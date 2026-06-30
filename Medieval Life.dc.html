@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#9fcdf5;background-image:linear-gradient(#bfe3ff,#7fb6ee);font-family:'VT323',monospace}
+  img{image-rendering:pixelated}
+  .scr::-webkit-scrollbar{width:7px}
+  .scr::-webkit-scrollbar-thumb{background:#2b6cb0;border:2px solid #1a4d8f}
+  .scr::-webkit-scrollbar-track{background:#cfe6ff}
+  .chips::-webkit-scrollbar{height:0}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  @keyframes pop{0%{transform:scale(.92)}100%{transform:scale(1)}}
+  .pbtn{cursor:pointer;user-select:none;transition:transform .05s}
+  .pbtn:active{transform:translateY(2px)}
+</style>
+</helmet>
+
+<div style="width:314px;background:#0d1b2e;border-radius:38px;padding:13px;box-shadow:0 22px 50px rgba(13,27,46,.45), inset 0 0 0 2px #2b3a52">
+  <div style="position:relative;width:288px;height:640px;border-radius:26px;overflow:hidden;background:#bfe3ff;display:flex;flex-direction:column">
+    <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:118px;height:22px;background:#0d1b2e;border-radius:0 0 14px 14px;z-index:40"></div>
+
+    <!-- STATUS -->
+    <div style="flex:none;height:32px;background:#2b6cb0;display:flex;align-items:center;justify-content:space-between;padding:0 16px;color:#eaf4ff;font-family:'VT323';font-size:15px">
+      <span>9:41</span><span style="width:17px;height:9px;background:#9fe88f;display:inline-block;box-shadow:inset -2px 0 0 #5fb04f"></span>
+    </div>
+
+    <!-- HEADER -->
+    <div style="flex:none;background:#2b6cb0;border-bottom:4px solid #1a4d8f;padding:6px 10px 9px;display:flex;align-items:center;gap:8px">
+      <div style="width:40px;height:40px;flex:none;background:#f6e9c8;border:3px solid #1a2e4a;box-shadow:inset -3px -3px 0 #d8c08f,inset 3px 3px 0 #fffaf0;display:flex;align-items:center;justify-content:center;font-size:21px">{{ portrait }}</div>
+      <div style="flex:1;line-height:1.05;min-width:0">
+        <div style="font-family:'VT323';font-size:20px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ fullName }}</div>
+        <div style="font-family:'VT323';font-size:13px;color:#bfe0ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Age {{ age }} · {{ classRank }}</div>
+      </div>
+      <div style="flex:none;display:flex;align-items:center;gap:4px">
+        <div style="display:flex;align-items:center;gap:4px;background:#1a4d8f;padding:5px 6px;box-shadow:inset -2px -2px 0 #0d2a4a"><span style="width:12px;height:12px;border-radius:50%;background:#ffce3a;box-shadow:inset -2px -2px 0 #c9921f;display:inline-block"></span><span style="font-family:'VT323';font-size:16px;color:#ffe9a0">{{ gold }}</span></div>
+        <div class="pbtn" onClick="{{ onOpenShop }}" style="width:25px;height:25px;background:#ffce3a;border:2px solid #1a2e4a;box-shadow:inset -2px -2px 0 #c9921f;display:flex;align-items:center;justify-content:center;font-size:13px">🛒</div>
+        <div class="pbtn" onClick="{{ onOpenSettings }}" style="width:25px;height:25px;background:#63b3ed;border:2px solid #1a2e4a;box-shadow:inset -2px -2px 0 #2b6cb0;display:flex;align-items:center;justify-content:center;font-size:13px">⚙️</div>
+      </div>
+    </div>
+
+    <!-- COMPACT STAT STRIP -->
+    <div style="flex:none;background:#1f5896;border-bottom:4px solid #14406f;padding:7px 10px;display:flex;gap:7px">
+      <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px"><span style="font-family:'Press Start 2P';font-size:6px;color:{{ s.color }}">{{ s.icon }}</span><span style="font-family:'VT323';font-size:13px;color:#cfe6ff;line-height:1">{{ s.val }}</span></div>
+          <div style="height:8px;background:#0d2a4a;border:2px solid #0a2038;box-shadow:inset 1px 1px 0 #06182e"><div style="height:100%;width:{{ s.val }}%;background:{{ s.color }};box-shadow:inset 0 -2px 0 {{ s.dark }}"></div></div>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- CONTENT -->
+    <div style="flex:1;position:relative;overflow:hidden">
+
+      <!-- LIFE -->
+      <sc-if value="{{ isLife }}" hint-placeholder-val="{{ true }}">
+        <div class="scr" ref="{{ feedRef }}" style="position:absolute;inset:0;overflow-y:auto;padding:11px 11px 7px;display:flex;flex-direction:column;gap:8px">
+          <div style="font-family:'Press Start 2P';font-size:7px;color:#2b6cb0;text-align:center;margin:2px 0 3px">~ THY LIFE SO FAR ~</div>
+          <sc-for list="{{ feed }}" as="e" hint-placeholder-count="4">
+            <div style="background:{{ e.bg }};border:3px solid {{ e.border }};box-shadow:inset -3px -3px 0 {{ e.sd }},inset 3px 3px 0 {{ e.sl }};padding:7px 9px;animation:pop .18s ease-out">
+              <span style="font-family:'Press Start 2P';font-size:6px;color:{{ e.tagColor }}">{{ e.tag }}</span>
+              <div style="font-family:'VT323';font-size:17px;color:#3a3320;line-height:1.18;margin-top:3px">{{ e.text }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- DO (activities) -->
+      <sc-if value="{{ isDo }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column">
+          <div class="chips" style="flex:none;display:flex;gap:5px;overflow-x:auto;padding:10px 11px 8px;border-bottom:3px solid #9fc4e8">
+            <sc-for list="{{ doCats }}" as="c" hint-placeholder-count="6">
+              <div class="pbtn" onClick="{{ c.onClick }}" style="flex:none;font-family:'Press Start 2P';font-size:7px;color:{{ c.fg }};background:{{ c.bg }};border:2px solid #1a2e4a;box-shadow:inset -2px -2px 0 {{ c.sd }};padding:6px 8px">{{ c.label }}</div>
+            </sc-for>
+          </div>
+          <div class="scr" style="flex:1;overflow-y:auto;padding:10px 11px 7px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <sc-for list="{{ activities }}" as="a" hint-placeholder-count="8">
+                <div class="pbtn" onClick="{{ a.onClick }}" style="background:#f6e9c8;border:3px solid #2a3550;box-shadow:inset -3px -3px 0 #d8c08f,inset 3px 3px 0 #fffaf0;padding:9px 8px;display:flex;flex-direction:column;gap:5px;min-height:88px">
+                  <div style="width:30px;height:30px;background:{{ a.iconBg }};border:2px solid #1a2e4a;box-shadow:inset -2px -2px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:17px">{{ a.icon }}</div>
+                  <div style="font-family:'Press Start 2P';font-size:7px;color:#3a2a08;line-height:1.3">{{ a.name }}</div>
+                  <div style="font-family:'VT323';font-size:13px;color:#6a5a38;line-height:1.05;margin-top:auto">{{ a.desc }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- KIN (relationships) -->
+      <sc-if value="{{ isKin }}" hint-placeholder-val="{{ false }}">
+        <div class="scr" style="position:absolute;inset:0;overflow-y:auto;padding:11px 11px 7px;display:flex;flex-direction:column;gap:8px">
+          <div style="font-family:'Press Start 2P';font-size:8px;color:#1a4d8f;margin:2px 0 3px">♥ THY KIN & FOES</div>
+          <sc-for list="{{ kin }}" as="k" hint-placeholder-count="4">
+            <div class="pbtn" onClick="{{ k.onOpen }}" style="background:#f6e9c8;border:3px solid #2a3550;box-shadow:inset -3px -3px 0 #d8c08f,inset 3px 3px 0 #fffaf0;padding:8px 9px">
+              <div style="display:flex;align-items:center;gap:9px">
+                <div style="width:36px;height:36px;background:#bfe3ff;border:2px solid #1a2e4a;box-shadow:inset -2px -2px 0 #7fb0e0;display:flex;align-items:center;justify-content:center;font-size:19px">{{ k.emoji }}</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-family:'VT323';font-size:18px;color:#3a3320;line-height:1">{{ k.name }}</div>
+                  <div style="font-family:'VT323';font-size:13px;color:#8a7440">{{ k.role }}</div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font-family:'Press Start 2P';font-size:7px;color:{{ k.relColor }}">{{ k.rel }}%</div>
+                  <div style="font-family:'VT323';font-size:12px;color:#8a7440">view ▸</div>
+                </div>
+              </div>
+              <div style="height:7px;background:#d8c08f;border:2px solid #b89a5f;margin:6px 0 0"><div style="height:100%;width:{{ k.rel }}%;background:{{ k.relColor }}"></div></div>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- KIN DETAIL -->
+        <sc-if value="{{ kinDetailOpen }}" hint-placeholder-val="{{ false }}">
+          <div class="scr" style="position:absolute;inset:0;z-index:20;overflow-y:auto;background:#bfe3ff;padding:10px 11px 8px">
+            <div class="pbtn" onClick="{{ kd.onBack }}" style="display:inline-block;font-family:'Press Start 2P';font-size:7px;color:#fff;background:#2b6cb0;border:2px solid #1a2e4a;box-shadow:inset -2px -2px 0 #1a4d8f;padding:6px 8px;margin-bottom:9px">◂ BACK</div>
+            <div style="display:flex;align-items:center;gap:11px;background:#0f274a;border:4px solid #ffce3a;box-shadow:inset -3px -3px 0 #c9921f,inset 3px 3px 0 #ffe98a;padding:10px">
+              <div style="width:56px;height:56px;flex:none;background:#bfe3ff;border:3px solid #1a2e4a;box-shadow:inset -3px -3px 0 #7fb0e0;display:flex;align-items:center;justify-content:center;font-size:30px">{{ kd.emoji }}</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-family:'Press Start 2P';font-size:9px;color:#ffce3a;line-height:1.3">{{ kd.name }}</div>
+                <div style="font-family:'VT323';font-size:15px;color:#dbe9ff;margin-top:3px">{{ kd.role }} · {{ kd.age }} winters</div>
+                <div style="display:inline-block;margin-top:4px;font-family:'VT323';font-size:13px;color:#0d2a4a;background:{{ kd.relColor }};padding:1px 7px">{{ kd.relLabel }} · {{ kd.rel }}%</div>
+              </div>
+            </div>
+            <div style="height:9px;background:#d8c08f;border:2px solid #b89a5f;margin:9px 0"><div style="height:100%;width:{{ kd.rel }}%;background:{{ kd.relColor }}"></div></div>
+            <div style="background:#f6e9c8;border:3px solid #2a3550;box-shadow:inset -3px -3px 0 #d8c08f,inset 3px 3px 0 #fffaf0;padding:9px;font-family:'VT323';font-size:16px;color:#5a4a28;line-height:1.2">
+              <span style="font-family:'Press Start 2P';font-size:6px;color:#a36a1f">TRAIT — {{ kd.trait }}</span>
+              <div style="margin-top:5px">{{ kd.bio }}</div>
+            </div>
+            <div style="font-family:'Press Start 2P';font-size:7px;color:#1a4d8f;margin:12px 0 8px">INTERACTIONS</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+              <sc-for list="{{ kd.actions }}" as="x" hint-placeholder-count="6">
+                <div class="pbtn" onClick="{{ x.onClick }}" style="background:{{ x.bg }};border:2px solid #1a2e4a;box-shadow:inset -2px -2px 0 {{ x.sd }};padding:9px 6px;text-align:center">
+                  <div style="font-family:'Press Start 2P';font-size:7px;color:{{ x.fg }};line-height:1.3">{{ x.label }}</div>
+                  <div style="font-family:'VT323';font-size:12px;color:{{ x.fg }};opacity:.85;margin-top:3px">{{ x.hint }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </sc-if>
+
+      <!-- SHOP -->
+      <sc-if value="{{ isShop }}" hint-placeholder-val="{{ false }}">
+        <div class="scr" style="position:absolute;inset:0;overflow-y:auto;padding:11px 11px 7px">
+          <div style="font-family:'Press Start 2P';font-size:8px;color:#1a4d8f;margin:2px 0 8px">🛒 MERCHANT'S STALL</div>
+          <!-- ledger -->
+          <div style="display:flex;gap:6px;margin-bottom:11px">
+            <div style="flex:1;background:#eaf7e4;border:3px solid #9bc46a;box-shadow:inset -2px -2px 0 #bcd494;padding:6px 5px;text-align:center"><div style="font-family:'Press Start 2P';font-size:6px;color:#5a8a2a">INCOME</div><div style="font-family:'VT323';font-size:18px;color:#3a5a1a">{{ ledger.income }}g</div></div>
+            <div style="flex:1;background:#fdeaea;border:3px solid #fc8181;box-shadow:inset -2px -2px 0 #f0b0b0;padding:6px 5px;text-align:center"><div style="font-family:'Press Start 2P';font-size:6px;color:#c24a4a">SPENT</div><div style="font-family:'VT323';font-size:18px;color:#8a2a2a">{{ ledger.expenses }}g</div></div>
+            <div style="flex:1;background:#fff6df;border:3px solid #ffce3a;box-shadow:inset -2px -2px 0 #f0d98a;padding:6px 5px;text-align:center"><div style="font-family:'Press Start 2P';font-size:6px;color:#a36a1f">PURSE</div><div style="font-family:'VT323';font-size:18px;color:#7a5a1a">{{ ledger.gold }}g</div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <sc-for list="{{ shopItems }}" as="it" hint-placeholder-count="8">
+              <div class="pbtn" onClick="{{ it.onClick }}" style="position:relative;background:{{ it.cardBg }};border:3px solid #2a3550;box-shadow:inset -3px -3px 0 #d8c08f,inset 3px 3px 0 #fffaf0;padding:8px;display:flex;flex-direction:column;gap:4px;min-height:96px">
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                  <div style="width:28px;height:28px;background:{{ it.iconBg }};border:2px solid #1a2e4a;box-shadow:inset -2px -2px 0 rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:16px">{{ it.icon }}</div>
+                  <div style="font-family:'Press Start 2P';font-size:7px;color:{{ it.priceColor }};background:{{ it.priceBg }};border:2px solid #1a2e4a;padding:3px 5px">{{ it.priceLabel }}</div>
+                </div>
+                <div style="font-family:'Press Start 2P';font-size:7px;color:#3a2a08;line-height:1.3;margin-top:2px">{{ it.name }}</div>
+                <div style="font-family:'VT323';font-size:13px;color:#6a5a38;line-height:1.05;margin-top:auto">{{ it.desc }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ hasOwned }}" hint-placeholder-val="{{ false }}">
+            <div style="font-family:'Press Start 2P';font-size:7px;color:#1a4d8f;margin:13px 0 7px">THY POSSESSIONS</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <sc-for list="{{ ownedList }}" as="o" hint-placeholder-count="2">
+                <div style="display:flex;align-items:center;gap:5px;background:#9fe88f;border:2px solid #1a2e4a;box-shadow:inset -2px -2px 0 #5fb04f;padding:4px 7px;font-family:'VT323';font-size:14px;color:#1a3a0a"><span>{{ o.icon }}</span><span>{{ o.short }}</span></div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <!-- ME (profile) -->
+      <sc-if value="{{ isMe }}" hint-placeholder-val="{{ false }}">
+        <div class="scr" style="position:absolute;inset:0;overflow-y:auto;padding:12px 12px 8px">
+          <div style="display:flex;align-items:center;gap:11px;background:#0f274a;border:4px solid #ffce3a;box-shadow:inset -3px -3px 0 #c9921f,inset 3px 3px 0 #ffe98a;padding:10px">
+            <div style="width:60px;height:60px;background:#bfe3ff;border:3px solid #1a2e4a;box-shadow:inset -3px -3px 0 #7fb0e0;display:flex;align-items:center;justify-content:center;font-size:32px">{{ portrait }}</div>
+            <div style="flex:1;min-width:0"><div style="font-family:'Press Start 2P';font-size:9px;color:#ffce3a;line-height:1.3">{{ firstName }}</div><div style="font-family:'VT323';font-size:16px;color:#dbe9ff;margin-top:3px">"{{ epithet }}"</div><div style="display:inline-block;margin-top:5px;font-family:'VT323';font-size:14px;color:#0d2a4a;background:#63b3ed;padding:1px 7px;box-shadow:inset -2px -2px 0 #2b6cb0">{{ classRank }} · AGE {{ age }}</div></div>
+          </div>
+
+          <div style="font-family:'Press Start 2P';font-size:7px;color:#1a4d8f;margin:13px 0 8px">PATH TO NOBILITY</div>
+          <div style="display:flex;align-items:center;gap:3px">
+            <sc-for list="{{ rankPath }}" as="r" hint-placeholder-count="4">
+              <div style="flex:1;text-align:center;background:{{ r.bg }};border:2px solid #1a2e4a;box-shadow:inset -2px -2px 0 {{ r.sd }};padding:6px 2px;font-family:'Press Start 2P';font-size:6px;color:{{ r.fg }}">{{ r.name }}</div>
+            </sc-for>
+          </div>
+
+          <div style="font-family:'Press Start 2P';font-size:7px;color:#1a4d8f;margin:14px 0 8px">ATTRIBUTES</div>
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+              <div>
+                <div style="display:flex;justify-content:space-between;font-family:'Press Start 2P';font-size:7px;color:#1a2e4a;margin-bottom:4px"><span style="color:{{ s.dark }}">{{ s.icon }} {{ s.label }}</span><span>{{ s.val }}%</span></div>
+                <div style="height:13px;background:#cfe6ff;border:2px solid #1a2e4a;box-shadow:inset 1px 1px 0 #9fc4e8"><div style="height:100%;width:{{ s.val }}%;background:{{ s.color }};box-shadow:inset 0 -3px 0 {{ s.dark }}"></div></div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:13px;background:#f6e9c8;border:3px solid #2a3550;box-shadow:inset -3px -3px 0 #d8c08f,inset 3px 3px 0 #fffaf0;padding:9px;font-family:'VT323';font-size:16px;color:#5a4a28;line-height:1.2">{{ bio }}</div>
+        </div>
+      </sc-if>
+
+    </div>
+
+    <!-- AGE UP BAR -->
+    <div style="flex:none;padding:8px 12px 6px;background:#1a4d8f;border-top:4px solid #0d2a4a">
+      <div class="pbtn" onClick="{{ onAgeUp }}" style="background:#ffce3a;border:3px solid #1a2e4a;box-shadow:inset -3px -3px 0 #c9921f,inset 3px 3px 0 #fff1b0;padding:10px;text-align:center;font-family:'Press Start 2P';font-size:11px;color:#3a2a08;animation:bob 1.7s infinite">▲ AGE UP</div>
+    </div>
+
+    <!-- NAV -->
+    <div style="flex:none;height:58px;background:#1a4d8f;display:flex;align-items:center;justify-content:space-around;padding:0 4px 6px">
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
+        <div class="pbtn" onClick="{{ n.onClick }}" style="text-align:center;padding:4px 6px">
+          <div style="width:18px;height:18px;margin:0 auto;background:{{ n.sq }};box-shadow:inset -2px -2px 0 {{ n.sqDark }};outline:{{ n.ring }}"></div>
+          <div style="font-family:'Press Start 2P';font-size:6px;color:{{ n.fg }};margin-top:5px">{{ n.label }}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- EVENT MODAL -->
+    <sc-if value="{{ eventOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:50;background:rgba(13,27,46,.72);display:flex;align-items:center;justify-content:center;padding:18px">
+        <div style="width:100%;background:#f6e9c8;border:4px solid #1a2e4a;box-shadow:inset -4px -4px 0 #d8c08f,inset 4px 4px 0 #fffaf0,0 10px 0 rgba(0,0,0,.3);padding:14px;animation:pop .2s ease-out">
+          <div style="background:#fc8181;border:3px solid #1a2e4a;box-shadow:inset -2px -2px 0 #c2484a;padding:6px 8px;font-family:'Press Start 2P';font-size:9px;color:#fff;text-align:center;line-height:1.4">{{ event.title }}</div>
+          <div style="font-family:'VT323';font-size:18px;color:#3a3320;line-height:1.2;margin:11px 2px 13px">{{ event.text }}</div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <sc-for list="{{ event.choices }}" as="c" hint-placeholder-count="3">
+              <div class="pbtn" onClick="{{ c.onClick }}" style="background:#63b3ed;border:3px solid #1a2e4a;box-shadow:inset -3px -3px 0 #2b6cb0,inset 3px 3px 0 #bfe3ff;padding:9px;font-family:'VT323';font-size:17px;color:#0d2a4a;line-height:1.05">{{ c.label }}</div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- SETTINGS MODAL -->
+    <sc-if value="{{ settingsOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:55;background:rgba(13,27,46,.72);display:flex;align-items:center;justify-content:center;padding:18px">
+        <div style="width:100%;background:#f6e9c8;border:4px solid #1a2e4a;box-shadow:inset -4px -4px 0 #d8c08f,inset 4px 4px 0 #fffaf0,0 10px 0 rgba(0,0,0,.3);padding:14px;animation:pop .2s ease-out">
+          <div style="background:#63b3ed;border:3px solid #1a2e4a;box-shadow:inset -2px -2px 0 #2b6cb0;padding:6px 8px;font-family:'Press Start 2P';font-size:9px;color:#fff;text-align:center">⚙️ SETTINGS</div>
+          <div style="margin:13px 0;display:flex;flex-direction:column;gap:9px">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-family:'VT323';font-size:17px;color:#3a3320"><span>Difficulty</span><span style="font-family:'Press Start 2P';font-size:7px;color:#2b6cb0;background:#cfe6ff;border:2px solid #1a2e4a;padding:4px 6px">{{ difficulty }}</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-family:'VT323';font-size:17px;color:#3a3320"><span>Permadeath</span><span style="font-family:'Press Start 2P';font-size:7px;color:{{ permadeathColor }};background:#fff;border:2px solid #1a2e4a;padding:4px 6px">{{ permadeathLabel }}</span></div>
+            <div class="pbtn" onClick="{{ onToggleAutoScroll }}" style="display:flex;justify-content:space-between;align-items:center;font-family:'VT323';font-size:17px;color:#3a3320"><span>Auto-scroll feed</span><span style="font-family:'Press Start 2P';font-size:7px;color:#fff;background:{{ autoScrollColor }};border:2px solid #1a2e4a;padding:4px 6px">{{ autoScrollLabel }}</span></div>
+            <div style="font-family:'VT323';font-size:13px;color:#8a7440;line-height:1.1;border-top:2px dashed #c9b483;padding-top:8px">Difficulty & permadeath are set in the Tweaks panel.</div>
+          </div>
+          <div style="display:flex;gap:7px">
+            <div class="pbtn" onClick="{{ onRestart }}" style="flex:1;text-align:center;background:#fc8181;border:3px solid #1a2e4a;box-shadow:inset -2px -2px 0 #c2484a;padding:9px;font-family:'Press Start 2P';font-size:8px;color:#fff">RESTART</div>
+            <div class="pbtn" onClick="{{ onCloseSettings }}" style="flex:1;text-align:center;background:#9fe88f;border:3px solid #1a2e4a;box-shadow:inset -2px -2px 0 #5fb04f;padding:9px;font-family:'Press Start 2P';font-size:8px;color:#0d2a4a">CLOSE</div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- DEATH -->
+    <sc-if value="{{ dead }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;z-index:60;background:#0d1b2e;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center">
+        <div style="font-size:50px;margin-bottom:6px">🪦</div>
+        <div style="font-family:'Press Start 2P';font-size:13px;color:#fc8181;line-height:1.5">THOU HAST DIED</div>
+        <div style="font-family:'VT323';font-size:19px;color:#bfe0ff;margin-top:12px;line-height:1.25">{{ fullName }}<br>Peasant-born · died at {{ age }}<br><span style="color:#9fc4e8">{{ deathCause }}</span></div>
+        <div style="font-family:'VT323';font-size:16px;color:#ffce3a;margin-top:14px;max-width:230px;line-height:1.25">&ldquo;{{ epitaph }}&rdquo;</div>
+        <div class="pbtn" onClick="{{ onNewLife }}" style="margin-top:22px;background:#ffce3a;border:3px solid #1a2e4a;box-shadow:inset -3px -3px 0 #c9921f,inset 3px 3px 0 #fff1b0;padding:12px 22px;font-family:'Press Start 2P';font-size:11px;color:#3a2a08">✦ NEW LIFE</div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:360,&quot;height&quot;:740},&quot;difficulty&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Merciful&quot;,&quot;Normal&quot;,&quot;Brutal&quot;],&quot;default&quot;:&quot;Normal&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Game&quot;},&quot;permadeath&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Game&quot;}}">
+class Component extends DCLogic {
+  feedRef = React.createRef();
+
+  RANKS = [
+    { key:'Peasant', short:'PEASANT', portrait:'\u{1F9D1}\u200D\u{1F33E}' },
+    { key:'Squire',  short:'SQUIRE',  portrait:'\u{1F9D2}' },
+    { key:'Knight',  short:'KNIGHT',  portrait:'\u{1F6E1}\uFE0F' },
+    { key:'Noble',   short:'NOBLE',   portrait:'\u{1F451}' },
+  ];
+  FIRST = ['Aldric','Godwin','Bjorn','Cuthbert','Edmund','Rowena','Mathilda','Beatrix','Wulfric','Osric','Edith','Hilda','Percival','Agnes'];
+  EPITHET = ['the Unready','the Bold','the Smelly','the Lucky','the Confused','the Turnip','Goosefriend','the Pale','Two-Eyebrows','the Mild','the Damp'];
+  EPITAPHS = ['Smelled of turnips. Will be missed by a goose.','Came for the bread, stayed for the plague.','Never did pay back that apple.','Briefly magnificent, mostly muddy.','Loved by few, owed by many.','Here lies one who feared the leech-doctor most of all.'];
+
+  state = this.freshLife();
+
+  freshLife() {
+    const first = this.pick(this.FIRST);
+    const epi = this.pick(this.EPITHET);
+    return {
+      first, epithet: epi, rankIdx: 0, age: 0, gold: 8, income: 0, expenses: 0,
+      stats: { health: 80 + this.rnd(0,18), charm: this.rnd(25,55), wits: this.rnd(25,55), faith: this.rnd(15,45) },
+      feed: [{ id:1, tag:'YEAR 0 · BORN', tagColor:'#a36a1f', tone:'good',
+        text:`Born in muddy Swineford to a turnip farmer. They named you ${first} and called it a beautiful, screaming miracle.` }],
+      kin: [
+        { name:'Maud',  role:'Thy Mother', emoji:'\u{1F469}\u200D\u{1F33E}', rel:72, age:44, trait:'Stern but loving', bio:'Raised you on turnips and tough love. Bakes a rye loaf that could fell an ox.' },
+        { name:'Old Cedric', role:'Thy Father', emoji:'\u{1F468}\u200D\u{1F33E}', rel:55, age:51, trait:'Perpetually weary', bio:'A turnip farmer of forty years. Speaks mostly in grunts and weather complaints.' },
+        { name:'Sir Quackbeard', role:'Goose & Best Friend', emoji:'\u{1FABF}', rel:95, age:3, trait:'Fiercely loyal', bio:'A goose of uncommon dignity. Has bitten three tax collectors and a bishop.' },
+        { name:'Sir Roderick', role:'The Apple Thief', emoji:'\u2694\uFE0F', rel:8, age:29, trait:'Insufferably smug', bio:'A knight who once called you peasant scum and stole your apple. You have not forgotten.' },
+      ],
+      inventory: [], doCat:'all', selectedKin:null, settingsOpen:false, settings:{ autoScroll:true },
+      tab:'life', event:null, dead:false, deathCause:'', epitaph:'', nextId:2,
+    };
+  }
+
+  // ---- helpers ----
+  rnd(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+  pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  clamp(v){ return Math.max(0, Math.min(100, Math.round(v))); }
+  diff(){ return this.props.difficulty ?? 'Normal'; }
+  permadeath(){ return this.props.permadeath ?? true; }
+
+  money(s, delta){
+    const before = s.gold;
+    s.gold = Math.max(0, before + delta);
+    const actual = s.gold - before;
+    if(actual > 0) s.income += actual;
+    else if(actual < 0) s.expenses += (-actual);
+    return s;
+  }
+  apply(s, eff){
+    eff = eff || {};
+    const st = { ...s.stats };
+    let harsh = this.diff()==='Brutal' ? 1.5 : this.diff()==='Merciful' ? 0.6 : 1;
+    ['health','charm','wits','faith'].forEach(k=>{
+      if(eff[k]!=null){ let d = eff[k]; if(d<0) d*=harsh; st[k] = this.clamp(st[k]+d); }
+    });
+    s.stats = st;
+    if(eff.gold!=null) this.money(s, eff.gold);
+    return s;
+  }
+  push(s, tag, tagColor, text, tone){
+    s.feed = [...s.feed, { id:s.nextId++, tag, tagColor, text, tone: tone||'plain' }];
+    return s;
+  }
+  clone(){ return { ...this.state, stats:{...this.state.stats}, feed:[...this.state.feed] }; }
+
+  // ---- content banks ----
+  NARRATED = [
+    { tag:'MISHAP', c:'#c24a4a', t:"You slipped in the pig trough before half the village. They are still laughing.", e:{charm:-4} },
+    { tag:'FORTUNE', c:'#2f8f3f', t:"Found a shiny coin in the mud. It is mostly mud, but it spends.", e:{gold:3} },
+    { tag:'GOSSIP', c:'#a36a1f', t:"A bard sang a song about you. It was not flattering and it rhymed 'Aldric' with 'garlic'.", e:{charm:-2} },
+    { tag:'PLAGUE', c:'#c24a4a', t:"A cough went round the village. You survived by holding your breath for a season.", e:{health:-9} },
+    { tag:'WISDOM', c:'#2b6cb0', t:"The hermit on the hill taught you to read three whole words. Two were 'turnip'.", e:{wits:6} },
+    { tag:'BLESSING', c:'#2f8f3f', t:"You lit a candle at the chapel. You feel holier and slightly singed.", e:{faith:7} },
+    { tag:'WEATHER', c:'#a36a1f', t:"The harvest was good! Bread for all. You ate eleven loaves out of principle.", e:{health:4, gold:2} },
+    { tag:'MISHAP', c:'#c24a4a', t:"A goat headbutted you off the bridge. Sir Quackbeard witnessed your shame.", e:{health:-6, charm:-2} },
+    { tag:'FORTUNE', c:'#2f8f3f', t:"A merchant overpaid you by mistake and rode off. You said nothing. Wise.", e:{gold:6, faith:-2} },
+    { tag:'ROMANCE', c:'#c2484a', t:"You winked at the miller's child across the square. You think it went well. It did not.", e:{charm:3} },
+    { tag:'WISDOM', c:'#2b6cb0', t:"You watched a monk do sums and learned what a 'zero' is. Revolutionary.", e:{wits:5} },
+  ];
+
+  CHOICES = [
+    { title:'THE QUACK DOCTOR', text:"A 'physician' offers a magic healing crystal for 6 gold. It is visibly a pebble.",
+      choices:[
+        { label:'Buy the healing pebble (6g)', eff:{gold:-6, health:3, wits:-3}, r:"You bought the pebble. It did nothing, but you feel optimistic. That counts for something." },
+        { label:'Politely decline', eff:{wits:4}, r:"You declined. The doctor moved on to a more gullible peasant." },
+        { label:'Steal the pebble and run', eff:{gold:4, faith:-5, charm:-2}, r:"You snatched the pebble and bolted. It's still just a pebble, but it's YOUR pebble now." },
+      ]},
+    { title:'A RAT IN THE GRANARY', text:"A fat rat is eating the village's winter grain. The elders look at you, the nearest fool.",
+      choices:[
+        { label:'Hunt it with a broom', eff:{health:-4, charm:6, gold:3}, r:"After an epic broom-duel, the rat fled. The village cheered. You bled slightly." },
+        { label:'Befriend it', eff:{charm:4, wits:-2}, r:"You named the rat Geoffrey. Geoffrey now eats your grain too. Worth it." },
+        { label:'Blame Sir Quackbeard', eff:{faith:-4}, r:"You blamed the goose. The goose knows. The goose will remember." },
+      ]},
+    { title:'THE LORD\u2019S TOURNEY', text:"A jousting tourney is held! Peasants may enter for 5 gold and probable death.",
+      choices:[
+        { label:'Enter and joust!', eff:{health:-12, charm:10, gold:8}, r:"You were unhorsed in 0.4 seconds, but the crowd loved your scream. Minor fame achieved." },
+        { label:'Sell pies to the crowd', eff:{gold:9, charm:2}, r:"You sold forty mince pies. Capitalism, even in 1340, finds a way." },
+        { label:'Watch from a safe tree', eff:{wits:3}, r:"You watched from a tree and learned much about how NOT to fall off a horse." },
+      ]},
+    { title:'A WANDERING KNIGHT', text:"A knight seeks a squire to carry his absurdly heavy armour. He squints at you.",
+      choices:[
+        { label:'Beg to be his squire', eff:{charm:5, wits:4}, r:"He grunted approval. You may be on the path to knighthood... or just heavy lifting.", squireChance:true },
+        { label:'Demand fair wages first', eff:{charm:-3, gold:5}, r:"He laughed, tossed you a coin, and rode off. Bold, but you remain a peasant." },
+        { label:'Hide behind the goose', eff:{charm:-4}, r:"You hid behind Sir Quackbeard. The knight respected the goose, not you." },
+      ]},
+    { title:'CONFESSION TIME', text:"The priest asks if you have sinned this year. You have. Many times. Mostly about pies.",
+      choices:[
+        { label:'Confess everything', eff:{faith:12, charm:-3}, r:"You confessed all. The priest needed a sit-down. Your soul is lighter; the village now knows about the pies." },
+        { label:'Lie boldly', eff:{faith:-8, wits:3, charm:4}, r:"You claimed sainthood. The priest is suspicious but impressed by your confidence." },
+        { label:'Donate to dodge it (4g)', eff:{gold:-4, faith:6}, r:"A few coins in the box and the priest forgot his question entirely. Convenient." },
+      ]},
+  ];
+
+  ACT_DEFS = [
+    { id:'tavern',     cat:'leisure', name:'TAVERN',    icon:'\u{1F37A}', iconBg:'#ffce3a', desc:'Drink, sing, brawl' },
+    { id:'dice',       cat:'leisure', name:'DICE',      icon:'\u{1F3B2}', iconBg:'#fc8181', desc:'Gamble thy coin' },
+    { id:'feast',      cat:'leisure', name:'FEAST',     icon:'\u{1F357}', iconBg:'#f6a13a', desc:'Host a merry feast' },
+    { id:'fair',       cat:'leisure', name:'FAIR',      icon:'\u{1F3AA}', iconBg:'#d6a8ff', desc:'Juggle at the fair' },
+    { id:'fields',     cat:'work',    name:'FIELDS',    icon:'\u{1F33E}', iconBg:'#cda35f', desc:'Honest turnip toil' },
+    { id:'blacksmith', cat:'work',    name:'FORGE',     icon:'\u{1F528}', iconBg:'#63b3ed', desc:'Sweat for coin' },
+    { id:'market',     cat:'work',    name:'MARKET',    icon:'\u{1F9FA}', iconBg:'#9fe88f', desc:'Sell thy wares' },
+    { id:'church',     cat:'faith',   name:'CHAPEL',    icon:'\u26EA',    iconBg:'#9fe88f', desc:'Pray for thy soul' },
+    { id:'pilgrimage', cat:'faith',   name:'PILGRIM',   icon:'\u{1F9CE}', iconBg:'#63b3ed', desc:'Walk to the shrine' },
+    { id:'train',      cat:'martial', name:'THE KEEP',  icon:'\u{1F6E1}\uFE0F', iconBg:'#63b3ed', desc:'Train for knighthood' },
+    { id:'quest',      cat:'martial', name:'QUEST',     icon:'\u{1F4DC}', iconBg:'#d6a8ff', desc:'Heed the notice board' },
+    { id:'tournament', cat:'martial', name:'TOURNEY',   icon:'\u{1F40E}', iconBg:'#ffce3a', desc:'Joust for glory' },
+    { id:'poach',      cat:'crime',   name:'POACH',     icon:'\u{1F98C}', iconBg:'#9bc46a', desc:"Hunt royal deer" },
+    { id:'pickpocket', cat:'crime',   name:'PICKPOCKET',icon:'\u{1F932}', iconBg:'#fc8181', desc:'Lift a fat purse' },
+    { id:'banditry',   cat:'crime',   name:'BANDITRY',  icon:'\u{1F5E1}\uFE0F', iconBg:'#cda35f', desc:'Rob the road' },
+    { id:'leech',      cat:'health',  name:'DOCTOR',    icon:'\u{1FA78}', iconBg:'#f3a0a0', desc:'Leeches cure all' },
+    { id:'bathhouse',  cat:'health',  name:'BATHHOUSE', icon:'\u{1F6C1}', iconBg:'#7ad0c0', desc:'A rare hot bath' },
+    { id:'herbalist',  cat:'health',  name:'HERBALIST', icon:'\u{1F33F}', iconBg:'#9fe88f', desc:'A potent tonic' },
+  ];
+
+  CATS = [
+    { id:'all',     label:'ALL',     bg:'#1a4d8f', sd:'#0d2a4a', fg:'#fff' },
+    { id:'leisure', label:'LEISURE', bg:'#ffce3a', sd:'#c9921f', fg:'#3a2a08' },
+    { id:'work',    label:'WORK',    bg:'#cda35f', sd:'#9a7333', fg:'#2a1c08' },
+    { id:'faith',   label:'FAITH',   bg:'#9fe88f', sd:'#5fb04f', fg:'#1a3a0a' },
+    { id:'martial', label:'MARTIAL', bg:'#63b3ed', sd:'#2b6cb0', fg:'#0d2a4a' },
+    { id:'crime',   label:'CRIME',   bg:'#fc8181', sd:'#c2484a', fg:'#fff' },
+    { id:'health',  label:'BODY',    bg:'#7ad0c0', sd:'#3f9486', fg:'#0d3a33' },
+  ];
+
+  SHOP_ITEMS = [
+    { id:'bread',   name:'BREAD',     short:'Bread',    icon:'\u{1F35E}', iconBg:'#cda35f', price:2,  type:'consumable', eff:{health:4},          desc:'A humble meal. +4 health' },
+    { id:'herbs',   name:'HEAL HERBS',short:'Herbs',    icon:'\u{1F33F}', iconBg:'#9fe88f', price:6,  type:'consumable', eff:{health:12},         desc:'Bitter, potent. +12 health' },
+    { id:'ale',     name:'ALE BARREL',short:'Ale',      icon:'\u{1F37A}', iconBg:'#ffce3a', price:3,  type:'consumable', eff:{charm:5,health:-2}, desc:'Liquid courage. +5 charm' },
+    { id:'candle',  name:'HOLY CANDLE',short:'Candle',  icon:'\u{1F56F}\uFE0F', iconBg:'#f6a13a', price:4, type:'consumable', eff:{faith:8},   desc:'Light the soul. +8 faith' },
+    { id:'tunic',   name:'FINE TUNIC',short:'Tunic',    icon:'\u{1F455}', iconBg:'#63b3ed', price:15, type:'perm', eff:{charm:8},        desc:'Less peasant-like. +8 charm' },
+    { id:'quill',   name:'GOOSE QUILL',short:'Quill',   icon:'\u{1FAB6}', iconBg:'#d6a8ff', price:12, type:'perm', eff:{wits:10},        desc:'For lettered folk. +10 wits' },
+    { id:'sword',   name:'IRON SWORD',short:'Sword',    icon:'\u2694\uFE0F', iconBg:'#9fc4e8', price:25, type:'perm', eff:{charm:6,health:3}, desc:'A knight needs steel. +6 charm' },
+    { id:'steed',   name:'STURDY STEED',short:'Steed',  icon:'\u{1F434}', iconBg:'#cda35f', price:40, type:'perm', eff:{charm:5,health:5}, desc:'No more walking! Status.' },
+    { id:'relic',   name:'HOLY RELIC',short:'Relic',    icon:'\u271D\uFE0F', iconBg:'#ffce3a', price:60, type:'perm', eff:{faith:15},       desc:"A saint's toe, allegedly. +15 faith" },
+    { id:'cottage', name:'STONE COTTAGE',short:'Cottage',icon:'\u{1F3E0}',iconBg:'#9bc46a', price:90, type:'perm', eff:{health:8,charm:6},desc:'A home of thine own!' },
+  ];
+
+  // ---- core loop ----
+  ageUp(){
+    if(this.state.dead || this.state.event) return;
+    let s = this.clone();
+    s.age += 1;
+    s.tab = 'life'; s.selectedKin = null;
+
+    const n = Math.random() < 0.5 ? 2 : 1;
+    for(let i=0;i<n;i++){
+      const ev = this.pick(this.NARRATED);
+      this.apply(s, ev.e);
+      this.push(s, `AGE ${s.age} · ${ev.tag}`, ev.c, ev.t, ev.e.health<0?'bad':'good');
+    }
+    if(s.age > 45){ this.apply(s, { health: -this.rnd(1, Math.floor((s.age-40)/4)+2) }); }
+
+    let died = false, cause = '';
+    if(this.permadeath()){
+      if(s.stats.health <= 0){ died = true; cause = this.pick(['Succumbed to a mild cough.','The plague, finally.','A goose-related incident.','Fell into the turnip cellar.']); }
+      else if(s.age > 60 && Math.random() < (s.age-58)/60){ died = true; cause = 'Died peacefully of being very, very old.'; }
+    }
+    if(died){
+      s.dead = true; s.deathCause = cause; s.epitaph = this.pick(this.EPITAPHS);
+      this.push(s, `AGE ${s.age} · THE END`, '#c24a4a', `You died at ${s.age}. ${cause}`, 'bad');
+      this.setState(s); return;
+    }
+
+    if(Math.random() < 0.32){ s.event = this.pick(this.CHOICES); }
+    this.setState(s);
+  }
+
+  chooseOption(c){
+    let s = this.clone();
+    this.apply(s, c.eff);
+    this.push(s, `AGE ${s.age} · CHOICE`, '#7a4fb0', c.r, 'plain');
+    if(c.squireChance && s.rankIdx===0 && Math.random()<0.6){
+      s.rankIdx = 1;
+      this.push(s, `AGE ${s.age} · PROMOTED`, '#2f8f3f', "You are now a SQUIRE! You own a slightly less muddy tunic.", 'good');
+    }
+    s.event = null;
+    this.setState(s);
+  }
+
+  // ---- activities ----
+  doActivity(id){
+    if(this.state.dead || this.state.event) return;
+    let s = this.clone();
+    s.tab = 'life'; s.selectedKin = null;
+    const R = Math.random();
+    switch(id){
+      case 'tavern':
+        if(s.gold<2){ this.push(s,'TAVERN','#a36a1f',"You had no coin for ale, so you watched others drink. Bleak.",'plain'); break; }
+        this.apply(s,{gold:-2,charm:5,health:-2,faith:-1});
+        this.push(s,'TAVERN','#a36a1f',"A night at the Sloshed Squire! You sang, you spilled, you made three new friends and one new enemy.",'good'); break;
+      case 'dice':
+        if(s.gold<3){ this.push(s,'DICE','#a36a1f',"You can't gamble with an empty purse. The dice men shoo you away.",'plain'); break; }
+        if(R<0.45){ this.apply(s,{gold:9,charm:2}); this.push(s,'DICE','#2f8f3f',"You won at dice! The other peasants are suspicious of your luck. So are you.",'good'); }
+        else { this.apply(s,{gold:-5}); this.push(s,'DICE','#c24a4a',"You lost at dice. Again. The dice men thank you for your generous donation.",'bad'); }
+        break;
+      case 'feast':
+        if(s.gold<4){ this.push(s,'FEAST','#a36a1f',"A feast needs coin and you have none. You gnaw a turnip alone. Festive.",'plain'); break; }
+        this.apply(s,{gold:-4,health:6,charm:3,faith:-1});
+        this.push(s,'FEAST','#a36a1f',"You hosted a roaring feast \u2014 roast goose (NOT Sir Quackbeard), much mead, more merriment.",'good'); break;
+      case 'fair':
+        this.apply(s,{charm:4,health:2});
+        this.push(s,'VILLAGE FAIR','#7a4fb0',"You juggled turnips at the fair. Two children cheered, one threw a beet. A triumph.",'good'); break;
+      case 'fields':
+        this.apply(s,{gold:5,health:-4});
+        this.push(s,'LABOUR','#a36a1f',"You toiled in the turnip fields all season. Your back hates you, your purse loves you.",'good'); break;
+      case 'blacksmith':
+        this.apply(s,{gold:6,health:-3,wits:2});
+        this.push(s,'THE FORGE','#2b6cb0',"You hammered iron at the forge all season. Sooty, sweaty, and a few coins richer.",'good'); break;
+      case 'market':
+        if(R<0.6){ this.apply(s,{gold:5,charm:1}); this.push(s,'MARKET','#2f8f3f',"You sold pies and trinkets at your stall. A brisk day's trade!",'good'); }
+        else { this.apply(s,{gold:-1}); this.push(s,'MARKET','#a36a1f',"Nobody bought a thing. You ate your own unsold pies. Bleakly profitable for your belly.",'plain'); }
+        break;
+      case 'church':
+        this.apply(s,{faith:8,charm:1});
+        this.push(s,'CHAPEL','#2f8f3f',"You prayed earnestly. The stained glass was lovely. You feel cleansed and a bit hungry.",'good'); break;
+      case 'pilgrimage':
+        if(s.gold<3){ this.push(s,'PILGRIMAGE','#a36a1f',"You lacked the 3 gold for the road. The shrine remains un-pilgrimaged.",'plain'); break; }
+        this.apply(s,{gold:-3,faith:14,health:-6,wits:2});
+        this.push(s,'PILGRIMAGE','#2f8f3f',"You walked to the holy shrine and back. Blisters and blessings, in equal and abundant measure.",'good'); break;
+      case 'train':
+        this.apply(s,{wits:5,charm:4,health:-2});
+        let promoted=false;
+        if(s.rankIdx===0 && s.age>=12 && s.stats.wits>=42 && Math.random()<0.5){ s.rankIdx=1; promoted=true; }
+        else if(s.rankIdx===1 && s.age>=16 && s.stats.wits>=55 && s.stats.charm>=48 && Math.random()<0.5){ s.rankIdx=2; promoted=true; }
+        else if(s.rankIdx===2 && s.age>=20 && s.gold>=60 && s.stats.charm>=60 && Math.random()<0.45){ s.rankIdx=3; promoted=true; }
+        if(promoted) this.push(s,`PROMOTED \u2192 ${this.RANKS[s.rankIdx].short}`,'#2f8f3f',`Your training paid off! You rose to ${this.RANKS[s.rankIdx].key}. The village gasps.`,'good');
+        else this.push(s,'TRAINING','#2b6cb0',"You trained hard at the keep \u2014 sword, courtesy, and not tripping over your own cloak.",'good');
+        break;
+      case 'quest':
+        if(R<0.55){ this.apply(s,{gold:10,charm:7,health:-5}); this.push(s,'QUEST','#2f8f3f',"You answered a notice-board quest and returned a hero! A small one. A village hero.",'good'); }
+        else { this.apply(s,{health:-10,charm:3}); this.push(s,'QUEST','#c24a4a',"The quest was a trap. The 'dragon' was an angry cow. You have learned humility and a limp.",'bad'); }
+        break;
+      case 'tournament':
+        if(s.gold<5){ this.push(s,'TOURNEY','#a36a1f',"Entry costs 5 gold you do not have. You watch the joust from the cheap mud.",'plain'); break; }
+        if(R<0.5){ this.apply(s,{gold:5,charm:12,health:-12}); this.push(s,'TOURNEY','#2f8f3f',"You were unhorsed gloriously, but your scream thrilled the crowd. Bruised, but briefly famous!",'good'); }
+        else { this.apply(s,{gold:-5,charm:4,health:-6}); this.push(s,'TOURNEY','#c24a4a',"You fell off before the joust even began. Polite, pitying applause. The horse seemed embarrassed for you.",'bad'); }
+        break;
+      case 'poach':
+        if(R<0.5){ this.apply(s,{gold:12,health:-2}); this.push(s,'POACHING','#2f8f3f',"You poached a fat deer from the King's wood and sold it quietly. Delicious crime.",'good'); }
+        else { this.apply(s,{gold:-6,health:-8,charm:-3}); this.push(s,'CAUGHT!','#c24a4a',"The King's foresters caught you mid-poach. You were fined, thrashed, and shamed. The deer escaped smugly.",'bad'); }
+        break;
+      case 'pickpocket':
+        if(R<0.55){ this.apply(s,{gold:7,faith:-3}); this.push(s,'PICKPOCKET','#2f8f3f',"Light fingers, fat purse. You lifted a merchant's coin and whistled away innocently.",'good'); }
+        else { this.apply(s,{gold:-3,health:-5,charm:-3}); this.push(s,'CAUGHT!','#c24a4a',"A guard caught your hand in a stranger's pocket. A public ear-flicking ensued. Humbling.",'bad'); }
+        break;
+      case 'banditry':
+        if(R<0.45){ this.apply(s,{gold:18,charm:3,faith:-8}); this.push(s,'BANDITRY','#2f8f3f',"You robbed a merchant on the lonely road! Rich, dashing, and thoroughly damned.",'good'); }
+        else { this.apply(s,{gold:-5,health:-14,charm:-5}); this.push(s,'AMBUSHED!','#c24a4a',"Your ambush failed spectacularly. The merchant's guards thrashed you into the ditch.",'bad'); }
+        break;
+      case 'leech':
+        if(s.gold<3){ this.push(s,'DOCTOR','#c24a4a',"The leech-doctor demands 3 gold up front. You have not got it. You stay ill.",'plain'); break; }
+        this.apply(s,{gold:-3,health:R<0.6?9:-5});
+        this.push(s,'DOCTOR','#c24a4a',R<0.6?"The leech-doctor applied eleven leeches. Astonishingly, you feel better.":"The leech-doctor applied too many leeches. You feel considerably worse. He charged extra.",R<0.6?'good':'bad'); break;
+      case 'bathhouse':
+        if(s.gold<2){ this.push(s,'BATHHOUSE','#a36a1f',"A bath costs 2 gold. You cannot afford to be clean. You remain fragrant.",'plain'); break; }
+        this.apply(s,{gold:-2,health:5,charm:5});
+        this.push(s,'BATHHOUSE','#2f8f3f',"A rare hot bath! You emerge smelling of lavender instead of livestock. People stare, impressed.",'good'); break;
+      case 'herbalist':
+        if(s.gold<4){ this.push(s,'HERBALIST','#a36a1f',"The herb-wife wants 4 gold for her tonic. Your purse says no.",'plain'); break; }
+        this.apply(s,{gold:-4,health:10,wits:1});
+        this.push(s,'HERBALIST','#2f8f3f',"The herb-wife brewed you a tonic. It tastes of regret and pondwater, but it works wonders.",'good'); break;
+    }
+    this.setState(s);
+  }
+
+  // ---- shop ----
+  buyItem(item){
+    if(this.state.dead) return;
+    let s = { ...this.clone(), inventory:[...this.state.inventory] };
+    s.tab = 'shop';
+    if(item.type==='perm' && s.inventory.includes(item.id)){
+      this.push(s,'SHOP','#a36a1f',`You already own a ${item.name.toLowerCase()}. One is plenty.`,'plain');
+      this.setState(s); return;
+    }
+    if(s.gold < item.price){
+      this.push(s,'SHOP','#a36a1f',`You cannot afford the ${item.name.toLowerCase()} (${item.price}g). The merchant sneers.`,'plain');
+      this.setState(s); return;
+    }
+    this.money(s, -item.price);
+    this.apply(s, item.eff);
+    if(item.type==='perm') s.inventory = [...s.inventory, item.id];
+    this.push(s,'PURCHASE','#2f8f3f',`You bought a ${item.name.toLowerCase()} for ${item.price} gold. ${item.type==='perm'?'A fine addition to your estate.':'Best used at once!'}`,'good');
+    this.setState(s);
+  }
+
+  // ---- kin ----
+  openKin(idx){ this.setState({ selectedKin: idx }); }
+  interactKin(idx, kind){
+    if(this.state.dead) return;
+    let s = { ...this.clone(), kin:this.state.kin.map(k=>({...k})) };
+    s.tab = 'kin'; s.selectedKin = idx;
+    const k = s.kin[idx];
+    const isGoose = k.name==='Sir Quackbeard';
+    switch(kind){
+      case 'time':
+        k.rel = this.clamp(k.rel + this.rnd(4,9)); this.apply(s,{health:1});
+        this.push(s,'KIN \u00B7 TIME','#2f8f3f',`You spent the season with ${k.name}. ${isGoose?'You fed it bread and it honked contentedly.':'Pleasant, if a little quiet.'}`,'good'); break;
+      case 'praise':
+        k.rel = this.clamp(k.rel + this.rnd(6,12)); this.apply(s,{charm:1});
+        this.push(s,'KIN \u00B7 PRAISE','#2f8f3f',`You praised ${k.name}. ${isGoose?'The goose honked, deeply moved.':'They blushed and called you \u2018not the worst\u2019.'}`,'good'); break;
+      case 'gift':
+        if(s.gold<5){ this.push(s,'KIN','#a36a1f',`You wished to gift ${k.name} but lacked 5 gold. Awkward.`,'plain'); break; }
+        this.money(s,-5); k.rel = this.clamp(k.rel + this.rnd(12,20));
+        this.push(s,'KIN \u00B7 GIFT','#2f8f3f',`You gave ${k.name} a fine gift. ${k.name==='Sir Roderick'?'Even the apple thief was touched.':'Their heart grew three sizes.'}`,'good'); break;
+      case 'favour':
+        if(k.rel>=55){ const g=this.rnd(3,9); this.money(s,g); k.rel=this.clamp(k.rel-this.rnd(2,5));
+          this.push(s,'KIN \u00B7 FAVOUR','#2f8f3f',`${k.name} lent you ${g} gold. ${isGoose?'(The goose has surprising savings.)':'"Pay it back," they said. You will not.'}`,'good'); }
+        else { k.rel=this.clamp(k.rel-this.rnd(4,8));
+          this.push(s,'KIN \u00B7 FAVOUR','#c24a4a',`You begged ${k.name} for coin. They refused, and now think less of you.`,'bad'); }
+        break;
+      case 'insult':
+        k.rel = this.clamp(k.rel - this.rnd(10,18)); this.apply(s,{charm:-2,faith:-1});
+        this.push(s,'KIN \u00B7 INSULT','#c24a4a',`You insulted ${k.name} thoroughly. ${isGoose?'The goose will plot against you now.':'They are NOT pleased.'}`,'bad'); break;
+      case 'plot':
+        k.rel = this.clamp(k.rel - this.rnd(6,12)); this.apply(s,{wits:3,faith:-4});
+        this.push(s,'KIN \u00B7 SCHEME','#7a4fb0',`You schemed against ${k.name}. Petty and a touch wicked, but oh, so satisfying.`,'plain'); break;
+    }
+    this.setState(s);
+  }
+
+  // ---- nav / settings ----
+  setTab(t){ this.setState({ tab:t, selectedKin:null }); }
+  setCat(c){ this.setState({ doCat:c }); }
+  openShop(){ this.setState({ tab:'shop', selectedKin:null }); }
+  openSettings(){ this.setState({ settingsOpen:true }); }
+  closeSettings(){ this.setState({ settingsOpen:false }); }
+  toggleAutoScroll(){ this.setState(s=>({ settings:{ ...s.settings, autoScroll:!s.settings.autoScroll } })); }
+  newLife(){ this.setState(this.freshLife()); }
+
+  componentDidUpdate(){
+    const el = this.feedRef.current;
+    if(el && this.state.tab==='life' && this.state.settings.autoScroll) el.scrollTop = el.scrollHeight;
+  }
+  componentDidMount(){ const el=this.feedRef.current; if(el) el.scrollTop=el.scrollHeight; }
+
+  // ---- render ----
+  renderVals(){
+    const s = this.state;
+    const rank = this.RANKS[s.rankIdx];
+    const SC = {
+      health:{label:'HEALTH', icon:'\u2665', color:'#fc8181', dark:'#c2484a'},
+      charm: {label:'CHARM',  icon:'\u2605', color:'#ffce3a', dark:'#c9921f'},
+      wits:  {label:'WITS',   icon:'\u2726', color:'#63b3ed', dark:'#2b6cb0'},
+      faith: {label:'FAITH',  icon:'\u271D', color:'#9fe88f', dark:'#5fb04f'},
+    };
+    const stats = ['health','charm','wits','faith'].map(k=>({ key:k, ...SC[k], val:s.stats[k] }));
+
+    const toneStyle = {
+      good:  { bg:'#f1f7e4', border:'#9bc46a', sd:'#bcd494', sl:'#fbfff0', tagColor:'#5a8a2a' },
+      bad:   { bg:'#fdeaea', border:'#fc8181', sd:'#f0b0b0', sl:'#fffafa', tagColor:'#c24a4a' },
+      plain: { bg:'#f6e9c8', border:'#2a3550', sd:'#d8c08f', sl:'#fffaf0', tagColor:'#a36a1f' },
+    };
+    const feed = s.feed.map(e=>{
+      const ts = toneStyle[e.tone] || toneStyle.plain;
+      return { id:e.id, tag:e.tag, tagColor:e.tagColor||ts.tagColor, text:e.text, bg:ts.bg, border:ts.border, sd:ts.sd, sl:ts.sl };
+    });
+
+    const doCats = this.CATS.map(c=>{
+      const active = s.doCat===c.id;
+      return { label:c.label, onClick:()=>this.setCat(c.id),
+        bg: active?c.bg:'#dcebff', sd: active?c.sd:'#9fc4e8', fg: active?c.fg:'#3a5d8a' };
+    });
+    const activities = this.ACT_DEFS.filter(a=>s.doCat==='all'||a.cat===s.doCat)
+      .map(a=>({ name:a.name, icon:a.icon, iconBg:a.iconBg, desc:a.desc, onClick:()=>this.doActivity(a.id) }));
+
+    const relColorOf = r => r>=66?'#2f8f3f':r>=33?'#c9921f':'#c24a4a';
+    const kin = s.kin.map((k,i)=>({
+      name:k.name, role:k.role, emoji:k.emoji, rel:k.rel, relColor:relColorOf(k.rel),
+      onOpen:()=>this.openKin(i),
+    }));
+
+    let kd = null;
+    if(s.selectedKin!=null && s.kin[s.selectedKin]){
+      const k = s.kin[s.selectedKin]; const i = s.selectedKin;
+      const mk = (label,hint,kind,bg,sd,fg)=>({ label, hint, bg, sd, fg, onClick:()=>this.interactKin(i,kind) });
+      kd = {
+        name:k.name, role:k.role, emoji:k.emoji, age:k.age, trait:k.trait, bio:k.bio,
+        rel:k.rel, relColor:relColorOf(k.rel),
+        relLabel: k.rel>=75?'Adoring':k.rel>=50?'Warm':k.rel>=30?'Cool':'Hostile',
+        onBack:()=>this.setState({ selectedKin:null }),
+        actions:[
+          mk('SPEND TIME','+bond','time','#9fe88f','#5fb04f','#1a3a0a'),
+          mk('PRAISE','+bond','praise','#63b3ed','#2b6cb0','#0d2a4a'),
+          mk('GIFT','5g, ++bond','gift','#ffce3a','#c9921f','#3a2a08'),
+          mk('ASK FAVOUR','borrow coin','favour','#7ad0c0','#3f9486','#0d3a33'),
+          mk('INSULT','--bond','insult','#fc8181','#c2484a','#fff'),
+          mk('SCHEME','+wits, -bond','plot','#d6a8ff','#9a5fd0','#2a0d4a'),
+        ],
+      };
+    }
+
+    const shopItems = this.SHOP_ITEMS.map(it=>{
+      const owned = it.type==='perm' && s.inventory.includes(it.id);
+      return { name:it.name, icon:it.icon, iconBg:it.iconBg, desc: owned?'Owned \u2014 part of thy estate.':it.desc,
+        cardBg: owned?'#e4f3da':'#f6e9c8',
+        priceLabel: owned?'OWNED':it.price+'g',
+        priceColor: owned?'#fff':'#3a2a08', priceBg: owned?'#5fb04f':'#ffce3a',
+        onClick:()=>this.buyItem(it) };
+    });
+    const ownedList = s.inventory.map(id=>this.SHOP_ITEMS.find(x=>x.id===id)).filter(Boolean)
+      .map(it=>({ icon:it.icon, short:it.short }));
+
+    const rankPath = this.RANKS.map((r,i)=>({
+      name:r.short,
+      bg: i===s.rankIdx?'#ffce3a':(i<s.rankIdx?'#9fe88f':'#cfe6ff'),
+      sd: i===s.rankIdx?'#c9921f':(i<s.rankIdx?'#5fb04f':'#9fc4e8'),
+      fg: i<=s.rankIdx?'#1a2e4a':'#7a93b0',
+    }));
+
+    const navDefs = [
+      { id:'life', label:'LIFE', sq:'#fc8181', sqDark:'#c2484a' },
+      { id:'do',   label:'DO',   sq:'#ffce3a', sqDark:'#c9921f' },
+      { id:'kin',  label:'KIN',  sq:'#9fe88f', sqDark:'#5fb04f' },
+      { id:'shop', label:'SHOP', sq:'#f6a13a', sqDark:'#c97a1f' },
+      { id:'me',   label:'ME',   sq:'#d6a8ff', sqDark:'#9a5fd0' },
+    ];
+    const nav = navDefs.map(n=>{
+      const active = s.tab===n.id;
+      return { label:n.label, sq:active?n.sq:'#3a6aa0', sqDark:active?n.sqDark:'#244a73',
+        fg:active?'#fff':'#7fa8d0', ring:active?'2px solid '+n.sq:'2px solid transparent',
+        onClick:()=>this.setTab(n.id) };
+    });
+
+    const event = s.event ? {
+      title:s.event.title, text:s.event.text,
+      choices:s.event.choices.map(c=>({ label:c.label, onClick:()=>this.chooseOption(c) })),
+    } : { title:'', text:'', choices:[] };
+
+    const bio = `${s.first} ${s.epithet}, a ${rank.key.toLowerCase()} of Swineford, ${s.age} winters old. Owns ${s.gold} gold, one goose, and a complicated history with apples.`;
+
+    return {
+      portrait: rank.portrait, fullName: `${s.first} ${s.epithet}`, firstName:s.first, epithet:s.epithet,
+      classRank: rank.key, age:s.age, gold:s.gold,
+      stats, feed, doCats, activities, kin, kd, kinDetailOpen: s.selectedKin!=null,
+      shopItems, ownedList, hasOwned: ownedList.length>0,
+      ledger: { income:s.income, expenses:s.expenses, gold:s.gold },
+      rankPath, nav, bio,
+      tab:s.tab, isLife:s.tab==='life', isDo:s.tab==='do', isKin:s.tab==='kin', isShop:s.tab==='shop', isMe:s.tab==='me',
+      feedRef:this.feedRef,
+      onAgeUp:()=>this.ageUp(),
+      onOpenShop:()=>this.openShop(), onOpenSettings:()=>this.openSettings(),
+      settingsOpen:s.settingsOpen, onCloseSettings:()=>this.closeSettings(), onRestart:()=>this.newLife(),
+      onToggleAutoScroll:()=>this.toggleAutoScroll(),
+      autoScrollLabel: s.settings.autoScroll?'ON':'OFF', autoScrollColor: s.settings.autoScroll?'#5fb04f':'#c24a4a',
+      difficulty: this.diff(), permadeathLabel: this.permadeath()?'ON':'OFF', permadeathColor: this.permadeath()?'#c24a4a':'#5fb04f',
+      eventOpen: !!s.event && !s.dead, event,
+      dead:s.dead, deathCause:s.deathCause, epitaph:s.epitaph, onNewLife:()=>this.newLife(),
+    };
+  }
+}
+</script>
+</body>
+</html>

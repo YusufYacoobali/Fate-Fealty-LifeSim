@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "Medieval Life",
+    "slug": "medieval-life-simulator",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "scheme": "medievallife",
+    "splash": {
+      "backgroundColor": "#0d1b2e",
+      "resizeMode": "contain"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.medievallife.app"
+    },
+    "android": {
+      "package": "com.medievallife.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0d1b2e"
+      }
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-asset",
+      "expo-notifications"
+    ]
+  }
+}

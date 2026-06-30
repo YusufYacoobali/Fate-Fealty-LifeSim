@@ -15,7 +15,7 @@ interface Props {
   onOpenSettings: () => void;
 }
 
-const ACTION_BUTTON_SIZE = 34;
+const ACTION_BUTTON_SIZE = 35;
 const ACTION_ICON_SIZE = 18;
 
 function HeaderAction({ icon, bg, shadow, onPress }: { icon: string; bg: string; shadow: string; onPress: () => void }) {
@@ -84,14 +84,14 @@ export function Header({ portrait, fullName, age, classRank, gold, onOpenShop, o
             borderColor: C.blueDark,
           }}
         >
-          <DeltaBadge value={gold} size={13} style={{ right: 2, top: -12 }} />
+          <DeltaBadge value={gold} size={23} style={{ right: 2, top: -12 }} />
           <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: C.charm, borderBottomWidth: 2, borderRightWidth: 2, borderColor: C.charmDark }} />
           <PixelText font="body" size={16} color={C.goldText}>
             {gold}
           </PixelText>
         </View>
         <HeaderAction icon="🛒" bg={C.charm} shadow={C.charmDark} onPress={onOpenShop} />
-        <HeaderAction icon="⚙️" bg={C.light} shadow={C.blue} onPress={onOpenSettings} />
+        <HeaderAction icon="⚙️" bg={C.light} shadow={C.blueMid} onPress={onOpenSettings} />
       </View>
     </View>
   );

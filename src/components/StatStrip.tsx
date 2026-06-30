@@ -29,7 +29,7 @@ export function StatStrip({ stats }: { stats: StatVM[] }) {
     >
       {stats.map((s) => (
         <View key={s.key} style={{ flex: 1 }}>
-          <DeltaBadge value={s.val} size={12} style={{ right: 0, top: -10 }} />
+          <DeltaBadge value={s.val} size={18} style={{ right: 0, top: -10 }} />
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 3 }}>
             <PixelText font="pixel" size={8} color={s.color}>
               {s.icon}

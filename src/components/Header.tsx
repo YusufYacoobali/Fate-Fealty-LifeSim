@@ -1,9 +1,10 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Image, ImageSourcePropType, View } from 'react-native';
 import { PixelText } from './ui/PixelText';
 import { PixelButton } from './ui/PixelButton';
 import { DeltaBadge } from './ui/DeltaBadge';
 import { C } from '@/theme/theme';
+import { rankPortraitAsset, UI_ICONS } from '@/assets/generatedAssets';
 
 interface Props {
   portrait: string;
@@ -18,17 +19,23 @@ interface Props {
 const ACTION_BUTTON_SIZE = 35;
 const ACTION_ICON_SIZE = 18;
 
-function HeaderAction({ icon, bg, shadow, onPress }: { icon: string; bg: string; shadow: string; onPress: () => void }) {
+function HeaderAction({ icon, asset, bg, shadow, onPress }: { icon: string; asset?: ImageSourcePropType; bg: string; shadow: string; onPress: () => void }) {
   return (
     <PixelButton bg={bg} shadow={shadow} onPress={onPress} innerStyle={{ width: ACTION_BUTTON_SIZE, height: ACTION_BUTTON_SIZE, alignItems: 'center', justifyContent: 'center' }}>
-      <PixelText size={ACTION_ICON_SIZE} style={{ includeFontPadding: true, lineHeight: 24 }}>
-        {icon}
-      </PixelText>
+      {asset ? (
+        <Image source={asset} resizeMode="contain" style={{ width: 27, height: 27 }} />
+      ) : (
+        <PixelText size={ACTION_ICON_SIZE} style={{ includeFontPadding: true, lineHeight: 24 }}>
+          {icon}
+        </PixelText>
+      )}
     </PixelButton>
   );
 }
 
 export function Header({ portrait, fullName, age, classRank, gold, onOpenShop, onOpenSettings }: Props) {
+  const portraitAsset = rankPortraitAsset(classRank);
+
   return (
     <View
       style={{
@@ -58,7 +65,11 @@ export function Header({ portrait, fullName, age, classRank, gold, onOpenShop, o
           justifyContent: 'center',
         }}
       >
-        <PixelText size={21}>{portrait}</PixelText>
+        {portraitAsset ? (
+          <Image source={portraitAsset} resizeMode="contain" style={{ width: 34, height: 34 }} />
+        ) : (
+          <PixelText size={21}>{portrait}</PixelText>
+        )}
       </View>
 
       <View style={{ flex: 1, minWidth: 0 }}>
@@ -90,8 +101,8 @@ export function Header({ portrait, fullName, age, classRank, gold, onOpenShop, o
             {gold}
           </PixelText>
         </View>
-        <HeaderAction icon="🛒" bg={C.charm} shadow={C.charmDark} onPress={onOpenShop} />
-        <HeaderAction icon="⚙️" bg={C.light} shadow={C.blueMid} onPress={onOpenSettings} />
+        <HeaderAction icon="🛒" asset={UI_ICONS.shop} bg={C.charm} shadow={C.charmDark} onPress={onOpenShop} />
+        <HeaderAction icon="⚙️" asset={UI_ICONS.settings} bg={C.light} shadow={C.blueMid} onPress={onOpenSettings} />
       </View>
     </View>
   );

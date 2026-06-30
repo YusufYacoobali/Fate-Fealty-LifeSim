@@ -1,8 +1,9 @@
 import React from 'react';
-import { ScrollView, View } from 'react-native';
+import { Image, ScrollView, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { StatBar } from '../ui/StatBar';
 import { C } from '@/theme/theme';
+import { rankPortraitAsset, statIconAsset, traitIconAsset } from '@/assets/generatedAssets';
 
 interface StatVM {
   key: string;
@@ -50,12 +51,18 @@ interface Props {
 }
 
 export function MeTab({ portrait, firstName, epithet, classRank, age, stats, rankPath, traits, goal, bio }: Props) {
+  const portraitAsset = rankPortraitAsset(classRank);
+
   return (
     <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 12, paddingBottom: 8 }}>
       {/* identity card */}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 11, backgroundColor: '#0f274a', borderWidth: 4, borderColor: C.charm, borderBottomColor: C.charmDark, borderRightColor: C.charmDark, padding: 10 }}>
         <View style={{ width: 60, height: 60, backgroundColor: C.sky, borderWidth: 3, borderColor: C.inkSoft, alignItems: 'center', justifyContent: 'center' }}>
-          <PixelText size={32}>{portrait}</PixelText>
+          {portraitAsset ? (
+            <Image source={portraitAsset} resizeMode="contain" style={{ width: 54, height: 54 }} />
+          ) : (
+            <PixelText size={32}>{portrait}</PixelText>
+          )}
         </View>
         <View style={{ flex: 1, minWidth: 0 }}>
           <PixelText font="pixel" size={9} color={C.charm}>
@@ -94,9 +101,18 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
         {stats.map((s) => (
           <View key={s.key}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-              <PixelText font="pixel" size={7} color={s.dark}>
-                {s.icon} {s.label}
-              </PixelText>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                {statIconAsset(s.key) ? (
+                  <Image source={statIconAsset(s.key)} resizeMode="contain" style={{ width: 20, height: 20 }} />
+                ) : (
+                  <PixelText font="pixel" size={7} color={s.dark}>
+                    {s.icon}
+                  </PixelText>
+                )}
+                <PixelText font="pixel" size={7} color={s.dark}>
+                  {s.label}
+                </PixelText>
+              </View>
               <PixelText font="pixel" size={7} color={C.inkSoft}>
                 {s.val}%
               </PixelText>
@@ -117,7 +133,7 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
               <PixelText font="body" size={17} color={C.textDark}>
                 {goal.emoji} {goal.title}
               </PixelText>
-              <PixelText font="pixel" size={7} color={goal.done ? C.faithDark : C.amber}>
+              <PixelText font="body" size={15} color={goal.done ? C.faithDark : C.amber}>
                 {goal.done ? 'DONE ✓' : `${Math.round(goal.progress * 100)}%`}
               </PixelText>
             </View>
@@ -138,29 +154,37 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
         TRAITS & REPUTE
       </PixelText>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 7 }}>
-        {traits.map((t) => (
-          <View
-            key={t.id}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 5,
-              backgroundColor: t.kind === 'birth' ? C.lightFill : C.purple,
-              borderWidth: 2,
-              borderColor: C.inkSoft,
-              borderBottomColor: t.kind === 'birth' ? C.paleEdge : C.purpleDark,
-              borderRightColor: t.kind === 'birth' ? C.paleEdge : C.purpleDark,
-              paddingHorizontal: 7,
-              paddingVertical: 4,
-              maxWidth: '100%',
-            }}
-          >
-            <PixelText size={14}>{t.emoji}</PixelText>
-            <PixelText font="body" size={14} color={C.blueDark}>
-              {t.name}
-            </PixelText>
-          </View>
-        ))}
+        {traits.map((t) => {
+          const icon = traitIconAsset(t.id);
+
+          return (
+            <View
+              key={t.id}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 5,
+                backgroundColor: t.kind === 'birth' ? C.lightFill : C.purple,
+                borderWidth: 2,
+                borderColor: C.inkSoft,
+                borderBottomColor: t.kind === 'birth' ? C.paleEdge : C.purpleDark,
+                borderRightColor: t.kind === 'birth' ? C.paleEdge : C.purpleDark,
+                paddingHorizontal: 7,
+                paddingVertical: 4,
+                maxWidth: '100%',
+              }}
+            >
+              {icon ? (
+                <Image source={icon} resizeMode="contain" style={{ width: 18, height: 18 }} />
+              ) : (
+                <PixelText size={14}>{t.emoji}</PixelText>
+              )}
+              <PixelText font="body" size={14} color={C.blueDark}>
+                {t.name}
+              </PixelText>
+            </View>
+          );
+        })}
       </View>
 
       {/* bio */}

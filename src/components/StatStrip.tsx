@@ -1,9 +1,10 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Image, View } from 'react-native';
 import { PixelText } from './ui/PixelText';
 import { StatBar } from './ui/StatBar';
 import { DeltaBadge } from './ui/DeltaBadge';
 import { C } from '@/theme/theme';
+import { statIconAsset } from '@/assets/generatedAssets';
 
 interface StatVM {
   key: string;
@@ -31,9 +32,13 @@ export function StatStrip({ stats }: { stats: StatVM[] }) {
         <View key={s.key} style={{ flex: 1 }}>
           <DeltaBadge value={s.val} size={18} style={{ right: 0, top: -10 }} />
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 3 }}>
-            <PixelText font="pixel" size={8} color={s.color}>
-              {s.icon}
-            </PixelText>
+            {statIconAsset(s.key) ? (
+              <Image source={statIconAsset(s.key)} resizeMode="contain" style={{ width: 20, height: 20 }} />
+            ) : (
+              <PixelText font="pixel" size={8} color={s.color}>
+                {s.icon}
+              </PixelText>
+            )}
             <PixelText font="body" size={15} color={C.lightFill}>
               {s.val}
             </PixelText>

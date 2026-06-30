@@ -1,11 +1,12 @@
 import React from 'react';
-import { ScrollView, View } from 'react-native';
+import { Image, ScrollView, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
 import { KinMember } from '@/types/game';
 import { KinAction } from '@/engine/kinEngine';
 import { relColor, relLabel } from '@/state/viewModel';
 import { C } from '@/theme/theme';
+import { kinIconAsset } from '@/assets/generatedAssets';
 
 interface Props {
   kin: KinMember[];
@@ -46,7 +47,7 @@ export function KinTab({ kin, detail, onOpen, onBack, onInteract }: Props) {
         {/* hero card */}
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 11, backgroundColor: '#0f274a', borderWidth: 4, borderColor: C.charm, borderBottomColor: C.charmDark, borderRightColor: C.charmDark, padding: 10 }}>
           <View style={{ width: 56, height: 56, backgroundColor: C.sky, borderWidth: 3, borderColor: C.inkSoft, alignItems: 'center', justifyContent: 'center' }}>
-            <PixelText size={30}>{detail.emoji}</PixelText>
+            <KinIcon kin={detail} size={50} fallbackSize={30} />
           </View>
           <View style={{ flex: 1, minWidth: 0 }}>
             <PixelText font="pixel" size={9} color={C.charm}>
@@ -134,7 +135,7 @@ export function KinTab({ kin, detail, onOpen, onBack, onInteract }: Props) {
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 9 }}>
             <View style={{ width: 36, height: 36, backgroundColor: C.sky, borderWidth: 2, borderColor: C.inkSoft, alignItems: 'center', justifyContent: 'center' }}>
-              <PixelText size={19}>{k.emoji}</PixelText>
+              <KinIcon kin={k} size={32} fallbackSize={19} />
             </View>
             <View style={{ flex: 1, minWidth: 0 }}>
               <PixelText font="body" size={18} color={C.textDark}>
@@ -160,4 +161,14 @@ export function KinTab({ kin, detail, onOpen, onBack, onInteract }: Props) {
       ))}
     </ScrollView>
   );
+}
+
+function KinIcon({ kin, size, fallbackSize }: { kin: KinMember; size: number; fallbackSize: number }) {
+  const asset = kinIconAsset(kin.id, kin.kind);
+
+  if (!asset) {
+    return <PixelText size={fallbackSize}>{kin.emoji}</PixelText>;
+  }
+
+  return <Image source={asset} resizeMode="contain" style={{ width: size, height: size }} />;
 }

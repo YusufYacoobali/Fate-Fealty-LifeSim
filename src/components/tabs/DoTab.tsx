@@ -1,10 +1,11 @@
 import React from 'react';
-import { ScrollView, View } from 'react-native';
+import { Image, ScrollView, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
 import { ACTIVITY_DEFS, CATEGORIES } from '@/data/activities';
 import { ActivityCategory } from '@/types/game';
 import { C } from '@/theme/theme';
+import { ACTIVITY_ICONS } from '@/assets/generatedAssets';
 
 interface Props {
   cat: ActivityCategory | 'all';
@@ -54,12 +55,12 @@ export function DoTab({ cat, onCat, onActivity }: Props) {
               outline={C.parchBorder}
               onPress={() => onActivity(a.id)}
               style={{ width: '48.5%', marginBottom: 8 }}
-              innerStyle={{ paddingHorizontal: 8, paddingVertical: 9, minHeight: 88 }}
+              innerStyle={{ paddingHorizontal: 8, paddingVertical: 9, minHeight: 100 }}
             >
               <View
                 style={{
-                  width: 30,
-                  height: 30,
+                  width: 42,
+                  height: 42,
                   backgroundColor: a.iconBg,
                   borderWidth: 2,
                   borderColor: C.inkSoft,
@@ -68,7 +69,11 @@ export function DoTab({ cat, onCat, onActivity }: Props) {
                   marginBottom: 5,
                 }}
               >
-                <PixelText size={17}>{a.icon}</PixelText>
+                {ACTIVITY_ICONS[a.id] ? (
+                  <Image source={ACTIVITY_ICONS[a.id]} resizeMode="contain" style={{ width: 36, height: 36 }} />
+                ) : (
+                  <PixelText size={17}>{a.icon}</PixelText>
+                )}
               </View>
               <PixelText font="pixel" size={7} color="#3a2a08">
                 {a.name}

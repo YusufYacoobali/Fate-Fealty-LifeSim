@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, TextInput, View } from 'react-native';
+import { Image, ScrollView, TextInput, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
 import { Difficulty } from '@/types/game';
@@ -8,6 +8,7 @@ import { birthTraits } from '@/data/traits';
 import { FIRST_NAMES } from '@/data/names';
 import { pick } from '@/engine/random';
 import { C, FONT } from '@/theme/theme';
+import { traitIconAsset } from '@/assets/generatedAssets';
 
 interface Props {
   initialDifficulty: Difficulty;
@@ -29,6 +30,7 @@ export function CharacterCreation({ initialDifficulty, onBegin }: Props) {
 
   const traits = birthTraits();
   const selectedTrait = traits.find((t) => t.id === traitId) ?? null;
+  const selectedTraitIcon = selectedTrait ? traitIconAsset(selectedTrait.id) : undefined;
 
   const begin = () =>
     onBegin({
@@ -77,7 +79,7 @@ export function CharacterCreation({ initialDifficulty, onBegin }: Props) {
           {/* Surprise me */}
           <TraitChip selected={traitId === SURPRISE} emoji="🎲" name="Leave to Fate" onPress={() => setTraitId(SURPRISE)} />
           {traits.map((t) => (
-            <TraitChip key={t.id} selected={traitId === t.id} emoji={t.emoji} name={t.name} onPress={() => setTraitId(t.id)} />
+            <TraitChip key={t.id} id={t.id} selected={traitId === t.id} emoji={t.emoji} name={t.name} onPress={() => setTraitId(t.id)} />
           ))}
         </View>
 
@@ -85,9 +87,16 @@ export function CharacterCreation({ initialDifficulty, onBegin }: Props) {
         <View style={{ marginTop: 10, minHeight: 54, backgroundColor: '#0f274a', borderWidth: 3, borderColor: C.charm, borderBottomColor: C.charmDark, borderRightColor: C.charmDark, padding: 10 }}>
           {selectedTrait ? (
             <>
-              <PixelText font="pixel" size={7} color={C.charm}>
-                {selectedTrait.emoji} {selectedTrait.name}
-              </PixelText>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                {selectedTraitIcon ? (
+                  <Image source={selectedTraitIcon} resizeMode="contain" style={{ width: 20, height: 20 }} />
+                ) : (
+                  <PixelText size={14}>{selectedTrait.emoji}</PixelText>
+                )}
+                <PixelText font="pixel" size={7} color={C.charm}>
+                  {selectedTrait.name}
+                </PixelText>
+              </View>
               <PixelText font="body" size={15} color={C.creamBlue} style={{ marginTop: 5 }}>
                 {selectedTrait.blurb}
               </PixelText>
@@ -127,7 +136,9 @@ export function CharacterCreation({ initialDifficulty, onBegin }: Props) {
   );
 }
 
-function TraitChip({ selected, emoji, name, onPress }: { selected: boolean; emoji: string; name: string; onPress: () => void }) {
+function TraitChip({ id, selected, emoji, name, onPress }: { id?: string; selected: boolean; emoji: string; name: string; onPress: () => void }) {
+  const icon = id ? traitIconAsset(id) : undefined;
+
   return (
     <PixelButton
       bg={selected ? C.purple : C.parch}
@@ -138,7 +149,7 @@ function TraitChip({ selected, emoji, name, onPress }: { selected: boolean; emoj
       style={{ width: '48.5%', marginBottom: 7 }}
       innerStyle={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 8, paddingVertical: 8 }}
     >
-      <PixelText size={16}>{emoji}</PixelText>
+      {icon ? <Image source={icon} resizeMode="contain" style={{ width: 22, height: 22 }} /> : <PixelText size={16}>{emoji}</PixelText>}
       <PixelText font="body" size={15} color={selected ? '#2a0d4a' : C.textDark}>
         {name}
       </PixelText>

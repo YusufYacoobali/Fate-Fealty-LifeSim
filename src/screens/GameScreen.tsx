@@ -104,7 +104,18 @@ export function GameScreen() {
               onInteract={(id, action) => dispatch({ type: 'KIN_INTERACT', id, action })}
             />
           )}
-          {state.tab === 'shop' && <ShopTab />}
+          {state.tab === 'shop' && (
+            <ShopTab
+              gold={state.gold}
+              income={state.income}
+              expenses={state.expenses}
+              inventory={state.inventory}
+              onBuy={(item) => {
+                haptic('medium', buzz);
+                dispatch({ type: 'BUY', item });
+              }}
+            />
+          )}
           {state.tab === 'me' && (
             <MeTab
               portrait={rank.portrait}

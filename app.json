@@ -4,6 +4,7 @@
     "slug": "medieval-life-simulator",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./assets/icon/icon_ios.png",
     "userInterfaceStyle": "light",
     "scheme": "medievallife",
     "splash": {
@@ -15,11 +16,14 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.medievallife.app"
+      "bundleIdentifier": "com.yacoobali.med",
+      "icon": "./assets/icon/icon_ios.png"
     },
     "android": {
-      "package": "com.medievallife.app",
+      "package": "com.yacoobali.med",
+      "icon": "./assets/icon/icon_android.png",
       "adaptiveIcon": {
+        "foregroundImage": "./assets/icon/icon_android.png",
         "backgroundColor": "#0d1b2e"
       }
     },

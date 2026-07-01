@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useGame } from '@/state/GameContext';
 import {
   currentRank,
@@ -34,7 +34,7 @@ import { AchievementToast } from '@/components/modals/AchievementToast';
 import { ChronicleScreen } from '@/components/modals/ChronicleScreen';
 import { OnboardingModal } from '@/components/modals/OnboardingModal';
 import { ComingSoonShop } from '@/components/modals/ComingSoonShop';
-import { ANDROID_BOTTOM_NAV_GUARD } from '@/components/systemLayout';
+import { MIN_ANDROID_BOTTOM_NAV_GUARD } from '@/components/systemLayout';
 import { useGameFeedback } from '@/state/hooks/useGameFeedback';
 import { haptic } from '@/services/haptics';
 
@@ -60,6 +60,8 @@ export function GameScreen() {
   const goal = selectGoal(state);
   const [chronicleOpen, setChronicleOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const insets = useSafeAreaInsets();
+  const bottomNavInset = Math.max(insets.bottom, MIN_ANDROID_BOTTOM_NAV_GUARD);
 
   // Promotion/death haptics ride on engine transitions.
   useGameFeedback(state);
@@ -68,7 +70,7 @@ export function GameScreen() {
   const meStats = stats.map((s) => ({ ...s, label: STAT_STYLES[s.key].label }));
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: C.blue }}>
+    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: C.blue }}>
       <View style={{ flex: 1, backgroundColor: C.sky }}>
         <Header
           portrait={rank.portrait}
@@ -140,7 +142,7 @@ export function GameScreen() {
           }}
           disabled={state.dead || !!state.event}
         />
-        <View style={{ backgroundColor: C.blueDeep, paddingBottom: ANDROID_BOTTOM_NAV_GUARD }}>
+        <View style={{ backgroundColor: C.blueDeep, paddingBottom: bottomNavInset }}>
           <NavBar active={state.tab} onTab={(t) => dispatch({ type: 'SET_TAB', tab: t })} />
         </View>
 

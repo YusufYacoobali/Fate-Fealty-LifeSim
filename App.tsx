@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFonts, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 import { VT323_400Regular } from '@expo-google-fonts/vt323';
 import { GameProvider } from '@/state/GameContext';
@@ -22,9 +23,11 @@ export default function App() {
   }
 
   return (
-    <GameProvider>
-      <StatusBar style="light" />
-      <GameScreen />
-    </GameProvider>
+    <SafeAreaProvider>
+      <GameProvider>
+        <StatusBar style="light" />
+        <GameScreen />
+      </GameProvider>
+    </SafeAreaProvider>
   );
 }

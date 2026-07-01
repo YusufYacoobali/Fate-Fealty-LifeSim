@@ -1,4 +1,4 @@
-package com.medievallife.app
+package com.yacoobali.med
 
 import android.os.Build
 import android.os.Bundle

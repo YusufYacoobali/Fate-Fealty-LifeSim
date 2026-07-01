@@ -4,7 +4,7 @@ import * as StoreReview from 'expo-store-review';
 export { REVIEW_ENTRY_THRESHOLD, shouldPromptReview, entriesDelta } from './reviewLogic';
 
 /** The package id from app.json — used to build a Play Store fallback URL. */
-const ANDROID_PACKAGE = 'com.medievallife.app';
+const ANDROID_PACKAGE = 'com.yacoobali.med';
 
 function fallbackStoreUrl(): string | null {
   if (Platform.OS === 'android') {

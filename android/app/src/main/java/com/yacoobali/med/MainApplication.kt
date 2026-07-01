@@ -1,4 +1,4 @@
-package com.medievallife.app
+package com.yacoobali.med
 
 import android.app.Application
 import android.content.res.Configuration

@@ -33,6 +33,11 @@
     "plugins": [
       "expo-asset",
       "expo-notifications"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "bb28a220-3a1e-4c84-8e16-7525b1117aed"
+      }
+    }
   }
 }

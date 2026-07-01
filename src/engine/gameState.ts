@@ -8,6 +8,7 @@
  */
 
 import {
+  FeedEntry,
   GameSettings,
   GameState,
   KinMember,
@@ -108,6 +109,7 @@ export function createLife(opts: FreshLifeOptions = {}): GameState {
         tag: 'YEAR 0 · TRAIT',
         tagColor: C.purpleDark,
         tone: 'good',
+        traitId: birth.id,
         text: `${birth.emoji} From the cradle you are ${birth.name} — ${birth.blurb}`,
       },
     ],
@@ -151,8 +153,15 @@ export function cloneState(s: GameState): GameState {
 // Small mutation helpers
 // ---------------------------------------------------------------------------
 
-export function pushFeed(s: GameState, tag: string, tagColor: string, text: string, tone: Tone = 'plain'): GameState {
-  s.feed = [...s.feed, { id: s.nextId++, age: s.age, tag, tagColor, text, tone }];
+export function pushFeed(
+  s: GameState,
+  tag: string,
+  tagColor: string,
+  text: string,
+  tone: Tone = 'plain',
+  meta: Pick<FeedEntry, 'traitId'> = {},
+): GameState {
+  s.feed = [...s.feed, { id: s.nextId++, age: s.age, tag, tagColor, text, tone, ...meta }];
   return s;
 }
 

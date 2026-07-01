@@ -26,7 +26,7 @@ export function GoalBanner({ goal }: { goal: GoalView }) {
           <PixelText font="pixel" size={6} color={goal.done ? C.faith : C.purple}>
             {goal.done ? '✓ AMBITION' : '🎯 AMBITION'}
           </PixelText>
-          <PixelText font="body" size={13} color={C.creamBlue}>
+          <PixelText font="body" size={15} color={C.creamBlue}>
             {goal.done ? 'FULFILLED' : `${pct}%`}
           </PixelText>
         </View>

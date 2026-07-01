@@ -36,7 +36,7 @@ export function grantTrait(s: GameState, id: string, announce = true): boolean {
   s.traits = [...s.traits, id];
   addTag(s, `trait_${id}`);
   if (announce) {
-    pushFeed(s, 'TRAIT GAINED', C.purpleDark, `${t.emoji} You are now ${t.name}. ${t.blurb}`, 'good');
+    pushFeed(s, 'TRAIT GAINED', C.purpleDark, `You are now ${t.name}. ${t.blurb}`, 'good', { traitId: t.id });
   }
   return true;
 }

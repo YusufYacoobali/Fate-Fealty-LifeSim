@@ -53,6 +53,7 @@ export interface FeedEntry {
   tagColor?: string;
   text: string;
   tone: Tone;
+  traitId?: string;
 }
 
 // ---------------------------------------------------------------------------

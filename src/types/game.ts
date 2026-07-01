@@ -1,5 +1,5 @@
 /**
- * Core type system for the Medieval Life Simulator engine.
+ * Core type system for the Fate & Fealty engine.
  *
  * Design rule (from the engine spec): only FOUR stats are ever visible to the
  * player — health, charm, wits, faith. Everything else that gives the game depth

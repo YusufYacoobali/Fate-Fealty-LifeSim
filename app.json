@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Fate & Fealty",
-    "slug": "fate-and-fealty",
+    "slug": "medieval-life-simulator",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon/icon_ios.png",

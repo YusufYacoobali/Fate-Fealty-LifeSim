@@ -1,4 +1,5 @@
-import { isChoiceEnabled, meetsCondition, pickEvent } from '@/engine/eventPicker';
+import { isChoiceEnabled, isEventEligible, meetsCondition, pickEvent } from '@/engine/eventPicker';
+import { EVENTS_BY_ID } from '@/content';
 import { Choice } from '@/types/game';
 import { makeState } from './helpers';
 
@@ -46,5 +47,13 @@ describe('eventPicker.pickEvent', () => {
         expect(e.arcNodeOnly).toBeFalsy();
       }
     }
+  });
+
+  it('gates premium events behind the Lifetime Pass', () => {
+    const event = EVENTS_BY_ID.baron_oath_day;
+    const locked = makeState({ age: 30, rankIdx: 4, lifetimeUnlocked: false });
+    const unlocked = makeState({ age: 30, rankIdx: 4, lifetimeUnlocked: true });
+    expect(isEventEligible(locked, event)).toBe(false);
+    expect(isEventEligible(unlocked, event)).toBe(true);
   });
 });

@@ -30,6 +30,7 @@ export type GameAction =
   | { type: 'CLOSE_SETTINGS' }
   | { type: 'TOGGLE_AUTOSCROLL' }
   | { type: 'SET_SETTINGS'; settings: Partial<GameSettings> }
+  | { type: 'SET_LIFETIME_UNLOCKED'; unlocked: boolean }
   | { type: 'NEW_LIFE'; options?: NewLifeOptions }
   | { type: 'CONTINUE_AS_HEIR' };
 
@@ -127,6 +128,12 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       return s;
     }
 
+    case 'SET_LIFETIME_UNLOCKED': {
+      const s = cloneState(state);
+      s.lifetimeUnlocked = action.unlocked;
+      return s;
+    }
+
     case 'NEW_LIFE': {
       const opts = action.options ?? {};
       const settings = opts.difficulty ? { ...state.settings, difficulty: opts.difficulty } : state.settings;
@@ -135,6 +142,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         lifeNo: state.lifeNo + 1,
         firstName: opts.firstName,
         birthTraitId: opts.birthTraitId,
+        lifetimeUnlocked: state.lifetimeUnlocked,
       });
     }
 
@@ -144,6 +152,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       return createLife({
         settings: state.settings,
         lifeNo: state.lifeNo + 1,
+        lifetimeUnlocked: state.lifetimeUnlocked,
         inherit: {
           gold: inheritGold,
           reputation: Math.floor(state.reputation / 2),

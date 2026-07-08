@@ -53,6 +53,9 @@ export function GameScreen() {
     onboardingVisible,
     completeOnboarding,
     restartOnboarding,
+    lifetimeUnlocked,
+    purchaseLifetime,
+    restoreLifetime,
   } = useGame();
   const rank = currentRank(state);
   const stats = selectStats(state);
@@ -188,9 +191,9 @@ export function GameScreen() {
           <ReviewPrompt onResolved={resolveReview} />
         )}
         {chronicleOpen && <ChronicleScreen progress={getProgress()} onClose={() => setChronicleOpen(false)} />}
-        {cartOpen && <ComingSoonShop onClose={() => setCartOpen(false)} />}
+        {cartOpen && <ComingSoonShop unlocked={lifetimeUnlocked} onPurchase={purchaseLifetime} onRestore={restoreLifetime} onClose={() => setCartOpen(false)} />}
         {onboardingVisible && !creating && !state.dead && !state.event && (
-          <OnboardingModal onDone={completeOnboarding} />
+          <OnboardingModal unlocked={lifetimeUnlocked} onPurchase={purchaseLifetime} onRestore={restoreLifetime} onDone={completeOnboarding} />
         )}
         {creating && (
           <CharacterCreation

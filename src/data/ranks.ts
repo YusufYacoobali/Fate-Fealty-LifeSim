@@ -4,6 +4,8 @@ export interface RankDef {
   key: RankKey;
   short: string;
   portrait: string;
+  /** Lifetime Pass rank; free players stop before this. */
+  premium?: boolean;
   /** Hidden requirements for promotion INTO this rank (checked against state). */
   promote: {
     minAge: number;
@@ -15,7 +17,8 @@ export interface RankDef {
 }
 
 /**
- * The visible class ladder. The mockup shows PEASANT -> SQUIRE -> KNIGHT -> NOBLE.
+ * The visible class ladder. Free players climb PEASANT -> SQUIRE -> KNIGHT -> NOBLE.
+ * Lifetime Pass owners can keep going to BARON -> MONARCH.
  * Promotion is driven by hidden rankProgress + gating requirements.
  */
 export const RANKS: RankDef[] = [
@@ -43,8 +46,26 @@ export const RANKS: RankDef[] = [
     portrait: '👑',
     promote: { minAge: 20, minGold: 60, progress: 100, stats: { charm: 58 } },
   },
+  {
+    key: 'Baron',
+    short: 'BARON',
+    portrait: 'B',
+    premium: true,
+    promote: { minAge: 28, minGold: 140, progress: 100, stats: { charm: 70, wits: 62 } },
+  },
+  {
+    key: 'Monarch',
+    short: 'KING',
+    portrait: 'M',
+    premium: true,
+    promote: { minAge: 35, minGold: 240, progress: 100, stats: { charm: 82, wits: 74, faith: 55 } },
+  },
 ];
 
 export function rankByKey(key: RankKey): number {
   return RANKS.findIndex((r) => r.key === key);
+}
+
+export function ranksForLifetime(unlocked: boolean): RankDef[] {
+  return unlocked ? RANKS : RANKS.filter((r) => !r.premium);
 }

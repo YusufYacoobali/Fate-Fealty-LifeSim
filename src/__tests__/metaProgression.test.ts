@@ -34,6 +34,13 @@ describe('evaluateAchievements', () => {
     expect(evaluateAchievements(meta, s, false).newly).toContain('reincarnated');
   });
 
+  it('gates premium achievements behind the Lifetime Pass', () => {
+    const locked = makeState({ rankIdx: 5, lifetimeUnlocked: false });
+    const unlocked = makeState({ rankIdx: 5, lifetimeUnlocked: true });
+    expect(evaluateAchievements(baseMeta(), locked, false).newly).not.toContain('crowned');
+    expect(evaluateAchievements(baseMeta(), unlocked, false).newly).toContain('crowned');
+  });
+
   it('every achievement id is unique', () => {
     const ids = ACHIEVEMENTS.map((a) => a.id);
     expect(new Set(ids).size).toBe(ids.length);

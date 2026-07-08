@@ -14,6 +14,8 @@ import { FAMILY_EVENTS } from './familyEvents';
 import { PLAGUE_EVENTS } from './plagueEvents';
 import { WAR_EVENTS } from './warEvents';
 import { STORY_ARCS } from './storyArcs';
+import { BASE_EXPANSION_EVENTS } from './baseExpansionEvents';
+import { PREMIUM_EVENTS } from './premiumEvents';
 
 export const ALL_EVENTS: GameEvent[] = [
   ...CHILD_EVENTS,
@@ -25,6 +27,8 @@ export const ALL_EVENTS: GameEvent[] = [
   ...FAMILY_EVENTS,
   ...PLAGUE_EVENTS,
   ...WAR_EVENTS,
+  ...BASE_EXPANSION_EVENTS,
+  ...PREMIUM_EVENTS,
   ...STORY_ARCS,
 ];
 

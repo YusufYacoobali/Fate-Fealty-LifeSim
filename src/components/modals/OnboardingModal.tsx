@@ -13,9 +13,25 @@ const LESSONS = [
   { icon: '👪', title: 'MIND THY KIN', body: 'Family, friends, rivals, and heirs can change a life as much as any royal decree.' },
 ] as const;
 
-export function OnboardingModal({ onDone }: { onDone: () => void }) {
+interface Props {
+  unlocked: boolean;
+  onPurchase: () => void;
+  onRestore: () => boolean;
+  onDone: () => void;
+}
+
+export function OnboardingModal({ unlocked, onPurchase, onRestore, onDone }: Props) {
   const [page, setPage] = useState<'guide' | 'offer'>('guide');
+  const [message, setMessage] = useState<string | undefined>();
   const isOffer = page === 'offer';
+  const buy = () => {
+    onPurchase();
+    setMessage('Lifetime Pass unlocked on this device.');
+  };
+  const restore = () => {
+    const restored = onRestore();
+    setMessage(restored ? 'Lifetime Pass restored.' : 'No saved Lifetime Pass was found.');
+  };
 
   return (
     <ModalBackdrop zIndex={80}>
@@ -27,7 +43,7 @@ export function OnboardingModal({ onDone }: { onDone: () => void }) {
         </View>
 
         {isOffer ? (
-          <LifetimeOffer />
+          <LifetimeOffer unlocked={unlocked} message={message} onPurchase={buy} onRestore={restore} />
         ) : (
           <>
             <PixelText font="body" size={18} color={C.textDark} style={{ marginTop: 12, marginBottom: 10, textAlign: 'center' }}>

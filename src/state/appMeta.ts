@@ -53,6 +53,8 @@ export interface AppMeta {
   onboarded: boolean;
   /** True once the first-play guide has been dismissed. */
   tutorialSeen: boolean;
+  /** Owns the one-time Lifetime Pass unlock. */
+  lifetimeUnlocked: boolean;
   /** Lifetime statistics across all lives. */
   stats: LifetimeStats;
   /** Unlocked achievement ids. */
@@ -68,6 +70,7 @@ export const DEFAULT_META: AppMeta = {
   notificationsDenied: false,
   onboarded: false,
   tutorialSeen: false,
+  lifetimeUnlocked: false,
   stats: DEFAULT_STATS,
   achievements: [],
   dynasty: [],

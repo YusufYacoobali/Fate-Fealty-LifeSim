@@ -53,7 +53,7 @@ export function ChronicleScreen({ progress, onClose }: Props) {
 
       <ScrollView contentContainerStyle={{ padding: 14, paddingBottom: 28 }}>
         {section === 'stats' && <StatsSection progress={progress} />}
-        {section === 'achievements' && <AchievementsSection unlocked={unlocked} />}
+        {section === 'achievements' && <AchievementsSection unlocked={unlocked} lifetimeUnlocked={progress.lifetimeUnlocked} />}
         {section === 'dynasty' && <DynastySection progress={progress} />}
       </ScrollView>
     </View>
@@ -89,14 +89,15 @@ function StatsSection({ progress }: { progress: ProgressSnapshot }) {
   );
 }
 
-function AchievementsSection({ unlocked }: { unlocked: Set<string> }) {
-  const earned = ACHIEVEMENTS.filter((a) => unlocked.has(a.id)).length;
+function AchievementsSection({ unlocked, lifetimeUnlocked }: { unlocked: Set<string>; lifetimeUnlocked: boolean }) {
+  const all = ACHIEVEMENTS.filter((a) => !a.premium || lifetimeUnlocked);
+  const earned = all.filter((a) => unlocked.has(a.id)).length;
   return (
     <View style={{ gap: 8 }}>
       <PixelText font="body" size={15} color={C.creamBlue} style={{ marginBottom: 4 }}>
-        {earned} of {ACHIEVEMENTS.length} deeds accomplished
+        {earned} of {all.length} deeds accomplished
       </PixelText>
-      {ACHIEVEMENTS.map((a) => {
+      {all.map((a) => {
         const has = unlocked.has(a.id);
         const hidden = a.secret && !has;
         return (

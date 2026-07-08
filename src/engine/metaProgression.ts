@@ -26,6 +26,7 @@ export function evaluateAchievements(meta: AppMeta, state: GameState, atDeath: b
   const have = new Set(meta.achievements);
   const newly: string[] = [];
   for (const a of ACHIEVEMENTS) {
+    if (a.premium && !state.lifetimeUnlocked) continue;
     if (!have.has(a.id) && a.check(ctx)) {
       have.add(a.id);
       newly.push(a.id);

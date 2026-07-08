@@ -10,6 +10,8 @@ export interface LifeGoalDef {
   title: string;
   desc: string;
   emoji: string;
+  /** Lifetime Pass ambition; only assigned when lifetimeUnlocked is true. */
+  premium?: boolean;
   /** 0..1 progress toward the goal. */
   progress: (s: GameState) => number;
   done: (s: GameState) => boolean;
@@ -33,6 +35,11 @@ export const LIFE_GOALS: LifeGoalDef[] = [
   { id: 'knighthood', title: 'Earn Your Spurs', desc: 'Rise to the rank of Knight.', emoji: '🛡️', progress: (s) => frac(s.rankIdx, 2), done: (s) => s.rankIdx >= 2 },
   { id: 'elder', title: 'Live to a Grand Old Age', desc: `Reach the age of ${ELDER_TARGET}.`, emoji: '🧓', progress: (s) => frac(s.age - 18, ELDER_TARGET - 18), done: (s) => s.age >= ELDER_TARGET },
   { id: 'wedded', title: 'Find True Love', desc: 'Take a spouse and wed.', emoji: '💍', progress: (s) => (s.tags.includes('married') ? 1 : 0), done: (s) => s.tags.includes('married') },
+  { id: 'barony', title: 'Become a Baron', desc: 'Rise to the rank of Baron.', emoji: 'B', premium: true, progress: (s) => frac(s.rankIdx, 4), done: (s) => s.rankIdx >= 4 },
+  { id: 'crown', title: 'Become Monarch', desc: 'Claim the crown itself.', emoji: 'M', premium: true, progress: (s) => frac(s.rankIdx, 5), done: (s) => s.rankIdx >= 5 },
+  { id: 'dynasty', title: 'Leave a Great Dynasty', desc: 'Secure an heir or become a lasting dynasty.', emoji: 'D', premium: true, progress: (s) => (s.tags.includes('dynasty_secured') || s.tags.includes('great_dynasty') ? 1 : frac(livingChildren(s), 2)), done: (s) => s.tags.includes('dynasty_secured') || s.tags.includes('great_dynasty') || livingChildren(s) >= 2 },
+  { id: 'kind_rule', title: 'Rule Kindly', desc: 'Be remembered as a merciful ruler.', emoji: '+', premium: true, progress: (s) => (s.tags.includes('beloved_ruler') ? 1 : s.tags.includes('kind_ruler') ? 0.6 : 0), done: (s) => s.tags.includes('beloved_ruler') },
+  { id: 'hard_rule', title: 'Rule Cruelly', desc: 'Be remembered as a feared ruler.', emoji: '!', premium: true, progress: (s) => (s.tags.includes('feared_ruler') ? 1 : s.tags.includes('cruel_ruler') ? 0.6 : 0), done: (s) => s.tags.includes('feared_ruler') },
 ];
 
 const BY_ID: Record<string, LifeGoalDef> = LIFE_GOALS.reduce(
@@ -49,5 +56,5 @@ export function goalById(id: string): LifeGoalDef | undefined {
 
 /** Goals worth assigning: those not already satisfied at coming-of-age. */
 export function assignableGoals(s: GameState): LifeGoalDef[] {
-  return LIFE_GOALS.filter((g) => !g.done(s));
+  return LIFE_GOALS.filter((g) => !g.done(s) && (!g.premium || s.lifetimeUnlocked));
 }

@@ -33,6 +33,18 @@ describe('pathProgression', () => {
     expect(s.rankIdx).toBe(1);
   });
 
+  it('locks Baron promotion behind the Lifetime Pass', () => {
+    const ready = {
+      age: 30,
+      gold: 200,
+      rankIdx: 3,
+      rankProgress: 100,
+      stats: { health: 80, charm: 80, wits: 80, faith: 80 },
+    };
+    expect(canPromote(makeState({ ...ready, lifetimeUnlocked: false }))).toBe(false);
+    expect(canPromote(makeState({ ...ready, lifetimeUnlocked: true }))).toBe(true);
+  });
+
   it('tickProgression nudges progress toward promotion for martial lives', () => {
     const s = makeState();
     s.paths = { martial: 20, court: 0, church: 0, labour: 0, outlaw: 0 };

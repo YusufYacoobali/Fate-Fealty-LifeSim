@@ -20,6 +20,8 @@ export interface AchievementDef {
   desc: string;
   /** Hidden in the list until unlocked. */
   secret?: boolean;
+  /** Lifetime Pass deed; only unlocks and displays when lifetimeUnlocked is true. */
+  premium?: boolean;
   check: (ctx: AchievementCtx) => boolean;
 }
 
@@ -35,6 +37,9 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: 'squired', name: 'A Squire Rises', emoji: '🧒', desc: 'Climb to the rank of Squire.', check: (c) => c.state.rankIdx >= 1 },
   { id: 'knighted', name: 'Arise, Sir Knight', emoji: '🛡️', desc: 'Be dubbed a Knight.', check: (c) => c.state.rankIdx >= 2 },
   { id: 'ennobled', name: 'Born Again Noble', emoji: '👑', desc: 'Ascend to the nobility.', check: (c) => c.state.rankIdx >= 3 },
+
+  { id: 'baron_rise', name: 'Lord of the Manor', emoji: 'B', desc: 'Rise to the rank of Baron.', premium: true, check: (c) => c.state.rankIdx >= 4 },
+  { id: 'crowned', name: 'The Crown Is Yours', emoji: 'M', desc: 'Become Monarch.', premium: true, check: (c) => c.state.rankIdx >= 5 },
 
   // --- wealth ---
   { id: 'coin_purse', name: 'A Heavy Purse', emoji: '💰', desc: 'Hold 100 gold at once.', check: (c) => c.state.gold >= 100 },
@@ -54,6 +59,12 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: 'saint', name: 'A Living Saint', emoji: '✨', desc: 'Become a Living Saint.', check: (c) => c.state.traits.includes('living_saint') },
   { id: 'jailbird', name: 'Jailbird', emoji: '⛓️', desc: 'Survive a stint in the dungeon.', check: (c) => c.state.tags.includes('ex_convict') },
   { id: 'plague_walker', name: 'Plague Walker', emoji: '☣️', desc: 'Outlive the Great Pestilence.', secret: true, check: (c) => c.state.tags.includes('plague_survivor') },
+
+  { id: 'beloved_ruler', name: 'Beloved Ruler', emoji: '+', desc: 'Be remembered for mercy on the throne.', premium: true, check: (c) => c.state.tags.includes('beloved_ruler') },
+  { id: 'feared_ruler', name: 'Feared Ruler', emoji: '!', desc: 'Be remembered for iron rule.', premium: true, check: (c) => c.state.tags.includes('feared_ruler') },
+  { id: 'rebellion_breaker', name: 'Rebellion Breaker', emoji: 'R', desc: 'Survive or crush a rebellion.', premium: true, secret: true, check: (c) => c.state.tags.includes('rebellion_crushed') || c.state.tags.includes('rebellion_survived') },
+  { id: 'abdicated', name: 'The Weary Crown', emoji: 'A', desc: 'Abdicate with grace.', premium: true, secret: true, check: (c) => c.state.tags.includes('abdicated') },
+  { id: 'great_dynasty', name: 'Great Dynasty', emoji: 'D', desc: 'Secure a royal legacy.', premium: true, check: (c) => c.state.tags.includes('great_dynasty') || c.state.tags.includes('dynasty_secured') },
 
   // --- ambition ---
   { id: 'ambition', name: 'Life’s Ambition', emoji: '🎯', desc: 'Fulfil the life goal set at your coming of age.', check: (c) => c.state.goalDone },

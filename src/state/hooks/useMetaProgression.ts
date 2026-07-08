@@ -8,6 +8,7 @@ export interface ProgressSnapshot {
   stats: LifetimeStats;
   achievements: string[];
   dynasty: DynastyRecord[];
+  lifetimeUnlocked: boolean;
 }
 
 /**
@@ -51,7 +52,7 @@ export function useMetaProgression(state: GameState, meta: AppMetaApi, loaded: b
 
   const getProgress = useCallback((): ProgressSnapshot => {
     const m = meta.metaRef.current;
-    return { stats: m.stats, achievements: m.achievements, dynasty: m.dynasty };
+    return { stats: m.stats, achievements: m.achievements, dynasty: m.dynasty, lifetimeUnlocked: m.lifetimeUnlocked };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -2,7 +2,7 @@
  * Path & rank progression.
  *
  * Two things live here:
- *  1. The visible CLASS LADDER (Peasant -> Squire -> Knight -> Noble), advanced
+ *  1. The visible CLASS LADDER, advanced
  *     via hidden `rankProgress` plus gating requirements per rank.
  *  2. The hidden LIFE PATHS (martial/court/church/labour/outlaw) whose dominant
  *     value tells the event picker what kind of life this is becoming.
@@ -30,6 +30,7 @@ export function dominantPath(s: GameState): PathKey {
 export function canPromote(s: GameState): boolean {
   const next = RANKS[s.rankIdx + 1];
   if (!next) return false;
+  if (next.premium && !s.lifetimeUnlocked) return false;
   const req = next.promote;
   if (s.age < req.minAge) return false;
   if (req.minGold != null && s.gold < req.minGold) return false;

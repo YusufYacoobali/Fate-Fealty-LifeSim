@@ -1,4 +1,6 @@
 import { ALL_EVENTS, EVENTS_BY_ID } from '@/content';
+import { ANNUAL_MESSAGES } from '@/content/annualMessages';
+import { BASE_EXPANSION_EVENTS } from '@/content/baseExpansionEvents';
 import { createLife } from '@/engine/gameState';
 
 const KNOWN_KIN_IDS = new Set(createLife().kin.map((k) => k.id));
@@ -55,5 +57,23 @@ describe('content integrity', () => {
     for (const e of ALL_EVENTS) {
       if (e.id.startsWith('arc_')) expect(e.arcNodeOnly).toBe(true);
     }
+  });
+
+  it('includes a focused Lifetime Pass premium event pack', () => {
+    const premium = ALL_EVENTS.filter((e) => e.premium);
+    expect(premium.length).toBeGreaterThanOrEqual(25);
+    expect(premium.length).toBeLessThanOrEqual(35);
+  });
+
+  it('includes a generous free/base content pool', () => {
+    const base = ALL_EVENTS.filter((e) => !e.premium && !e.arcNodeOnly);
+    expect(base.length).toBeGreaterThanOrEqual(70);
+    expect(BASE_EXPANSION_EVENTS.length).toBeGreaterThanOrEqual(35);
+    expect(BASE_EXPANSION_EVENTS.length).toBeLessThanOrEqual(45);
+    expect(BASE_EXPANSION_EVENTS.every((e) => !e.premium)).toBe(true);
+  });
+
+  it('has enough annual flavour beats for repeated lives', () => {
+    expect(ANNUAL_MESSAGES.length).toBeGreaterThanOrEqual(32);
   });
 });

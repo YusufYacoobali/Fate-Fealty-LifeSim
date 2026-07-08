@@ -42,6 +42,7 @@ function chooseOption(s: GameState, choices: Choice[]): Choice {
 
 function runLife(difficulty: Difficulty): GameState {
   let s = createLife({ settings: { autoScroll: true, difficulty, permadeath: true, haptics: false } });
+  s.lifetimeUnlocked = true;
   let guard = 0;
   while (!s.dead && guard < 400) {
     guard++;
@@ -61,7 +62,7 @@ function runLife(difficulty: Difficulty): GameState {
 }
 
 function report(difficulty: Difficulty, lives: number) {
-  const rankReached = [0, 0, 0, 0];
+  const rankReached = Array.from({ length: RANKS.length }, () => 0);
   const buckets = { '<20': 0, '20-39': 0, '40-59': 0, '60+': 0 };
   let totalAge = 0;
   let goalAssigned = 0;

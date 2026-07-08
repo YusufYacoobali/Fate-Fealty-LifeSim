@@ -50,6 +50,8 @@ export interface FreshLifeOptions {
   birthTraitId?: string;
   /** Optional inheritance from a deceased forebear (heir continuation). */
   inherit?: { gold?: number; reputation?: number; tags?: string[] };
+  /** Whether this save can access Lifetime Pass ranks and content. */
+  lifetimeUnlocked?: boolean;
 }
 
 export function createLife(opts: FreshLifeOptions = {}): GameState {
@@ -123,6 +125,7 @@ export function createLife(opts: FreshLifeOptions = {}): GameState {
     deathCause: '',
     epitaph: '',
     heirContinued: false,
+    lifetimeUnlocked: opts.lifetimeUnlocked ?? false,
     doCat: 'all',
     settings,
     nextId: 3,

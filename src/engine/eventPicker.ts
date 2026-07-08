@@ -56,6 +56,7 @@ export function meetsCondition(s: GameState, c?: Condition): boolean {
 
 export function isEventEligible(s: GameState, e: GameEvent): boolean {
   if (e.arcNodeOnly) return false; // only reachable via story graph
+  if (e.premium && !s.lifetimeUnlocked) return false;
   if (e.once && s.firedOnce.includes(e.id)) return false;
   if (e.ageMin != null && s.age < e.ageMin) return false;
   if (e.ageMax != null && s.age > e.ageMax) return false;

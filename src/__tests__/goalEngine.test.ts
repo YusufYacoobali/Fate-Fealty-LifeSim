@@ -1,5 +1,5 @@
 import { assignLifeGoalIfDue, checkLifeGoal, goalView, GOAL_AGE } from '@/engine/goalEngine';
-import { goalById, LIFE_GOALS } from '@/data/goals';
+import { assignableGoals, goalById, LIFE_GOALS } from '@/data/goals';
 import { ageUp } from '@/engine/lifeDirector';
 import { cloneState } from '@/engine/gameState';
 import { makeState } from './helpers';
@@ -29,6 +29,13 @@ describe('life-goal assignment', () => {
       assignLifeGoalIfDue(t);
       expect(['fortune', 'wedded']).not.toContain(t.goalId);
     }
+  });
+
+  it('gates premium goals behind the Lifetime Pass', () => {
+    const locked = makeState({ age: 18, lifetimeUnlocked: false });
+    const unlocked = makeState({ age: 18, lifetimeUnlocked: true });
+    expect(assignableGoals(locked).some((g) => g.premium)).toBe(false);
+    expect(assignableGoals(unlocked).some((g) => g.id === 'barony')).toBe(true);
   });
 
   it('an age-up at 18 assigns a goal via the Life Director', () => {

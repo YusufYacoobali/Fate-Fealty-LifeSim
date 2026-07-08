@@ -31,6 +31,7 @@ export async function loadGame(): Promise<GameState | null> {
     // Defensive reset of transient UI.
     parsed.settingsOpen = false;
     parsed.selectedKinId = null;
+    parsed.lifetimeUnlocked = parsed.lifetimeUnlocked ?? false;
     return parsed;
   } catch (e) {
     console.warn('[persistence] load failed', e);

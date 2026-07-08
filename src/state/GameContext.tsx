@@ -24,6 +24,9 @@ interface GameContextValue {
   onboardingVisible: boolean;
   completeOnboarding: () => void;
   restartOnboarding: () => void;
+  lifetimeUnlocked: boolean;
+  purchaseLifetime: () => void;
+  restoreLifetime: () => boolean;
 }
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -41,12 +44,22 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const creation = useCharacterCreation(meta, game.loaded, game.dispatch);
   const progression = useMetaProgression(game.state, meta, game.loaded);
   const [onboardingVisible, setOnboardingVisible] = useState(false);
+  const [lifetimeUnlocked, setLifetimeUnlocked] = useState(false);
 
   useEffect(() => {
     if (game.loaded && meta.ready && meta.metaRef.current.onboarded && !meta.metaRef.current.tutorialSeen) {
       setOnboardingVisible(true);
     }
   }, [game.loaded, meta.ready, meta.metaRef, game.state.lifeNo]);
+
+  useEffect(() => {
+    if (!game.loaded || !meta.ready) return;
+    const unlocked = meta.metaRef.current.lifetimeUnlocked;
+    setLifetimeUnlocked(unlocked);
+    if (game.state.lifetimeUnlocked !== unlocked) {
+      game.dispatch({ type: 'SET_LIFETIME_UNLOCKED', unlocked });
+    }
+  }, [game.loaded, meta.ready, meta.metaRef, game.state.lifetimeUnlocked, game.dispatch]);
 
   const completeOnboarding = useCallback(() => {
     meta.update({ tutorialSeen: true });
@@ -57,6 +70,19 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     meta.update({ tutorialSeen: false });
     setOnboardingVisible(true);
   }, [meta]);
+
+  const purchaseLifetime = useCallback(() => {
+    meta.update({ lifetimeUnlocked: true });
+    setLifetimeUnlocked(true);
+    game.dispatch({ type: 'SET_LIFETIME_UNLOCKED', unlocked: true });
+  }, [game, meta]);
+
+  const restoreLifetime = useCallback(() => {
+    const unlocked = meta.metaRef.current.lifetimeUnlocked;
+    setLifetimeUnlocked(unlocked);
+    game.dispatch({ type: 'SET_LIFETIME_UNLOCKED', unlocked });
+    return unlocked;
+  }, [game, meta]);
 
   const value = useMemo<GameContextValue>(
     () => ({
@@ -74,6 +100,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       onboardingVisible,
       completeOnboarding,
       restartOnboarding,
+      lifetimeUnlocked,
+      purchaseLifetime,
+      restoreLifetime,
     }),
     [
       game.state,
@@ -90,6 +119,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       onboardingVisible,
       completeOnboarding,
       restartOnboarding,
+      lifetimeUnlocked,
+      purchaseLifetime,
+      restoreLifetime,
     ],
   );
 

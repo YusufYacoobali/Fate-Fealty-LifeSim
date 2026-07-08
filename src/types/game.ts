@@ -16,7 +16,7 @@ export type StatKey = 'health' | 'charm' | 'wits' | 'faith';
 export type Stats = Record<StatKey, number>;
 
 /** The visible class ladder. Index in RANKS == rankIdx in GameState. */
-export type RankKey = 'Peasant' | 'Squire' | 'Knight' | 'Noble';
+export type RankKey = 'Peasant' | 'Squire' | 'Knight' | 'Noble' | 'Baron' | 'Monarch';
 
 /**
  * Hidden "life paths". A peasant slowly accrues progress along several of these
@@ -239,6 +239,8 @@ export type EventCategory =
 export interface GameEvent {
   id: string;
   category: EventCategory;
+  /** Lifetime Pass content; only eligible when lifetimeUnlocked is true. */
+  premium?: boolean;
   /** Part of a multi-node story arc (shares an arc id). */
   arc?: string;
   title: string;
@@ -356,6 +358,9 @@ export interface GameState {
   deathCause: string;
   epitaph: string;
   heirContinued: boolean;
+
+  // --- lifetime pass ---
+  lifetimeUnlocked: boolean;
 
   // --- meta ---
   doCat: ActivityCategory | 'all';

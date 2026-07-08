@@ -31,13 +31,14 @@ function checkInvariants(s: GameState) {
 const LIVES = 500;
 let deaths = 0;
 let totalDeathAge = 0;
-const rankReached: number[] = [0, 0, 0, 0];
+const rankReached: number[] = Array.from({ length: RANKS.length }, () => 0);
 let eventsSeen = 0;
 let arcsSeen = 0;
 let maxAge = 0;
 
 for (let i = 0; i < LIVES; i++) {
   let s = createLife({ settings: { autoScroll: true, difficulty: randomChoice(['Merciful', 'Normal', 'Brutal']), permadeath: true, haptics: false } });
+  s.lifetimeUnlocked = Math.random() < 0.5;
   let guard = 0;
 
   while (!s.dead && guard < 400) {

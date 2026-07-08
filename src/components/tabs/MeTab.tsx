@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, ScrollView, View } from 'react-native';
+import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { StatBar } from '../ui/StatBar';
 import { C } from '@/theme/theme';
@@ -16,6 +16,7 @@ interface StatVM {
 
 interface RankVM {
   name: string;
+  locked: boolean;
   bg: string;
   sd: string;
   fg: string;
@@ -48,9 +49,10 @@ interface Props {
   traits: TraitVM[];
   goal: GoalVM | null;
   bio: string;
+  onLockedRankPress?: () => void;
 }
 
-export function MeTab({ portrait, firstName, epithet, classRank, age, stats, rankPath, traits, goal, bio }: Props) {
+export function MeTab({ portrait, firstName, epithet, classRank, age, stats, rankPath, traits, goal, bio, onLockedRankPress }: Props) {
   const portraitAsset = rankPortraitAsset(classRank);
 
   return (
@@ -85,11 +87,24 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
       </PixelText>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
         {rankPath.map((r, i) => (
-          <View key={i} style={{ flex: 1, alignItems: 'center', backgroundColor: r.bg, borderWidth: 2, borderColor: C.inkSoft, borderBottomColor: r.sd, borderRightColor: r.sd, paddingVertical: 6, paddingHorizontal: 2 }}>
+          <TouchableOpacity
+            key={i}
+            activeOpacity={r.locked ? 0.72 : 1}
+            disabled={!r.locked}
+            accessibilityRole={r.locked ? 'button' : undefined}
+            accessibilityLabel={r.locked ? `${r.name} locked. Opens Lifetime Pass.` : r.name}
+            onPress={r.locked ? onLockedRankPress : undefined}
+            style={{ flex: 1, alignItems: 'center', backgroundColor: r.bg, borderWidth: 2, borderColor: C.inkSoft, borderBottomColor: r.sd, borderRightColor: r.sd, paddingVertical: 5, paddingHorizontal: 2, opacity: r.locked ? 0.86 : 1 }}
+          >
+            {r.locked && (
+              <PixelText font="pixel" size={6} color={r.fg} style={{ marginBottom: 2 }}>
+                LOCK
+              </PixelText>
+            )}
             <PixelText font="pixel" size={6} color={r.fg}>
-              {r.name}
+              {r.locked ? `${r.name}` : r.name}
             </PixelText>
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
 

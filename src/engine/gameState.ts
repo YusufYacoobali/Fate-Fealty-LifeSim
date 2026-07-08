@@ -24,7 +24,7 @@ import { C } from '@/theme/theme';
 export const DEFAULT_SETTINGS: GameSettings = {
   autoScroll: true,
   difficulty: 'Normal',
-  permadeath: true,
+  permadeath: false,
   haptics: true,
 };
 

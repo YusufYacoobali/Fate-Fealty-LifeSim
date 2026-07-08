@@ -8,7 +8,9 @@ import { ModalBackdrop } from './ModalBackdrop';
 
 interface Props {
   settings: GameSettings;
+  lifetimeUnlocked: boolean;
   onSetSettings: (patch: Partial<GameSettings>) => void;
+  onLockedFeaturePress: () => void;
   onToggleAutoScroll: () => void;
   onRestart: () => void;
   onRestartOnboarding: () => void;
@@ -42,7 +44,7 @@ function Pill({ label, color, bg, onPress }: { label: string; color: string; bg:
   return inner;
 }
 
-export function SettingsModal({ settings, onSetSettings, onToggleAutoScroll, onRestart, onRestartOnboarding, onClose, onOpenChronicle }: Props) {
+export function SettingsModal({ settings, lifetimeUnlocked, onSetSettings, onLockedFeaturePress, onToggleAutoScroll, onRestart, onRestartOnboarding, onClose, onOpenChronicle }: Props) {
   const cycleDifficulty = () => {
     const i = DIFFICULTIES.indexOf(settings.difficulty);
     onSetSettings({ difficulty: DIFFICULTIES[(i + 1) % DIFFICULTIES.length] });
@@ -69,10 +71,10 @@ export function SettingsModal({ settings, onSetSettings, onToggleAutoScroll, onR
               Permadeath
             </PixelText>
             <Pill
-              label={settings.permadeath ? 'ON' : 'OFF'}
-              color={settings.permadeath ? C.bad : C.faithDark}
-              bg={C.white}
-              onPress={() => onSetSettings({ permadeath: !settings.permadeath })}
+              label={lifetimeUnlocked ? (settings.permadeath ? 'ON' : 'OFF') : 'PRO'}
+              color={lifetimeUnlocked ? (settings.permadeath ? C.bad : C.faithDark) : C.purpleDark}
+              bg={lifetimeUnlocked ? C.white : C.purple}
+              onPress={lifetimeUnlocked ? () => onSetSettings({ permadeath: !settings.permadeath }) : onLockedFeaturePress}
             />
           </Row>
           <Row>

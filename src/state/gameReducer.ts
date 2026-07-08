@@ -41,10 +41,14 @@ export interface NewLifeOptions {
   difficulty?: GameSettings['difficulty'];
 }
 
+function proLockedSettings(settings: GameSettings, lifetimeUnlocked: boolean): GameSettings {
+  return lifetimeUnlocked ? settings : { ...settings, permadeath: false };
+}
+
 export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case 'HYDRATE':
-      return action.state;
+      return { ...action.state, settings: proLockedSettings(action.state.settings, action.state.lifetimeUnlocked) };
 
     case 'AGE_UP': {
       const s = cloneState(state);
@@ -124,13 +128,14 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
     case 'SET_SETTINGS': {
       const s = cloneState(state);
-      s.settings = { ...s.settings, ...action.settings };
+      s.settings = proLockedSettings({ ...s.settings, ...action.settings }, s.lifetimeUnlocked);
       return s;
     }
 
     case 'SET_LIFETIME_UNLOCKED': {
       const s = cloneState(state);
       s.lifetimeUnlocked = action.unlocked;
+      s.settings = proLockedSettings(s.settings, action.unlocked);
       return s;
     }
 
@@ -138,7 +143,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const opts = action.options ?? {};
       const settings = opts.difficulty ? { ...state.settings, difficulty: opts.difficulty } : state.settings;
       return createLife({
-        settings,
+        settings: proLockedSettings(settings, state.lifetimeUnlocked),
         lifeNo: state.lifeNo + 1,
         firstName: opts.firstName,
         birthTraitId: opts.birthTraitId,
@@ -150,7 +155,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       // Carry a fraction of wealth/reputation to the next generation.
       const inheritGold = Math.floor(state.gold / 2);
       return createLife({
-        settings: state.settings,
+        settings: proLockedSettings(state.settings, state.lifetimeUnlocked),
         lifeNo: state.lifeNo + 1,
         lifetimeUnlocked: state.lifetimeUnlocked,
         inherit: {

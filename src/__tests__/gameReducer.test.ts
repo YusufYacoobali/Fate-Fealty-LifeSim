@@ -57,6 +57,28 @@ describe('gameReducer', () => {
     expect(s.settings.difficulty).toBe('Brutal');
   });
 
+  it('locks permadeath behind the Lifetime Pass', () => {
+    const locked = gameReducer(makeState({ lifetimeUnlocked: false, settings: { autoScroll: true, difficulty: 'Normal', permadeath: false, haptics: false } }), {
+      type: 'SET_SETTINGS',
+      settings: { permadeath: true },
+    });
+    expect(locked.settings.permadeath).toBe(false);
+
+    const unlocked = gameReducer(makeState({ lifetimeUnlocked: true, settings: { autoScroll: true, difficulty: 'Normal', permadeath: false, haptics: false } }), {
+      type: 'SET_SETTINGS',
+      settings: { permadeath: true },
+    });
+    expect(unlocked.settings.permadeath).toBe(true);
+  });
+
+  it('turns permadeath off when Lifetime Pass access is removed', () => {
+    const s = gameReducer(makeState({ lifetimeUnlocked: true, settings: { autoScroll: true, difficulty: 'Normal', permadeath: true, haptics: false } }), {
+      type: 'SET_LIFETIME_UNLOCKED',
+      unlocked: false,
+    });
+    expect(s.settings.permadeath).toBe(false);
+  });
+
   it('NEW_LIFE with a blank name falls back to a random one', () => {
     const s = gameReducer(makeState(), { type: 'NEW_LIFE', options: { firstName: '   ' } });
     expect(s.first.length).toBeGreaterThan(0);

@@ -4,7 +4,7 @@
  */
 
 import { GameState, KinMember, StatKey, TraitDef } from '@/types/game';
-import { RANKS, ranksForLifetime } from '@/data/ranks';
+import { RANKS } from '@/data/ranks';
 import { traitById } from '@/data/traits';
 import { STAT_STYLES, TONE_STYLE, C } from '@/theme/theme';
 
@@ -50,12 +50,17 @@ export function selectedKin(s: GameState): KinMember | null {
 }
 
 export function selectRankPath(s: GameState) {
-  return ranksForLifetime(s.lifetimeUnlocked).map((r, i) => ({
-    name: r.short,
-    bg: i === s.rankIdx ? C.charm : i < s.rankIdx ? C.faith : C.lightFill,
-    sd: i === s.rankIdx ? C.charmDark : i < s.rankIdx ? C.faithDark : C.paleEdge,
-    fg: i <= s.rankIdx ? C.inkSoft : '#7a93b0',
-  }));
+  return RANKS.map((r, i) => {
+    const locked = !!r.premium && !s.lifetimeUnlocked;
+
+    return {
+      name: r.short,
+      locked,
+      bg: locked ? '#c2ccd8' : i === s.rankIdx ? C.charm : i < s.rankIdx ? C.faith : C.lightFill,
+      sd: locked ? '#7a8799' : i === s.rankIdx ? C.charmDark : i < s.rankIdx ? C.faithDark : C.paleEdge,
+      fg: locked ? '#41536b' : i <= s.rankIdx ? C.inkSoft : '#7a93b0',
+    };
+  });
 }
 
 export function currentRank(s: GameState) {

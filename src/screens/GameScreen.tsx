@@ -133,6 +133,10 @@ export function GameScreen() {
               traits={selectTraits(state)}
               goal={goal}
               bio={selectBio(state)}
+              onLockedRankPress={() => {
+                haptic('light', buzz);
+                setCartOpen(true);
+              }}
             />
           )}
         </View>
@@ -163,7 +167,13 @@ export function GameScreen() {
         {state.settingsOpen && !state.dead && (
           <SettingsModal
             settings={state.settings}
+            lifetimeUnlocked={lifetimeUnlocked}
             onSetSettings={(patch) => dispatch({ type: 'SET_SETTINGS', settings: patch })}
+            onLockedFeaturePress={() => {
+              haptic('light', buzz);
+              dispatch({ type: 'CLOSE_SETTINGS' });
+              setCartOpen(true);
+            }}
             onToggleAutoScroll={() => dispatch({ type: 'TOGGLE_AUTOSCROLL' })}
             onRestart={() => {
               dispatch({ type: 'CLOSE_SETTINGS' });

@@ -6,8 +6,8 @@ export const RANK_PORTRAITS: Record<RankKey, ImageSourcePropType> = {
   Squire: require('../../assets/generated/portrait-squire.png'),
   Knight: require('../../assets/generated/portrait-knight.png'),
   Noble: require('../../assets/generated/portrait-noble.png'),
-  Baron: require('../../assets/generated/portrait-noble.png'),
-  Monarch: require('../../assets/generated/portrait-noble.png'),
+  Baron: require('../../assets/generated/portrait-baron.png'),
+  Monarch: require('../../assets/generated/portrait-monarch.png'),
 };
 
 export const UI_ICONS = {

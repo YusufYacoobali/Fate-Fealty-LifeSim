@@ -16,6 +16,7 @@ interface Props {
   onRestartOnboarding: () => void;
   onClose: () => void;
   onOpenChronicle: () => void;
+  onOpenShop: () => void;
 }
 
 const DIFFICULTIES: Difficulty[] = ['Merciful', 'Normal', 'Brutal'];
@@ -44,7 +45,7 @@ function Pill({ label, color, bg, onPress }: { label: string; color: string; bg:
   return inner;
 }
 
-export function SettingsModal({ settings, lifetimeUnlocked, onSetSettings, onLockedFeaturePress, onToggleAutoScroll, onRestart, onRestartOnboarding, onClose, onOpenChronicle }: Props) {
+export function SettingsModal({ settings, lifetimeUnlocked, onSetSettings, onLockedFeaturePress, onToggleAutoScroll, onRestart, onRestartOnboarding, onClose, onOpenChronicle, onOpenShop }: Props) {
   const cycleDifficulty = () => {
     const i = DIFFICULTIES.indexOf(settings.difficulty);
     onSetSettings({ difficulty: DIFFICULTIES[(i + 1) % DIFFICULTIES.length] });
@@ -97,6 +98,11 @@ export function SettingsModal({ settings, lifetimeUnlocked, onSetSettings, onLoc
         <PixelButton bg={C.purple} shadow={C.purpleDark} onPress={onOpenChronicle} style={{ marginBottom: 7 }} innerStyle={{ paddingVertical: 9, alignItems: 'center' }}>
           <PixelText font="pixel" size={8} color="#2a0d4a">
             📜 CHRONICLE
+          </PixelText>
+        </PixelButton>
+        <PixelButton bg={C.charm} shadow={C.charmDark} light="#fff1b0" onPress={onOpenShop} style={{ marginBottom: 7 }} innerStyle={{ paddingVertical: 9, alignItems: 'center' }}>
+          <PixelText font="pixel" size={8} color="#3a2a08">
+            PRO SHOP
           </PixelText>
         </PixelButton>
         <PixelButton bg={C.light} shadow={C.blue} light={C.sky} onPress={onRestartOnboarding} style={{ marginBottom: 7 }} innerStyle={{ paddingVertical: 9, alignItems: 'center' }}>

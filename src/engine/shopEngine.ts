@@ -10,6 +10,10 @@ export function buyItem(s: GameState, item: ShopItem): GameState {
   if (s.dead) return s;
   s.tab = 'shop';
 
+  if (item.minAge != null && s.age < item.minAge) {
+    pushFeed(s, 'SHOP', C.amber, `The merchant peers down at you. "No ${item.name.toLowerCase()} for young'uns. Come back at ${item.minAge}."`, 'plain');
+    return s;
+  }
   if (item.type === 'perm' && s.inventory.includes(item.id)) {
     pushFeed(s, 'SHOP', C.amber, `You already own a ${item.name.toLowerCase()}. One is plenty.`, 'plain');
     return s;

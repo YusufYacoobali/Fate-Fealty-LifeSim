@@ -22,6 +22,10 @@ interface RankVM {
   fg: string;
 }
 
+function displayLockedRank(name: string) {
+  return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+}
+
 interface TraitVM {
   id: string;
   name: string;
@@ -96,14 +100,14 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
             onPress={r.locked ? onLockedRankPress : undefined}
             style={{ flex: 1, alignItems: 'center', backgroundColor: r.bg, borderWidth: 2, borderColor: C.inkSoft, borderBottomColor: r.sd, borderRightColor: r.sd, paddingVertical: 5, paddingHorizontal: 2, opacity: r.locked ? 0.86 : 1 }}
           >
+            <PixelText font="pixel" size={6} color={r.fg}>
+              {r.locked ? displayLockedRank(r.name) : r.name}
+            </PixelText>
             {r.locked && (
-              <PixelText font="pixel" size={6} color={r.fg} style={{ marginBottom: 2 }}>
-                LOCK
+              <PixelText font="pixel" size={6} color={r.fg} style={{ marginTop: 2 }}>
+                Locked
               </PixelText>
             )}
-            <PixelText font="pixel" size={6} color={r.fg}>
-              {r.locked ? `${r.name}` : r.name}
-            </PixelText>
           </TouchableOpacity>
         ))}
       </View>

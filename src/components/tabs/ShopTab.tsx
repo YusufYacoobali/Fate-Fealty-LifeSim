@@ -9,6 +9,7 @@ import { shopItemIconAsset } from '@/assets/generatedAssets';
 
 interface Props {
   gold: number;
+  age: number;
   income: number;
   expenses: number;
   inventory: string[];
@@ -28,7 +29,7 @@ function Ledger({ label, value, bg, border, fg, valFg }: { label: string; value:
   );
 }
 
-export function ShopTab({ gold, income, expenses, inventory, onBuy }: Props) {
+export function ShopTab({ gold, age, income, expenses, inventory, onBuy }: Props) {
   const owned = inventory.map((id) => shopItemById(id)).filter(Boolean) as ShopItem[];
 
   return (
@@ -46,6 +47,7 @@ export function ShopTab({ gold, income, expenses, inventory, onBuy }: Props) {
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
         {SHOP_ITEMS.map((it) => {
           const isOwned = it.type === 'perm' && inventory.includes(it.id);
+          const locked = it.minAge != null && age < it.minAge;
           return (
             <PixelButton
               key={it.id}
@@ -54,6 +56,7 @@ export function ShopTab({ gold, income, expenses, inventory, onBuy }: Props) {
               light={C.parchSl}
               outline={C.parchBorder}
               onPress={() => onBuy(it)}
+              disabled={locked}
               style={{ width: '48.5%', marginBottom: 8 }}
               innerStyle={{ padding: 8, minHeight: 96 }}
             >
@@ -61,17 +64,17 @@ export function ShopTab({ gold, income, expenses, inventory, onBuy }: Props) {
                 <View style={{ width: 28, height: 28, backgroundColor: it.iconBg, borderWidth: 2, borderColor: C.inkSoft, alignItems: 'center', justifyContent: 'center' }}>
                   <ShopIcon item={it} size={25} fallbackSize={16} />
                 </View>
-                <View style={{ backgroundColor: isOwned ? C.faithDark : C.charm, borderWidth: 2, borderColor: C.inkSoft, paddingHorizontal: 5, paddingVertical: 3 }}>
-                  <PixelText font="pixel" size={7} color={isOwned ? C.white : '#3a2a08'}>
-                    {isOwned ? 'OWNED' : `${it.price}g`}
+                <View style={{ backgroundColor: isOwned ? C.faithDark : locked ? C.paleEdge : C.charm, borderWidth: 2, borderColor: C.inkSoft, paddingHorizontal: 5, paddingVertical: 3 }}>
+                  <PixelText font="pixel" size={7} color={isOwned ? C.white : locked ? C.blueDark : '#3a2a08'}>
+                    {isOwned ? 'OWNED' : locked ? `AGE ${it.minAge}+` : `${it.price}g`}
                   </PixelText>
                 </View>
               </View>
               <PixelText font="pixel" size={7} color="#3a2a08" style={{ marginTop: 4 }}>
                 {it.name}
               </PixelText>
-              <PixelText font="body" size={13} color="#6a5a38" style={{ marginTop: 4 }}>
-                {isOwned ? 'Owned - part of thy estate.' : it.desc}
+              <PixelText font="body" size={13} color={locked ? C.bad : '#6a5a38'} style={{ marginTop: 4 }}>
+                {isOwned ? 'Owned - part of thy estate.' : locked ? `🔒 The merchant will not sell to a child.` : it.desc}
               </PixelText>
             </PixelButton>
           );

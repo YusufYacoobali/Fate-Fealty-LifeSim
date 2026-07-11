@@ -25,7 +25,7 @@ describe('gameReducer', () => {
 
   it('BUY a perm item adds it to inventory once', () => {
     const tunic = SHOP_ITEMS.find((i) => i.id === 'tunic')!;
-    let s = gameReducer(makeState({ gold: 50 }), { type: 'BUY', item: tunic });
+    let s = gameReducer(makeState({ gold: 50, age: 20 }), { type: 'BUY', item: tunic });
     expect(s.inventory).toContain('tunic');
     const goldAfterFirst = s.gold;
     s = gameReducer(s, { type: 'BUY', item: tunic }); // second buy refused

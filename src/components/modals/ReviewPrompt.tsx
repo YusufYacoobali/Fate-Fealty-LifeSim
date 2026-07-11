@@ -3,31 +3,30 @@ import { View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
 import { ModalBackdrop } from './ModalBackdrop';
-import { presentNativeReview } from '@/services/review';
+import { openStorePage, presentNativeReview } from '@/services/review';
 import { C } from '@/theme/theme';
 
 interface Props {
-  /** Called once the prompt is fully resolved (so it's marked as shown). */
+  /** Called once the prompt is fully resolved, so it is marked as shown. */
   onResolved: () => void;
 }
 
 /**
- * Two-step review flow, per the soft-prompt best practice:
- *   1. Ask if they're enjoying it (never send an unhappy player to the store).
- *   2a. "Aye" -> trigger the OS-native in-app review (falls back to the store
- *       page if the native prompt isn't available).
- *   2b. "Not yet" -> thank them and quietly bow out — no store trip, no nagging.
+ * Soft prompt first, native review second, manual store link last. The final
+ * step covers platforms that silently decline to show the native sheet.
  */
 export function ReviewPrompt({ onResolved }: Props) {
-  const [step, setStep] = useState<'ask' | 'sad'>('ask');
+  const [step, setStep] = useState<'ask' | 'sad' | 'rate'>('ask');
 
   const onEnjoying = async () => {
-    // Resolve first (mark as shown) so we never prompt twice, then present.
-    onResolved();
     await presentNativeReview();
+    setStep('rate');
   };
 
-  const onNotYet = () => setStep('sad');
+  const onRateInStore = async () => {
+    onResolved();
+    await openStorePage();
+  };
 
   return (
     <ModalBackdrop zIndex={58}>
@@ -55,7 +54,7 @@ export function ReviewPrompt({ onResolved }: Props) {
           }}
         >
           <PixelText font="pixel" size={9} color="#3a2a08" style={{ textAlign: 'center' }}>
-            {step === 'ask' ? '★ A MOMENT, GOOD SOUL' : '☆ FARE THEE WELL'}
+            {step === 'ask' ? 'A MOMENT, GOOD SOUL' : step === 'rate' ? 'RATE THE TALE' : 'FARE THEE WELL'}
           </PixelText>
         </View>
 
@@ -70,9 +69,27 @@ export function ReviewPrompt({ onResolved }: Props) {
                   AYE, 'TIS GRAND!
                 </PixelText>
               </PixelButton>
-              <PixelButton bg={C.lightFill} shadow={C.paleEdge} onPress={onNotYet} innerStyle={{ paddingVertical: 10, alignItems: 'center' }}>
+              <PixelButton bg={C.lightFill} shadow={C.paleEdge} onPress={() => setStep('sad')} innerStyle={{ paddingVertical: 10, alignItems: 'center' }}>
                 <PixelText font="pixel" size={8} color={C.blue}>
                   NOT YET...
+                </PixelText>
+              </PixelButton>
+            </View>
+          </>
+        ) : step === 'rate' ? (
+          <>
+            <PixelText font="body" size={18} color={C.textDark} style={{ marginVertical: 12, marginHorizontal: 2, textAlign: 'center' }}>
+              If no review box appeared, thou can rate the game on its store page.
+            </PixelText>
+            <View style={{ gap: 8 }}>
+              <PixelButton bg={C.faith} shadow={C.faithDark} onPress={onRateInStore} innerStyle={{ paddingVertical: 10, alignItems: 'center' }}>
+                <PixelText font="pixel" size={8} color={C.blueDark}>
+                  RATE ON STORE
+                </PixelText>
+              </PixelButton>
+              <PixelButton bg={C.lightFill} shadow={C.paleEdge} onPress={onResolved} innerStyle={{ paddingVertical: 10, alignItems: 'center' }}>
+                <PixelText font="pixel" size={8} color={C.blue}>
+                  DONE
                 </PixelText>
               </PixelButton>
             </View>

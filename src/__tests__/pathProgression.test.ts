@@ -9,17 +9,17 @@ describe('pathProgression', () => {
   });
 
   it('canPromote respects age, progress and stat gates', () => {
-    const s = makeState({ age: 10, rankProgress: 100, stats: { health: 60, charm: 50, wits: 50, faith: 50 } });
-    // Squire needs age>=12 and wits>=40 and progress>=100.
+    const s = makeState({ age: 12, rankProgress: 100, stats: { health: 60, charm: 50, wits: 50, faith: 50 } });
+    // Squire needs age>=14 and wits>=48 and progress>=100.
     expect(canPromote(s)).toBe(false); // too young
-    s.age = 13;
+    s.age = 14;
     expect(canPromote(s)).toBe(true);
-    s.stats.wits = 30;
+    s.stats.wits = 40;
     expect(canPromote(s)).toBe(false); // wits too low
   });
 
   it('promote advances rank and resets progress; demote reverses', () => {
-    const s = makeState({ age: 13, rankProgress: 100, stats: { health: 60, charm: 50, wits: 50, faith: 50 } });
+    const s = makeState({ age: 14, rankProgress: 100, stats: { health: 60, charm: 50, wits: 50, faith: 50 } });
     expect(promote(s)).toBe(true);
     expect(s.rankIdx).toBe(1);
     expect(s.rankProgress).toBe(0);
@@ -35,11 +35,11 @@ describe('pathProgression', () => {
 
   it('locks Baron promotion behind the Lifetime Pass', () => {
     const ready = {
-      age: 30,
-      gold: 200,
+      age: 38,
+      gold: 260,
       rankIdx: 3,
       rankProgress: 100,
-      stats: { health: 80, charm: 80, wits: 80, faith: 80 },
+      stats: { health: 80, charm: 84, wits: 76, faith: 80 },
     };
     expect(canPromote(makeState({ ...ready, lifetimeUnlocked: false }))).toBe(false);
     expect(canPromote(makeState({ ...ready, lifetimeUnlocked: true }))).toBe(true);

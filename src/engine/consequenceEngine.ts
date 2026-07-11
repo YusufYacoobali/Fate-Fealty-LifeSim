@@ -14,6 +14,8 @@ import { promote, demote } from './pathProgression';
 import { killKin as killKinMember, spawnKin } from './kinFactory';
 
 const STAT_KEYS: StatKey[] = ['health', 'charm', 'wits', 'faith'];
+// Normal deeds earn rank slowly; explicit promotion-claim scenes keep full value.
+const RANK_PROGRESS_GAIN_MULTIPLIER = 0.65;
 
 /**
  * Difficulty multiplier applied to NEGATIVE stat changes only. Tuned (with the
@@ -30,6 +32,12 @@ function harshness(s: GameState): number {
     default:
       return 1;
   }
+}
+
+function rankProgressDelta(delta: number, fullStrength: boolean): number {
+  if (fullStrength || delta === 0) return delta;
+  if (delta > 0) return Math.max(1, Math.ceil(delta * RANK_PROGRESS_GAIN_MULTIPLIER));
+  return Math.min(-1, Math.floor(delta * RANK_PROGRESS_GAIN_MULTIPLIER));
 }
 
 export function applyEffects(s: GameState, eff?: Effects): GameState {
@@ -51,7 +59,8 @@ export function applyEffects(s: GameState, eff?: Effects): GameState {
 
   // --- rank progress (hidden) ---
   if (eff.rankProgress != null) {
-    s.rankProgress = Math.max(0, s.rankProgress + eff.rankProgress);
+    const delta = rankProgressDelta(eff.rankProgress, !!eff.promote);
+    s.rankProgress = Math.max(0, s.rankProgress + delta);
   }
 
   // --- reputation (hidden, -100..100) ---

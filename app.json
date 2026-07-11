@@ -18,10 +18,13 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.yacoobali.med",
+      "appStoreUrl": "https://apps.apple.com/app/id6786423727",
       "icon": "./assets/icon/icon_ios.png"
     },
     "android": {
       "package": "com.yacoobali.med",
+      "versionCode": 2,
+      "playStoreUrl": "https://play.google.com/store/apps/details?id=com.yacoobali.med",
       "icon": "./assets/icon/icon_android.png",
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon/icon_android.png",
@@ -38,6 +41,10 @@
     "extra": {
       "eas": {
         "projectId": "bb28a220-3a1e-4c84-8e16-7525b1117aed"
+      },
+      "revenueCat": {
+        "androidApiKey": "goog_UnkuUkiZMGCHufeOyUZDfYsJFlQ",
+        "iosApiKey": "appl_ujLMhXfUBPBOEqEmAjKZYZYKYOp"
       }
     }
   }

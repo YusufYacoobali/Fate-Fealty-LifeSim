@@ -11,6 +11,7 @@ import { KNIGHT_EVENTS } from './knightEvents';
 import { NOBLE_EVENTS } from './nobleEvents';
 import { FAITH_EVENTS } from './faithEvents';
 import { FAMILY_EVENTS } from './familyEvents';
+import { COMPANION_EVENTS } from './companionEvents';
 import { PLAGUE_EVENTS } from './plagueEvents';
 import { WAR_EVENTS } from './warEvents';
 import { STORY_ARCS } from './storyArcs';
@@ -25,6 +26,7 @@ export const ALL_EVENTS: GameEvent[] = [
   ...NOBLE_EVENTS,
   ...FAITH_EVENTS,
   ...FAMILY_EVENTS,
+  ...COMPANION_EVENTS,
   ...PLAGUE_EVENTS,
   ...WAR_EVENTS,
   ...BASE_EXPANSION_EVENTS,

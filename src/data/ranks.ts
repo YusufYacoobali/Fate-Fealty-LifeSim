@@ -19,7 +19,7 @@ export interface RankDef {
 /**
  * The visible class ladder. Free players climb PEASANT -> SQUIRE -> KNIGHT -> NOBLE.
  * Lifetime Pass owners can keep going to BARON -> MONARCH.
- * Promotion is driven by hidden rankProgress + gating requirements.
+ * Promotion is driven by hidden rankProgress plus strict gating requirements.
  */
 export const RANKS: RankDef[] = [
   {
@@ -32,33 +32,33 @@ export const RANKS: RankDef[] = [
     key: 'Squire',
     short: 'SQUIRE',
     portrait: '🧒',
-    promote: { minAge: 12, progress: 100, stats: { wits: 40 } },
+    promote: { minAge: 14, progress: 100, stats: { wits: 48 } },
   },
   {
     key: 'Knight',
     short: 'KNIGHT',
     portrait: '🛡️',
-    promote: { minAge: 16, progress: 100, stats: { wits: 52, charm: 46 } },
+    promote: { minAge: 20, progress: 100, stats: { wits: 64, charm: 56 } },
   },
   {
     key: 'Noble',
     short: 'NOBLE',
     portrait: '👑',
-    promote: { minAge: 20, minGold: 60, progress: 100, stats: { charm: 58 } },
+    promote: { minAge: 28, minGold: 120, progress: 100, stats: { charm: 72, wits: 58 } },
   },
   {
     key: 'Baron',
     short: 'BARON',
     portrait: 'B',
     premium: true,
-    promote: { minAge: 28, minGold: 140, progress: 100, stats: { charm: 70, wits: 62 } },
+    promote: { minAge: 38, minGold: 260, progress: 100, stats: { charm: 84, wits: 76 } },
   },
   {
     key: 'Monarch',
     short: 'KING',
     portrait: 'M',
     premium: true,
-    promote: { minAge: 35, minGold: 240, progress: 100, stats: { charm: 82, wits: 74, faith: 55 } },
+    promote: { minAge: 50, minGold: 420, progress: 100, stats: { charm: 92, wits: 88, faith: 68 } },
   },
 ];
 

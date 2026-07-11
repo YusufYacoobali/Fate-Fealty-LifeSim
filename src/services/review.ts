@@ -5,13 +5,15 @@ export { REVIEW_ENTRY_THRESHOLD, shouldPromptReview, entriesDelta } from './revi
 
 /** The package id from app.json — used to build a Play Store fallback URL. */
 const ANDROID_PACKAGE = 'com.yacoobali.med';
+const IOS_APP_ID = '6786423727';
 
 function fallbackStoreUrl(): string | null {
   if (Platform.OS === 'android') {
     return `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE}`;
   }
-  // iOS needs a numeric App Store id, assigned at submission time. Until then
-  // there is no meaningful page to open, so we bail gracefully.
+  if (Platform.OS === 'ios') {
+    return `https://apps.apple.com/app/id${IOS_APP_ID}`;
+  }
   return null;
 }
 

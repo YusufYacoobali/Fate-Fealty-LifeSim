@@ -82,10 +82,10 @@ export function demote(s: GameState): boolean {
  * path momentum, then auto-promote if the player has earned it.
  */
 export function tickProgression(s: GameState): GameState {
-  // Martial + court paths feed the climb toward knighthood/nobility.
+  // Martial + court paths feed the climb toward knighthood/nobility, slowly.
   const climb = dominantPath(s);
   if (climb === 'martial' || climb === 'court') {
-    s.rankProgress += 2;
+    s.rankProgress += 1;
   }
   // Outlaws can't be promoted by society; their progress decays.
   if (climb === 'outlaw' && s.rankProgress > 0) {

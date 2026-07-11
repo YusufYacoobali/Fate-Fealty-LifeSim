@@ -53,7 +53,7 @@ export interface AppMeta {
   onboarded: boolean;
   /** True once the first-play guide has been dismissed. */
   tutorialSeen: boolean;
-  /** Owns the one-time Lifetime Pass unlock. */
+  /** Mirror of the last RevenueCat entitlement reading; never a source of truth. */
   lifetimeUnlocked: boolean;
   /** Lifetime statistics across all lives. */
   stats: LifetimeStats;
@@ -86,6 +86,7 @@ export async function loadMeta(): Promise<AppMeta> {
     return {
       ...DEFAULT_META,
       ...parsed,
+      lifetimeUnlocked: false,
       stats: { ...DEFAULT_STATS, ...(parsed.stats ?? {}) },
       achievements: parsed.achievements ?? [],
       dynasty: parsed.dynasty ?? [],

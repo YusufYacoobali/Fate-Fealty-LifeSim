@@ -94,7 +94,7 @@ export function KinTab({ kin, detail, onOpen, onBack, onInteract }: Props) {
               <PixelText font="pixel" size={7} color={a.fg} style={{ textAlign: 'center' }}>
                 {a.label}
               </PixelText>
-              <PixelText font="body" size={12} color={a.fg} style={{ marginTop: 3, opacity: 0.85 }}>
+              <PixelText font="body" size={13} color={a.fg} style={{ marginTop: 3, opacity: 0.85 }}>
                 {a.hint}
               </PixelText>
             </PixelButton>

@@ -33,7 +33,7 @@ import { CharacterCreation } from '@/components/modals/CharacterCreation';
 import { AchievementToast } from '@/components/modals/AchievementToast';
 import { ChronicleScreen } from '@/components/modals/ChronicleScreen';
 import { OnboardingModal } from '@/components/modals/OnboardingModal';
-import { ComingSoonShop } from '@/components/modals/ComingSoonShop';
+import { ProShopModal } from '@/components/modals/ProShopModal';
 import { MIN_ANDROID_BOTTOM_NAV_GUARD } from '@/components/systemLayout';
 import { useGameFeedback } from '@/state/hooks/useGameFeedback';
 import { haptic } from '@/services/haptics';
@@ -54,6 +54,7 @@ export function GameScreen() {
     completeOnboarding,
     restartOnboarding,
     lifetimeUnlocked,
+    premiumAccessState,
     purchaseLifetime,
     restoreLifetime,
   } = useGame();
@@ -93,6 +94,7 @@ export function GameScreen() {
           {state.tab === 'do' && (
             <DoTab
               cat={state.doCat}
+              age={state.age}
               onCat={(c) => dispatch({ type: 'SET_CAT', cat: c })}
               onActivity={(id) => {
                 haptic('light', buzz);
@@ -112,6 +114,7 @@ export function GameScreen() {
           {state.tab === 'shop' && (
             <ShopTab
               gold={state.gold}
+              age={state.age}
               income={state.income}
               expenses={state.expenses}
               inventory={state.inventory}
@@ -188,6 +191,10 @@ export function GameScreen() {
               dispatch({ type: 'CLOSE_SETTINGS' });
               setChronicleOpen(true);
             }}
+            onOpenShop={() => {
+              dispatch({ type: 'CLOSE_SETTINGS' });
+              setCartOpen(true);
+            }}
           />
         )}
         {state.dead && !creating && (
@@ -201,9 +208,9 @@ export function GameScreen() {
           <ReviewPrompt onResolved={resolveReview} />
         )}
         {chronicleOpen && <ChronicleScreen progress={getProgress()} onClose={() => setChronicleOpen(false)} />}
-        {cartOpen && <ComingSoonShop unlocked={lifetimeUnlocked} onPurchase={purchaseLifetime} onRestore={restoreLifetime} onClose={() => setCartOpen(false)} />}
+        {cartOpen && <ProShopModal unlocked={lifetimeUnlocked} accessState={premiumAccessState} onPurchase={purchaseLifetime} onRestore={restoreLifetime} onClose={() => setCartOpen(false)} />}
         {onboardingVisible && !creating && !state.dead && !state.event && (
-          <OnboardingModal unlocked={lifetimeUnlocked} onPurchase={purchaseLifetime} onRestore={restoreLifetime} onDone={completeOnboarding} />
+          <OnboardingModal unlocked={lifetimeUnlocked} accessState={premiumAccessState} onPurchase={purchaseLifetime} onRestore={restoreLifetime} onDone={completeOnboarding} />
         )}
         {creating && (
           <CharacterCreation

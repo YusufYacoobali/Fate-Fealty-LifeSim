@@ -43,6 +43,16 @@ describe('consequenceEngine.applyEffects', () => {
     expect(s.paths.martial).toBe(4);
   });
 
+  it('slows ordinary rank progress but keeps promotion-claim progress full strength', () => {
+    const ordinary = makeState({ rankProgress: 0 });
+    applyEffects(ordinary, { rankProgress: 10 });
+    expect(ordinary.rankProgress).toBe(7);
+
+    const claim = makeState({ rankProgress: 0 });
+    applyEffects(claim, { rankProgress: 10, promote: true });
+    expect(claim.rankProgress).toBe(10);
+  });
+
   it('adds/removes tags, records memories, shifts kin relationships', () => {
     const s = makeState();
     applyEffects(s, { addTags: ['married'], memory: { tag: 'wed', weight: 2 }, kinRel: { id: 'goose', delta: -5 } });

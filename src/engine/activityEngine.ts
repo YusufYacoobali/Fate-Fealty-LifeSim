@@ -7,12 +7,21 @@
  * promotion, and memories all work uniformly.
  */
 
-import { GameState } from '@/types/game';
+import { GameState, KinKind } from '@/types/game';
+import { ACTIVITY_DEFS } from '@/data/activities';
 import { applyEffects } from './consequenceEngine';
 import { hasTag, pushFeed, removeTag } from './gameState';
 import { checkLifeGoal } from './goalEngine';
+import { spawnKin } from './kinFactory';
 import { chance, pick, rnd } from './random';
 import { C } from '@/theme/theme';
+
+/** Chance a tavern night yields a real drinking companion (adults only). */
+export const TAVERN_FRIEND_CHANCE = 0.12;
+
+function livingKinOfKind(s: GameState, kind: KinKind): number {
+  return s.kin.filter((k) => k.alive && k.kind === kind).length;
+}
 
 /** Shared cure: clears the ongoing illness state and announces it. */
 function cureIllness(s: GameState): void {
@@ -41,6 +50,12 @@ const HANDLERS: Record<string, Handler> = {
       'You joined a tavern argument over whether soup can be sinful. Nobody won, but everyone shouted well.',
       'The ale was thin, the songs were thick, and you left with a new friend who may have been a hatter.',
     ]), 'good');
+    // Sometimes the "new friend" is real: a modest chance to gain a drinking
+    // companion, capped so the roster can't fill up with tavern acquaintances.
+    if (s.age >= 16 && chance(TAVERN_FRIEND_CHANCE) && livingKinOfKind(s, 'friend') <= 2) {
+      const mate = spawnKin(s, { kind: 'friend', role: 'Tavern Friend', trait: 'Merry', rel: 55 });
+      pushFeed(s, 'NEW FRIEND', C.good, `${mate.name} matched you tale for tale until dawn. You have made a true friend at the Sloshed Squire.`, 'good');
+    }
   },
   dice: (s) => {
     if (s.gold < 3) return blocked(s, 'DICE', "You can't gamble with an empty purse. The dice men shoo you away.");
@@ -112,7 +127,7 @@ const HANDLERS: Record<string, Handler> = {
     pushFeed(s, 'PILGRIMAGE', C.good, 'You walked to the holy shrine and back. Blisters and blessings, in equal and abundant measure.', 'good');
   },
   train: (s) => {
-    applyEffects(s, { wits: 5, charm: 4, health: -2, path: { martial: 3 }, rankProgress: 14 });
+    applyEffects(s, { wits: 5, charm: 4, health: -2, path: { martial: 3 }, rankProgress: 9 });
     pushFeed(s, 'TRAINING', C.blue, one([
       'You trained hard at the keep: sword, courtesy, and not tripping over your own cloak.',
       'You practiced blade work until the straw dummy looked personally disappointed.',
@@ -121,7 +136,7 @@ const HANDLERS: Record<string, Handler> = {
   },
   quest: (s) => {
     if (chance(0.55)) {
-      applyEffects(s, { gold: 10, charm: 7, health: -5, path: { martial: 2 }, rankProgress: 8, memory: { tag: 'hero', weight: 2 } });
+      applyEffects(s, { gold: 10, charm: 7, health: -5, path: { martial: 2 }, rankProgress: 5, memory: { tag: 'hero', weight: 2 } });
       pushFeed(s, 'QUEST', C.good, one([
         'You answered a notice-board quest and returned a hero! A small one. A village hero.',
         'You solved the quest by bravery, luck, and misreading the map in a useful direction.',
@@ -139,7 +154,7 @@ const HANDLERS: Record<string, Handler> = {
   tournament: (s) => {
     if (s.gold < 5) return blocked(s, 'TOURNEY', 'Entry costs 5 gold you do not have. You watch the joust from the cheap mud.');
     if (chance(0.5)) {
-      applyEffects(s, { gold: 5, charm: 12, health: -12, path: { martial: 3 }, rankProgress: 10 });
+      applyEffects(s, { gold: 5, charm: 12, health: -12, path: { martial: 3 }, rankProgress: 7 });
       pushFeed(s, 'TOURNEY', C.good, one([
         'You were unhorsed gloriously, but your scream thrilled the crowd. Bruised, but briefly famous!',
         'You survived the tilt and bowed to the wrong lord. The crowd loved both.',
@@ -231,6 +246,16 @@ export function doActivity(s: GameState, id: string): GameState {
   s.selectedKinId = null;
   if (s.tags.includes('imprisoned')) {
     pushFeed(s, 'IMPRISONED', C.amber, 'You languish behind iron bars; such pursuits must wait for freedom.', 'plain');
+    return s;
+  }
+  // Too young: the world (and your mother) will not allow it.
+  const def = ACTIVITY_DEFS.find((a) => a.id === id);
+  if (def?.minAge != null && s.age < def.minAge) {
+    pushFeed(s, 'TOO YOUNG', C.amber, one([
+      `At ${s.age}, you are firmly informed that ${def.name.toLowerCase()} is not for children. Maud marches you home by the ear.`,
+      `You toddle hopefully toward the ${def.name.toLowerCase()}, and are returned to the cottage by a passing neighbour. Again.`,
+      `The village agrees: no ${def.name.toLowerCase()} until you are at least ${def.minAge} winters old.`,
+    ]), 'plain');
     return s;
   }
   const handler = HANDLERS[id];

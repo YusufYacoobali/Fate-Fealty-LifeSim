@@ -7,7 +7,10 @@ import { useReviewGate } from './hooks/useReviewGate';
 import { useScheduledReminders } from './hooks/useScheduledReminders';
 import { useCharacterCreation } from './hooks/useCharacterCreation';
 import { useMetaProgression, ProgressSnapshot } from './hooks/useMetaProgression';
+import { usePremium } from './hooks/usePremium';
+import type { PremiumAccessState } from './hooks/usePremium';
 import { NewLifeOptions } from './gameReducer';
+import { PurchaseOutcome } from '@/services/purchases';
 
 interface GameContextValue {
   state: GameState;
@@ -25,8 +28,9 @@ interface GameContextValue {
   completeOnboarding: () => void;
   restartOnboarding: () => void;
   lifetimeUnlocked: boolean;
-  purchaseLifetime: () => void;
-  restoreLifetime: () => boolean;
+  premiumAccessState: PremiumAccessState;
+  purchaseLifetime: () => Promise<PurchaseOutcome>;
+  restoreLifetime: () => Promise<boolean>;
 }
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -43,23 +47,14 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const review = useReviewGate(game.state, game.loaded, meta);
   const creation = useCharacterCreation(meta, game.loaded, game.dispatch);
   const progression = useMetaProgression(game.state, meta, game.loaded);
+  const premium = usePremium(meta, game.loaded, game.dispatch);
   const [onboardingVisible, setOnboardingVisible] = useState(false);
-  const [lifetimeUnlocked, setLifetimeUnlocked] = useState(false);
 
   useEffect(() => {
     if (game.loaded && meta.ready && meta.metaRef.current.onboarded && !meta.metaRef.current.tutorialSeen) {
       setOnboardingVisible(true);
     }
   }, [game.loaded, meta.ready, meta.metaRef, game.state.lifeNo]);
-
-  useEffect(() => {
-    if (!game.loaded || !meta.ready) return;
-    const unlocked = meta.metaRef.current.lifetimeUnlocked;
-    setLifetimeUnlocked(unlocked);
-    if (game.state.lifetimeUnlocked !== unlocked) {
-      game.dispatch({ type: 'SET_LIFETIME_UNLOCKED', unlocked });
-    }
-  }, [game.loaded, meta.ready, meta.metaRef, game.state.lifetimeUnlocked, game.dispatch]);
 
   const completeOnboarding = useCallback(() => {
     meta.update({ tutorialSeen: true });
@@ -70,19 +65,6 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     meta.update({ tutorialSeen: false });
     setOnboardingVisible(true);
   }, [meta]);
-
-  const purchaseLifetime = useCallback(() => {
-    meta.update({ lifetimeUnlocked: true });
-    setLifetimeUnlocked(true);
-    game.dispatch({ type: 'SET_LIFETIME_UNLOCKED', unlocked: true });
-  }, [game, meta]);
-
-  const restoreLifetime = useCallback(() => {
-    const unlocked = meta.metaRef.current.lifetimeUnlocked;
-    setLifetimeUnlocked(unlocked);
-    game.dispatch({ type: 'SET_LIFETIME_UNLOCKED', unlocked });
-    return unlocked;
-  }, [game, meta]);
 
   const value = useMemo<GameContextValue>(
     () => ({
@@ -100,9 +82,10 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       onboardingVisible,
       completeOnboarding,
       restartOnboarding,
-      lifetimeUnlocked,
-      purchaseLifetime,
-      restoreLifetime,
+      lifetimeUnlocked: premium.lifetimeUnlocked,
+      premiumAccessState: premium.premiumAccessState,
+      purchaseLifetime: premium.purchaseLifetime,
+      restoreLifetime: premium.restoreLifetime,
     }),
     [
       game.state,
@@ -119,9 +102,10 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       onboardingVisible,
       completeOnboarding,
       restartOnboarding,
-      lifetimeUnlocked,
-      purchaseLifetime,
-      restoreLifetime,
+      premium.lifetimeUnlocked,
+      premium.premiumAccessState,
+      premium.purchaseLifetime,
+      premium.restoreLifetime,
     ],
   );
 

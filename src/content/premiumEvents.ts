@@ -8,9 +8,9 @@ export const PREMIUM_EVENTS: GameEvent[] = [
     category: 'noble',
     title: 'A VACANT BARONY',
     text: 'A border barony lacks a lord. The council wants coin, manners, and someone foolish enough to live near raiders.',
-    ageMin: 26,
+    ageMin: 38,
     ranks: ['Noble'],
-    requires: { minGold: 120, statAtLeast: { charm: 68 } },
+    requires: { minGold: 350, statAtLeast: { charm: 84, wits: 76 } },
     once: true,
     choices: [
       { label: 'Buy the claim (90g)', costGold: 90, outcome: { text: 'The seal is yours. Muddy Swineford once birthed a peasant; now it bows to a Baron.', effects: { gold: -90, charm: 8, reputation: 12, rankProgress: 100, path: { court: 6 }, memory: { tag: 'barony_claimed', weight: 5 }, promote: true }, tone: 'good' } },
@@ -144,9 +144,9 @@ export const PREMIUM_EVENTS: GameEvent[] = [
     category: 'court',
     title: 'A CLAIM TO THE CROWN',
     text: 'A genealogist finds a royal ancestor in your line. The ink is fresh, but ambition does not mind.',
-    ageMin: 35,
+    ageMin: 50,
     ranks: ['Baron'],
-    requires: { minGold: 220, statAtLeast: { charm: 80, wits: 70 } },
+    requires: { minGold: 560, statAtLeast: { charm: 80, wits: 88, faith: 68 } },
     once: true,
     choices: [
       { label: 'Press the claim (140g)', costGold: 140, successChance: (s) => 0.32 + s.reputation / 300 + s.stats.charm / 400, success: { text: 'Banners rise. Rivals kneel. Somehow, impossibly, the crown rests on your head.', effects: { gold: -140, charm: 12, reputation: 18, rankProgress: 100, addTags: ['claimed_crown'], memory: { tag: 'crowned', weight: 7 }, promote: true }, tone: 'good' }, failure: { text: 'The claim collapses under laughter and steel. You flee with fewer friends and lighter coffers.', effects: { gold: -80, reputation: -25, health: -14, memory: { tag: 'failed_claim', weight: 5 } }, tone: 'bad' } },

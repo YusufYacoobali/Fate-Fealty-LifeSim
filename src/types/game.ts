@@ -183,6 +183,14 @@ export interface Condition {
   minReputation?: number;
   maxReputation?: number;
   pathAtLeast?: Partial<PathProgress>;
+  /** Require at least one LIVING kin of each listed kind (e.g. a sibling). */
+  hasKinOfKind?: KinKind[];
+  /**
+   * Cap on LIVING kin of a kind — lets kin-adding events self-balance so the
+   * roster can't overflow (e.g. befriend someone only while friends <= 2, or
+   * swear to a liege only while lieges = 0).
+   */
+  kinCountAtMost?: Partial<Record<KinKind, number>>;
   /** Escape hatch for one-off logic. */
   custom?: (s: GameState) => boolean;
 }
@@ -282,6 +290,8 @@ export interface ActivityDef {
   icon: string;
   iconBg: string;
   desc: string;
+  /** Youngest age that may attempt this (default 0). Shown as a lock in the UI. */
+  minAge?: number;
 }
 
 export type ShopItemType = 'consumable' | 'perm';
@@ -296,6 +306,8 @@ export interface ShopItem {
   type: ShopItemType;
   eff: Effects;
   desc: string;
+  /** Youngest age the merchant will sell this to (default 0). */
+  minAge?: number;
 }
 
 export interface GameSettings {

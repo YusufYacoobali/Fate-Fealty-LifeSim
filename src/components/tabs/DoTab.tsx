@@ -9,11 +9,12 @@ import { ACTIVITY_ICONS } from '@/assets/generatedAssets';
 
 interface Props {
   cat: ActivityCategory | 'all';
+  age: number;
   onCat: (c: ActivityCategory | 'all') => void;
   onActivity: (id: string) => void;
 }
 
-export function DoTab({ cat, onCat, onActivity }: Props) {
+export function DoTab({ cat, age, onCat, onActivity }: Props) {
   const activities = ACTIVITY_DEFS.filter((a) => cat === 'all' || a.cat === cat);
 
   return (
@@ -46,43 +47,47 @@ export function DoTab({ cat, onCat, onActivity }: Props) {
       {/* activity grid */}
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 11, paddingBottom: 7 }}>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-          {activities.map((a) => (
-            <PixelButton
-              key={a.id}
-              bg={C.parch}
-              shadow={C.parchSd}
-              light={C.parchSl}
-              outline={C.parchBorder}
-              onPress={() => onActivity(a.id)}
-              style={{ width: '48.5%', marginBottom: 8 }}
-              innerStyle={{ paddingHorizontal: 8, paddingVertical: 9, minHeight: 100 }}
-            >
-              <View
-                style={{
-                  width: 42,
-                  height: 42,
-                  backgroundColor: a.iconBg,
-                  borderWidth: 2,
-                  borderColor: C.inkSoft,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: 5,
-                }}
+          {activities.map((a) => {
+            const locked = a.minAge != null && age < a.minAge;
+            return (
+              <PixelButton
+                key={a.id}
+                bg={C.parch}
+                shadow={C.parchSd}
+                light={C.parchSl}
+                outline={C.parchBorder}
+                onPress={() => onActivity(a.id)}
+                disabled={locked}
+                style={{ width: '48.5%', marginBottom: 8 }}
+                innerStyle={{ paddingHorizontal: 8, paddingVertical: 9, minHeight: 100 }}
               >
-                {ACTIVITY_ICONS[a.id] ? (
-                  <Image source={ACTIVITY_ICONS[a.id]} resizeMode="contain" style={{ width: 36, height: 36 }} />
-                ) : (
-                  <PixelText size={17}>{a.icon}</PixelText>
-                )}
-              </View>
-              <PixelText font="pixel" size={7} color="#3a2a08">
-                {a.name}
-              </PixelText>
-              <PixelText font="body" size={13} color="#6a5a38" style={{ marginTop: 4 }}>
-                {a.desc}
-              </PixelText>
-            </PixelButton>
-          ))}
+                <View
+                  style={{
+                    width: 42,
+                    height: 42,
+                    backgroundColor: a.iconBg,
+                    borderWidth: 2,
+                    borderColor: C.inkSoft,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: 5,
+                  }}
+                >
+                  {ACTIVITY_ICONS[a.id] ? (
+                    <Image source={ACTIVITY_ICONS[a.id]} resizeMode="contain" style={{ width: 36, height: 36 }} />
+                  ) : (
+                    <PixelText size={17}>{a.icon}</PixelText>
+                  )}
+                </View>
+                <PixelText font="pixel" size={7} color="#3a2a08">
+                  {a.name}
+                </PixelText>
+                <PixelText font="body" size={13} color={locked ? C.bad : '#6a5a38'} style={{ marginTop: 4 }}>
+                  {locked ? `🔒 Age ${a.minAge}+` : a.desc}
+                </PixelText>
+              </PixelButton>
+            );
+          })}
         </View>
       </ScrollView>
     </View>

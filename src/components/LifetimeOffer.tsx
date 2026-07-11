@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { C } from '@/theme/theme';
 import { PixelButton } from './ui/PixelButton';
 import { PixelText } from './ui/PixelText';
+import { getLifetimeOfferDetails } from '@/services/purchases';
+import type { PremiumAccessState } from '@/state/hooks/usePremium';
 
 const BENEFITS = [
   'Baron and Monarch ranks',
@@ -14,12 +16,57 @@ const BENEFITS = [
 
 interface Props {
   unlocked: boolean;
+  accessState?: PremiumAccessState;
   message?: string;
+  priceLabel?: string;
+  offerMissing?: boolean;
+  storeUnavailable?: boolean;
+  offerLoading?: boolean;
+  loading?: boolean;
   onPurchase: () => void;
   onRestore: () => void;
 }
 
-export function LifetimeOffer({ unlocked, message, onPurchase, onRestore }: Props) {
+export function LifetimeOffer({
+  unlocked,
+  accessState = unlocked ? 'active' : 'inactive',
+  message,
+  priceLabel,
+  offerMissing = false,
+  storeUnavailable = false,
+  offerLoading = false,
+  loading = false,
+  onPurchase,
+  onRestore,
+}: Props) {
+  const [localPriceLabel, setLocalPriceLabel] = useState<string | undefined>();
+  const [localOfferLoading, setLocalOfferLoading] = useState(!unlocked && priceLabel === undefined);
+  const [localOfferMissing, setLocalOfferMissing] = useState(false);
+  const [localStoreUnavailable, setLocalStoreUnavailable] = useState(false);
+
+  useEffect(() => {
+    if (unlocked || priceLabel !== undefined) return;
+    let active = true;
+    setLocalOfferLoading(true);
+    getLifetimeOfferDetails().then((details) => {
+      if (!active) return;
+      setLocalOfferLoading(false);
+      setLocalStoreUnavailable(details === null);
+      setLocalOfferMissing(details?.available === false);
+      setLocalPriceLabel(details?.priceString ?? undefined);
+    });
+    return () => {
+      active = false;
+    };
+  }, [priceLabel, unlocked]);
+
+  const checkingAccess = accessState === 'loading';
+  const effectiveOfferLoading = offerLoading || localOfferLoading;
+  const effectiveOfferMissing = offerMissing || localOfferMissing;
+  const storeBlocked = storeUnavailable || localStoreUnavailable || accessState === 'unavailable';
+  const effectivePriceLabel = priceLabel ?? localPriceLabel;
+  const buyDisabled = unlocked || loading || checkingAccess || effectiveOfferLoading || effectiveOfferMissing || storeBlocked;
+
   return (
     <View>
       <View style={{ alignItems: 'center', paddingTop: 8, paddingBottom: 11 }}>
@@ -41,7 +88,7 @@ export function LifetimeOffer({ unlocked, message, onPurchase, onRestore }: Prop
           {unlocked ? 'Lifetime Pass owned' : "Founder's lifetime unlock"}
         </PixelText>
         <PixelText font="pixel" size={18} color={C.charm} style={{ marginTop: 6 }}>
-          {unlocked ? 'UNLOCKED' : '$9.99'}
+          {unlocked ? 'UNLOCKED' : checkingAccess || effectiveOfferLoading ? 'CHECKING...' : storeBlocked || effectiveOfferMissing ? 'UNAVAILABLE' : effectivePriceLabel ?? 'CHECKING...'}
         </PixelText>
       </View>
 
@@ -56,13 +103,13 @@ export function LifetimeOffer({ unlocked, message, onPurchase, onRestore }: Prop
         ))}
       </View>
 
-      <PixelButton disabled={unlocked} bg={unlocked ? C.faith : C.charm} shadow={unlocked ? C.faithDark : C.charmDark} light="#fff1b0" onPress={onPurchase} style={{ marginTop: 13 }} innerStyle={{ paddingVertical: 12, alignItems: 'center' }}>
+      <PixelButton disabled={buyDisabled} bg={unlocked ? C.faith : C.charm} shadow={unlocked ? C.faithDark : C.charmDark} light="#fff1b0" onPress={onPurchase} style={{ marginTop: 13 }} innerStyle={{ paddingVertical: 12, alignItems: 'center' }}>
         <PixelText font="pixel" size={9} color="#3a2a08">
-          {unlocked ? 'OWNED' : 'BUY LIFETIME PASS'}
+          {unlocked ? 'OWNED' : checkingAccess || effectiveOfferLoading ? 'CHECKING...' : effectiveOfferMissing || storeBlocked ? 'NOT AVAILABLE' : loading ? 'WORKING...' : 'BUY LIFETIME PASS'}
         </PixelText>
       </PixelButton>
       {!unlocked && (
-        <PixelButton bg={C.light} shadow={C.blue} light={C.sky} onPress={onRestore} style={{ marginTop: 7 }} innerStyle={{ paddingVertical: 9, alignItems: 'center' }}>
+        <PixelButton disabled={loading} bg={C.light} shadow={C.blue} light={C.sky} onPress={onRestore} style={{ marginTop: 7 }} innerStyle={{ paddingVertical: 9, alignItems: 'center' }}>
           <PixelText font="pixel" size={8} color={C.blueDark}>
             RESTORE
           </PixelText>

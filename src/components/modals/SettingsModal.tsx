@@ -102,7 +102,7 @@ export function SettingsModal({ settings, lifetimeUnlocked, onSetSettings, onLoc
         </PixelButton>
         <PixelButton bg={C.charm} shadow={C.charmDark} light="#fff1b0" onPress={onOpenShop} style={{ marginBottom: 7 }} innerStyle={{ paddingVertical: 9, alignItems: 'center' }}>
           <PixelText font="pixel" size={8} color="#3a2a08">
-            PRO SHOP
+            SHOP
           </PixelText>
         </PixelButton>
         <PixelButton bg={C.light} shadow={C.blue} light={C.sky} onPress={onRestartOnboarding} style={{ marginBottom: 7 }} innerStyle={{ paddingVertical: 9, alignItems: 'center' }}>

@@ -89,7 +89,7 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
       <PixelText font="pixel" size={7} color={C.blueDeep} style={{ marginTop: 13, marginBottom: 8 }}>
         PATH TO NOBILITY
       </PixelText>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
         {rankPath.map((r, i) => (
           <TouchableOpacity
             key={i}

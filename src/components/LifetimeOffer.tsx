@@ -10,6 +10,7 @@ const BENEFITS = [
   'Baron and Monarch ranks',
   'Premium ruler events',
   'Extra goals and deeds',
+  "Permadeath off: death isn't the end",
   'All future premium chapters',
   'One purchase, no renewal',
 ] as const;

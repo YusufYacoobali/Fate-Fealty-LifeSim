@@ -7,13 +7,12 @@
  * so balancing (e.g. difficulty scaling on damage) lives in one place.
  */
 
-import { Effects, GameState, PathKey, StatKey } from '@/types/game';
+import { Effects, GameState, PathKey, STAT_KEYS } from '@/types/game';
 import { addMemory, addMoney, addTag, pushFeed, removeTag } from './gameState';
 import { clamp } from './random';
 import { promote, demote } from './pathProgression';
 import { killKin as killKinMember, spawnKin } from './kinFactory';
 
-const STAT_KEYS: StatKey[] = ['health', 'charm', 'wits', 'faith'];
 // Normal deeds earn rank slowly; explicit promotion-claim scenes keep full value.
 const RANK_PROGRESS_GAIN_MULTIPLIER = 0.65;
 

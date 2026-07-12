@@ -1,6 +1,5 @@
 import {
   agingMultiplierFromTraits,
-  assignBirthTrait,
   grantAcquiredTraits,
   grantTrait,
   hasTrait,
@@ -22,15 +21,13 @@ describe('birth traits', () => {
     }
   });
 
-  it('assignBirthTrait applies flat starting-stat shifts', () => {
-    // Seed so we deterministically land on a known trait, then assert stat moved.
-    const s = makeState({ stats: { health: 50, charm: 50, wits: 50, faith: 50 } });
-    s.traits = [];
-    s.tags = [];
-    assignBirthTrait(s);
-    expect(s.traits.length).toBe(1);
-    // Whatever was rolled, the tag must mirror it.
-    expect(s.tags).toContain(`trait_${s.traits[0]}`);
+  it('a chosen birth trait applies its flat starting-stat shifts', () => {
+    // Silver-Tongued grants +12 charm on top of the 25..55 base roll.
+    const s = createLife({ birthTraitId: 'silver_tongue' });
+    expect(s.traits).toEqual(['silver_tongue']);
+    expect(s.tags).toContain('trait_silver_tongue');
+    expect(s.stats.charm).toBeGreaterThanOrEqual(37);
+    expect(s.stats.charm).toBeLessThanOrEqual(67);
   });
 });
 

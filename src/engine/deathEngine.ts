@@ -14,7 +14,7 @@ import { EPITAPHS } from '@/data/names';
 import { dominantPath } from './pathProgression';
 import { agingMultiplierFromTraits } from './traitEngine';
 import { killPlayer, legacyScore } from './consequenceEngine';
-import { addMemory, hasTag, pushFeed } from './gameState';
+import { addMemory, countLivingKin, hasTag, pushFeed } from './gameState';
 import { chance, pick, rnd } from './random';
 import { C } from '@/theme/theme';
 
@@ -111,7 +111,7 @@ export interface DeathSummary {
 }
 
 export function buildDeathSummary(s: GameState, rankKey: string): DeathSummary {
-  const heirs = s.kin.filter((k) => k.kind === 'child' && k.alive).length;
+  const heirs = countLivingKin(s, 'child');
   return {
     name: `${s.first} ${s.epithet}`,
     age: s.age,

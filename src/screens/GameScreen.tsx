@@ -32,8 +32,8 @@ import { ReviewPrompt } from '@/components/modals/ReviewPrompt';
 import { CharacterCreation } from '@/components/modals/CharacterCreation';
 import { AchievementToast } from '@/components/modals/AchievementToast';
 import { ChronicleScreen } from '@/components/modals/ChronicleScreen';
-import { OnboardingModal } from '@/components/modals/OnboardingModal';
-import { ProShopModal } from '@/components/modals/ProShopModal';
+import { OnboardingScreen } from '@/screens/OnboardingScreen';
+import { PremiumShopScreen } from '@/screens/PremiumShopScreen';
 import { MIN_ANDROID_BOTTOM_NAV_GUARD } from '@/components/systemLayout';
 import { useGameFeedback } from '@/state/hooks/useGameFeedback';
 import { haptic } from '@/services/haptics';
@@ -53,10 +53,10 @@ export function GameScreen() {
     onboardingVisible,
     completeOnboarding,
     restartOnboarding,
-    lifetimeUnlocked,
+    premiumUnlocked,
     premiumAccessState,
-    purchaseLifetime,
-    restoreLifetime,
+    purchasePlan,
+    restorePremium,
   } = useGame();
   const rank = currentRank(state);
   const stats = selectStats(state);
@@ -170,7 +170,7 @@ export function GameScreen() {
         {state.settingsOpen && !state.dead && (
           <SettingsModal
             settings={state.settings}
-            lifetimeUnlocked={lifetimeUnlocked}
+            premiumUnlocked={premiumUnlocked}
             onSetSettings={(patch) => dispatch({ type: 'SET_SETTINGS', settings: patch })}
             onLockedFeaturePress={() => {
               haptic('light', buzz);
@@ -208,9 +208,23 @@ export function GameScreen() {
           <ReviewPrompt onResolved={resolveReview} />
         )}
         {chronicleOpen && <ChronicleScreen progress={getProgress()} onClose={() => setChronicleOpen(false)} />}
-        {cartOpen && <ProShopModal unlocked={lifetimeUnlocked} accessState={premiumAccessState} onPurchase={purchaseLifetime} onRestore={restoreLifetime} onClose={() => setCartOpen(false)} />}
+        {cartOpen && (
+          <PremiumShopScreen
+            unlocked={premiumUnlocked}
+            accessState={premiumAccessState}
+            onPurchase={purchasePlan}
+            onRestore={restorePremium}
+            onClose={() => setCartOpen(false)}
+          />
+        )}
         {onboardingVisible && !creating && !state.dead && !state.event && (
-          <OnboardingModal unlocked={lifetimeUnlocked} accessState={premiumAccessState} onPurchase={purchaseLifetime} onRestore={restoreLifetime} onDone={completeOnboarding} />
+          <OnboardingScreen
+            premiumUnlocked={premiumUnlocked}
+            accessState={premiumAccessState}
+            onPurchase={purchasePlan}
+            onRestore={restorePremium}
+            onDone={completeOnboarding}
+          />
         )}
         {creating && (
           <CharacterCreation

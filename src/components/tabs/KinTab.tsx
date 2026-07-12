@@ -5,7 +5,7 @@ import { PixelButton } from '../ui/PixelButton';
 import { KinMember } from '@/types/game';
 import { KinAction } from '@/engine/kinEngine';
 import { relColor, relLabel } from '@/state/viewModel';
-import { C } from '@/theme/theme';
+import { C, PANEL } from '@/theme/theme';
 import { kinIconAsset } from '@/assets/generatedAssets';
 
 interface Props {
@@ -69,7 +69,7 @@ export function KinTab({ kin, detail, onOpen, onBack, onInteract }: Props) {
         </View>
 
         {/* trait + bio */}
-        <View style={{ backgroundColor: C.parch, borderWidth: 3, borderColor: C.parchBorder, borderTopColor: C.parchSl, borderLeftColor: C.parchSl, borderBottomColor: C.parchSd, borderRightColor: C.parchSd, padding: 9 }}>
+        <View style={PANEL.parchCard}>
           <PixelText font="pixel" size={6} color={C.amber}>
             TRAIT — {detail.trait}
           </PixelText>

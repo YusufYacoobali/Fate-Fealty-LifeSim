@@ -24,7 +24,7 @@ import { assignLifeGoalIfDue, checkLifeGoal } from './goalEngine';
 import { tickAilments, tickImprisonment, tickKinMortality } from './lifecycleEngine';
 import { pickEvent } from './eventPicker';
 import { popReadyArc } from './storyGraph';
-import { chance, rnd } from './random';
+import { chance } from './random';
 
 const EVENT_CHANCE = 0.34;
 
@@ -75,13 +75,4 @@ export function ageUp(s: GameState): GameState {
   checkDeath(s);
 
   return s;
-}
-
-/** A tiny bit of randomised income flavour the Life Director can call on. */
-export function passiveIncome(s: GameState): number {
-  // Owning a cottage or steed implies a steadier purse.
-  let n = 0;
-  if (s.inventory.includes('cottage')) n += rnd(1, 3);
-  if (s.inventory.includes('steed')) n += rnd(0, 2);
-  return n;
 }

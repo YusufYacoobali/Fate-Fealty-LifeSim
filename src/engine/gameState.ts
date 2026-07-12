@@ -11,9 +11,11 @@ import {
   FeedEntry,
   GameSettings,
   GameState,
+  KinKind,
   KinMember,
   Memory,
   PathProgress,
+  STAT_KEYS,
   Tone,
 } from '@/types/game';
 import { EPITHETS, FIRST_NAMES } from '@/data/names';
@@ -50,7 +52,7 @@ export interface FreshLifeOptions {
   birthTraitId?: string;
   /** Optional inheritance from a deceased forebear (heir continuation). */
   inherit?: { gold?: number; reputation?: number; tags?: string[] };
-  /** Whether this save can access Lifetime Pass ranks and content. */
+  /** Whether this save can access premium ranks and content. */
   lifetimeUnlocked?: boolean;
 }
 
@@ -71,7 +73,7 @@ export function createLife(opts: FreshLifeOptions = {}): GameState {
   // shifts into the starting stats.
   const birth = (opts.birthTraitId && traitById(opts.birthTraitId)) || pick(birthTraits());
   if (birth.startStats) {
-    for (const k of ['health', 'charm', 'wits', 'faith'] as const) {
+    for (const k of STAT_KEYS) {
       const d = birth.startStats[k];
       if (d != null) stats[k] = clamp(stats[k] + d);
     }
@@ -199,4 +201,12 @@ export function removeTag(s: GameState, tag: string): GameState {
 
 export function countMemories(s: GameState, tag: string): number {
   return s.memories.filter((m) => m.tag === tag).length;
+}
+
+export function countLivingKin(s: GameState, kind: KinKind): number {
+  return s.kin.filter((k) => k.alive && k.kind === kind).length;
+}
+
+export function hasLivingKin(s: GameState, kind: KinKind): boolean {
+  return s.kin.some((k) => k.alive && k.kind === kind);
 }

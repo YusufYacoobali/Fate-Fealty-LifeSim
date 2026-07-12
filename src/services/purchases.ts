@@ -5,10 +5,10 @@
 
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
-import { entitlementActive, isProductionRevenueCatKey, mergeEntitlement, pickLifetimePackage, PurchaseOutcome } from './purchasesLogic';
+import { entitlementActive, isProductionRevenueCatKey, PLAN_IDS, pickPackage, PlanId, PurchaseOutcome } from './purchasesLogic';
 
-export { ENTITLEMENT_ID, isProductionRevenueCatKey, mergeEntitlement } from './purchasesLogic';
-export type { PurchaseOutcome } from './purchasesLogic';
+export { ENTITLEMENT_ID, PLAN_IDS, isProductionRevenueCatKey, mergeEntitlement } from './purchasesLogic';
+export type { PlanId, PurchaseOutcome } from './purchasesLogic';
 
 let configured = false;
 
@@ -59,33 +59,41 @@ export interface PurchaseResult {
   unlocked: boolean;
 }
 
-export interface LifetimeOfferDetails {
+export interface PlanOffer {
   available: boolean;
   priceString: string | null;
 }
 
-export async function getLifetimeOfferDetails(): Promise<LifetimeOfferDetails | null> {
+export type PlanOffers = Record<PlanId, PlanOffer>;
+
+/** Store prices for every plan in one offerings fetch; null when the store is unreachable. */
+export async function getPremiumOffers(): Promise<PlanOffers | null> {
   const Purchases = rc();
   if (!Purchases || !configurePurchases()) return null;
   try {
     const offerings = await Purchases.getOfferings();
-    const pack = pickLifetimePackage(offerings.current);
-    if (!pack) return { available: false, priceString: null };
-    const product = (pack as { product?: { priceString?: string } }).product;
-    return { available: true, priceString: product?.priceString ?? null };
+    const offers = {} as PlanOffers;
+    for (const plan of PLAN_IDS) {
+      const pack = pickPackage(offerings.current, plan);
+      const product = (pack as { product?: { priceString?: string } } | null)?.product;
+      offers[plan] = pack
+        ? { available: true, priceString: product?.priceString ?? null }
+        : { available: false, priceString: null };
+    }
+    return offers;
   } catch {
     return null;
   }
 }
 
-export async function purchasePremium(): Promise<PurchaseResult> {
+export async function purchasePremium(plan: PlanId): Promise<PurchaseResult> {
   const Purchases = rc();
   if (!Purchases || !configurePurchases()) return { outcome: 'unavailable', unlocked: false };
   try {
     const offerings = await Purchases.getOfferings();
-    const pack = pickLifetimePackage(offerings.current);
+    const pack = pickPackage(offerings.current, plan);
     if (!pack) return { outcome: 'unavailable', unlocked: false };
-    const { customerInfo } = await Purchases.purchasePackage(pack);
+    const { customerInfo } = await Purchases.purchasePackage(pack as Parameters<typeof Purchases.purchasePackage>[0]);
     return { outcome: 'purchased', unlocked: entitlementActive(customerInfo) };
   } catch (e) {
     const cancelled = !!(e as { userCancelled?: boolean })?.userCancelled;

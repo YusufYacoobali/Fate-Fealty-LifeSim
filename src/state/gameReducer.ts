@@ -25,7 +25,6 @@ export type GameAction =
   | { type: 'SET_CAT'; cat: ActivityCategory | 'all' }
   | { type: 'OPEN_KIN'; id: string }
   | { type: 'CLOSE_KIN' }
-  | { type: 'OPEN_SHOP' }
   | { type: 'OPEN_SETTINGS' }
   | { type: 'CLOSE_SETTINGS' }
   | { type: 'TOGGLE_AUTOSCROLL' }
@@ -97,13 +96,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
     case 'CLOSE_KIN': {
       const s = cloneState(state);
-      s.selectedKinId = null;
-      return s;
-    }
-
-    case 'OPEN_SHOP': {
-      const s = cloneState(state);
-      s.tab = 'shop';
       s.selectedKinId = null;
       return s;
     }

@@ -10,7 +10,7 @@ import { useMetaProgression, ProgressSnapshot } from './hooks/useMetaProgression
 import { usePremium } from './hooks/usePremium';
 import type { PremiumAccessState } from './hooks/usePremium';
 import { NewLifeOptions } from './gameReducer';
-import { PurchaseOutcome } from '@/services/purchases';
+import { PlanId, PurchaseOutcome } from '@/services/purchases';
 
 interface GameContextValue {
   state: GameState;
@@ -27,10 +27,10 @@ interface GameContextValue {
   onboardingVisible: boolean;
   completeOnboarding: () => void;
   restartOnboarding: () => void;
-  lifetimeUnlocked: boolean;
+  premiumUnlocked: boolean;
   premiumAccessState: PremiumAccessState;
-  purchaseLifetime: () => Promise<PurchaseOutcome>;
-  restoreLifetime: () => Promise<boolean>;
+  purchasePlan: (plan: PlanId) => Promise<PurchaseOutcome>;
+  restorePremium: () => Promise<boolean>;
 }
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -82,10 +82,10 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       onboardingVisible,
       completeOnboarding,
       restartOnboarding,
-      lifetimeUnlocked: premium.lifetimeUnlocked,
+      premiumUnlocked: premium.premiumUnlocked,
       premiumAccessState: premium.premiumAccessState,
-      purchaseLifetime: premium.purchaseLifetime,
-      restoreLifetime: premium.restoreLifetime,
+      purchasePlan: premium.purchasePlan,
+      restorePremium: premium.restorePremium,
     }),
     [
       game.state,
@@ -102,10 +102,10 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       onboardingVisible,
       completeOnboarding,
       restartOnboarding,
-      premium.lifetimeUnlocked,
+      premium.premiumUnlocked,
       premium.premiumAccessState,
-      premium.purchaseLifetime,
-      premium.restoreLifetime,
+      premium.purchasePlan,
+      premium.restorePremium,
     ],
   );
 

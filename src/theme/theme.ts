@@ -90,6 +90,35 @@ export const STAT_STYLES: Record<'health' | 'charm' | 'wits' | 'faith', StatStyl
   faith: { label: 'FAITH', icon: '✝', color: C.faith, dark: C.faithDark },
 };
 
+/**
+ * Shared beveled-parchment surfaces so every card/modal keeps the identical
+ * pixel-art frame. Spread into a style array to add margins/padding overrides.
+ */
+export const PANEL = {
+  /** In-tab parchment card (bio boxes, ambition, kin detail). */
+  parchCard: {
+    backgroundColor: C.parch,
+    borderWidth: 3,
+    borderColor: C.parchBorder,
+    borderTopColor: C.parchSl,
+    borderLeftColor: C.parchSl,
+    borderBottomColor: C.parchSd,
+    borderRightColor: C.parchSd,
+    padding: 9,
+  },
+  /** Full-screen modal frame (events, settings, shop, onboarding). */
+  parchModal: {
+    backgroundColor: C.parch,
+    borderWidth: 4,
+    borderColor: C.inkSoft,
+    borderTopColor: C.parchSl,
+    borderLeftColor: C.parchSl,
+    borderBottomColor: C.parchSd,
+    borderRightColor: C.parchSd,
+    padding: 14,
+  },
+} as const;
+
 export const TONE_STYLE = {
   good: { bg: C.goodBg, border: C.goodBorder, sd: '#bcd494', sl: '#fbfff0', tagColor: '#5a8a2a' },
   bad: { bg: C.badBg, border: C.badBorder, sd: '#f0b0b0', sl: '#fffafa', tagColor: C.bad },

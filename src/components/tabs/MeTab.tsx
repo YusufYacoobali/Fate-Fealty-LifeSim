@@ -2,7 +2,7 @@ import React from 'react';
 import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { StatBar } from '../ui/StatBar';
-import { C } from '@/theme/theme';
+import { C, PANEL } from '@/theme/theme';
 import { rankPortraitAsset, statIconAsset, traitIconAsset } from '@/assets/generatedAssets';
 
 interface StatVM {
@@ -145,7 +145,7 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
       <PixelText font="pixel" size={7} color={C.blueDeep} style={{ marginTop: 14, marginBottom: 8 }}>
         THY AMBITION
       </PixelText>
-      <View style={{ backgroundColor: C.parch, borderWidth: 3, borderColor: C.parchBorder, borderTopColor: C.parchSl, borderLeftColor: C.parchSl, borderBottomColor: C.parchSd, borderRightColor: C.parchSd, padding: 9 }}>
+      <View style={PANEL.parchCard}>
         {goal ? (
           <>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
@@ -207,7 +207,7 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
       </View>
 
       {/* bio */}
-      <View style={{ marginTop: 13, backgroundColor: C.parch, borderWidth: 3, borderColor: C.parchBorder, borderTopColor: C.parchSl, borderLeftColor: C.parchSl, borderBottomColor: C.parchSd, borderRightColor: C.parchSd, padding: 9 }}>
+      <View style={[PANEL.parchCard, { marginTop: 13 }]}>
         <PixelText font="body" size={16} color={C.textBrown}>
           {bio}
         </PixelText>

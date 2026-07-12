@@ -7,7 +7,8 @@ import {
   getPremiumStatus,
   mergeEntitlement,
   purchasePremium,
-  restorePremium,
+  restorePremium as restorePremiumPurchases,
+  PlanId,
   PurchaseOutcome,
 } from '@/services/purchases';
 
@@ -15,10 +16,11 @@ export type PremiumAccessState = 'loading' | 'active' | 'inactive' | 'unavailabl
 
 /**
  * Owns the Pro entitlement lifecycle. RevenueCat is the source of truth:
- * local state and app meta only mirror the latest confirmed `pro` entitlement.
+ * local state and app meta only mirror the latest confirmed `pro` entitlement,
+ * whether it was granted by a subscription or the Lifetime Pass.
  */
 export function usePremium(meta: AppMetaApi, loaded: boolean, dispatch: React.Dispatch<GameAction>) {
-  const [lifetimeUnlocked, setLifetimeUnlocked] = useState(false);
+  const [premiumUnlocked, setPremiumUnlocked] = useState(false);
   const [accessState, setAccessState] = useState<PremiumAccessState>('loading');
   const { metaRef, ready, update } = meta;
 
@@ -27,12 +29,12 @@ export function usePremium(meta: AppMetaApi, loaded: boolean, dispatch: React.Di
       const merged = mergeEntitlement(metaRef.current.lifetimeUnlocked, fresh);
       if (merged === null) {
         setAccessState('unavailable');
-        setLifetimeUnlocked((prev) => (prev ? false : prev));
+        setPremiumUnlocked((prev) => (prev ? false : prev));
         dispatch({ type: 'SET_LIFETIME_UNLOCKED', unlocked: false });
         return false;
       }
       setAccessState(merged ? 'active' : 'inactive');
-      setLifetimeUnlocked((prev) => (prev === merged ? prev : merged));
+      setPremiumUnlocked((prev) => (prev === merged ? prev : merged));
       if (metaRef.current.lifetimeUnlocked !== merged) {
         update({ lifetimeUnlocked: merged });
       }
@@ -59,16 +61,19 @@ export function usePremium(meta: AppMetaApi, loaded: boolean, dispatch: React.Di
     };
   }, [loaded, ready, applyEntitlement]);
 
-  const purchaseLifetime = useCallback(async (): Promise<PurchaseOutcome> => {
-    const { outcome, unlocked } = await purchasePremium();
-    if (outcome === 'purchased') applyEntitlement(unlocked);
-    return outcome;
-  }, [applyEntitlement]);
+  const purchasePlan = useCallback(
+    async (plan: PlanId): Promise<PurchaseOutcome> => {
+      const { outcome, unlocked } = await purchasePremium(plan);
+      if (outcome === 'purchased') applyEntitlement(unlocked);
+      return outcome;
+    },
+    [applyEntitlement],
+  );
 
-  const restoreLifetime = useCallback(async (): Promise<boolean> => {
-    const fresh = await restorePremium();
+  const restorePremium = useCallback(async (): Promise<boolean> => {
+    const fresh = await restorePremiumPurchases();
     return applyEntitlement(fresh);
   }, [applyEntitlement]);
 
-  return { lifetimeUnlocked, premiumAccessState: accessState, purchaseLifetime, restoreLifetime };
+  return { premiumUnlocked, premiumAccessState: accessState, purchasePlan, restorePremium };
 }

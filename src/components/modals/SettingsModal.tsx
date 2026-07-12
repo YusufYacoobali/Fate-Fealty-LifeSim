@@ -3,12 +3,12 @@ import { View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
 import { Difficulty, GameSettings } from '@/types/game';
-import { C } from '@/theme/theme';
+import { C, PANEL } from '@/theme/theme';
 import { ModalBackdrop } from './ModalBackdrop';
 
 interface Props {
   settings: GameSettings;
-  lifetimeUnlocked: boolean;
+  premiumUnlocked: boolean;
   onSetSettings: (patch: Partial<GameSettings>) => void;
   onLockedFeaturePress: () => void;
   onToggleAutoScroll: () => void;
@@ -45,7 +45,7 @@ function Pill({ label, color, bg, onPress }: { label: string; color: string; bg:
   return inner;
 }
 
-export function SettingsModal({ settings, lifetimeUnlocked, onSetSettings, onLockedFeaturePress, onToggleAutoScroll, onRestart, onRestartOnboarding, onClose, onOpenChronicle, onOpenShop }: Props) {
+export function SettingsModal({ settings, premiumUnlocked, onSetSettings, onLockedFeaturePress, onToggleAutoScroll, onRestart, onRestartOnboarding, onClose, onOpenChronicle, onOpenShop }: Props) {
   const cycleDifficulty = () => {
     const i = DIFFICULTIES.indexOf(settings.difficulty);
     onSetSettings({ difficulty: DIFFICULTIES[(i + 1) % DIFFICULTIES.length] });
@@ -53,7 +53,7 @@ export function SettingsModal({ settings, lifetimeUnlocked, onSetSettings, onLoc
 
   return (
     <ModalBackdrop zIndex={55}>
-      <View style={{ backgroundColor: C.parch, borderWidth: 4, borderColor: C.inkSoft, borderTopColor: C.parchSl, borderLeftColor: C.parchSl, borderBottomColor: C.parchSd, borderRightColor: C.parchSd, padding: 14 }}>
+      <View style={PANEL.parchModal}>
         <View style={{ backgroundColor: C.light, borderWidth: 3, borderColor: C.inkSoft, borderBottomColor: C.blue, borderRightColor: C.blue, paddingHorizontal: 8, paddingVertical: 6 }}>
           <PixelText font="pixel" size={9} color={C.white} style={{ textAlign: 'center' }}>
             ⚙️ SETTINGS
@@ -72,10 +72,10 @@ export function SettingsModal({ settings, lifetimeUnlocked, onSetSettings, onLoc
               Permadeath
             </PixelText>
             <Pill
-              label={lifetimeUnlocked ? (settings.permadeath ? 'ON' : 'OFF') : 'PRO'}
-              color={lifetimeUnlocked ? (settings.permadeath ? C.bad : C.faithDark) : C.purpleDark}
-              bg={lifetimeUnlocked ? C.white : C.purple}
-              onPress={lifetimeUnlocked ? () => onSetSettings({ permadeath: !settings.permadeath }) : onLockedFeaturePress}
+              label={premiumUnlocked ? (settings.permadeath ? 'ON' : 'OFF') : 'PRO'}
+              color={premiumUnlocked ? (settings.permadeath ? C.bad : C.faithDark) : C.purpleDark}
+              bg={premiumUnlocked ? C.white : C.purple}
+              onPress={premiumUnlocked ? () => onSetSettings({ permadeath: !settings.permadeath }) : onLockedFeaturePress}
             />
           </Row>
           <Row>

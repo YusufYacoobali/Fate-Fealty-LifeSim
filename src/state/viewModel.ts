@@ -3,15 +3,12 @@
  * UI components consume. Keeping this logic here keeps components dumb.
  */
 
-import { GameState, KinMember, StatKey, TraitDef } from '@/types/game';
+import { GameState, KinMember, STAT_KEYS } from '@/types/game';
 import { RANKS } from '@/data/ranks';
-import { traitById } from '@/data/traits';
 import { STAT_STYLES, TONE_STYLE, C } from '@/theme/theme';
 
-const STAT_ORDER: StatKey[] = ['health', 'charm', 'wits', 'faith'];
-
 export function selectStats(s: GameState) {
-  return STAT_ORDER.map((k) => ({ key: k, ...STAT_STYLES[k], val: s.stats[k] }));
+  return STAT_KEYS.map((k) => ({ key: k, ...STAT_STYLES[k], val: s.stats[k] }));
 }
 
 export function selectFeed(s: GameState) {
@@ -72,16 +69,9 @@ export function selectBio(s: GameState): string {
   return `${s.first} ${s.epithet}, a ${rank.key.toLowerCase()} of Swineford, ${s.age} winters old. Owns ${s.gold} gold, one goose, and a complicated history with apples.`;
 }
 
-export function selectLedger(s: GameState) {
-  return { income: s.income, expenses: s.expenses, gold: s.gold };
-}
-
 export function fullName(s: GameState): string {
   return `${s.first} ${s.epithet}`;
 }
 
-export function selectTraits(s: GameState): TraitDef[] {
-  return s.traits.map((id) => traitById(id)).filter((t): t is TraitDef => !!t);
-}
-
+export { traitsOf as selectTraits } from '@/engine/traitEngine';
 export { goalView as selectGoal } from '@/engine/goalEngine';

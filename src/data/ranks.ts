@@ -4,7 +4,7 @@ export interface RankDef {
   key: RankKey;
   short: string;
   portrait: string;
-  /** Lifetime Pass rank; free players stop before this. */
+  /** Premium rank; free players stop before this. */
   premium?: boolean;
   /** Hidden requirements for promotion INTO this rank (checked against state). */
   promote: {
@@ -18,7 +18,7 @@ export interface RankDef {
 
 /**
  * The visible class ladder. Free players climb PEASANT -> SQUIRE -> KNIGHT -> NOBLE.
- * Lifetime Pass owners can keep going to BARON -> MONARCH.
+ * Premium owners can keep going to BARON -> MONARCH.
  * Promotion is driven by hidden rankProgress plus strict gating requirements.
  */
 export const RANKS: RankDef[] = [

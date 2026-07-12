@@ -15,6 +15,8 @@ export type StatKey = 'health' | 'charm' | 'wits' | 'faith';
 
 export type Stats = Record<StatKey, number>;
 
+export const STAT_KEYS: StatKey[] = ['health', 'charm', 'wits', 'faith'];
+
 /** The visible class ladder. Index in RANKS == rankIdx in GameState. */
 export type RankKey = 'Peasant' | 'Squire' | 'Knight' | 'Noble' | 'Baron' | 'Monarch';
 
@@ -247,7 +249,7 @@ export type EventCategory =
 export interface GameEvent {
   id: string;
   category: EventCategory;
-  /** Lifetime Pass content; only eligible when lifetimeUnlocked is true. */
+  /** Premium content; only eligible when lifetimeUnlocked is true. */
   premium?: boolean;
   /** Part of a multi-node story arc (shares an arc id). */
   arc?: string;
@@ -371,7 +373,8 @@ export interface GameState {
   epitaph: string;
   heirContinued: boolean;
 
-  // --- lifetime pass ---
+  // --- premium entitlement (field name kept for save compatibility; granted
+  // by a subscription or the Lifetime Pass) ---
   lifetimeUnlocked: boolean;
 
   // --- meta ---

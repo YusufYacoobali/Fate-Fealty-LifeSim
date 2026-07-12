@@ -4,13 +4,12 @@
  * reputation, once-per-life flags, and weighting.
  */
 
-import { Choice, Condition, GameEvent, GameState, KinKind, PathKey, StatKey } from '@/types/game';
+import { Choice, Condition, GameEvent, GameState, KinKind, PathKey, STAT_KEYS } from '@/types/game';
 import { RANKS } from '@/data/ranks';
 import { ALL_EVENTS, EVENTS_BY_ID } from '@/content';
+import { countLivingKin, hasLivingKin } from './gameState';
 import { dominantPath } from './pathProgression';
 import { pickWeighted } from './random';
-
-const STAT_KEYS: StatKey[] = ['health', 'charm', 'wits', 'faith'];
 
 export function meetsCondition(s: GameState, c?: Condition): boolean {
   if (!c) return true;
@@ -52,13 +51,13 @@ export function meetsCondition(s: GameState, c?: Condition): boolean {
   }
   if (c.hasKinOfKind) {
     for (const kind of c.hasKinOfKind) {
-      if (!s.kin.some((k) => k.alive && k.kind === kind)) return false;
+      if (!hasLivingKin(s, kind)) return false;
     }
   }
   if (c.kinCountAtMost) {
     for (const kind of Object.keys(c.kinCountAtMost) as KinKind[]) {
       const cap = c.kinCountAtMost[kind];
-      if (cap != null && s.kin.filter((k) => k.alive && k.kind === kind).length > cap) return false;
+      if (cap != null && countLivingKin(s, kind) > cap) return false;
     }
   }
   if (c.custom && !c.custom(s)) return false;

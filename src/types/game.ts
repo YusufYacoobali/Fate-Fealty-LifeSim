@@ -1,10 +1,9 @@
 /**
  * Core type system for the Fate & Fealty engine.
  *
- * Design rule (from the engine spec): only FOUR stats are ever visible to the
- * player — health, charm, wits, faith. Everything else that gives the game depth
- * (path progress, reputation, memories, tags, active story arcs) is HIDDEN state
- * that quietly steers which events fire and how the life unfolds.
+ * Design rule: only FOUR character stats are visible — health, charm, wits,
+ * faith. The Holding has its own clearly separated management resources, while
+ * path progress, reputation, memories, tags, and active story arcs stay hidden.
  */
 
 // ---------------------------------------------------------------------------
@@ -48,6 +47,9 @@ export type Difficulty = 'Merciful' | 'Normal' | 'Brutal';
 
 export type Tone = 'good' | 'bad' | 'plain';
 
+export type FeedSource = 'player' | 'npc' | 'world';
+export type FeedFilter = 'all' | 'player' | 'world';
+
 export interface FeedEntry {
   id: number;
   age: number;
@@ -56,6 +58,9 @@ export interface FeedEntry {
   text: string;
   tone: Tone;
   traitId?: string;
+  /** Stable actor attribution prevents dead-player narration and enables filtering. */
+  actorId?: string;
+  source?: FeedSource;
 }
 
 // ---------------------------------------------------------------------------
@@ -101,20 +106,107 @@ export interface TraitDef {
 // Kin (family, spouse, children, friends, foes)
 // ---------------------------------------------------------------------------
 
-export type KinKind = 'mother' | 'father' | 'sibling' | 'spouse' | 'child' | 'friend' | 'foe' | 'liege';
+export type KinKind = 'mother' | 'father' | 'sibling' | 'spouse' | 'child' | 'friend' | 'foe' | 'liege' | 'acquaintance';
 
-export interface KinMember {
+export type GenderIdentity = 'woman' | 'man' | 'nonbinary' | 'unspecified';
+export type PronounId = 'she' | 'he' | 'they';
+export type AttractionPreference = 'women' | 'men' | 'any' | 'none';
+
+export interface PronounSet {
+  id: PronounId;
+  subject: 'she' | 'he' | 'they';
+  object: 'her' | 'him' | 'them';
+  possessive: 'her' | 'his' | 'their';
+}
+
+export interface OccupationState {
+  careerId: string | null;
+  experience: number;
+  performance: number;
+  workedThisYear: number;
+}
+
+export interface Debt {
+  id: string;
+  lenderId?: string;
+  principal: number;
+  interestRate: number;
+}
+
+export interface CharacterCore {
   id: string;
   name: string;
+  age: number;
+  alive: boolean;
+  gender: GenderIdentity;
+  pronouns: PronounSet;
+  attraction: AttractionPreference;
+  stats: Stats;
+  traits: string[];
+  gold: number;
+  rankIdx: number;
+  occupation: OccupationState;
+  debts: Debt[];
+}
+
+export interface KinMember extends CharacterCore {
   role: string;
   emoji: string;
   rel: number; // 0..100 relationship
-  age: number;
   trait: string;
   bio: string;
   kind: KinKind;
-  alive: boolean;
   isHeir?: boolean;
+  householdId?: string;
+  healthTags: string[];
+  memories: string[];
+}
+
+export type WorldCharacter = KinMember;
+
+export interface RelationshipPerspective {
+  affinity: number;
+  trust: number;
+  respect: number;
+  attraction: number;
+}
+
+export type RelationshipFlag = 'family' | 'spouse' | 'friend' | 'rival' | 'authority' | 'feud' | 'former_spouse';
+
+export interface Relationship {
+  id: string;
+  aId: string;
+  bId: string;
+  aToB: RelationshipPerspective;
+  bToA: RelationshipPerspective;
+  flags: RelationshipFlag[];
+  lastInteractionAge: number;
+  interactionsThisYear: number;
+  sharedMemories: string[];
+}
+
+export interface Household {
+  id: string;
+  memberIds: string[];
+  wealth: number;
+}
+
+export type RelationFilter = 'all' | 'family' | 'romance' | 'friends' | 'acquaintances' | 'rivals' | 'authority' | 'deceased';
+
+export interface WorldState {
+  relationships: Relationship[];
+  households: Household[];
+  relationFilter: RelationFilter;
+  feedFilter: FeedFilter;
+  proposalFromId: string | null;
+  recentNarrativeIds: string[];
+}
+
+export interface ActionClock {
+  used: number;
+  cap: number;
+  lifetimeUsed: number;
+  fullYears: number;
 }
 
 /**
@@ -135,6 +227,39 @@ export interface NewKinSpec {
 }
 
 // ---------------------------------------------------------------------------
+// Holding (rank-scaled land and household management)
+// ---------------------------------------------------------------------------
+
+export type HoldingResource = 'stores' | 'security' | 'loyalty';
+
+export type HoldingResources = Record<HoldingResource, number>;
+
+export interface HoldingState extends HoldingResources {
+  upgrades: string[];
+  /** Character age at which the most recent deliberate action was taken. */
+  lastActionAge: number | null;
+  /** Consecutive annual ticks with at least one resource below 15. */
+  criticalYears: number;
+}
+
+export interface HoldingActionDef {
+  id: string;
+  name: string;
+  icon: string;
+  desc: string;
+  minRankIdx: number;
+}
+
+export interface HoldingUpgradeDef {
+  id: string;
+  name: string;
+  icon: string;
+  desc: string;
+  price: number;
+  minRankIdx: number;
+}
+
+// ---------------------------------------------------------------------------
 // Effects & conditions (the data language events are written in)
 // ---------------------------------------------------------------------------
 
@@ -150,6 +275,8 @@ export interface Effects {
   reputation?: number;
   /** Hidden path progress to add. */
   path?: Partial<PathProgress>;
+  /** Visible Holding resource shifts. */
+  holding?: Partial<HoldingResources>;
   addTags?: string[];
   removeTags?: string[];
   /** Record a hidden memory. */
@@ -185,6 +312,8 @@ export interface Condition {
   minReputation?: number;
   maxReputation?: number;
   pathAtLeast?: Partial<PathProgress>;
+  holdingAtLeast?: Partial<HoldingResources>;
+  holdingAtMost?: Partial<HoldingResources>;
   /** Require at least one LIVING kin of each listed kind (e.g. a sibling). */
   hasKinOfKind?: KinKind[];
   /**
@@ -296,6 +425,24 @@ export interface ActivityDef {
   minAge?: number;
 }
 
+export type CareerFamily = 'agriculture' | 'craft' | 'trade' | 'church' | 'martial' | 'court' | 'outlaw';
+
+export interface CareerDef {
+  id: string;
+  family: CareerFamily;
+  title: string;
+  icon: string;
+  tier: number;
+  minAge: number;
+  minRankIdx: number;
+  minStats?: Partial<Stats>;
+  minReputation?: number;
+  wage: number;
+  healthRisk?: number;
+  promotesTo?: string;
+  desc: string;
+}
+
 export type ShopItemType = 'consumable' | 'perm';
 
 export interface ShopItem {
@@ -319,7 +466,7 @@ export interface GameSettings {
   haptics: boolean;
 }
 
-export type Tab = 'life' | 'do' | 'kin' | 'shop' | 'me';
+export type Tab = 'life' | 'do' | 'kin' | 'hold' | 'shop' | 'me';
 
 // ---------------------------------------------------------------------------
 // The full game state
@@ -329,6 +476,9 @@ export interface GameState {
   // --- identity ---
   first: string;
   epithet: string;
+  gender: GenderIdentity;
+  pronouns: PronounSet;
+  attraction: AttractionPreference;
 
   // --- core visible ---
   age: number;
@@ -350,9 +500,16 @@ export interface GameState {
 
   // --- relationships ---
   kin: KinMember[];
+  world: WorldState;
+
+  // --- time, career, economy ---
+  actionClock: ActionClock;
+  occupation: OccupationState;
+  debts: Debt[];
 
   // --- possessions ---
   inventory: string[];
+  holding: HoldingState;
 
   // --- log ---
   feed: FeedEntry[];

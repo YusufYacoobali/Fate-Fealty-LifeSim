@@ -12,6 +12,7 @@ import { addMemory, addMoney, addTag, pushFeed, removeTag } from './gameState';
 import { clamp } from './random';
 import { promote, demote } from './pathProgression';
 import { killKin as killKinMember, spawnKin } from './kinFactory';
+import { applyRelationshipShift } from './relationshipEngine';
 
 // Normal deeds earn rank slowly; explicit promotion-claim scenes keep full value.
 const RANK_PROGRESS_GAIN_MULTIPLIER = 0.65;
@@ -75,6 +76,14 @@ export function applyEffects(s: GameState, eff?: Effects): GameState {
     }
   }
 
+  // --- Holding resources (visible only inside the HOLD tab) ---
+  if (eff.holding) {
+    for (const key of ['stores', 'security', 'loyalty'] as const) {
+      const delta = eff.holding[key];
+      if (delta != null) s.holding[key] = clamp(s.holding[key] + delta);
+    }
+  }
+
   // --- tags ---
   if (eff.addTags) for (const t of eff.addTags) addTag(s, t);
   if (eff.removeTags) for (const t of eff.removeTags) removeTag(s, t);
@@ -85,7 +94,11 @@ export function applyEffects(s: GameState, eff?: Effects): GameState {
   // --- kin relationship ---
   if (eff.kinRel) {
     const k = s.kin.find((m) => m.id === eff.kinRel!.id);
-    if (k) k.rel = clamp(k.rel + eff.kinRel.delta);
+    if (k) {
+      const legacy = k.rel;
+      applyRelationshipShift(s, k.id, { affinity: eff.kinRel.delta }, { affinity: eff.kinRel.delta });
+      k.rel = clamp(legacy + eff.kinRel.delta);
+    }
   }
 
   // --- kin roster changes (new spouse/child, or a death) ---

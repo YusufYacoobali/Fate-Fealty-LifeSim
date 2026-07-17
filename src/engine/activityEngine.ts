@@ -15,6 +15,7 @@ import { checkLifeGoal } from './goalEngine';
 import { spawnKin } from './kinFactory';
 import { chance, pick } from './random';
 import { C } from '@/theme/theme';
+import { isIncapacitated } from './lifecycleEngine';
 
 /** Chance a tavern night yields a real drinking companion (adults only). */
 export const TAVERN_FRIEND_CHANCE = 0.12;
@@ -28,6 +29,29 @@ function cureIllness(s: GameState): void {
 }
 
 type Handler = (s: GameState) => void;
+
+const ACTIVITY_COSTS: Record<string, number> = {
+  tavern: 2, dice: 3, feast: 4, pilgrimage: 3, tournament: 5,
+  leech: 5, bathhouse: 3, herbalist: 4,
+};
+
+export interface ActivityAvailability {
+  available: boolean;
+  reason?: string;
+}
+
+export function activityAvailability(s: GameState, id: string): ActivityAvailability {
+  if (s.dead) return { available: false, reason: 'Thy life is ended' };
+  if (s.event) return { available: false, reason: 'Resolve the current event' };
+  if (s.actionClock.used >= s.actionClock.cap) return { available: false, reason: 'No actions remain this year' };
+  if (isIncapacitated(s)) return { available: false, reason: 'Imprisoned' };
+  const def = ACTIVITY_DEFS.find((activity) => activity.id === id);
+  if (!def) return { available: false, reason: 'Unknown activity' };
+  if (def.minAge != null && s.age < def.minAge) return { available: false, reason: `Requires age ${def.minAge}` };
+  const cost = ACTIVITY_COSTS[id] ?? 0;
+  if (s.gold < cost) return { available: false, reason: `Needs ${cost} gold` };
+  return { available: true };
+}
 
 function blocked(s: GameState, tag: string, text: string) {
   pushFeed(s, tag, C.amber, text, 'plain');

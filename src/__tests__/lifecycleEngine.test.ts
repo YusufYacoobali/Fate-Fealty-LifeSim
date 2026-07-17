@@ -80,12 +80,13 @@ describe('kin mortality', () => {
 });
 
 describe('divorce', () => {
-  it('removes the spouse from the household and clears the married tag', () => {
+  it('keeps an ex-spouse as a living character and clears the married tag', () => {
     const s = makeState();
     addTag(s, 'married');
     const spouse = spawnKin(s, { kind: 'spouse' });
     interactKin(s, spouse.id, 'divorce');
-    expect(s.kin.find((k) => k.id === spouse.id)!.alive).toBe(false);
+    expect(s.kin.find((k) => k.id === spouse.id)!.alive).toBe(true);
+    expect(s.kin.find((k) => k.id === spouse.id)!.kind).toBe('acquaintance');
     expect(s.tags).not.toContain('married');
     expect(s.tags).toContain('divorced');
   });

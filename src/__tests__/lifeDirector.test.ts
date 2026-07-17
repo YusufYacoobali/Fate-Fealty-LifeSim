@@ -21,6 +21,14 @@ describe('lifeDirector.ageUp', () => {
     expect(s.feed.length).toBeGreaterThan(before);
   });
 
+  it('runs neutral Holding maintenance for a skipped managed year', () => {
+    const s = makeState({ age: 6, lifetimeUnlocked: true });
+    ageUp(s);
+    expect(s.age).toBe(7);
+    expect(s.holding.stores).toBe(60);
+    expect(s.holding.security).toBe(60);
+  });
+
   it('is a no-op while an event popup is open or the player is dead', () => {
     const withEvent = makeState({ age: 5 });
     withEvent.event = { id: 'x', category: 'peasant', title: 't', text: 't', choices: [] };

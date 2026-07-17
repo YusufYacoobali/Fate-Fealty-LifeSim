@@ -18,6 +18,7 @@ import { chance } from './random';
 import { rollBonusFromTraits, grantAcquiredTraits } from './traitEngine';
 import { checkLifeGoal } from './goalEngine';
 import { C } from '@/theme/theme';
+import { checkDeath } from './deathEngine';
 
 function rollChance(s: GameState, ch: Choice): boolean {
   if (ch.successChance == null) return true;
@@ -57,6 +58,11 @@ export function applyChoice(s: GameState, event: GameEvent, ch: Choice): ChoiceR
 
   if (outcome) {
     applyEffects(s, outcome.effects);
+    if (s.dead || s.stats.health <= 0) {
+      checkDeath(s);
+      s.event = null;
+      return { openNow: null };
+    }
     pushFeed(
       s,
       outcome.tag ?? `AGE ${s.age} · CHOICE`,

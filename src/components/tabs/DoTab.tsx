@@ -3,18 +3,22 @@ import { Image, ScrollView, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
 import { ACTIVITY_DEFS, CATEGORIES } from '@/data/activities';
-import { ActivityCategory } from '@/types/game';
+import { ActivityCategory, GameState } from '@/types/game';
 import { C } from '@/theme/theme';
 import { ACTIVITY_ICONS } from '@/assets/generatedAssets';
+import { CareerPanel } from './career-panel';
+import { CareerAction } from '@/engine/careerEngine';
 
 interface Props {
   cat: ActivityCategory | 'all';
   age: number;
+  state: GameState;
   onCat: (c: ActivityCategory | 'all') => void;
   onActivity: (id: string) => void;
+  onCareer: (action: CareerAction, careerId?: string) => void;
 }
 
-export function DoTab({ cat, age, onCat, onActivity }: Props) {
+export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
   const activities = ACTIVITY_DEFS.filter((a) => cat === 'all' || a.cat === cat);
 
   return (
@@ -46,9 +50,12 @@ export function DoTab({ cat, age, onCat, onActivity }: Props) {
 
       {/* activity grid */}
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 11, paddingBottom: 7 }}>
+        {(cat === 'all' || cat === 'work') && <CareerPanel state={state} onAction={onCareer} />}
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
           {activities.map((a) => {
-            const locked = a.minAge != null && age < a.minAge;
+            const ageLocked = a.minAge != null && age < a.minAge;
+            const timeLocked = state.actionClock.used >= state.actionClock.cap;
+            const locked = ageLocked || timeLocked;
             return (
               <PixelButton
                 key={a.id}
@@ -83,7 +90,7 @@ export function DoTab({ cat, age, onCat, onActivity }: Props) {
                   {a.name}
                 </PixelText>
                 <PixelText font="body" size={13} color={locked ? C.bad : '#6a5a38'} style={{ marginTop: 4 }}>
-                  {locked ? `🔒 Age ${a.minAge}+` : a.desc}
+                  {timeLocked ? 'No actions remain — age up.' : ageLocked ? `🔒 Age ${a.minAge}+` : a.desc}
                 </PixelText>
               </PixelButton>
             );

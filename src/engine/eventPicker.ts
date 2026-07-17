@@ -49,6 +49,18 @@ export function meetsCondition(s: GameState, c?: Condition): boolean {
       if (v != null && s.paths[key] < v) return false;
     }
   }
+  if (c.holdingAtLeast) {
+    for (const key of ['stores', 'security', 'loyalty'] as const) {
+      const v = c.holdingAtLeast[key];
+      if (v != null && s.holding[key] < v) return false;
+    }
+  }
+  if (c.holdingAtMost) {
+    for (const key of ['stores', 'security', 'loyalty'] as const) {
+      const v = c.holdingAtMost[key];
+      if (v != null && s.holding[key] > v) return false;
+    }
+  }
   if (c.hasKinOfKind) {
     for (const kind of c.hasKinOfKind) {
       if (!hasLivingKin(s, kind)) return false;

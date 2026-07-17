@@ -52,6 +52,7 @@ export const KIN_KIND_ICONS: Record<KinKind, ImageSourcePropType> = {
   friend: require('../../assets/generated/kin-friend.png'),
   foe: require('../../assets/generated/kin-foe.png'),
   liege: require('../../assets/generated/kin-liege.png'),
+  acquaintance: require('../../assets/generated/kin-friend.png'),
 };
 
 export const KIN_ID_ICONS: Record<string, ImageSourcePropType> = {

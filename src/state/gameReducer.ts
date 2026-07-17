@@ -4,15 +4,19 @@
  * returns the new state. Engine functions mutate their working copy only.
  */
 
-import { GameEvent, GameSettings, GameState, ShopItem, Tab } from '@/types/game';
+import { AttractionPreference, FeedFilter, GameEvent, GameSettings, GameState, GenderIdentity, PronounSet, RelationFilter, ShopItem, Tab } from '@/types/game';
 import { ActivityCategory } from '@/types/game';
 import { cloneState, createLife } from '@/engine/gameState';
 import { ageUp } from '@/engine/lifeDirector';
 import { applyChoice } from '@/engine/storyGraph';
-import { doActivity } from '@/engine/activityEngine';
-import { buyItem } from '@/engine/shopEngine';
-import { interactKin, KinAction } from '@/engine/kinEngine';
+import { activityAvailability, doActivity } from '@/engine/activityEngine';
+import { buyItem, shopAvailability } from '@/engine/shopEngine';
+import { interactKin, KinAction, kinActionAvailability } from '@/engine/kinEngine';
 import { Choice } from '@/types/game';
+import { buyHoldingUpgrade, holdingActionAvailability, holdingUpgradeAvailability, manageHolding } from '@/engine/holdingEngine';
+import { resetActionClock, spendAction, timedActionAvailability } from '@/engine/actionClock';
+import { CareerAction, careerActionAvailability, performCareerAction } from '@/engine/careerEngine';
+import { checkDeath } from '@/engine/deathEngine';
 
 export type GameAction =
   | { type: 'HYDRATE'; state: GameState }
@@ -21,8 +25,13 @@ export type GameAction =
   | { type: 'DO_ACTIVITY'; id: string }
   | { type: 'BUY'; item: ShopItem }
   | { type: 'KIN_INTERACT'; id: string; action: KinAction }
+  | { type: 'MANAGE_HOLDING'; id: string }
+  | { type: 'BUY_HOLDING_UPGRADE'; id: string }
+  | { type: 'CAREER_ACTION'; action: CareerAction; careerId?: string }
   | { type: 'SET_TAB'; tab: Tab }
   | { type: 'SET_CAT'; cat: ActivityCategory | 'all' }
+  | { type: 'SET_REL_FILTER'; filter: RelationFilter }
+  | { type: 'SET_FEED_FILTER'; filter: FeedFilter }
   | { type: 'OPEN_KIN'; id: string }
   | { type: 'CLOSE_KIN' }
   | { type: 'OPEN_SETTINGS' }
@@ -38,6 +47,22 @@ export interface NewLifeOptions {
   firstName?: string;
   birthTraitId?: string;
   difficulty?: GameSettings['difficulty'];
+  gender?: GenderIdentity;
+  pronouns?: PronounSet;
+  attraction?: AttractionPreference;
+}
+
+function timed(
+  original: GameState,
+  localAvailable: (state: GameState) => boolean,
+  perform: (state: GameState) => GameState,
+): GameState {
+  const state = cloneState(original);
+  if (!timedActionAvailability(state).available || !localAvailable(state)) return state;
+  perform(state);
+  spendAction(state);
+  checkDeath(state);
+  return state;
 }
 
 function proLockedSettings(settings: GameSettings, lifetimeUnlocked: boolean): GameSettings {
@@ -51,7 +76,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
     case 'AGE_UP': {
       const s = cloneState(state);
-      return ageUp(s);
+      const aged = ageUp(s);
+      if (aged.age !== state.age) resetActionClock(aged);
+      return aged;
     }
 
     case 'CHOOSE': {
@@ -61,18 +88,31 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'DO_ACTIVITY': {
-      const s = cloneState(state);
-      return doActivity(s, action.id);
+      return timed(state, (s) => activityAvailability(s, action.id).available, (s) => doActivity(s, action.id));
     }
 
     case 'BUY': {
-      const s = cloneState(state);
-      return buyItem(s, action.item);
+      return timed(state, (s) => shopAvailability(s, action.item).available, (s) => buyItem(s, action.item));
     }
 
     case 'KIN_INTERACT': {
-      const s = cloneState(state);
-      return interactKin(s, action.id, action.action);
+      return timed(state, (s) => kinActionAvailability(s, action.id, action.action).available, (s) => interactKin(s, action.id, action.action));
+    }
+
+    case 'MANAGE_HOLDING': {
+      return timed(state, (s) => holdingActionAvailability(s, action.id).available, (s) => manageHolding(s, action.id));
+    }
+
+    case 'BUY_HOLDING_UPGRADE': {
+      return timed(state, (s) => holdingUpgradeAvailability(s, action.id).available, (s) => buyHoldingUpgrade(s, action.id));
+    }
+
+    case 'CAREER_ACTION': {
+      return timed(
+        state,
+        (s) => careerActionAvailability(s, action.action, action.careerId).available,
+        (s) => performCareerAction(s, action.action, action.careerId),
+      );
     }
 
     case 'SET_TAB': {
@@ -85,6 +125,19 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     case 'SET_CAT': {
       const s = cloneState(state);
       s.doCat = action.cat;
+      return s;
+    }
+
+    case 'SET_REL_FILTER': {
+      const s = cloneState(state);
+      s.world.relationFilter = action.filter;
+      s.selectedKinId = null;
+      return s;
+    }
+
+    case 'SET_FEED_FILTER': {
+      const s = cloneState(state);
+      s.world.feedFilter = action.filter;
       return s;
     }
 
@@ -139,12 +192,15 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         lifeNo: state.lifeNo + 1,
         firstName: opts.firstName,
         birthTraitId: opts.birthTraitId,
+        gender: opts.gender,
+        pronouns: opts.pronouns,
+        attraction: opts.attraction,
         lifetimeUnlocked: state.lifetimeUnlocked,
       });
     }
 
     case 'CONTINUE_AS_HEIR': {
-      // Carry a fraction of wealth/reputation to the next generation.
+      // Hereditary station: carry rank, estate, and part of its resources.
       const inheritGold = Math.floor(state.gold / 2);
       return createLife({
         settings: proLockedSettings(state.settings, state.lifetimeUnlocked),
@@ -154,6 +210,15 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           gold: inheritGold,
           reputation: Math.floor(state.reputation / 2),
           tags: state.tags.includes('founder') ? ['noble_blood'] : [],
+          rankIdx: state.rankIdx,
+          holding: {
+            stores: Math.floor(state.holding.stores * 0.75),
+            security: Math.floor(state.holding.security * 0.75),
+            loyalty: Math.floor(state.holding.loyalty * 0.75),
+            upgrades: [...state.holding.upgrades],
+            lastActionAge: null,
+            criticalYears: 0,
+          },
         },
       });
     }

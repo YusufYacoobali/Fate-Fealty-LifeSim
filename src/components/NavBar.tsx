@@ -14,12 +14,21 @@ interface NavDef {
 const NAV: NavDef[] = [
   { id: 'life', label: 'LIFE', sq: C.health, sqDark: C.healthDark },
   { id: 'do', label: 'DO', sq: C.charm, sqDark: C.charmDark },
-  { id: 'kin', label: 'KIN', sq: C.faith, sqDark: C.faithDark },
+  { id: 'kin', label: 'PEOPLE', sq: C.faith, sqDark: C.faithDark },
+  { id: 'hold', label: 'HOLD', sq: '#cda35f', sqDark: '#9a7333' },
   { id: 'shop', label: 'SHOP', sq: C.orange, sqDark: '#c97a1f' },
   { id: 'me', label: 'ME', sq: C.purple, sqDark: C.purpleDark },
 ];
 
-export function NavBar({ active, onTab }: { active: Tab; onTab: (t: Tab) => void }) {
+export function NavBar({
+  active,
+  onTab,
+  lockedTabs = {},
+}: {
+  active: Tab;
+  onTab: (t: Tab) => void;
+  lockedTabs?: Partial<Record<Tab, boolean>>;
+}) {
   return (
     <View
       style={{
@@ -27,20 +36,28 @@ export function NavBar({ active, onTab }: { active: Tab; onTab: (t: Tab) => void
         backgroundColor: C.blueDeep,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-around',
+        justifyContent: 'space-between',
         paddingHorizontal: 4,
         paddingBottom: 6,
       }}
     >
       {NAV.map((n) => {
         const on = active === n.id;
+        const locked = !!lockedTabs[n.id];
         return (
-          <Pressable key={n.id} onPress={() => onTab(n.id)} style={{ alignItems: 'center', paddingHorizontal: 6, paddingVertical: 4 }}>
+          <Pressable
+            key={n.id}
+            onPress={() => onTab(n.id)}
+            accessibilityRole="button"
+            accessibilityLabel={locked ? `${n.label} locked. Opens Royal Shop.` : n.label}
+            accessibilityState={{ disabled: false }}
+            style={{ flex: 1, alignItems: 'center', paddingHorizontal: 1, paddingVertical: 4 }}
+          >
             <View
               style={{
                 width: 18,
                 height: 18,
-                backgroundColor: on ? n.sq : '#3a6aa0',
+                backgroundColor: locked ? '#596b83' : on ? n.sq : '#3a6aa0',
                 borderBottomWidth: 2,
                 borderRightWidth: 2,
                 borderBottomColor: on ? n.sqDark : '#244a73',
@@ -49,9 +66,13 @@ export function NavBar({ active, onTab }: { active: Tab; onTab: (t: Tab) => void
                 borderColor: n.sq,
                 borderTopColor: on ? n.sq : 'transparent',
                 borderLeftColor: on ? n.sq : 'transparent',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
-            />
-            <PixelText font="pixel" size={6} color={on ? C.white : '#7fa8d0'} style={{ marginTop: 5 }}>
+            >
+              {locked && <PixelText font="pixel" size={6} color={C.charm}>P</PixelText>}
+            </View>
+            <PixelText font="pixel" size={6} color={locked ? C.charm : on ? C.white : '#7fa8d0'} style={{ marginTop: 5 }}>
               {n.label}
             </PixelText>
           </Pressable>

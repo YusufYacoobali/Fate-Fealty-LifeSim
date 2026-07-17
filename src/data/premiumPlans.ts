@@ -63,6 +63,7 @@ export const SHOP_PLAN_IDS: PlanId[] = ['annual', 'lifetime', 'monthly'];
 
 /** What the Pro entitlement unlocks, shown on every sales surface. */
 export const PREMIUM_BENEFITS = [
+  'HOLD: manage lands, buildings, and loyalty',
   'Baron and Monarch ranks',
   'Premium ruler events and story arcs',
   'Extra goals and deeds',

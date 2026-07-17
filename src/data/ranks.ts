@@ -49,14 +49,14 @@ export const RANKS: RankDef[] = [
   {
     key: 'Baron',
     short: 'BARON',
-    portrait: 'B',
+    portrait: '🏰',
     premium: true,
     promote: { minAge: 38, minGold: 260, progress: 100, stats: { charm: 84, wits: 76 } },
   },
   {
     key: 'Monarch',
     short: 'KING',
-    portrait: 'M',
+    portrait: '👑',
     premium: true,
     promote: { minAge: 50, minGold: 420, progress: 100, stats: { charm: 92, wits: 88, faith: 68 } },
   },

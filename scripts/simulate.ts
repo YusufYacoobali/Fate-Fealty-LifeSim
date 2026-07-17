@@ -3,13 +3,13 @@
  * asserts invariants. Run: npx tsx scripts/simulate.ts
  */
 import { createLife, cloneState } from '../src/engine/gameState';
-import { ageUp } from '../src/engine/lifeDirector';
 import { applyChoice } from '../src/engine/storyGraph';
-import { doActivity } from '../src/engine/activityEngine';
 import { isChoiceAvailable } from '../src/engine/eventPicker';
 import { ACTIVITY_DEFS } from '../src/data/activities';
 import { RANKS } from '../src/data/ranks';
 import { GameState } from '../src/types/game';
+import { gameReducer } from '../src/state/gameReducer';
+import { ENTRY_CAREERS } from '../src/data/careers';
 
 function randomChoice<T>(a: T[]): T {
   return a[Math.floor(Math.random() * a.length)];
@@ -26,6 +26,20 @@ function checkInvariants(s: GameState) {
   assert(s.gold >= 0, `negative gold: ${s.gold}`);
   assert(s.rankIdx >= 0 && s.rankIdx < RANKS.length, `rankIdx out of range: ${s.rankIdx}`);
   assert(s.age >= 0 && s.age < 200, `absurd age: ${s.age}`);
+  for (const k of ['stores', 'security', 'loyalty'] as const) {
+    assert(s.holding[k] >= 0 && s.holding[k] <= 100, `holding ${k} out of range: ${s.holding[k]}`);
+  }
+  assert(new Set(s.holding.upgrades).size === s.holding.upgrades.length, 'duplicate Holding upgrade');
+  assert(s.holding.lastActionAge == null || s.holding.lastActionAge <= s.age, 'Holding action recorded in the future');
+  assert(s.holding.criticalYears >= 0, 'negative Holding crisis streak');
+  assert(s.actionClock.used >= 0 && s.actionClock.used <= 24, `action clock out of range: ${s.actionClock.used}`);
+  assert(s.actionClock.cap === 24, `unexpected action cap: ${s.actionClock.cap}`);
+  assert(s.kin.filter((person) => person.alive).length <= 30, 'living world exceeded its soft cap');
+  for (const relationship of s.world.relationships) {
+    for (const perspective of [relationship.aToB, relationship.bToA]) {
+      for (const value of Object.values(perspective)) assert(value >= 0 && value <= 100, `relationship dimension out of range: ${value}`);
+    }
+  }
 }
 
 const LIVES = 500;
@@ -52,13 +66,19 @@ for (let i = 0; i < LIVES; i++) {
       s = cloneState(s);
       applyChoice(s, ev, choice);
     } else {
-      // Occasionally do a free activity, then age up.
-      if (Math.random() < 0.6) {
-        s = cloneState(s);
-        doActivity(s, randomChoice(ACTIVITY_DEFS).id);
+      // Spend a variable part of the yearly allowance, including work, then
+      // deliberately age up early or at the cap.
+      const actions = Math.floor(Math.random() * 7);
+      for (let action = 0; action < actions && !s.dead && !s.event; action++) {
+        if (!s.occupation.careerId && s.age >= 8 && Math.random() < 0.25) {
+          s = gameReducer(s, { type: 'CAREER_ACTION', action: 'apply', careerId: randomChoice(ENTRY_CAREERS).id });
+        } else if (s.occupation.careerId && Math.random() < 0.35) {
+          s = gameReducer(s, { type: 'CAREER_ACTION', action: 'work' });
+        } else {
+          s = gameReducer(s, { type: 'DO_ACTIVITY', id: randomChoice(ACTIVITY_DEFS).id });
+        }
       }
-      s = cloneState(s);
-      ageUp(s);
+      s = gameReducer(s, { type: 'AGE_UP' });
     }
     checkInvariants(s);
     if (s.age > maxAge) maxAge = s.age;

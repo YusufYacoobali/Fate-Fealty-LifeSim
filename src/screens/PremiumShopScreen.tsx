@@ -40,7 +40,7 @@ export function PremiumShopScreen({ unlocked, accessState, onPurchase, onRestore
         </PixelText>
         {!unlocked && (
           <PixelText font="body" size={16} color={C.textBrown} style={{ textAlign: 'center', marginTop: 6 }}>
-            Baron and Monarch await. Pick the pact that suits your reign.
+            Manage your own Holding, then rise to Baron and Monarch. Pick the pact that suits your reign.
           </PixelText>
         )}
       </View>

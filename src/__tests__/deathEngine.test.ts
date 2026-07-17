@@ -33,7 +33,7 @@ describe('deathEngine', () => {
 
   it('buildDeathSummary reports rank, gold and heirs', () => {
     const s = makeState({ gold: 42, deathCause: 'old age', epitaph: 'here lies a turnip' });
-    s.kin.push({ id: 'child1', name: 'Wat', role: 'Heir', emoji: '🧒', rel: 80, age: 4, trait: 'small', bio: '', kind: 'child', alive: true });
+    s.kin.push({ ...s.kin[0], id: 'child1', name: 'Wat', role: 'Heir', emoji: '🧒', rel: 80, age: 4, trait: 'small', bio: '', kind: 'child', alive: true });
     const sum = buildDeathSummary(s, 'Knight');
     expect(sum.rank).toBe('Knight');
     expect(sum.gold).toBe(42);

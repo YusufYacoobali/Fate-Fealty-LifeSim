@@ -298,8 +298,8 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     ageMin: 22,
     ranks: ['Noble'],
     choices: [
-      { label: 'Call it entertainment', outcome: { text: 'You declare it a new French fashion. No one knows enough French to disagree.', effects: { charm: 8, wits: 4, reputation: 3 }, tone: 'good' } },
-      { label: 'Blame the cook', outcome: { text: 'The cook bows and points out you ordered "something memorable." Treason by accuracy.', effects: { reputation: -4, faith: -2 }, tone: 'bad' } },
+      { label: 'Call it entertainment', outcome: { text: 'You declare it a new French fashion. No one knows enough French to disagree.', effects: { charm: 8, wits: 4, reputation: 3, holding: { stores: -5, loyalty: 5 } }, tone: 'good' } },
+      { label: 'Blame the cook', outcome: { text: 'The cook bows and points out you ordered "something memorable." Treason by accuracy.', effects: { reputation: -4, faith: -2, holding: { stores: -5, loyalty: -5 } }, tone: 'bad' } },
     ],
   },
   {

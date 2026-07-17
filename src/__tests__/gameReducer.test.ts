@@ -72,11 +72,12 @@ describe('gameReducer', () => {
   });
 
   it('turns permadeath off when Lifetime Pass access is removed', () => {
-    const s = gameReducer(makeState({ lifetimeUnlocked: true, settings: { autoScroll: true, difficulty: 'Normal', permadeath: true, haptics: false } }), {
+    const s = gameReducer(makeState({ lifetimeUnlocked: true, tab: 'hold', settings: { autoScroll: true, difficulty: 'Normal', permadeath: true, haptics: false } }), {
       type: 'SET_LIFETIME_UNLOCKED',
       unlocked: false,
     });
     expect(s.settings.permadeath).toBe(false);
+    expect(s.tab).toBe('hold');
   });
 
   it('NEW_LIFE with a blank name falls back to a random one', () => {
@@ -84,9 +85,10 @@ describe('gameReducer', () => {
     expect(s.first.length).toBeGreaterThan(0);
   });
 
-  it('CONTINUE_AS_HEIR carries forward half the gold', () => {
-    const s = gameReducer(makeState({ age: 50, gold: 80 }), { type: 'CONTINUE_AS_HEIR' });
+  it('CONTINUE_AS_HEIR carries forward half the gold and hereditary rank', () => {
+    const s = gameReducer(makeState({ age: 50, gold: 80, rankIdx: 2 }), { type: 'CONTINUE_AS_HEIR' });
     expect(s.age).toBe(0);
     expect(s.gold).toBe(8 + 40); // base starting gold + inherited half
+    expect(s.rankIdx).toBe(2);
   });
 });

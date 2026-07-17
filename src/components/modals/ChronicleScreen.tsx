@@ -53,7 +53,7 @@ export function ChronicleScreen({ progress, onClose }: Props) {
 
       <ScrollView contentContainerStyle={{ padding: 14, paddingBottom: 28 }}>
         {section === 'stats' && <StatsSection progress={progress} />}
-        {section === 'achievements' && <AchievementsSection unlocked={unlocked} lifetimeUnlocked={progress.lifetimeUnlocked} />}
+        {section === 'achievements' && <AchievementsSection unlocked={unlocked} progress={progress} />}
         {section === 'dynasty' && <DynastySection progress={progress} />}
       </ScrollView>
     </View>
@@ -89,8 +89,8 @@ function StatsSection({ progress }: { progress: ProgressSnapshot }) {
   );
 }
 
-function AchievementsSection({ unlocked, lifetimeUnlocked }: { unlocked: Set<string>; lifetimeUnlocked: boolean }) {
-  const all = ACHIEVEMENTS.filter((a) => !a.premium || lifetimeUnlocked);
+function AchievementsSection({ unlocked, progress }: { unlocked: Set<string>; progress: ProgressSnapshot }) {
+  const all = ACHIEVEMENTS.filter((a) => !a.premium || progress.lifetimeUnlocked);
   const earned = all.filter((a) => unlocked.has(a.id)).length;
   return (
     <View style={{ gap: 8 }}>
@@ -100,6 +100,7 @@ function AchievementsSection({ unlocked, lifetimeUnlocked }: { unlocked: Set<str
       {all.map((a) => {
         const has = unlocked.has(a.id);
         const hidden = a.secret && !has;
+        const counter = !hidden && !has && a.progress?.({ state: progress.currentState, stats: progress.stats, atDeath: progress.currentState.dead });
         return (
           <View
             key={a.id}
@@ -125,6 +126,7 @@ function AchievementsSection({ unlocked, lifetimeUnlocked }: { unlocked: Set<str
               <PixelText font="body" size={14} color={C.creamBlue} style={{ marginTop: 3 }}>
                 {hidden ? 'A deed yet to be discovered.' : a.desc}
               </PixelText>
+              {counter && <PixelText font="pixel" size={6} color={C.blue} style={{ marginTop: 4 }}>{Math.min(counter.current, counter.target)}/{counter.target}</PixelText>}
             </View>
             {has && (
               <PixelText font="pixel" size={8} color={C.faith}>

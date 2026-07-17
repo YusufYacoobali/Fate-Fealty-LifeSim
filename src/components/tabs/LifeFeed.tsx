@@ -3,6 +3,8 @@ import { Image, ScrollView, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { C } from '@/theme/theme';
 import { traitIconAsset } from '@/assets/generatedAssets';
+import { PixelButton } from '../ui/PixelButton';
+import { FeedFilter, FeedSource } from '@/types/game';
 
 interface FeedVM {
   id: number;
@@ -14,9 +16,10 @@ interface FeedVM {
   border: string;
   sd: string;
   sl: string;
+  source: FeedSource;
 }
 
-export function LifeFeed({ feed, autoScroll }: { feed: FeedVM[]; autoScroll: boolean }) {
+export function LifeFeed({ feed, autoScroll, filter, onFilter }: { feed: FeedVM[]; autoScroll: boolean; filter: FeedFilter; onFilter: (filter: FeedFilter) => void }) {
   const ref = useRef<ScrollView>(null);
 
   useEffect(() => {
@@ -36,6 +39,13 @@ export function LifeFeed({ feed, autoScroll }: { feed: FeedVM[]; autoScroll: boo
       <PixelText font="pixel" size={7} color={C.blue} style={{ textAlign: 'center', marginVertical: 3 }}>
         ~ THY LIFE SO FAR ~
       </PixelText>
+      <View style={{ flexDirection: 'row', gap: 5 }}>
+        {([['all', 'ALL'], ['player', 'MY LIFE'], ['world', 'WORLD']] as [FeedFilter, string][]).map(([id, label]) => (
+          <PixelButton key={id} bg={filter === id ? C.blue : C.lightFill} shadow={filter === id ? C.blueDark : C.paleEdge} onPress={() => onFilter(id)} style={{ flex: 1 }} innerStyle={{ paddingVertical: 6, alignItems: 'center' }}>
+            <PixelText font="pixel" size={6} color={filter === id ? C.white : C.blueDark}>{label}</PixelText>
+          </PixelButton>
+        ))}
+      </View>
       {feed.map((e) => {
         const traitIcon = e.traitId ? traitIconAsset(e.traitId) : undefined;
 

@@ -13,6 +13,7 @@ interface Props {
   income: number;
   expenses: number;
   inventory: string[];
+  actionAvailable: boolean;
   onBuy: (item: ShopItem) => void;
 }
 
@@ -29,7 +30,7 @@ function Ledger({ label, value, bg, border, fg, valFg }: { label: string; value:
   );
 }
 
-export function ShopTab({ gold, age, income, expenses, inventory, onBuy }: Props) {
+export function ShopTab({ gold, age, income, expenses, inventory, actionAvailable, onBuy }: Props) {
   const owned = inventory.map((id) => shopItemById(id)).filter(Boolean) as ShopItem[];
 
   return (
@@ -48,6 +49,7 @@ export function ShopTab({ gold, age, income, expenses, inventory, onBuy }: Props
         {SHOP_ITEMS.map((it) => {
           const isOwned = it.type === 'perm' && inventory.includes(it.id);
           const locked = it.minAge != null && age < it.minAge;
+          const unaffordable = gold < it.price;
           return (
             <PixelButton
               key={it.id}
@@ -56,7 +58,7 @@ export function ShopTab({ gold, age, income, expenses, inventory, onBuy }: Props
               light={C.parchSl}
               outline={C.parchBorder}
               onPress={() => onBuy(it)}
-              disabled={locked}
+              disabled={locked || isOwned || unaffordable || !actionAvailable}
               style={{ width: '48.5%', marginBottom: 8 }}
               innerStyle={{ padding: 8, minHeight: 96 }}
             >
@@ -66,7 +68,7 @@ export function ShopTab({ gold, age, income, expenses, inventory, onBuy }: Props
                 </View>
                 <View style={{ backgroundColor: isOwned ? C.faithDark : locked ? C.paleEdge : C.charm, borderWidth: 2, borderColor: C.inkSoft, paddingHorizontal: 5, paddingVertical: 3 }}>
                   <PixelText font="pixel" size={7} color={isOwned ? C.white : locked ? C.blueDark : '#3a2a08'}>
-                    {isOwned ? 'OWNED' : locked ? `AGE ${it.minAge}+` : `${it.price}g`}
+                    {isOwned ? 'OWNED' : !actionAvailable ? 'NO TIME' : locked ? `AGE ${it.minAge}+` : unaffordable ? 'TOO DEAR' : `${it.price}g`}
                   </PixelText>
                 </View>
               </View>
@@ -74,7 +76,7 @@ export function ShopTab({ gold, age, income, expenses, inventory, onBuy }: Props
                 {it.name}
               </PixelText>
               <PixelText font="body" size={13} color={locked ? C.bad : '#6a5a38'} style={{ marginTop: 4 }}>
-                {isOwned ? 'Owned - part of thy estate.' : locked ? `🔒 The merchant will not sell to a child.` : it.desc}
+                {isOwned ? 'Owned - part of thy estate.' : !actionAvailable ? 'Age up to act again.' : locked ? `🔒 The merchant will not sell to a child.` : unaffordable ? `Needs ${it.price}g.` : it.desc}
               </PixelText>
             </PixelButton>
           );

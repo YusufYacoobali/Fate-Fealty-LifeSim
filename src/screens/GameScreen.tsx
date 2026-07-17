@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useGame } from '@/state/GameContext';
 import {
@@ -25,6 +25,7 @@ import { DoTab } from '@/components/tabs/DoTab';
 import { KinTab } from '@/components/tabs/KinTab';
 import { ShopTab } from '@/components/tabs/ShopTab';
 import { MeTab } from '@/components/tabs/MeTab';
+import { HoldingTab } from '@/components/tabs/HoldingTab';
 import { EventModal } from '@/components/modals/EventModal';
 import { SettingsModal } from '@/components/modals/SettingsModal';
 import { DeathScreen } from '@/components/modals/DeathScreen';
@@ -90,25 +91,43 @@ export function GameScreen() {
 
         {/* content area */}
         <View style={{ flex: 1, position: 'relative' }}>
-          {state.tab === 'life' && <LifeFeed feed={selectFeed(state)} autoScroll={state.settings.autoScroll} />}
+          {state.tab === 'life' && <LifeFeed feed={selectFeed(state)} autoScroll={state.settings.autoScroll} filter={state.world.feedFilter} onFilter={(filter) => dispatch({ type: 'SET_FEED_FILTER', filter })} />}
           {state.tab === 'do' && (
             <DoTab
               cat={state.doCat}
               age={state.age}
+              state={state}
               onCat={(c) => dispatch({ type: 'SET_CAT', cat: c })}
               onActivity={(id) => {
                 haptic('light', buzz);
                 dispatch({ type: 'DO_ACTIVITY', id });
               }}
+              onCareer={(action, careerId) => dispatch({ type: 'CAREER_ACTION', action, careerId })}
             />
           )}
           {state.tab === 'kin' && (
             <KinTab
+              state={state}
               kin={selectKin(state)}
               detail={selectedKin(state)}
+              filter={state.world.relationFilter}
+              onFilter={(filter) => dispatch({ type: 'SET_REL_FILTER', filter })}
               onOpen={(id) => dispatch({ type: 'OPEN_KIN', id })}
               onBack={() => dispatch({ type: 'CLOSE_KIN' })}
               onInteract={(id, action) => dispatch({ type: 'KIN_INTERACT', id, action })}
+            />
+          )}
+          {state.tab === 'hold' && (
+            <HoldingTab
+              state={state}
+              onAction={(id) => {
+                haptic('medium', buzz);
+                dispatch({ type: 'MANAGE_HOLDING', id });
+              }}
+              onUpgrade={(id) => {
+                haptic('success', buzz);
+                dispatch({ type: 'BUY_HOLDING_UPGRADE', id });
+              }}
             />
           )}
           {state.tab === 'shop' && (
@@ -118,6 +137,7 @@ export function GameScreen() {
               income={state.income}
               expenses={state.expenses}
               inventory={state.inventory}
+              actionAvailable={state.actionClock.used < state.actionClock.cap}
               onBuy={(item) => {
                 haptic('medium', buzz);
                 dispatch({ type: 'BUY', item });
@@ -147,13 +167,30 @@ export function GameScreen() {
         {goal && !state.dead && <GoalBanner goal={goal} />}
         <AgeUpBar
           onAgeUp={() => {
-            haptic('light', buzz);
-            dispatch({ type: 'AGE_UP' });
+            const advance = () => {
+              haptic('light', buzz);
+              dispatch({ type: 'AGE_UP' });
+            };
+            const remaining = state.actionClock.cap - state.actionClock.used;
+            if (remaining > 0) {
+              Alert.alert('Age up early?', `${remaining} unused actions will be lost.`, [
+                { text: 'Stay this year', style: 'cancel' },
+                { text: 'Age up', onPress: advance },
+              ]);
+            } else advance();
           }}
           disabled={state.dead || !!state.event}
+          actionsUsed={state.actionClock.used}
+          actionCap={state.actionClock.cap}
         />
         <View style={{ backgroundColor: C.blueDeep, paddingBottom: bottomNavInset }}>
-          <NavBar active={state.tab} onTab={(t) => dispatch({ type: 'SET_TAB', tab: t })} />
+          <NavBar
+            active={state.tab}
+            lockedTabs={{}}
+            onTab={(t) => {
+              dispatch({ type: 'SET_TAB', tab: t });
+            }}
+          />
         </View>
 
         {/* overlays */}

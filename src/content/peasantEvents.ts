@@ -24,9 +24,9 @@ export const PEASANT_EVENTS: GameEvent[] = [
     ageMin: 8,
     ranks: ['Peasant', 'Squire'],
     choices: [
-      { label: 'Hunt it with a broom', outcome: { text: 'After an epic broom-duel, the rat fled. The village cheered. You bled slightly.', effects: { health: -4, charm: 6, gold: 3, reputation: 2 }, tone: 'good' } },
-      { label: 'Befriend it', outcome: { text: 'You named the rat Geoffrey. Geoffrey now eats your grain too. Worth it.', effects: { charm: 4, wits: -2 }, tone: 'plain' } },
-      { label: 'Blame Sir Quackbeard', outcome: { text: 'You blamed the goose. The goose knows. The goose will remember.', effects: { faith: -4, kinRel: { id: 'goose', delta: -10 } }, tone: 'bad' } },
+      { label: 'Hunt it with a broom', outcome: { text: 'After an epic broom-duel, the rat fled. The village cheered. You bled slightly.', effects: { health: -4, charm: 6, gold: 3, reputation: 2, holding: { stores: 4, security: 2 } }, tone: 'good' } },
+      { label: 'Befriend it', outcome: { text: 'You named the rat Geoffrey. Geoffrey now eats your grain too. Worth it.', effects: { charm: 4, wits: -2, holding: { stores: -8 } }, tone: 'plain' } },
+      { label: 'Blame Sir Quackbeard', outcome: { text: 'You blamed the goose. The goose knows. The goose will remember.', effects: { faith: -4, kinRel: { id: 'goose', delta: -10 }, holding: { stores: -5, loyalty: -3 } }, tone: 'bad' } },
     ],
   },
   {

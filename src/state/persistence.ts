@@ -105,6 +105,7 @@ export function normalizeGameState(parsed: GameState): GameState {
       stores: clampResource(saved?.stores, defaults.stores),
       security: clampResource(saved?.security, defaults.security),
       loyalty: clampResource(saved?.loyalty, defaults.loyalty),
+      population: Math.max(1, Math.floor(saved?.population ?? defaults.population ?? 18)),
       upgrades: Array.isArray(saved?.upgrades) ? [...saved.upgrades] : [],
       lastActionAge: typeof saved?.lastActionAge === 'number' ? saved.lastActionAge : null,
       criticalYears: typeof saved?.criticalYears === 'number' ? Math.max(0, saved.criticalYears) : 0,

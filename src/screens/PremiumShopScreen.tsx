@@ -17,22 +17,33 @@ interface Props {
   onClose: () => void;
 }
 
-/** Full-screen premium storefront: every plan, reachable any time from the game. */
+/** Full-screen premium storefront, reachable any time from the game. */
 export function PremiumShopScreen({ unlocked, accessState, onPurchase, onRestore, onClose }: Props) {
   return (
     <FullScreenPage
-      title="👑 ROYAL SHOP"
+      title="ROYAL SHOP"
       zIndex={75}
       headerRight={
         <TouchableOpacity onPress={onClose} accessibilityRole="button" accessibilityLabel="Close shop" style={{ padding: 4 }}>
           <PixelText font="pixel" size={10} color={C.cream}>
-            ✕
+            X
           </PixelText>
         </TouchableOpacity>
       }
     >
       <View style={{ alignItems: 'center', marginBottom: 12 }}>
-        <View style={{ width: 76, height: 76, backgroundColor: C.lightFill, borderWidth: 3, borderColor: C.inkSoft, alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+        <View
+          style={{
+            width: 76,
+            height: 76,
+            backgroundColor: C.lightFill,
+            borderWidth: 3,
+            borderColor: C.inkSoft,
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: 10,
+          }}
+        >
           <Image source={RANK_PORTRAITS.Monarch} resizeMode="contain" style={{ width: 66, height: 66 }} />
         </View>
         <PixelText font="pixel" size={11} color={C.blueDeep} style={{ textAlign: 'center' }}>
@@ -40,7 +51,7 @@ export function PremiumShopScreen({ unlocked, accessState, onPurchase, onRestore
         </PixelText>
         {!unlocked && (
           <PixelText font="body" size={16} color={C.textBrown} style={{ textAlign: 'center', marginTop: 6 }}>
-            Manage your own Holding, then rise to Baron and Monarch. Pick the pact that suits your reign.
+            Expand your holding into a realm, then rise to Baron and Monarch. Pick the pass that suits your reign.
           </PixelText>
         )}
       </View>

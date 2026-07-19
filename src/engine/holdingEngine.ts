@@ -25,6 +25,40 @@ export function isHoldingUpgradeActive(s: GameState, id: string): boolean {
   return !!def && ownsUpgrade(s, id) && s.rankIdx >= def.minRankIdx;
 }
 
+export function holdingPopulation(s: GameState): number {
+  return Math.max(1, Math.floor(s.holding.population ?? 18));
+}
+
+export function holdingPopulationCapacity(s: GameState): number {
+  return 30
+    + s.rankIdx * 18
+    + (isHoldingUpgradeActive(s, 'granary') ? 15 : 0)
+    + (isHoldingUpgradeActive(s, 'stewards_hall') ? 12 : 0);
+}
+
+export function holdingYearlyUpkeep(s: GameState): { stores: number; security: number } {
+  return {
+    stores: 8
+      - (isHoldingUpgradeActive(s, 'smokehouse') ? 2 : 0)
+      - (isHoldingUpgradeActive(s, 'granary') ? 2 : 0),
+    security: 6 - (isHoldingUpgradeActive(s, 'watchtower') ? 2 : 0),
+  };
+}
+
+export function holdingProsperityReward(s: GameState): number {
+  return 4
+    + 2 * s.rankIdx
+    + Math.floor(holdingPopulation(s) / 12)
+    + (isHoldingUpgradeActive(s, 'watermill') ? 8 : 0);
+}
+
+function adjustPopulation(s: GameState, delta: number): void {
+  s.holding.population = Math.max(
+    1,
+    Math.min(holdingPopulationCapacity(s), holdingPopulation(s) + delta),
+  );
+}
+
 function premiumGate(minRankIdx: number, s: GameState): boolean {
   return minRankIdx >= 4 && !s.lifetimeUnlocked;
 }
@@ -88,6 +122,7 @@ export function manageHolding(s: GameState, id: string): GameState {
     }
     case 'open_stores':
       applyEffects(s, { holding: { stores: -14, loyalty: 18 }, faith: 2, reputation: 3 });
+      adjustPopulation(s, 1);
       pushFeed(s, 'HOLDING · ALMS', C.faithDark, 'You open the stores to hungry hands. Supper is thin in your hall, but songs of your kindness travel far.', 'good');
       break;
     case 'sell_surplus': {
@@ -105,6 +140,7 @@ export function manageHolding(s: GameState, id: string): GameState {
     }
     case 'hold_feast':
       applyEffects(s, { holding: { stores: -12, loyalty: 20 }, gold: -10, charm: 5, reputation: 4 });
+      adjustPopulation(s, 2);
       pushFeed(s, 'HOLDING · FEAST', C.charmDark, 'Your tables groan with meat, bread, and competitive boasting. The people leave full and loudly loyal.', 'good');
       break;
     case 'muster_levy':
@@ -114,6 +150,7 @@ export function manageHolding(s: GameState, id: string): GameState {
     case 'royal_progress': {
       const storesCost = isHoldingUpgradeActive(s, 'royal_road') ? -5 : -10;
       applyEffects(s, { holding: { stores: storesCost, loyalty: 25 }, gold: -25, charm: 8, reputation: 6 });
+      adjustPopulation(s, 2);
       pushFeed(s, 'HOLDING · PROGRESS', C.purpleDark, 'You tour the realm beneath snapping banners. Roads empty of potholes moments before the royal carriage reaches them.', 'good');
       break;
     }
@@ -157,12 +194,15 @@ function lowestResource(s: GameState): HoldingResource {
 
 function firstCriticalWarning(s: GameState, lowest: HoldingResource): void {
   if (lowest === 'stores') {
+    adjustPopulation(s, -Math.max(2, Math.ceil(holdingPopulation(s) * 0.2)));
     applyEffects(s, { health: -8, holding: { loyalty: -5 } });
     pushFeed(s, 'HOLDING · HUNGER', C.bad, 'The stores run bare. Hunger creeps from cottage to hall, and patience thins with the pottage.', 'bad');
   } else if (lowest === 'security') {
+    adjustPopulation(s, -Math.max(1, Math.ceil(holdingPopulation(s) * 0.1)));
     applyEffects(s, { gold: -5, health: -4 });
     pushFeed(s, 'HOLDING · LAWLESS', C.bad, 'Thieves test every weak gate. They leave with five gold and your confidence in local policing.', 'bad');
   } else {
+    adjustPopulation(s, -Math.max(1, Math.ceil(holdingPopulation(s) * 0.15)));
     applyEffects(s, { gold: -5, reputation: -8 });
     pushFeed(s, 'HOLDING · MURMURS', C.bad, 'The people mutter openly and pay poorly. Five gold vanishes beneath a remarkably united shrug.', 'bad');
   }
@@ -170,10 +210,12 @@ function firstCriticalWarning(s: GameState, lowest: HoldingResource): void {
 
 function severeCrisis(s: GameState, lowest: HoldingResource): void {
   if (lowest === 'stores') {
+    adjustPopulation(s, -Math.max(3, Math.ceil(holdingPopulation(s) * 0.3)));
     applyEffects(s, { health: -25, holding: { stores: 25 - s.holding.stores, loyalty: -10 } });
     addMemory(s, 'holding_famine', 4);
     pushFeed(s, 'HOLDING · FAMINE', C.bad, 'Famine takes the land by the throat. Seed grain is broken open at last, saving some and weakening all.', 'bad');
   } else if (lowest === 'security') {
+    adjustPopulation(s, -Math.max(2, Math.ceil(holdingPopulation(s) * 0.2)));
     const active = s.holding.upgrades.filter((id) => isHoldingUpgradeActive(s, id));
     const destroyed = active.length ? pick(active) : null;
     if (destroyed) s.holding.upgrades = s.holding.upgrades.filter((id) => id !== destroyed);
@@ -182,6 +224,7 @@ function severeCrisis(s: GameState, lowest: HoldingResource): void {
     const lostText = destroyed ? ` The ${holdingUpgradeById(destroyed)?.name.toLowerCase()} is destroyed.` : '';
     pushFeed(s, 'HOLDING · DISASTER', C.bad, `Fire and raiders tear through the undefended holding.${lostText}`, 'bad');
   } else {
+    adjustPopulation(s, -Math.max(2, Math.ceil(holdingPopulation(s) * 0.25)));
     const loss = Math.floor(s.gold * 0.25);
     const wasRanked = s.rankIdx > 0;
     applyEffects(s, { gold: -loss, holding: { loyalty: 25 - s.holding.loyalty }, ...(s.rankIdx > 0 ? { demote: true } : { prison: true }) });
@@ -202,6 +245,7 @@ function severeCrisis(s: GameState, lowest: HoldingResource): void {
 export function tickHoldingYear(s: GameState): GameState {
   const outgoingAge = s.age - 1;
   if (outgoingAge < HOLDING_UNLOCK_AGE) return s;
+  adjustPopulation(s, 0);
 
   if (s.holding.lastActionAge !== outgoingAge) {
     applyEffects(s, {
@@ -213,17 +257,23 @@ export function tickHoldingYear(s: GameState): GameState {
     });
   }
 
-  const storesUpkeep = 8
-    - (isHoldingUpgradeActive(s, 'smokehouse') ? 2 : 0)
-    - (isHoldingUpgradeActive(s, 'granary') ? 2 : 0);
-  const securityUpkeep = 6 - (isHoldingUpgradeActive(s, 'watchtower') ? 2 : 0);
-  applyEffects(s, { holding: { stores: -storesUpkeep, security: -securityUpkeep } });
+  // Judge the year's result before ordinary upkeep so the visible 75 target is
+  // the real target. Upkeep becomes the starting pressure for the next year.
+  const lowest = Math.min(s.holding.stores, s.holding.security, s.holding.loyalty);
+  if (lowest >= 60) {
+    adjustPopulation(s, s.holding.stores >= 75 && s.holding.security >= 75 && s.holding.loyalty >= 75 ? 2 : 1);
+  } else if (lowest >= 15 && lowest < 25) {
+    adjustPopulation(s, -Math.max(1, Math.ceil(holdingPopulation(s) * 0.1)));
+  }
 
   if (s.holding.stores >= 75 && s.holding.security >= 75 && s.holding.loyalty >= 75) {
-    const reward = 4 + 2 * s.rankIdx + (isHoldingUpgradeActive(s, 'watermill') ? 8 : 0);
+    const reward = holdingProsperityReward(s);
     applyEffects(s, { gold: reward, reputation: 2 });
     pushFeed(s, `HOLDING · ${holdingTitle(s.rankIdx).toUpperCase()}`, C.good, `The holding flourishes. Full stores, safe roads, and loyal voices bring ${reward} gold to thy purse.`, 'good');
   }
+
+  const upkeep = holdingYearlyUpkeep(s);
+  applyEffects(s, { holding: { stores: -upkeep.stores, security: -upkeep.security } });
 
   if (Math.min(s.holding.stores, s.holding.security, s.holding.loyalty) < 15) {
     s.holding.criticalYears += 1;

@@ -175,8 +175,22 @@ describe('holding management', () => {
       holding: { stores: 90, security: 90, loyalty: 90, upgrades: ['watermill'], lastActionAge: 6, criticalYears: 0 },
     });
     tickHoldingYear(s);
-    expect(s.gold).toBe(118); // 4 + (3 * 2) + 8
+    expect(s.gold).toBe(119); // Base, rank, population, and Watermill rewards.
     expect(s.reputation).toBe(2);
+    expect(s.holding.population).toBe(20);
+  });
+
+  it('treats the visible 75 resource target as a flourishing year', () => {
+    const s = makeState({
+      age: 7,
+      rankIdx: 0,
+      gold: 100,
+      holding: { stores: 75, security: 75, loyalty: 75, population: 18, upgrades: [], lastActionAge: 6, criticalYears: 0 },
+    });
+    tickHoldingYear(s);
+    expect(s.gold).toBe(105);
+    expect(s.reputation).toBe(2);
+    expect(s.holding.population).toBe(20);
   });
 });
 
@@ -196,6 +210,7 @@ describe('holding succession and persistence', () => {
       stores: 60,
       security: 45,
       loyalty: 30,
+      population: 13,
       upgrades: ['fenced_field', 'watermill'],
       lastActionAge: null,
       criticalYears: 0,
@@ -223,6 +238,7 @@ describe('holding succession and persistence', () => {
       stores: 60,
       security: 60,
       loyalty: 60,
+      population: 18,
       upgrades: [],
       lastActionAge: null,
       criticalYears: 0,

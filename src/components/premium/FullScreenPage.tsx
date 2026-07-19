@@ -15,6 +15,10 @@ interface Props {
   children: React.ReactNode;
   /** Optional footer pinned under the scroll area (CTAs, skip links). */
   footer?: React.ReactNode;
+  /** Optional readable-width cap for body and footer content on large screens. */
+  contentMaxWidth?: number;
+  /** Horizontal/vertical padding around the scrollable body. */
+  contentPadding?: number;
 }
 
 /**
@@ -22,7 +26,15 @@ interface Props {
  * ModalBackdrop this owns the whole screen: no dimmed game behind it, so the
  * player's attention stays on the page.
  */
-export function FullScreenPage({ title, zIndex = 75, headerRight, children, footer }: Props) {
+export function FullScreenPage({
+  title,
+  zIndex = 75,
+  headerRight,
+  children,
+  footer,
+  contentMaxWidth,
+  contentPadding = 14,
+}: Props) {
   const insets = useSafeAreaInsets();
   const bottomInset = Math.max(insets.bottom, MIN_ANDROID_BOTTOM_NAV_GUARD);
 
@@ -44,8 +56,12 @@ export function FullScreenPage({ title, zIndex = 75, headerRight, children, foot
         </PixelText>
         {headerRight && <View style={{ position: 'absolute', right: 10 }}>{headerRight}</View>}
       </View>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 14, paddingBottom: 18 }}>
-        {children}
+      <ScrollView
+        style={{ flex: 1 }}
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={{ padding: contentPadding, paddingBottom: 18, alignItems: 'center' }}
+      >
+        <View style={{ width: '100%', maxWidth: contentMaxWidth }}>{children}</View>
       </ScrollView>
       {footer && (
         <View
@@ -57,7 +73,7 @@ export function FullScreenPage({ title, zIndex = 75, headerRight, children, foot
             borderTopColor: C.paleEdge,
           }}
         >
-          {footer}
+          <View style={{ width: '100%', maxWidth: contentMaxWidth, alignSelf: 'center' }}>{footer}</View>
         </View>
       )}
     </View>

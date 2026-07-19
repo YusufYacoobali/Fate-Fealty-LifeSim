@@ -15,6 +15,32 @@ export const UI_ICONS = {
   settings: require('../../assets/generated/ui-settings.png'),
 } as const satisfies Record<string, ImageSourcePropType>;
 
+export const FEATURE_ART = {
+  work: require('../../assets/generated/work-occupations-banner.png'),
+  holding: require('../../assets/generated/holding-overview-banner.png'),
+} as const satisfies Record<string, ImageSourcePropType>;
+
+export const CAREER_FAMILY_ART = {
+  agriculture: require('../../assets/generated/activity-fields.png'),
+  craft: require('../../assets/generated/activity-blacksmith.png'),
+  trade: require('../../assets/generated/activity-market.png'),
+  church: require('../../assets/generated/activity-church.png'),
+  martial: require('../../assets/generated/activity-train.png'),
+  court: require('../../assets/generated/shop-quill.png'),
+  outlaw: require('../../assets/generated/activity-poach.png'),
+} as const satisfies Record<string, ImageSourcePropType>;
+
+export const HOLDING_ACTION_ART = {
+  work_land: require('../../assets/generated/activity-fields.png'),
+  secure_bounds: require('../../assets/generated/activity-train.png'),
+  open_stores: require('../../assets/generated/shop-bread.png'),
+  sell_surplus: require('../../assets/generated/activity-market.png'),
+  collect_dues: require('../../assets/generated/shop-quill.png'),
+  hold_feast: require('../../assets/generated/activity-feast.png'),
+  muster_levy: require('../../assets/generated/activity-tournament.png'),
+  royal_progress: require('../../assets/generated/portrait-monarch.png'),
+} as const satisfies Record<string, ImageSourcePropType>;
+
 export const ACTIVITY_ICONS: Record<string, ImageSourcePropType> = {
   tavern: require('../../assets/generated/activity-tavern.png'),
   dice: require('../../assets/generated/activity-dice.png'),

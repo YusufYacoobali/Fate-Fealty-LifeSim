@@ -34,12 +34,14 @@ export function PlanPicker({ planIds, selected, onSelect, offers }: Props) {
           >
             <View
               style={{
-                backgroundColor: isSelected ? C.white : C.lightFill,
+                minHeight: 82,
+                backgroundColor: isSelected ? '#fff4c7' : C.lightFill,
                 borderWidth: 3,
                 borderColor: isSelected ? C.charmDark : C.paleEdge,
                 opacity: unavailable ? 0.45 : 1,
-                paddingHorizontal: 10,
-                paddingVertical: 9,
+                paddingHorizontal: 11,
+                paddingVertical: 11,
+                justifyContent: 'center',
               }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -50,12 +52,12 @@ export function PlanPicker({ planIds, selected, onSelect, offers }: Props) {
                     height: 14,
                     borderWidth: 2,
                     borderColor: isSelected ? C.charmDark : C.inkSoft,
-                    backgroundColor: C.white,
+                    backgroundColor: isSelected ? C.charm : C.white,
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
                 >
-                  {isSelected && <View style={{ width: 6, height: 6, backgroundColor: C.charmDark }} />}
+                  {isSelected && <View style={{ width: 7, height: 7, backgroundColor: C.charmDark }} />}
                 </View>
 
                 <View style={{ flex: 1 }}>

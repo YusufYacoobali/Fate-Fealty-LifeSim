@@ -215,6 +215,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
             stores: Math.floor(state.holding.stores * 0.75),
             security: Math.floor(state.holding.security * 0.75),
             loyalty: Math.floor(state.holding.loyalty * 0.75),
+            population: Math.max(1, Math.floor((state.holding.population ?? 18) * 0.75)),
             upgrades: [...state.holding.upgrades],
             lastActionAge: null,
             criticalYears: 0,

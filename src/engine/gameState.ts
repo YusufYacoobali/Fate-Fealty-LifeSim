@@ -130,6 +130,7 @@ export function createLife(opts: FreshLifeOptions = {}): GameState {
         stores: clamp(inherit.holding.stores),
         security: clamp(inherit.holding.security),
         loyalty: clamp(inherit.holding.loyalty),
+        population: Math.max(1, Math.floor(inherit.holding.population ?? 18)),
         upgrades: [...inherit.holding.upgrades],
         lastActionAge: null,
         criticalYears: 0,

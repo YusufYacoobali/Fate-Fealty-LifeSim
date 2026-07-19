@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, View } from 'react-native';
+import { View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useGame } from '@/state/GameContext';
 import {
@@ -30,6 +30,7 @@ import { EventModal } from '@/components/modals/EventModal';
 import { SettingsModal } from '@/components/modals/SettingsModal';
 import { DeathScreen } from '@/components/modals/DeathScreen';
 import { ReviewPrompt } from '@/components/modals/ReviewPrompt';
+import { ShopPromoPrompt } from '@/components/modals/ShopPromoPrompt';
 import { CharacterCreation } from '@/components/modals/CharacterCreation';
 import { AchievementToast } from '@/components/modals/AchievementToast';
 import { ChronicleScreen } from '@/components/modals/ChronicleScreen';
@@ -45,6 +46,9 @@ export function GameScreen() {
     dispatch,
     reviewVisible,
     resolveReview,
+    shopPromoVisible,
+    shopPromoMessageIndex,
+    resolveShopPromo,
     creating,
     requestNewLife,
     createCharacter,
@@ -167,17 +171,8 @@ export function GameScreen() {
         {goal && !state.dead && <GoalBanner goal={goal} />}
         <AgeUpBar
           onAgeUp={() => {
-            const advance = () => {
-              haptic('light', buzz);
-              dispatch({ type: 'AGE_UP' });
-            };
-            const remaining = state.actionClock.cap - state.actionClock.used;
-            if (remaining > 0) {
-              Alert.alert('Age up early?', `${remaining} unused actions will be lost.`, [
-                { text: 'Stay this year', style: 'cancel' },
-                { text: 'Age up', onPress: advance },
-              ]);
-            } else advance();
+            haptic('light', buzz);
+            dispatch({ type: 'AGE_UP' });
           }}
           disabled={state.dead || !!state.event}
           actionsUsed={state.actionClock.used}
@@ -244,6 +239,25 @@ export function GameScreen() {
         {reviewVisible && !state.dead && !state.event && !state.settingsOpen && !creating && (
           <ReviewPrompt onResolved={resolveReview} />
         )}
+        {shopPromoVisible &&
+          !reviewVisible &&
+          !state.dead &&
+          !state.event &&
+          !state.settingsOpen &&
+          !creating &&
+          !onboardingVisible &&
+          !chronicleOpen &&
+          !cartOpen && (
+            <ShopPromoPrompt
+              messageIndex={shopPromoMessageIndex}
+              onExplore={() => {
+                haptic('light', buzz);
+                resolveShopPromo();
+                setCartOpen(true);
+              }}
+              onDismiss={resolveShopPromo}
+            />
+          )}
         {chronicleOpen && <ChronicleScreen progress={getProgress()} onClose={() => setChronicleOpen(false)} />}
         {cartOpen && (
           <PremiumShopScreen

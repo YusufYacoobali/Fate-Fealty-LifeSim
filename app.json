@@ -4,7 +4,7 @@
     "slug": "medieval-life-simulator",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon/icon_ios.png",
+    "icon": "./assets/icon/icon-ios.png",
     "newArchEnabled": true,
     "userInterfaceStyle": "light",
     "scheme": "fateandfealty",
@@ -19,7 +19,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.yacoobali.med",
       "appStoreUrl": "https://apps.apple.com/app/id6786423727",
-      "icon": "./assets/icon/icon_ios.png"
+      "icon": "./assets/icon/icon-ios.png"
     },
     "android": {
       "package": "com.yacoobali.med",

@@ -2,8 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 /**
  * App-level metadata that lives ACROSS individual lives (the per-life save is
- * separate). This is where we keep the cumulative entry counter that drives the
- * review prompt and the flags that stop us nagging or double-scheduling.
+ * separate). This is where we keep the cumulative entry counter that drives
+ * engagement prompts and the flags that stop us nagging or double-scheduling.
  */
 /** Lifetime aggregates accumulated across every life played. */
 export interface LifetimeStats {
@@ -45,6 +45,10 @@ export interface AppMeta {
   totalEntries: number;
   /** True once we've shown the "are you enjoying it?" prompt (shown at most once). */
   reviewPrompted: boolean;
+  /** Cumulative entry position where the recurring shop promo was last shown. */
+  shopPromoLastEntry: number;
+  /** Number of shop promos shown, used to rotate the playful message. */
+  shopPromoCount: number;
   /** True once we've scheduled the recurring reminder. */
   notificationsScheduled: boolean;
   /** True if the user declined notification permission (don't keep asking). */
@@ -66,6 +70,8 @@ export interface AppMeta {
 export const DEFAULT_META: AppMeta = {
   totalEntries: 0,
   reviewPrompted: false,
+  shopPromoLastEntry: 0,
+  shopPromoCount: 0,
   notificationsScheduled: false,
   notificationsDenied: false,
   onboarded: false,

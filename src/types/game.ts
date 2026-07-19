@@ -235,6 +235,8 @@ export type HoldingResource = 'stores' | 'security' | 'loyalty';
 export type HoldingResources = Record<HoldingResource, number>;
 
 export interface HoldingState extends HoldingResources {
+  /** People living on the estate. Optional only for compatibility with old saves. */
+  population?: number;
   upgrades: string[];
   /** Character age at which the most recent deliberate action was taken. */
   lastActionAge: number | null;

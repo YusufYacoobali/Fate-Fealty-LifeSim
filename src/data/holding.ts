@@ -16,6 +16,7 @@ export function freshHolding(): HoldingState {
     stores: 60,
     security: 60,
     loyalty: 60,
+    population: 18,
     upgrades: [],
     lastActionAge: null,
     criticalYears: 0,
@@ -23,14 +24,14 @@ export function freshHolding(): HoldingState {
 }
 
 export const HOLDING_ACTIONS: HoldingActionDef[] = [
-  { id: 'work_land', name: 'WORK THE LAND', icon: '🌾', desc: 'Fill the stores through honest toil.', minRankIdx: 0 },
-  { id: 'secure_bounds', name: 'SECURE BOUNDS', icon: '🛡️', desc: 'Mend fences and guard the roads.', minRankIdx: 0 },
-  { id: 'open_stores', name: 'OPEN THE STORES', icon: '🍞', desc: 'Feed thy people and earn their love.', minRankIdx: 0 },
-  { id: 'sell_surplus', name: 'SELL SURPLUS', icon: '🪙', desc: 'Turn a full storehouse into coin.', minRankIdx: 1 },
-  { id: 'collect_dues', name: 'COLLECT DUES', icon: '📜', desc: 'Demand the coin owed to thy station.', minRankIdx: 2 },
-  { id: 'hold_feast', name: 'HOLD A FEAST', icon: '🍗', desc: 'Win loyalty with a groaning table.', minRankIdx: 3 },
-  { id: 'muster_levy', name: 'MUSTER THE LEVY', icon: '⚔️', desc: 'Call the barony to arms.', minRankIdx: 4 },
-  { id: 'royal_progress', name: 'ROYAL PROGRESS', icon: '👑', desc: 'Tour the realm and be seen to rule.', minRankIdx: 5 },
+  { id: 'work_land', name: 'WORK THE LAND', icon: '🌾', desc: 'Gain 22 Stores. Costs 4 Health.', minRankIdx: 0 },
+  { id: 'secure_bounds', name: 'SECURE BOUNDS', icon: '🛡️', desc: 'Gain 20 Security. Costs 3 Health.', minRankIdx: 0 },
+  { id: 'open_stores', name: 'OPEN THE STORES', icon: '🍞', desc: 'Spend 14 Stores. Gain 18 Loyalty and attract people.', minRankIdx: 0 },
+  { id: 'sell_surplus', name: 'SELL SURPLUS', icon: '🪙', desc: 'Spend 18 Stores and turn the harvest into gold.', minRankIdx: 1 },
+  { id: 'collect_dues', name: 'COLLECT DUES', icon: '📜', desc: 'Collect gold now, but lose Loyalty and reputation.', minRankIdx: 2 },
+  { id: 'hold_feast', name: 'HOLD A FEAST', icon: '🍗', desc: 'Spend Stores and gold to gain Loyalty, Charm, and people.', minRankIdx: 3 },
+  { id: 'muster_levy', name: 'MUSTER THE LEVY', icon: '⚔️', desc: 'Trade Stores and Loyalty for a large Security gain.', minRankIdx: 4 },
+  { id: 'royal_progress', name: 'ROYAL PROGRESS', icon: '👑', desc: 'Spend gold and Stores to gain Loyalty and reputation.', minRankIdx: 5 },
 ];
 
 export const HOLDING_UPGRADES: HoldingUpgradeDef[] = [

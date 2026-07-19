@@ -51,6 +51,14 @@ describe('careers and economy', () => {
     expect(state.actionClock.used).toBe(2);
   });
 
+  it('does not leave occupations available after all yearly actions are spent', () => {
+    const fullClock = { used: 24, cap: 24, lifetimeUsed: 24, fullYears: 1 };
+    const state = makeState({ age: 18, actionClock: fullClock });
+    const after = gameReducer(state, { type: 'CAREER_ACTION', action: 'apply', careerId: 'farmhand' });
+    expect(after.occupation.careerId).toBeNull();
+    expect(after.actionClock.used).toBe(24);
+  });
+
   it('tracks borrowing and repayment without allowing free invalid retries', () => {
     let state = makeState({ age: 18, gold: 20 });
     state = gameReducer(state, { type: 'CAREER_ACTION', action: 'borrow' });

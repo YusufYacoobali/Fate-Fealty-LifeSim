@@ -1,10 +1,6 @@
 /**
- * Premium plan catalog: display copy, fallback prices, and which plans each
- * sales surface shows. Live store prices come from RevenueCat at runtime; the
- * fallback keeps the paywall showing real numbers while prices load (or when
- * running without a store, e.g. Expo Go).
- *
- * Pure data — adding a plan or reordering a surface is an edit here only.
+ * Premium plan catalog. Live store prices come from RevenueCat at runtime.
+ * Fallback prices keep the paywall useful while prices load or in Expo Go.
  */
 
 import { PlanId } from '@/services/purchasesLogic';
@@ -14,15 +10,10 @@ export type { PlanId };
 export interface PremiumPlan {
   id: PlanId;
   name: string;
-  /** Shown when the store hasn't supplied a localized price (yet). */
   fallbackPrice: string;
-  /** Billing cadence, e.g. "per year". */
   period: string;
-  /** One-line sell under the plan name. */
   blurb: string;
-  /** Attention ribbon, e.g. "BEST VALUE". */
   badge?: string;
-  /** Renewal/ownership small print shown under the CTA for this plan. */
   ctaNote: string;
 }
 
@@ -33,7 +24,7 @@ export const PREMIUM_PLANS: Record<PlanId, PremiumPlan> = {
     fallbackPrice: '$9.99',
     period: 'per year',
     blurb: 'Under $0.84 a month.',
-    badge: 'BEST VALUE · SAVE 72%',
+    badge: 'BEST VALUE | SAVE 72%',
     ctaNote: 'Renews yearly. Cancel anytime.',
   },
   monthly: {
@@ -61,12 +52,28 @@ export const PAYWALL_PLAN_IDS: PlanId[] = ['annual', 'monthly'];
 /** The premium shop: everything, yearly first, lifetime as the anchor. */
 export const SHOP_PLAN_IDS: PlanId[] = ['annual', 'lifetime', 'monthly'];
 
-/** What the Pro entitlement unlocks, shown on every sales surface. */
-export const PREMIUM_BENEFITS = [
-  'HOLD: manage lands, buildings, and loyalty',
-  'Baron and Monarch ranks',
-  'Premium ruler events and story arcs',
-  'Extra goals and deeds',
-  "Permadeath off: death isn't the end",
-  'All future premium chapters',
+export const PREMIUM_BENEFIT_DETAILS = [
+  {
+    title: 'EXPAND THY HOLDING',
+    body: 'Unlock baronial and royal estate orders, buildings, and rewards.',
+  },
+  {
+    title: 'REACH THE CROWN',
+    body: 'Continue beyond Noble to Baron and Monarch with new challenges.',
+  },
+  {
+    title: 'LIVE MORE STORIES',
+    body: 'Unlock premium ruler events, story arcs, goals, and deeds.',
+  },
+  {
+    title: 'KEEP A FAVOURITE LIFE',
+    body: 'Turn off permadeath when you want the adventure to continue.',
+  },
+  {
+    title: 'GET FUTURE CHAPTERS',
+    body: 'Every future premium chapter is included while you have access.',
+  },
 ] as const;
+
+/** Compact copy retained for content checks and any small sales surface. */
+export const PREMIUM_BENEFITS = PREMIUM_BENEFIT_DETAILS.map((benefit) => `${benefit.title}: ${benefit.body}`);

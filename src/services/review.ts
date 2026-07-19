@@ -1,7 +1,13 @@
 import { Linking, Platform } from 'react-native';
 import * as StoreReview from 'expo-store-review';
 
-export { REVIEW_ENTRY_THRESHOLD, shouldPromptReview, entriesDelta } from './reviewLogic';
+export {
+  REVIEW_ENTRY_THRESHOLD,
+  REVIEW_OUTCOME_LOOKBACK,
+  shouldPromptReview,
+  hasRecentGoodOutcome,
+  entriesDelta,
+} from './reviewLogic';
 
 /** The package id from app.json — used to build a Play Store fallback URL. */
 const ANDROID_PACKAGE = 'com.yacoobali.med';

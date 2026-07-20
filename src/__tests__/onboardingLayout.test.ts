@@ -7,9 +7,8 @@ function rankStripWidth(width: number, height: number): number {
 }
 
 describe('onboardingLayout', () => {
-  it('keeps the paywall attached as the final page of free onboarding', () => {
-    expect(onboardingPages(false)).toEqual(['hook', 'lessons', 'destiny', 'paywall']);
-    expect(onboardingPages(true)).toEqual(['hook', 'lessons', 'destiny']);
+  it('always keeps the paywall attached as the final onboarding page', () => {
+    expect(onboardingPages()).toEqual(['hook', 'lessons', 'destiny', 'paywall']);
   });
 
   it.each([

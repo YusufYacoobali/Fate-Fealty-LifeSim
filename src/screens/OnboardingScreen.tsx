@@ -60,10 +60,10 @@ interface Props {
 
 export type OnboardingPage = 'hook' | 'lessons' | 'destiny' | 'paywall';
 
-const FREE_ONBOARDING_PAGES: OnboardingPage[] = ['hook', 'lessons', 'destiny', 'paywall'];
+const ONBOARDING_PAGES: OnboardingPage[] = ['hook', 'lessons', 'destiny', 'paywall'];
 
-export function onboardingPages(premiumUnlocked: boolean): OnboardingPage[] {
-  return premiumUnlocked ? FREE_ONBOARDING_PAGES.slice(0, -1) : [...FREE_ONBOARDING_PAGES];
+export function onboardingPages(): OnboardingPage[] {
+  return [...ONBOARDING_PAGES];
 }
 
 export interface OnboardingLayout {
@@ -312,7 +312,7 @@ function DestinyPage({ compact }: { compact: boolean }) {
 export function OnboardingScreen({ premiumUnlocked, accessState, onPurchase, onRestore, onDone }: Props) {
   const { width, height } = useWindowDimensions();
   const layout = onboardingLayout(width, height);
-  const pages = onboardingPages(premiumUnlocked);
+  const pages = onboardingPages();
   const [index, setIndex] = useState(0);
   const [restoring, setRestoring] = useState(false);
   const page = pages[Math.min(index, pages.length - 1)];
@@ -339,7 +339,9 @@ export function OnboardingScreen({ premiumUnlocked, accessState, onPurchase, onR
           <PixelText font="body" size={14} color={C.creamBlue}>{restoring ? 'Restoring...' : 'Restore purchases'}</PixelText>
         </TouchableOpacity>
         <TouchableOpacity onPress={onDone} style={{ padding: 7 }}>
-          <PixelText font="body" size={14} color={C.creamBlue}>Continue free &gt;</PixelText>
+          <PixelText font="body" size={14} color={C.creamBlue}>
+            {premiumUnlocked ? 'Continue >' : 'Continue free >'}
+          </PixelText>
         </TouchableOpacity>
       </View>
     ) : (

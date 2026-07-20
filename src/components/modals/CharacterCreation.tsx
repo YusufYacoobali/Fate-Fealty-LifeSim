@@ -22,6 +22,7 @@ interface Props {
 
 const DIFFICULTIES: Difficulty[] = ['Merciful', 'Normal', 'Brutal'];
 const SURPRISE = '__surprise__';
+export const DEFAULT_CHARACTER_GENDER: GenderIdentity = 'man';
 const GENDERS: { id: GenderIdentity; label: string }[] = [
   { id: 'woman', label: 'WOMAN' }, { id: 'man', label: 'MAN' },
 ];
@@ -41,7 +42,7 @@ export function CharacterCreation({ initialDifficulty, premiumUnlocked, onBegin,
   const [name, setName] = useState(() => pick(FIRST_NAMES));
   const [traitId, setTraitId] = useState<string>(SURPRISE);
   const [difficulty, setDifficulty] = useState<Difficulty>(initialDifficulty);
-  const [gender, setGender] = useState<GenderIdentity>('woman');
+  const [gender, setGender] = useState<GenderIdentity>(DEFAULT_CHARACTER_GENDER);
 
   const traits = birthTraits();
   const selectedTrait = traits.find((t) => t.id === traitId) ?? null;

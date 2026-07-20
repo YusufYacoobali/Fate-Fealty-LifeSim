@@ -1,6 +1,10 @@
-import { characterCreationBottomPadding } from '@/components/modals/CharacterCreation';
+import { characterCreationBottomPadding, DEFAULT_CHARACTER_GENDER } from '@/components/modals/CharacterCreation';
 
 describe('character creation layout', () => {
+  it('defaults new characters to Man', () => {
+    expect(DEFAULT_CHARACTER_GENDER).toBe('man');
+  });
+
   it('adds the Android navigation guard below the final button', () => {
     expect(characterCreationBottomPadding(0, 40)).toBe(68);
   });

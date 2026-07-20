@@ -39,6 +39,19 @@ export const CAREER_FAMILY_ART = {
   outlaw: require('../../assets/generated/activity-poach.png'),
 } as const satisfies Record<string, ImageSourcePropType>;
 
+export const CAREER_ACTION_ART = {
+  work: require('../../assets/generated/career-action-work.png'),
+  train: require('../../assets/generated/career-action-train.png'),
+  promote: require('../../assets/generated/career-action-promote.png'),
+  resign: require('../../assets/generated/career-action-resign.png'),
+  borrow: require('../../assets/generated/career-action-borrow.png'),
+  repay: require('../../assets/generated/career-action-repay.png'),
+  rank_duty: require('../../assets/generated/career-action-rank-duty.png'),
+  odd_job: require('../../assets/generated/career-action-odd-job.png'),
+  craft: require('../../assets/generated/career-action-craft.png'),
+  trade: require('../../assets/generated/career-action-trade.png'),
+} as const satisfies Record<string, ImageSourcePropType>;
+
 export const HOLDING_ACTION_ART = {
   work_land: require('../../assets/generated/activity-fields.png'),
   secure_bounds: require('../../assets/generated/activity-train.png'),
@@ -129,13 +142,14 @@ export const TRAIT_ICONS: Record<string, ImageSourcePropType> = {
   sickly: require('../../assets/generated/trait-sickly.png'),
   hale: require('../../assets/generated/trait-hale.png'),
   silver_tongue: require('../../assets/generated/trait-silver_tongue.png'),
-  dullard: require('../../assets/generated/trait-dullard.png'),
   bookish: require('../../assets/generated/trait-bookish.png'),
   pious: require('../../assets/generated/trait-pious.png'),
   heathen: require('../../assets/generated/trait-heathen.png'),
   lucky: require('../../assets/generated/trait-lucky.png'),
-  ill_starred: require('../../assets/generated/trait-ill_starred.png'),
+  golden_child: require('../../assets/generated/trait-golden_child.png'),
   comely: require('../../assets/generated/trait-comely.png'),
+  goose_cursed: require('../../assets/generated/trait-goose_cursed.png'),
+  royal_bastard: require('../../assets/generated/trait-royal_bastard.png'),
   war_hero: require('../../assets/generated/trait-war_hero.png'),
   living_saint: require('../../assets/generated/trait-living_saint.png'),
   notorious_outlaw: require('../../assets/generated/trait-notorious_outlaw.png'),

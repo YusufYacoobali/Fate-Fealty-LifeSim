@@ -36,6 +36,11 @@ export function holdingPopulationCapacity(s: GameState): number {
     + (isHoldingUpgradeActive(s, 'stewards_hall') ? 12 : 0);
 }
 
+/** Overall Holding health is only as strong as its weakest core resource. */
+export function holdingProsperity(s: GameState): number {
+  return Math.min(s.holding.stores, s.holding.security, s.holding.loyalty);
+}
+
 export function holdingYearlyUpkeep(s: GameState): { stores: number; security: number } {
   return {
     stores: 8
@@ -259,14 +264,14 @@ export function tickHoldingYear(s: GameState): GameState {
 
   // Judge the year's result before ordinary upkeep so the visible 75 target is
   // the real target. Upkeep becomes the starting pressure for the next year.
-  const lowest = Math.min(s.holding.stores, s.holding.security, s.holding.loyalty);
+  const lowest = holdingProsperity(s);
   if (lowest >= 60) {
     adjustPopulation(s, s.holding.stores >= 75 && s.holding.security >= 75 && s.holding.loyalty >= 75 ? 2 : 1);
   } else if (lowest >= 15 && lowest < 25) {
     adjustPopulation(s, -Math.max(1, Math.ceil(holdingPopulation(s) * 0.1)));
   }
 
-  if (s.holding.stores >= 75 && s.holding.security >= 75 && s.holding.loyalty >= 75) {
+  if (holdingProsperity(s) >= 75) {
     const reward = holdingProsperityReward(s);
     applyEffects(s, { gold: reward, reputation: 2 });
     pushFeed(s, `HOLDING · ${holdingTitle(s.rankIdx).toUpperCase()}`, C.good, `The holding flourishes. Full stores, safe roads, and loyal voices bring ${reward} gold to thy purse.`, 'good');
@@ -275,7 +280,7 @@ export function tickHoldingYear(s: GameState): GameState {
   const upkeep = holdingYearlyUpkeep(s);
   applyEffects(s, { holding: { stores: -upkeep.stores, security: -upkeep.security } });
 
-  if (Math.min(s.holding.stores, s.holding.security, s.holding.loyalty) < 15) {
+  if (holdingProsperity(s) < 15) {
     s.holding.criticalYears += 1;
     const lowest = lowestResource(s);
     if (s.holding.criticalYears >= 2) {

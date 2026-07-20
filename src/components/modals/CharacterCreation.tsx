@@ -1,42 +1,47 @@
 import React, { useState } from 'react';
 import { Image, ScrollView, TextInput, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
-import { AttractionPreference, Difficulty, GenderIdentity, PronounId } from '@/types/game';
+import { Difficulty, GenderIdentity } from '@/types/game';
 import { NewLifeOptions } from '@/state/gameReducer';
 import { birthTraits } from '@/data/traits';
 import { FIRST_NAMES } from '@/data/names';
 import { pick } from '@/engine/random';
 import { C, FONT } from '@/theme/theme';
 import { traitIconAsset } from '@/assets/generatedAssets';
-import { defaultPronouns, PRONOUNS } from '@/data/identity';
+import { defaultPronouns } from '@/data/identity';
+import { MIN_ANDROID_BOTTOM_NAV_GUARD } from '../systemLayout';
 
 interface Props {
   initialDifficulty: Difficulty;
+  premiumUnlocked: boolean;
   onBegin: (options: NewLifeOptions) => void;
+  onLockedTraitPress: () => void;
 }
 
 const DIFFICULTIES: Difficulty[] = ['Merciful', 'Normal', 'Brutal'];
 const SURPRISE = '__surprise__';
 const GENDERS: { id: GenderIdentity; label: string }[] = [
-  { id: 'woman', label: 'WOMAN' }, { id: 'man', label: 'MAN' }, { id: 'nonbinary', label: 'NONBINARY' },
+  { id: 'woman', label: 'WOMAN' }, { id: 'man', label: 'MAN' },
 ];
-const ATTRACTIONS: { id: AttractionPreference; label: string }[] = [
-  { id: 'women', label: 'WOMEN' }, { id: 'men', label: 'MEN' }, { id: 'any', label: 'ANY' }, { id: 'none', label: 'NONE' },
-];
+
+export function characterCreationBottomPadding(safeBottom: number, minimumGuard = MIN_ANDROID_BOTTOM_NAV_GUARD): number {
+  return 28 + Math.max(safeBottom, minimumGuard);
+}
 
 /**
  * First-run / new-life character creation. The player names their peasant,
  * picks (or leaves to fate) a birth trait, and sets the difficulty before the
  * life begins. Confirming dispatches NEW_LIFE with these options.
  */
-export function CharacterCreation({ initialDifficulty, onBegin }: Props) {
+export function CharacterCreation({ initialDifficulty, premiumUnlocked, onBegin, onLockedTraitPress }: Props) {
+  const insets = useSafeAreaInsets();
+  const bottomPadding = characterCreationBottomPadding(insets.bottom);
   const [name, setName] = useState(() => pick(FIRST_NAMES));
   const [traitId, setTraitId] = useState<string>(SURPRISE);
   const [difficulty, setDifficulty] = useState<Difficulty>(initialDifficulty);
-  const [gender, setGender] = useState<GenderIdentity>('nonbinary');
-  const [pronounId, setPronounId] = useState<PronounId>('they');
-  const [attraction, setAttraction] = useState<AttractionPreference>('any');
+  const [gender, setGender] = useState<GenderIdentity>('woman');
 
   const traits = birthTraits();
   const selectedTrait = traits.find((t) => t.id === traitId) ?? null;
@@ -48,13 +53,17 @@ export function CharacterCreation({ initialDifficulty, onBegin }: Props) {
       birthTraitId: traitId === SURPRISE ? undefined : traitId,
       difficulty,
       gender,
-      pronouns: PRONOUNS[pronounId],
-      attraction,
+      pronouns: defaultPronouns(gender),
+      attraction: gender === 'woman' ? 'men' : 'women',
     });
 
   return (
     <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 70, backgroundColor: C.ink }}>
-      <ScrollView contentContainerStyle={{ padding: 16, paddingTop: 28, paddingBottom: 28 }}>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ padding: 16, paddingTop: 28, paddingBottom: bottomPadding }}
+      >
         <PixelText font="pixel" size={13} color={C.charm} style={{ textAlign: 'center' }}>
           FORGE THY DESTINY
         </PixelText>
@@ -93,10 +102,7 @@ export function CharacterCreation({ initialDifficulty, onBegin }: Props) {
               key={option.id}
               bg={gender === option.id ? C.charm : C.lightFill}
               shadow={gender === option.id ? C.charmDark : C.paleEdge}
-              onPress={() => {
-                setGender(option.id);
-                setPronounId(defaultPronouns(option.id).id);
-              }}
+              onPress={() => setGender(option.id)}
               style={{ flex: 1 }}
               innerStyle={{ paddingVertical: 8, alignItems: 'center' }}
             >
@@ -104,31 +110,24 @@ export function CharacterCreation({ initialDifficulty, onBegin }: Props) {
             </PixelButton>
           ))}
         </View>
-        <View style={{ flexDirection: 'row', gap: 6, marginBottom: 8 }}>
-          {(['she', 'he', 'they'] as PronounId[]).map((id) => (
-            <PixelButton key={id} bg={pronounId === id ? C.purple : C.parch} shadow={pronounId === id ? C.purpleDark : C.parchSd} onPress={() => setPronounId(id)} style={{ flex: 1 }} innerStyle={{ paddingVertical: 7, alignItems: 'center' }}>
-              <PixelText font="body" size={14} color={C.textDark}>{id === 'she' ? 'she/her' : id === 'he' ? 'he/him' : 'they/them'}</PixelText>
-            </PixelButton>
-          ))}
-        </View>
-        <PixelText font="pixel" size={7} color={C.charm} style={{ marginBottom: 7 }}>DRAWN TO</PixelText>
-        <View style={{ flexDirection: 'row', gap: 5, marginBottom: 16 }}>
-          {ATTRACTIONS.map((option) => (
-            <PixelButton key={option.id} bg={attraction === option.id ? C.faith : C.parch} shadow={attraction === option.id ? C.faithDark : C.parchSd} onPress={() => setAttraction(option.id)} style={{ flex: 1 }} innerStyle={{ paddingVertical: 7, alignItems: 'center' }}>
-              <PixelText font="pixel" size={6} color={C.blueDark}>{option.label}</PixelText>
-            </PixelButton>
-          ))}
-        </View>
-
         {/* BIRTH TRAIT */}
-        <PixelText font="pixel" size={7} color={C.charm} style={{ marginBottom: 7 }}>
+        <PixelText font="pixel" size={7} color={C.charm} style={{ marginTop: 8, marginBottom: 7 }}>
           BORN AS...
         </PixelText>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
           {/* Surprise me */}
           <TraitChip selected={traitId === SURPRISE} emoji="🎲" name="Leave to Fate" onPress={() => setTraitId(SURPRISE)} />
           {traits.map((t) => (
-            <TraitChip key={t.id} id={t.id} selected={traitId === t.id} emoji={t.emoji} name={t.name} onPress={() => setTraitId(t.id)} />
+            <TraitChip
+              key={t.id}
+              id={t.id}
+              selected={traitId === t.id}
+              emoji={t.emoji}
+              name={t.name}
+              premium={Boolean(t.premium)}
+              locked={Boolean(t.premium && !premiumUnlocked)}
+              onPress={t.premium && !premiumUnlocked ? onLockedTraitPress : () => setTraitId(t.id)}
+            />
           ))}
         </View>
 
@@ -185,23 +184,28 @@ export function CharacterCreation({ initialDifficulty, onBegin }: Props) {
   );
 }
 
-function TraitChip({ id, selected, emoji, name, onPress }: { id?: string; selected: boolean; emoji: string; name: string; onPress: () => void }) {
+function TraitChip({ id, selected, emoji, name, premium = false, locked = false, onPress }: { id?: string; selected: boolean; emoji: string; name: string; premium?: boolean; locked?: boolean; onPress: () => void }) {
   const icon = id ? traitIconAsset(id) : undefined;
 
   return (
     <PixelButton
-      bg={selected ? C.purple : C.parch}
-      shadow={selected ? C.purpleDark : C.parchSd}
+      bg={selected ? C.purple : locked ? C.lightFill : C.parch}
+      shadow={selected ? C.purpleDark : locked ? C.paleEdge : C.parchSd}
       light={selected ? undefined : C.parchSl}
       outline={C.parchBorder}
       onPress={onPress}
       style={{ width: '48.5%', marginBottom: 7 }}
-      innerStyle={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 8, paddingVertical: 8 }}
+      innerStyle={{ flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 7, paddingVertical: 8 }}
     >
       {icon ? <Image source={icon} resizeMode="contain" style={{ width: 22, height: 22 }} /> : <PixelText size={16}>{emoji}</PixelText>}
-      <PixelText font="body" size={15} color={selected ? '#2a0d4a' : C.textDark}>
+      <PixelText font="body" size={15} color={locked ? C.textMuted : selected ? '#2a0d4a' : C.textDark} style={{ flex: 1 }}>
         {name}
       </PixelText>
+      {premium && (
+        <View style={{ backgroundColor: C.charm, borderWidth: 1, borderColor: C.charmDark, paddingHorizontal: 3, paddingVertical: 2 }}>
+          <PixelText font="pixel" size={5} color="#3a2a08">PRO</PixelText>
+        </View>
+      )}
     </PixelButton>
   );
 }

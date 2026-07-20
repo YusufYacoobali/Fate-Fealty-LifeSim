@@ -1,6 +1,7 @@
 import {
   buyHoldingUpgrade,
   holdingActionAvailability,
+  holdingProsperity,
   isHoldingUpgradeActive,
   manageHolding,
   tickHoldingYear,
@@ -17,6 +18,13 @@ function makeState(overrides: Partial<GameState> = {}, difficulty: Difficulty = 
 }
 
 describe('holding management', () => {
+  it('shows Prosperity as the weakest core Holding resource', () => {
+    const s = makeState({
+      holding: { stores: 82, security: 67, loyalty: 91, population: 18, upgrades: [], lastActionAge: null, criticalYears: 0 },
+    });
+    expect(holdingProsperity(s)).toBe(67);
+  });
+
   it('unlocks at age 6 and permits only one action per age', () => {
     const young = makeState({ age: 5 });
     expect(holdingActionAvailability(young, 'work_land').available).toBe(false);

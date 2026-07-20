@@ -77,7 +77,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   // --- living world update ---
   { id: 'first_job', name: 'Gainfully Employed', emoji: '🧰', desc: 'Take your first occupation.', check: (c) => c.state.tags.includes('gainfully_employed') },
   { id: 'career_master', name: 'Master of a Trade', emoji: '🏅', desc: 'Reach the final tier of a career.', check: (c) => !!c.state.occupation.careerId && ['reeve', 'master_artisan', 'merchant', 'prior', 'marshal', 'chancellor', 'bandit_chief'].includes(c.state.occupation.careerId) },
-  { id: 'hard_year', name: 'Not a Moment Wasted', emoji: '⏳', desc: 'Use all 24 actions in one year.', check: (c) => c.state.actionClock.used >= c.state.actionClock.cap },
+  { id: 'hard_year', name: 'Not a Moment Wasted', emoji: '⏳', desc: 'Use every available action in one year.', check: (c) => c.state.actionClock.used >= c.state.actionClock.cap },
   { id: 'hundred_actions', name: 'A Busy Life', emoji: '📅', desc: 'Take one hundred deliberate actions.', check: (c) => c.state.actionClock.lifetimeUsed >= 100, progress: (c) => ({ current: c.state.actionClock.lifetimeUsed, target: 100 }) },
   { id: 'borrower', name: 'Neither Lender Nor...', emoji: '🤝', desc: 'Take a loan.', check: (c) => c.state.tags.includes('has_borrowed') },
   { id: 'debt_free', name: 'Clear Ledger', emoji: '✅', desc: 'Repay a debt in full.', check: (c) => c.state.tags.includes('debt_repaid') },

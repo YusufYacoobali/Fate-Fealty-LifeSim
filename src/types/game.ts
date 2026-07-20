@@ -92,6 +92,8 @@ export interface TraitDef {
   emoji: string;
   blurb: string;
   kind: 'birth' | 'acquired';
+  /** Premium birth traits can be viewed by everyone but only chosen or rolled with access. */
+  premium?: boolean;
   /** Flat starting-stat shifts (birth traits only). */
   startStats?: Partial<Stats>;
   /** Added to a choice's success chance (e.g. +0.08 for Born Lucky). */

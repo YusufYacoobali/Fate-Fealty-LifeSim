@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Image, ImageSourcePropType, TouchableOpacity, View } from 'react-native';
-import { PAYWALL_ART } from '@/assets/generatedAssets';
+import { PAYWALL_ART, TRAIT_ICONS } from '@/assets/generatedAssets';
 import { PAYWALL_PLAN_IDS, PREMIUM_BENEFIT_DETAILS, PREMIUM_PLANS, SHOP_PLAN_IDS, PlanId } from '@/data/premiumPlans';
 import { PlanOffers, PurchaseOutcome } from '@/services/purchases';
 import { annualSubscriptionValue } from '@/services/purchasesLogic';
@@ -33,8 +33,9 @@ const SHOP_FEATURES: ReadonlyArray<{ title: string; body: string; art: ImageSour
   { ...PREMIUM_BENEFIT_DETAILS[1], art: PAYWALL_ART.crown },
   { ...PREMIUM_BENEFIT_DETAILS[0], art: PAYWALL_ART.holding },
   { ...PREMIUM_BENEFIT_DETAILS[2], art: PAYWALL_ART.stories },
-  { ...PREMIUM_BENEFIT_DETAILS[3], art: PAYWALL_ART.monthly },
-  { ...PREMIUM_BENEFIT_DETAILS[4], art: PAYWALL_ART.stories },
+  { ...PREMIUM_BENEFIT_DETAILS[3], art: TRAIT_ICONS.goose_cursed },
+  { ...PREMIUM_BENEFIT_DETAILS[4], art: PAYWALL_ART.monthly },
+  { ...PREMIUM_BENEFIT_DETAILS[5], art: PAYWALL_ART.stories },
 ];
 
 interface Props {

@@ -14,7 +14,7 @@ import { buyItem, shopAvailability } from '@/engine/shopEngine';
 import { interactKin, KinAction, kinActionAvailability } from '@/engine/kinEngine';
 import { Choice } from '@/types/game';
 import { buyHoldingUpgrade, holdingActionAvailability, holdingUpgradeAvailability, manageHolding } from '@/engine/holdingEngine';
-import { resetActionClock, spendAction, timedActionAvailability } from '@/engine/actionClock';
+import { resetActionClock, spendAction, syncActionLimit, timedActionAvailability } from '@/engine/actionClock';
 import { CareerAction, careerActionAvailability, performCareerAction } from '@/engine/careerEngine';
 import { checkDeath } from '@/engine/deathEngine';
 
@@ -71,8 +71,11 @@ function proLockedSettings(settings: GameSettings, lifetimeUnlocked: boolean): G
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
-    case 'HYDRATE':
-      return { ...action.state, settings: proLockedSettings(action.state.settings, action.state.lifetimeUnlocked) };
+    case 'HYDRATE': {
+      const s = cloneState(action.state);
+      s.settings = proLockedSettings(s.settings, s.lifetimeUnlocked);
+      return s;
+    }
 
     case 'AGE_UP': {
       const s = cloneState(state);
@@ -181,7 +184,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const s = cloneState(state);
       s.lifetimeUnlocked = action.unlocked;
       s.settings = proLockedSettings(s.settings, action.unlocked);
-      return s;
+      return syncActionLimit(s);
     }
 
     case 'NEW_LIFE': {

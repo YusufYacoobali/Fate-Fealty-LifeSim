@@ -6,6 +6,7 @@ import {
   holdingActionAvailability,
   holdingPopulation,
   holdingPopulationCapacity,
+  holdingProsperity,
   holdingProsperityReward,
   holdingUpgradeAvailability,
   holdingYearlyUpkeep,
@@ -57,7 +58,7 @@ function recommendation(state: GameState): string {
       ? 'Open the Stores next. Loyalty prevents revolt and protects your rank.'
       : 'Build Stores first, then use them to restore Loyalty.';
   }
-  if (Math.min(state.holding.stores, state.holding.security, state.holding.loyalty) < 75) {
+  if (holdingProsperity(state) < 75) {
     const lowest = (['stores', 'security', 'loyalty'] as HoldingResource[])
       .reduce((current, key) => state.holding[key] < state.holding[current] ? key : current, 'stores');
     return `Raise ${RESOURCE_STYLE[lowest].label} toward 75 to unlock the prosperity payout.`;
@@ -71,9 +72,10 @@ export function HoldingTab({ state, onAction, onUpgrade }: Props) {
   const title = holdingTitle(state.rankIdx);
   const population = holdingPopulation(state);
   const capacity = holdingPopulationCapacity(state);
+  const prosperity = holdingProsperity(state);
   const prosperityReward = holdingProsperityReward(state);
   const upkeep = holdingYearlyUpkeep(state);
-  const flourishing = state.holding.stores >= 75 && state.holding.security >= 75 && state.holding.loyalty >= 75;
+  const flourishing = prosperity >= 75;
 
   return (
     <ScrollView
@@ -91,9 +93,15 @@ export function HoldingTab({ state, onAction, onUpgrade }: Props) {
                 {RANKS[state.rankIdx].key} lands. Dynasty {state.lifeNo}.
               </PixelText>
             </View>
-            <View style={{ alignItems: 'flex-end' }}>
-              <PixelText font="pixel" size={7} color={C.faith}>PEOPLE</PixelText>
-              <PixelText font="body" size={20} color={C.white}>{population}/{capacity}</PixelText>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              <View style={{ alignItems: 'flex-end' }}>
+                <PixelText font="pixel" size={6} color={flourishing ? C.faith : C.charm}>PROSPERITY</PixelText>
+                <PixelText font="body" size={20} color={C.white}>{prosperity}%</PixelText>
+              </View>
+              <View style={{ alignItems: 'flex-end' }}>
+                <PixelText font="pixel" size={6} color={C.faith}>PEOPLE</PixelText>
+                <PixelText font="body" size={20} color={C.white}>{population}/{capacity}</PixelText>
+              </View>
             </View>
           </View>
         </View>
@@ -106,9 +114,9 @@ export function HoldingTab({ state, onAction, onUpgrade }: Props) {
         </PixelText>
         <View style={{ flexDirection: 'row', gap: 7, marginTop: 10 }}>
           <View style={{ flex: 1, backgroundColor: C.goodBg, borderWidth: 2, borderColor: C.goodBorder, padding: 8, minHeight: 68 }}>
-            <PixelText font="pixel" size={6} color={C.good}>PROSPERITY</PixelText>
+            <PixelText font="pixel" size={6} color={C.good}>HOW PROSPERITY WORKS</PixelText>
             <PixelText font="body" size={14} color={C.textDark} style={{ marginTop: 4 }}>
-              75+ in all three pays {prosperityReward}g and 2 reputation yearly.
+              It equals your lowest resource. Reach 75% to earn {prosperityReward}g and 2 reputation yearly.
             </PixelText>
           </View>
           <View style={{ flex: 1, backgroundColor: C.lightFill, borderWidth: 2, borderColor: C.paleEdge, padding: 8, minHeight: 68 }}>

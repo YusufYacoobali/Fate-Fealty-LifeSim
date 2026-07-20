@@ -109,6 +109,19 @@ describe('mutual relationships and living characters', () => {
 });
 
 describe('save migration', () => {
+  it('preserves Premium action usage while access is being rechecked', () => {
+    const saved = makeState({
+      lifetimeUnlocked: true,
+      actionClock: { used: 41, cap: 50, lifetimeUsed: 141, fullYears: 2 },
+    });
+    const loaded = normalizeGameState(saved);
+    expect(loaded.actionClock.used).toBe(41);
+    expect(loaded.actionClock.cap).toBe(24);
+
+    const restored = gameReducer(loaded, { type: 'SET_LIFETIME_UNLOCKED', unlocked: true });
+    expect(restored.actionClock).toMatchObject({ used: 41, cap: 50 });
+  });
+
   it('upgrades a legacy save without discarding its life', () => {
     const legacy = makeState({ first: 'Legacy', age: 33 }) as any;
     delete legacy.world;

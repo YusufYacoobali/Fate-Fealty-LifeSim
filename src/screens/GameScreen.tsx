@@ -280,6 +280,11 @@ export function GameScreen() {
         {creating && (
           <CharacterCreation
             initialDifficulty={state.settings.difficulty}
+            premiumUnlocked={premiumUnlocked}
+            onLockedTraitPress={() => {
+              haptic('light', buzz);
+              setCartOpen(true);
+            }}
             onBegin={(options) => {
               haptic('success', buzz);
               createCharacter(options);

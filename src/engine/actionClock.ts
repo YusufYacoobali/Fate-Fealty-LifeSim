@@ -3,6 +3,17 @@ import { pushFeed } from './gameState';
 import { C } from '@/theme/theme';
 
 export const ACTIONS_PER_YEAR = 24;
+export const PREMIUM_ACTIONS_PER_YEAR = 50;
+
+export function actionLimitForAccess(premiumUnlocked: boolean): number {
+  return premiumUnlocked ? PREMIUM_ACTIONS_PER_YEAR : ACTIONS_PER_YEAR;
+}
+
+export function syncActionLimit(state: GameState): GameState {
+  state.actionClock.cap = actionLimitForAccess(state.lifetimeUnlocked);
+  state.actionClock.used = Math.min(state.actionClock.used, state.actionClock.cap);
+  return state;
+}
 
 export interface ActionAvailability {
   available: boolean;

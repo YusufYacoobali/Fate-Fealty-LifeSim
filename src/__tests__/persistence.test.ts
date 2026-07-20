@@ -23,4 +23,15 @@ describe('settings persistence', () => {
       haptics: false,
     });
   });
+
+  it('migrates Ill-Starred lives to Golden Child', () => {
+    const legacyState = makeState({ traits: ['ill_starred'], tags: ['trait_ill_starred'] });
+    legacyState.feed = [{ ...legacyState.feed[0], traitId: 'ill_starred' }];
+
+    const migrated = normalizeGameState(legacyState);
+
+    expect(migrated.traits).toEqual(['golden_child']);
+    expect(migrated.tags).toEqual(['trait_golden_child']);
+    expect(migrated.feed[0].traitId).toBe('golden_child');
+  });
 });

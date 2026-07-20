@@ -3,7 +3,7 @@ import { Image, View } from 'react-native';
 import { GameState } from '@/types/game';
 import { CareerAction, careerActionAvailability } from '@/engine/careerEngine';
 import { ENTRY_CAREERS, careerById } from '@/data/careers';
-import { CAREER_FAMILY_ART, FEATURE_ART } from '@/assets/generatedAssets';
+import { CAREER_ACTION_ART, CAREER_FAMILY_ART, FEATURE_ART } from '@/assets/generatedAssets';
 import { PixelButton } from '../ui/PixelButton';
 import { PixelText } from '../ui/PixelText';
 import { C, PANEL } from '@/theme/theme';
@@ -16,6 +16,7 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
 
   const button = (action: CareerAction, label: string, hint: string, careerId?: string) => {
     const available = careerActionAvailability(state, action, careerId);
+    const actionArt = CAREER_ACTION_ART[action as keyof typeof CAREER_ACTION_ART];
     return (
       <PixelButton
         key={`${action}_${careerId ?? ''}`}
@@ -24,9 +25,12 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
         disabled={!available.available}
         onPress={() => onAction(action, careerId)}
         style={{ width: '48.5%', marginBottom: 8 }}
-        innerStyle={{ padding: 9, minHeight: 82 }}
+        innerStyle={{ padding: 9, minHeight: 106 }}
       >
-        <PixelText font="pixel" size={6} color={C.blueDark}>{label}</PixelText>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
+          {actionArt && <Image source={actionArt} resizeMode="contain" style={{ width: 34, height: 34 }} />}
+          <PixelText font="pixel" size={6} color={C.blueDark} style={{ flex: 1 }}>{label}</PixelText>
+        </View>
         <PixelText font="body" size={14} color={available.available ? C.textMuted : C.bad} style={{ marginTop: 5 }}>
           {available.available ? hint : available.reason}
         </PixelText>

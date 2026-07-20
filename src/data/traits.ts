@@ -12,13 +12,14 @@ const BIRTH_TRAITS: TraitDef[] = [
   { id: 'sickly', name: 'Sickly', emoji: '🤒', kind: 'birth', blurb: 'Frail from the first breath; the years weigh heavy.', startStats: { health: -15 }, agingMultiplier: 1.4 },
   { id: 'hale', name: 'Hale & Hearty', emoji: '💪', kind: 'birth', blurb: 'Built like an ox and ages like fine oak.', startStats: { health: 12 }, agingMultiplier: 0.8 },
   { id: 'silver_tongue', name: 'Silver-Tongued', emoji: '🗣️', kind: 'birth', blurb: 'Could talk a bishop out of his hat.', startStats: { charm: 12 } },
-  { id: 'dullard', name: 'Dullard', emoji: '🪨', kind: 'birth', blurb: 'Not the sharpest scythe in the barn, but well-liked.', startStats: { wits: -10, charm: 4 } },
   { id: 'bookish', name: 'Bookish', emoji: '📖', kind: 'birth', blurb: 'Reads, ciphers, and knows what a zero is.', startStats: { wits: 12 } },
   { id: 'pious', name: 'Pious', emoji: '🙏', kind: 'birth', blurb: 'Born with a prayer already on the lips.', startStats: { faith: 12 } },
   { id: 'heathen', name: 'Heathen', emoji: '😈', kind: 'birth', blurb: 'Skips chapel, questions everything, sleeps fine.', startStats: { faith: -12, wits: 5 } },
   { id: 'lucky', name: 'Born Lucky', emoji: '🍀', kind: 'birth', blurb: 'Fortune simply favours you, and it shows.', rollBonus: 0.08 },
-  { id: 'ill_starred', name: 'Ill-Starred', emoji: '🌑', kind: 'birth', blurb: 'The stars were wrong the night you were born.', rollBonus: -0.06, startStats: { faith: 4 } },
-  { id: 'comely', name: 'Comely', emoji: '🌹', kind: 'birth', blurb: 'Fair of face, if not of fortune.', startStats: { charm: 8, wits: -2 } },
+  { id: 'golden_child', name: 'Golden Child', emoji: '🌟', kind: 'birth', premium: true, blurb: 'Blessed with strength, charm, wit, and grace beyond ordinary children.', startStats: { health: 15, charm: 15, wits: 15, faith: 15 }, rollBonus: 0.06, agingMultiplier: 0.9 },
+  { id: 'comely', name: 'Comely', emoji: '🌹', kind: 'birth', premium: true, blurb: 'Fair of face, if not of fortune.', startStats: { charm: 8, wits: -2 } },
+  { id: 'goose_cursed', name: 'Goose-Cursed', emoji: '🪿', kind: 'birth', premium: true, blurb: 'Geese fear you, clergy distrust you, and fate finds it hilarious.', startStats: { health: 5, faith: -8 }, rollBonus: 0.04 },
+  { id: 'royal_bastard', name: 'Royal Bastard', emoji: '👑', kind: 'birth', premium: true, blurb: 'A cracked crown lurks somewhere in thy family tree.', startStats: { charm: 6, wits: 6, faith: -4 }, rollBonus: 0.03 },
 ];
 
 const ACQUIRED_TRAITS: TraitDef[] = [
@@ -46,6 +47,10 @@ export function traitById(id: string): TraitDef | undefined {
 
 export function birthTraits(): TraitDef[] {
   return BIRTH_TRAITS;
+}
+
+export function availableBirthTraits(premiumUnlocked: boolean): TraitDef[] {
+  return premiumUnlocked ? BIRTH_TRAITS : BIRTH_TRAITS.filter((trait) => !trait.premium);
 }
 
 export function acquiredTraits(): TraitDef[] {

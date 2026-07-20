@@ -80,6 +80,23 @@ describe('gameReducer', () => {
     expect(s.tab).toBe('hold');
   });
 
+  it('raises the yearly action limit to 50 with Premium and restores the free limit when access ends', () => {
+    const premium = gameReducer(makeState({
+      lifetimeUnlocked: false,
+      actionClock: { used: 20, cap: 24, lifetimeUsed: 20, fullYears: 0 },
+    }), {
+      type: 'SET_LIFETIME_UNLOCKED',
+      unlocked: true,
+    });
+    expect(premium.actionClock.cap).toBe(50);
+    expect(premium.actionClock.used).toBe(20);
+
+    premium.actionClock.used = 37;
+    const free = gameReducer(premium, { type: 'SET_LIFETIME_UNLOCKED', unlocked: false });
+    expect(free.actionClock.cap).toBe(24);
+    expect(free.actionClock.used).toBe(24);
+  });
+
   it('NEW_LIFE with a blank name falls back to a random one', () => {
     const s = gameReducer(makeState(), { type: 'NEW_LIFE', options: { firstName: '   ' } });
     expect(s.first.length).toBeGreaterThan(0);

@@ -27,7 +27,7 @@ export const SHOP_PROMO_MESSAGES: readonly ShopPromoMessage[] = [
   {
     heading: 'A PEDLAR BEARS CONTENT',
     title: 'No magic pebbles. Probably.',
-    body: 'The royal shop holds extra goals, premium story arcs, ruler choices, and every future premium chapter.',
+    body: 'The royal shop holds extra goals, premium story arcs, ruler choices, and 50 actions every year.',
     cta: 'INSPECT THE WARES',
   },
   {

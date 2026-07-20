@@ -41,7 +41,7 @@ const LESSONS = [
   {
     asset: HOLDING_ACTION_ART.work_land,
     title: 'MANAGE THY HOLDING',
-    body: 'From age 6, your holding needs one order each year. Balance Stores, Security, and Loyalty. Keep all three high to grow the population and earn yearly gold and reputation.',
+    body: 'From age 6, your holding needs one order each year. Prosperity is the lowest of Stores, Security, and Loyalty. Raise it to grow the population and earn yearly gold and reputation.',
   },
   {
     asset: RANK_PORTRAITS.Knight,
@@ -58,7 +58,13 @@ interface Props {
   onDone: () => void;
 }
 
-type Page = 'hook' | 'lessons' | 'destiny' | 'paywall';
+export type OnboardingPage = 'hook' | 'lessons' | 'destiny' | 'paywall';
+
+const FREE_ONBOARDING_PAGES: OnboardingPage[] = ['hook', 'lessons', 'destiny', 'paywall'];
+
+export function onboardingPages(premiumUnlocked: boolean): OnboardingPage[] {
+  return premiumUnlocked ? FREE_ONBOARDING_PAGES.slice(0, -1) : [...FREE_ONBOARDING_PAGES];
+}
 
 export interface OnboardingLayout {
   compact: boolean;
@@ -252,7 +258,7 @@ function DestinyPage({ compact }: { compact: boolean }) {
         color={C.textDark}
         style={{ textAlign: 'center', marginBottom: compact ? 8 : 12 }}
       >
-        The free adventure carries you from Peasant through Noble. Premium opens the final rise to Baron and Monarch, expands your holding into a realm, and adds more goals, ruler stories, and future premium chapters.
+        The free adventure carries you from Peasant through Noble. Premium opens the final rise to Baron and Monarch, expands your holding into a realm, adds more goals and ruler stories, and raises your yearly action limit from 24 to 50.
       </PixelText>
       <View style={{ gap: compact ? 7 : 9 }}>
         {RANKS.map((rank) => {
@@ -306,7 +312,7 @@ function DestinyPage({ compact }: { compact: boolean }) {
 export function OnboardingScreen({ premiumUnlocked, accessState, onPurchase, onRestore, onDone }: Props) {
   const { width, height } = useWindowDimensions();
   const layout = onboardingLayout(width, height);
-  const pages: Page[] = premiumUnlocked ? ['hook', 'lessons', 'destiny'] : ['hook', 'lessons', 'destiny', 'paywall'];
+  const pages = onboardingPages(premiumUnlocked);
   const [index, setIndex] = useState(0);
   const [restoring, setRestoring] = useState(false);
   const page = pages[Math.min(index, pages.length - 1)];

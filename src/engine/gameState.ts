@@ -24,12 +24,12 @@ import {
   Relationship,
 } from '@/types/game';
 import { EPITHETS, FIRST_NAMES } from '@/data/names';
-import { birthTraits, traitById } from '@/data/traits';
+import { availableBirthTraits, traitById } from '@/data/traits';
 import { clamp, pick, rnd } from './random';
 import { C } from '@/theme/theme';
 import { freshHolding, holdingTitle } from '@/data/holding';
 import { RANKS } from '@/data/ranks';
-import { ACTIONS_PER_YEAR } from './actionClock';
+import { actionLimitForAccess } from './actionClock';
 import { defaultPronouns } from '@/data/identity';
 
 export const DEFAULT_SETTINGS: GameSettings = {
@@ -146,7 +146,9 @@ export function createLife(opts: FreshLifeOptions = {}): GameState {
 
   // Use the chosen birth trait if valid, otherwise roll one. Fold its flat stat
   // shifts into the starting stats.
-  const birth = (opts.birthTraitId && traitById(opts.birthTraitId)) || pick(birthTraits());
+  const requestedBirth = opts.birthTraitId ? traitById(opts.birthTraitId) : undefined;
+  const canUseRequestedBirth = requestedBirth?.kind === 'birth' && (!requestedBirth.premium || opts.lifetimeUnlocked);
+  const birth = canUseRequestedBirth ? requestedBirth : pick(availableBirthTraits(Boolean(opts.lifetimeUnlocked)));
   if (birth.startStats) {
     for (const k of STAT_KEYS) {
       const d = birth.startStats[k];
@@ -214,7 +216,7 @@ export function createLife(opts: FreshLifeOptions = {}): GameState {
       proposalFromId: null,
       recentNarrativeIds: [],
     },
-    actionClock: { used: 0, cap: ACTIONS_PER_YEAR, lifetimeUsed: 0, fullYears: 0 },
+    actionClock: { used: 0, cap: actionLimitForAccess(Boolean(opts.lifetimeUnlocked)), lifetimeUsed: 0, fullYears: 0 },
     occupation: { careerId: null, experience: 0, performance: 50, workedThisYear: 0 },
     debts: [],
     inventory: [],

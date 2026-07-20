@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GameSettings, GameState, KinMember, Relationship } from '@/types/game';
 import { freshHolding } from '@/data/holding';
 import { defaultPronouns } from '@/data/identity';
-import { ACTIONS_PER_YEAR } from '@/engine/actionClock';
+import { ACTIONS_PER_YEAR, PREMIUM_ACTIONS_PER_YEAR } from '@/engine/actionClock';
 
 const SAVE_KEY = 'mls:save:v2';
 const LEGACY_SAVE_KEY = 'mls:save:v1';
@@ -87,6 +87,9 @@ export function normalizeGameState(parsed: GameState): GameState {
 
   return {
     ...parsed,
+    traits: Array.from(new Set((parsed.traits ?? []).map((id) => id === 'ill_starred' ? 'golden_child' : id))),
+    tags: Array.from(new Set((parsed.tags ?? []).map((tag) => tag === 'trait_ill_starred' ? 'trait_golden_child' : tag))),
+    feed: (parsed.feed ?? []).map((entry) => entry.traitId === 'ill_starred' ? { ...entry, traitId: 'golden_child' } : entry),
     settings: {
       autoScroll: savedSettings.autoScroll ?? true,
       difficulty: savedSettings.difficulty ?? 'Normal',
@@ -106,7 +109,9 @@ export function normalizeGameState(parsed: GameState): GameState {
       recentNarrativeIds: parsed.world?.recentNarrativeIds ?? [],
     },
     actionClock: {
-      used: Math.max(0, Math.min(ACTIONS_PER_YEAR, parsed.actionClock?.used ?? 0)),
+      // Keep Premium progress above 24 while RevenueCat rechecks access. The
+      // reducer restores the correct cap as soon as entitlement status arrives.
+      used: Math.max(0, Math.min(PREMIUM_ACTIONS_PER_YEAR, parsed.actionClock?.used ?? 0)),
       cap: ACTIONS_PER_YEAR,
       lifetimeUsed: parsed.actionClock?.lifetimeUsed ?? 0,
       fullYears: parsed.actionClock?.fullYears ?? 0,

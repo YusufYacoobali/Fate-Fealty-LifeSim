@@ -66,12 +66,16 @@ export const PREMIUM_BENEFIT_DETAILS = [
     body: 'Unlock premium ruler events, story arcs, goals, and deeds.',
   },
   {
+    title: 'CHOOSE WILDER FATES',
+    body: 'Unlock four Premium birth traits, including Goose-Cursed and Royal Bastard.',
+  },
+  {
     title: 'LIVE FOREVER',
     body: 'Enable Live Forever to survive lethal moments, ignore old-age death, and keep aging.',
   },
   {
-    title: 'GET FUTURE CHAPTERS',
-    body: 'Every future premium chapter is included while you have access.',
+    title: 'TAKE 50 ACTIONS A YEAR',
+    body: 'Raise the yearly action limit from 24 to 50 for longer, more flexible lives.',
   },
 ] as const;
 
@@ -80,9 +84,9 @@ export const PREMIUM_BENEFIT_LINES = [
   'Baron and Monarch ranks',
   'Royal Holding orders and buildings',
   'Premium events and story arcs',
-  'Extra goals and deeds',
+  '4 Premium birth traits',
   'Live Forever mode',
-  'Future premium chapters',
+  '50 actions every year',
 ] as const;
 
 /** Compact copy retained for content checks and any small sales surface. */

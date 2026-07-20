@@ -22,6 +22,13 @@ interface RankVM {
   fg: string;
 }
 
+interface RankClimbVM {
+  from: string;
+  to: string;
+  progress: number;
+  locked: boolean;
+}
+
 function displayLockedRank(name: string) {
   return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
 }
@@ -50,13 +57,14 @@ interface Props {
   age: number;
   stats: StatVM[];
   rankPath: RankVM[];
+  rankClimb: RankClimbVM | null;
   traits: TraitVM[];
   goal: GoalVM | null;
   bio: string;
   onLockedRankPress?: () => void;
 }
 
-export function MeTab({ portrait, firstName, epithet, classRank, age, stats, rankPath, traits, goal, bio, onLockedRankPress }: Props) {
+export function MeTab({ portrait, firstName, epithet, classRank, age, stats, rankPath, rankClimb, traits, goal, bio, onLockedRankPress }: Props) {
   const portraitAsset = rankPortraitAsset(classRank);
 
   return (
@@ -111,6 +119,24 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
           </TouchableOpacity>
         ))}
       </View>
+      {rankClimb && (
+        <View style={{ marginTop: 6 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 3 }}>
+            <PixelText font="body" size={12} color={C.textMuted}>{rankClimb.from} PATH</PixelText>
+            <PixelText font="body" size={12} color={rankClimb.locked ? C.textMuted : C.blueDark}>
+              {rankClimb.locked ? `${rankClimb.to} REQUIRES PREMIUM` : `${rankClimb.progress}% TO ${rankClimb.to}`}
+            </PixelText>
+          </View>
+          <StatBar
+            value={rankClimb.progress}
+            color={rankClimb.locked ? '#9aa8b8' : C.charm}
+            dark={rankClimb.locked ? '#667486' : C.charmDark}
+            height={6}
+            trackBg={C.lightFill}
+            trackBorder={C.paleEdge}
+          />
+        </View>
+      )}
 
       {/* attributes */}
       <PixelText font="pixel" size={7} color={C.blueDeep} style={{ marginTop: 14, marginBottom: 8 }}>

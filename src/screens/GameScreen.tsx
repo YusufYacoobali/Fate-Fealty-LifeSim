@@ -10,6 +10,7 @@ import {
   selectKin,
   selectedKin,
   selectGoal,
+  selectRankClimb,
   selectRankPath,
   selectStats,
   selectTraits,
@@ -157,6 +158,7 @@ export function GameScreen() {
               age={state.age}
               stats={meStats}
               rankPath={selectRankPath(state)}
+              rankClimb={selectRankClimb(state)}
               traits={selectTraits(state)}
               goal={goal}
               bio={selectBio(state)}

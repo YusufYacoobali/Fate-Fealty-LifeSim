@@ -66,6 +66,29 @@ export function selectRankPath(s: GameState) {
   });
 }
 
+export function selectRankClimb(s: GameState) {
+  const current = RANKS[s.rankIdx];
+  const next = RANKS[s.rankIdx + 1];
+  if (!current || !next) return null;
+
+  const req = next.promote;
+  const readiness = [req.progress > 0 ? s.rankProgress / req.progress : 1];
+  if (req.minAge > 0) readiness.push(s.age / req.minAge);
+  if (req.minGold != null && req.minGold > 0) readiness.push(s.gold / req.minGold);
+  if (req.stats) {
+    for (const [key, target] of Object.entries(req.stats)) {
+      if (target != null && target > 0) readiness.push(s.stats[key as keyof GameState['stats']] / target);
+    }
+  }
+
+  return {
+    from: current.short,
+    to: next.short,
+    progress: Math.round(Math.max(0, Math.min(1, ...readiness)) * 100),
+    locked: !!next.premium && !s.lifetimeUnlocked,
+  };
+}
+
 export function currentRank(s: GameState) {
   return RANKS[s.rankIdx];
 }

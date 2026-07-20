@@ -76,14 +76,14 @@ describe('consequenceEngine.applyEffects', () => {
     expect(s.tags).not.toContain('married');
   });
 
-  it('kills the player on death effect only when permadeath is on', () => {
+  it('kills the player on a death effect only when Live Forever is off', () => {
     const on = makeState();
     applyEffects(on, { death: 'tested to death' });
     expect(on.dead).toBe(true);
     expect(on.deathCause).toBe('tested to death');
 
     const off = makeState();
-    off.settings.permadeath = false;
+    off.settings.liveForever = true;
     applyEffects(off, { death: 'should not die' });
     expect(off.dead).toBe(false);
   });

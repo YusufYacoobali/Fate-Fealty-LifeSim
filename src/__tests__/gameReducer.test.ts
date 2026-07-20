@@ -57,26 +57,26 @@ describe('gameReducer', () => {
     expect(s.settings.difficulty).toBe('Brutal');
   });
 
-  it('locks permadeath behind the Lifetime Pass', () => {
-    const locked = gameReducer(makeState({ lifetimeUnlocked: false, settings: { autoScroll: true, difficulty: 'Normal', permadeath: false, haptics: false } }), {
+  it('locks Live Forever behind premium access', () => {
+    const locked = gameReducer(makeState({ lifetimeUnlocked: false, settings: { autoScroll: true, difficulty: 'Normal', liveForever: false, haptics: false } }), {
       type: 'SET_SETTINGS',
-      settings: { permadeath: true },
+      settings: { liveForever: true },
     });
-    expect(locked.settings.permadeath).toBe(false);
+    expect(locked.settings.liveForever).toBe(false);
 
-    const unlocked = gameReducer(makeState({ lifetimeUnlocked: true, settings: { autoScroll: true, difficulty: 'Normal', permadeath: false, haptics: false } }), {
+    const unlocked = gameReducer(makeState({ lifetimeUnlocked: true, settings: { autoScroll: true, difficulty: 'Normal', liveForever: false, haptics: false } }), {
       type: 'SET_SETTINGS',
-      settings: { permadeath: true },
+      settings: { liveForever: true },
     });
-    expect(unlocked.settings.permadeath).toBe(true);
+    expect(unlocked.settings.liveForever).toBe(true);
   });
 
-  it('turns permadeath off when Lifetime Pass access is removed', () => {
-    const s = gameReducer(makeState({ lifetimeUnlocked: true, tab: 'hold', settings: { autoScroll: true, difficulty: 'Normal', permadeath: true, haptics: false } }), {
+  it('turns Live Forever off when premium access is removed', () => {
+    const s = gameReducer(makeState({ lifetimeUnlocked: true, tab: 'hold', settings: { autoScroll: true, difficulty: 'Normal', liveForever: true, haptics: false } }), {
       type: 'SET_LIFETIME_UNLOCKED',
       unlocked: false,
     });
-    expect(s.settings.permadeath).toBe(false);
+    expect(s.settings.liveForever).toBe(false);
     expect(s.tab).toBe('hold');
   });
 

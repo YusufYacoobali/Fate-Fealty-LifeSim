@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Linking, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
 import { Difficulty, GameSettings } from '@/types/game';
@@ -20,6 +20,7 @@ interface Props {
 }
 
 const DIFFICULTIES: Difficulty[] = ['Merciful', 'Normal', 'Brutal'];
+const PRIVACY_POLICY_URL = 'https://doc-hosting.flycricket.io/fate-fealty-life-sim-privacy-policy/311360d4-bd3f-48be-8077-1df1964ed343/privacy';
 
 function Row({ children }: { children: React.ReactNode }) {
   return <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>{children}</View>;
@@ -51,6 +52,12 @@ export function SettingsModal({ settings, premiumUnlocked, onSetSettings, onLock
     onSetSettings({ difficulty: DIFFICULTIES[(i + 1) % DIFFICULTIES.length] });
   };
 
+  const openPrivacyPolicy = () => {
+    void Linking.openURL(PRIVACY_POLICY_URL).catch((error) => {
+      console.warn('[settings] privacy policy failed to open', error);
+    });
+  };
+
   return (
     <ModalBackdrop zIndex={55}>
       <View style={PANEL.parchModal}>
@@ -69,13 +76,13 @@ export function SettingsModal({ settings, premiumUnlocked, onSetSettings, onLock
           </Row>
           <Row>
             <PixelText font="body" size={17} color={C.textDark}>
-              Permadeath
+              Live Forever
             </PixelText>
             <Pill
-              label={premiumUnlocked ? (settings.permadeath ? 'ON' : 'OFF') : 'PRO'}
-              color={premiumUnlocked ? (settings.permadeath ? C.bad : C.faithDark) : C.purpleDark}
-              bg={premiumUnlocked ? C.white : C.purple}
-              onPress={premiumUnlocked ? () => onSetSettings({ permadeath: !settings.permadeath }) : onLockedFeaturePress}
+              label={premiumUnlocked ? (settings.liveForever ? 'ON' : 'OFF') : 'PRO'}
+              color={premiumUnlocked ? C.white : C.purpleDark}
+              bg={premiumUnlocked ? (settings.liveForever ? C.faithDark : C.bad) : C.purple}
+              onPress={premiumUnlocked ? () => onSetSettings({ liveForever: !settings.liveForever }) : onLockedFeaturePress}
             />
           </Row>
           <Row>
@@ -91,7 +98,7 @@ export function SettingsModal({ settings, premiumUnlocked, onSetSettings, onLock
             <Pill label={settings.haptics ? 'ON' : 'OFF'} color={C.white} bg={settings.haptics ? C.faithDark : C.bad} onPress={() => onSetSettings({ haptics: !settings.haptics })} />
           </Row>
           <PixelText font="body" size={13} color={C.textMuted} style={{ borderTopWidth: 2, borderTopColor: '#c9b483', paddingTop: 8 }}>
-            Tap a setting to change it. Difficulty scales the harm life deals thee.
+            Tap a setting to change it. Live Forever prevents death and lets thy current life keep aging.
           </PixelText>
         </View>
 
@@ -108,6 +115,11 @@ export function SettingsModal({ settings, premiumUnlocked, onSetSettings, onLock
         <PixelButton bg={C.light} shadow={C.blue} light={C.sky} onPress={onRestartOnboarding} style={{ marginBottom: 7 }} innerStyle={{ paddingVertical: 9, alignItems: 'center' }}>
           <PixelText font="pixel" size={8} color={C.blueDark}>
             TUTORIAL
+          </PixelText>
+        </PixelButton>
+        <PixelButton bg={C.lightFill} shadow={C.blue} onPress={openPrivacyPolicy} style={{ marginBottom: 7 }} innerStyle={{ paddingVertical: 9, alignItems: 'center' }}>
+          <PixelText font="pixel" size={8} color={C.blueDark}>
+            PRIVACY POLICY
           </PixelText>
         </PixelButton>
         <View style={{ flexDirection: 'row', gap: 7 }}>

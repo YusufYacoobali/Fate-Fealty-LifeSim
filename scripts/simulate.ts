@@ -51,7 +51,7 @@ let arcsSeen = 0;
 let maxAge = 0;
 
 for (let i = 0; i < LIVES; i++) {
-  let s = createLife({ settings: { autoScroll: true, difficulty: randomChoice(['Merciful', 'Normal', 'Brutal']), permadeath: true, haptics: false } });
+  let s = createLife({ settings: { autoScroll: true, difficulty: randomChoice(['Merciful', 'Normal', 'Brutal']), liveForever: false, haptics: false } });
   s.lifetimeUnlocked = Math.random() < 0.5;
   let guard = 0;
 
@@ -94,7 +94,7 @@ for (let i = 0; i < LIVES; i++) {
 
 console.log('--- SIMULATION COMPLETE ---');
 console.log(`Lives simulated:      ${LIVES}`);
-console.log(`Deaths (permadeath):  ${deaths} (${((deaths / LIVES) * 100).toFixed(1)}%)`);
+console.log(`Deaths (Live Forever off): ${deaths} (${((deaths / LIVES) * 100).toFixed(1)}%)`);
 console.log(`Avg age at death:     ${(totalDeathAge / Math.max(1, deaths)).toFixed(1)}`);
 console.log(`Oldest life reached:  ${maxAge}`);
 console.log(`Events resolved:      ${eventsSeen} (arc nodes: ${arcsSeen})`);

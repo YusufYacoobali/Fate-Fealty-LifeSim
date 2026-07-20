@@ -75,7 +75,7 @@ export function ageUp(s: GameState): GameState {
   simulateLivingWorld(s);
 
   // Resolve the outgoing year's estate management. A health collapse is
-  // finalised before another story is offered, while non-permadeath play
+  // finalised before another story is offered while Live Forever is enabled
   // recovers at 1 Health and continues normally.
   tickHoldingYear(s);
   if (s.stats.health <= 0) {

@@ -66,7 +66,7 @@ function timed(
 }
 
 function proLockedSettings(settings: GameSettings, lifetimeUnlocked: boolean): GameSettings {
-  return lifetimeUnlocked ? settings : { ...settings, permadeath: false };
+  return lifetimeUnlocked ? settings : { ...settings, liveForever: false };
 }
 
 export function gameReducer(state: GameState, action: GameAction): GameState {

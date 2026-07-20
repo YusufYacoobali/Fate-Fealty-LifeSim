@@ -462,7 +462,7 @@ export interface ShopItem {
 export interface GameSettings {
   autoScroll: boolean;
   difficulty: Difficulty;
-  permadeath: boolean;
+  liveForever: boolean;
   haptics: boolean;
 }
 

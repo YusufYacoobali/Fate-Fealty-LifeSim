@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GameState, KinMember, Relationship } from '@/types/game';
+import { GameSettings, GameState, KinMember, Relationship } from '@/types/game';
 import { freshHolding } from '@/data/holding';
 import { defaultPronouns } from '@/data/identity';
 import { ACTIONS_PER_YEAR } from '@/engine/actionClock';
@@ -47,6 +47,12 @@ export async function loadGame(): Promise<GameState | null> {
 export function normalizeGameState(parsed: GameState): GameState {
   const defaults = freshHolding();
   const saved = parsed.holding as Partial<GameState['holding']> | undefined;
+  const savedSettings = (parsed.settings ?? {}) as Partial<GameSettings> & { permadeath?: boolean };
+  const liveForever = typeof savedSettings.liveForever === 'boolean'
+    ? savedSettings.liveForever
+    : typeof savedSettings.permadeath === 'boolean'
+      ? !savedSettings.permadeath
+      : false;
   const clampResource = (value: number | undefined, fallback: number) =>
     Math.max(0, Math.min(100, typeof value === 'number' ? value : fallback));
 
@@ -81,6 +87,12 @@ export function normalizeGameState(parsed: GameState): GameState {
 
   return {
     ...parsed,
+    settings: {
+      autoScroll: savedSettings.autoScroll ?? true,
+      difficulty: savedSettings.difficulty ?? 'Normal',
+      liveForever,
+      haptics: savedSettings.haptics ?? true,
+    },
     gender: parsed.gender ?? 'unspecified',
     pronouns: parsed.pronouns ?? defaultPronouns(parsed.gender ?? 'unspecified'),
     attraction: parsed.attraction ?? 'any',

@@ -50,8 +50,8 @@ function difficultyDeathMod(s: GameState): number {
 }
 
 export function checkDeath(s: GameState): GameState {
-  if (!s.settings.permadeath) {
-    // No permadeath: floor health at 1 so the player can keep going.
+  if (s.settings.liveForever) {
+    // Live Forever floors health at 1 so the player can keep aging.
     if (s.stats.health <= 0) s.stats.health = 1;
     return s;
   }

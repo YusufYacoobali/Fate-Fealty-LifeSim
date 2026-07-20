@@ -123,7 +123,7 @@ export function applyEffects(s: GameState, eff?: Effects): GameState {
   }
 
   // --- death (handled last so any stat/gold context is already applied) ---
-  if (eff.death && s.settings.permadeath) {
+  if (eff.death && !s.settings.liveForever) {
     killPlayer(s, eff.death);
   }
 

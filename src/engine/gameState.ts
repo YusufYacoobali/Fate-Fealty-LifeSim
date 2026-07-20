@@ -35,7 +35,7 @@ import { defaultPronouns } from '@/data/identity';
 export const DEFAULT_SETTINGS: GameSettings = {
   autoScroll: true,
   difficulty: 'Normal',
-  permadeath: false,
+  liveForever: false,
   haptics: true,
 };
 

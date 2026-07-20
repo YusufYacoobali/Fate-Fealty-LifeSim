@@ -2,16 +2,16 @@ import { agingDamage, buildDeathSummary, checkDeath } from '@/engine/deathEngine
 import { makeState } from './helpers';
 
 describe('deathEngine', () => {
-  it('kills the player when health hits 0 (permadeath on)', () => {
+  it('kills the player when health hits 0 and Live Forever is off', () => {
     const s = makeState({ stats: { health: 0, charm: 50, wits: 50, faith: 50 }, age: 20 });
     checkDeath(s);
     expect(s.dead).toBe(true);
     expect(s.deathCause).toBeTruthy();
   });
 
-  it('floors health at 1 and never dies when permadeath is off', () => {
+  it('floors health at 1 and never dies when Live Forever is on', () => {
     const s = makeState({ stats: { health: -5 as unknown as number, charm: 50, wits: 50, faith: 50 } });
-    s.settings.permadeath = false;
+    s.settings.liveForever = true;
     checkDeath(s);
     expect(s.dead).toBe(false);
     expect(s.stats.health).toBe(1);

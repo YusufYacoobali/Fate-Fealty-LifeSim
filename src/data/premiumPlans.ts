@@ -66,8 +66,8 @@ export const PREMIUM_BENEFIT_DETAILS = [
     body: 'Unlock premium ruler events, story arcs, goals, and deeds.',
   },
   {
-    title: 'KEEP AGING',
-    body: 'Turn off permadeath so lethal moments do not end your life and you can keep aging.',
+    title: 'LIVE FOREVER',
+    body: 'Enable Live Forever to survive lethal moments, ignore old-age death, and keep aging.',
   },
   {
     title: 'GET FUTURE CHAPTERS',
@@ -81,7 +81,7 @@ export const PREMIUM_BENEFIT_LINES = [
   'Royal Holding orders and buildings',
   'Premium events and story arcs',
   'Extra goals and deeds',
-  'Stop death and keep aging',
+  'Live Forever mode',
   'Future premium chapters',
 ] as const;
 

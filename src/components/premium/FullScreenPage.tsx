@@ -19,6 +19,12 @@ interface Props {
   contentMaxWidth?: number;
   /** Horizontal/vertical padding around the scrollable body. */
   contentPadding?: number;
+  /** Optional colours for themed takeover surfaces such as the royal paywall. */
+  backgroundColor?: string;
+  headerBackgroundColor?: string;
+  headerBorderColor?: string;
+  footerBackgroundColor?: string;
+  footerBorderColor?: string;
 }
 
 /**
@@ -34,17 +40,22 @@ export function FullScreenPage({
   footer,
   contentMaxWidth,
   contentPadding = 14,
+  backgroundColor = C.sky,
+  headerBackgroundColor = C.blueDeep,
+  headerBorderColor = C.blueDark,
+  footerBackgroundColor = C.skyDeep,
+  footerBorderColor = C.paleEdge,
 }: Props) {
   const insets = useSafeAreaInsets();
   const bottomInset = Math.max(insets.bottom, MIN_ANDROID_BOTTOM_NAV_GUARD);
 
   return (
-    <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex, backgroundColor: C.sky }}>
+    <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex, backgroundColor }}>
       <View
         style={{
-          backgroundColor: C.blueDeep,
+          backgroundColor: headerBackgroundColor,
           borderBottomWidth: 3,
-          borderBottomColor: C.blueDark,
+          borderBottomColor: headerBorderColor,
           paddingVertical: 12,
           paddingHorizontal: 14,
           flexDirection: 'row',
@@ -57,9 +68,13 @@ export function FullScreenPage({
         {headerRight && <View style={{ position: 'absolute', right: 10 }}>{headerRight}</View>}
       </View>
       <ScrollView
-        style={{ flex: 1 }}
+        style={{ flex: 1, backgroundColor }}
         contentInsetAdjustmentBehavior="automatic"
-        contentContainerStyle={{ padding: contentPadding, paddingBottom: 18, alignItems: 'center' }}
+        contentContainerStyle={{
+          padding: contentPadding,
+          paddingBottom: footer ? 18 : 18 + bottomInset,
+          alignItems: 'center',
+        }}
       >
         <View style={{ width: '100%', maxWidth: contentMaxWidth }}>{children}</View>
       </ScrollView>
@@ -68,9 +83,9 @@ export function FullScreenPage({
           style={{
             padding: 12,
             paddingBottom: 12 + bottomInset,
-            backgroundColor: C.skyDeep,
+            backgroundColor: footerBackgroundColor,
             borderTopWidth: 3,
-            borderTopColor: C.paleEdge,
+            borderTopColor: footerBorderColor,
           }}
         >
           <View style={{ width: '100%', maxWidth: contentMaxWidth, alignSelf: 'center' }}>{footer}</View>

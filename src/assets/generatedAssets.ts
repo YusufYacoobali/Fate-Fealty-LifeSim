@@ -20,6 +20,15 @@ export const FEATURE_ART = {
   holding: require('../../assets/generated/holding-overview-banner.png'),
 } as const satisfies Record<string, ImageSourcePropType>;
 
+export const PAYWALL_ART = {
+  hero: require('../../assets/generated/paywall-progression-hero.png'),
+  crown: require('../../assets/generated/paywall-crown.png'),
+  stories: require('../../assets/generated/paywall-stories.png'),
+  holding: require('../../assets/generated/paywall-holding.png'),
+  check: require('../../assets/generated/paywall-check-badge.png'),
+  monthly: require('../../assets/generated/paywall-monthly-shield.png'),
+} as const satisfies Record<string, ImageSourcePropType>;
+
 export const CAREER_FAMILY_ART = {
   agriculture: require('../../assets/generated/activity-fields.png'),
   craft: require('../../assets/generated/activity-blacksmith.png'),
@@ -39,6 +48,23 @@ export const HOLDING_ACTION_ART = {
   hold_feast: require('../../assets/generated/activity-feast.png'),
   muster_levy: require('../../assets/generated/activity-tournament.png'),
   royal_progress: require('../../assets/generated/portrait-monarch.png'),
+} as const satisfies Record<string, ImageSourcePropType>;
+
+export const HOLDING_RESOURCE_ART = {
+  stores: require('../../assets/generated/holding-resource-stores.png'),
+  security: require('../../assets/generated/holding-resource-security.png'),
+  loyalty: require('../../assets/generated/holding-resource-loyalty.png'),
+} as const satisfies Record<string, ImageSourcePropType>;
+
+export const HOLDING_UPGRADE_ART = {
+  fenced_field: require('../../assets/generated/holding-upgrade-fenced-field.png'),
+  smokehouse: require('../../assets/generated/holding-upgrade-smokehouse.png'),
+  stable: require('../../assets/generated/holding-upgrade-stable.png'),
+  granary: require('../../assets/generated/holding-upgrade-granary.png'),
+  watchtower: require('../../assets/generated/holding-upgrade-watchtower.png'),
+  watermill: require('../../assets/generated/holding-upgrade-watermill.png'),
+  stewards_hall: require('../../assets/generated/holding-upgrade-stewards-hall.png'),
+  royal_road: require('../../assets/generated/holding-upgrade-royal-road.png'),
 } as const satisfies Record<string, ImageSourcePropType>;
 
 export const ACTIVITY_ICONS: Record<string, ImageSourcePropType> = {

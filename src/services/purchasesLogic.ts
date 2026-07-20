@@ -30,6 +30,22 @@ export function entitlementActive(info: CustomerInfoLike | null | undefined): bo
 
 export type PurchaseOutcome = 'purchased' | 'cancelled' | 'unavailable' | 'error';
 
+export interface AnnualSubscriptionValue {
+  perMonth: number;
+  savingsPercent: number;
+}
+
+/** Compares one annual payment with twelve monthly payments. */
+export function annualSubscriptionValue(annualPrice: number, monthlyPrice: number): AnnualSubscriptionValue | null {
+  if (!Number.isFinite(annualPrice) || !Number.isFinite(monthlyPrice) || annualPrice <= 0 || monthlyPrice <= 0) {
+    return null;
+  }
+  return {
+    perMonth: annualPrice / 12,
+    savingsPercent: Math.max(0, Math.round((1 - annualPrice / (monthlyPrice * 12)) * 100)),
+  };
+}
+
 /**
  * Merge a fresh entitlement reading into the locally cached unlock flag.
  *

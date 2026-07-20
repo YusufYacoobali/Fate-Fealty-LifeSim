@@ -1,11 +1,10 @@
 import React from 'react';
-import { Image, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, useWindowDimensions } from 'react-native';
 import { C } from '@/theme/theme';
 import { PixelText } from '@/components/ui/PixelText';
 import { FullScreenPage } from '@/components/premium/FullScreenPage';
-import { PaywallPanel } from '@/components/premium/PaywallPanel';
-import { RANK_PORTRAITS } from '@/assets/generatedAssets';
-import { SHOP_PLAN_IDS, PlanId } from '@/data/premiumPlans';
+import { RoyalShopOfferPanel } from '@/components/premium/onboarding-paywall-panel';
+import { PlanId } from '@/data/premiumPlans';
 import { PurchaseOutcome } from '@/services/purchases';
 import type { PremiumAccessState } from '@/state/hooks/usePremium';
 
@@ -19,6 +18,9 @@ interface Props {
 
 /** Full-screen premium storefront, reachable any time from the game. */
 export function PremiumShopScreen({ unlocked, accessState, onPurchase, onRestore, onClose }: Props) {
+  const { width, height } = useWindowDimensions();
+  const compact = width < 390 || height < 720;
+
   return (
     <FullScreenPage
       title="ROYAL SHOP"
@@ -30,39 +32,18 @@ export function PremiumShopScreen({ unlocked, accessState, onPurchase, onRestore
           </PixelText>
         </TouchableOpacity>
       }
+      contentMaxWidth={620}
+      contentPadding={compact ? 8 : 10}
+      backgroundColor="#0a3768"
+      headerBackgroundColor="#082c56"
+      headerBorderColor="#b8790a"
     >
-      <View style={{ alignItems: 'center', marginBottom: 12 }}>
-        <View
-          style={{
-            width: 76,
-            height: 76,
-            backgroundColor: C.lightFill,
-            borderWidth: 3,
-            borderColor: C.inkSoft,
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: 10,
-          }}
-        >
-          <Image source={RANK_PORTRAITS.Monarch} resizeMode="contain" style={{ width: 66, height: 66 }} />
-        </View>
-        <PixelText font="pixel" size={11} color={C.blueDeep} style={{ textAlign: 'center' }}>
-          {unlocked ? 'LONG MAY YOU REIGN' : 'OWN THE BIGGER LIFE'}
-        </PixelText>
-        {!unlocked && (
-          <PixelText font="body" size={16} color={C.textBrown} style={{ textAlign: 'center', marginTop: 6 }}>
-            Expand your holding into a realm, then rise to Baron and Monarch. Pick the pass that suits your reign.
-          </PixelText>
-        )}
-      </View>
-
-      <PaywallPanel
-        planIds={SHOP_PLAN_IDS}
+      <RoyalShopOfferPanel
+        compact={compact}
         unlocked={unlocked}
         accessState={accessState}
         onPurchase={onPurchase}
         onRestore={onRestore}
-        ctaLabel="UNLOCK PREMIUM"
       />
     </FullScreenPage>
   );

@@ -19,7 +19,10 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.yacoobali.med",
       "appStoreUrl": "https://apps.apple.com/app/id6786423727",
-      "icon": "./assets/icon/icon-ios.png"
+      "icon": "./assets/icon/icon-ios.png",
+      "infoPlist": {
+        "UIStatusBarHidden": true
+      }
     },
     "android": {
       "package": "com.yacoobali.med",
@@ -38,6 +41,9 @@
       "expo-asset",
       "expo-notifications"
     ],
+    "androidStatusBar": {
+      "hidden": true
+    },
     "extra": {
       "eas": {
         "projectId": "bb28a220-3a1e-4c84-8e16-7525b1117aed"

@@ -62,6 +62,8 @@ export interface PurchaseResult {
 export interface PlanOffer {
   available: boolean;
   priceString: string | null;
+  price: number | null;
+  currencyCode: string | null;
 }
 
 export type PlanOffers = Record<PlanId, PlanOffer>;
@@ -75,10 +77,15 @@ export async function getPremiumOffers(): Promise<PlanOffers | null> {
     const offers = {} as PlanOffers;
     for (const plan of PLAN_IDS) {
       const pack = pickPackage(offerings.current, plan);
-      const product = (pack as { product?: { priceString?: string } } | null)?.product;
+      const product = (pack as { product?: { priceString?: string; price?: number; currencyCode?: string } } | null)?.product;
       offers[plan] = pack
-        ? { available: true, priceString: product?.priceString ?? null }
-        : { available: false, priceString: null };
+        ? {
+            available: true,
+            priceString: product?.priceString ?? null,
+            price: product?.price ?? null,
+            currencyCode: product?.currencyCode ?? null,
+          }
+        : { available: false, priceString: null, price: null, currencyCode: null };
     }
     return offers;
   } catch {

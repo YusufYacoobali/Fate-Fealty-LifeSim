@@ -4,17 +4,16 @@ import { C } from '@/theme/theme';
 import { PixelButton } from '@/components/ui/PixelButton';
 import { PixelText } from '@/components/ui/PixelText';
 import { FullScreenPage } from '@/components/premium/FullScreenPage';
-import { PaywallPanel } from '@/components/premium/PaywallPanel';
+import { OnboardingPaywallPanel } from '@/components/premium/onboarding-paywall-panel';
 import {
   ACTIVITY_ICONS,
-  FEATURE_ART,
   HOLDING_ACTION_ART,
   KIN_KIND_ICONS,
   RANK_PORTRAITS,
   STAT_ICONS,
 } from '@/assets/generatedAssets';
 import { RANKS } from '@/data/ranks';
-import { PAYWALL_PLAN_IDS, PlanId } from '@/data/premiumPlans';
+import { PlanId } from '@/data/premiumPlans';
 import { PurchaseOutcome } from '@/services/purchases';
 import type { PremiumAccessState } from '@/state/hooks/usePremium';
 
@@ -92,18 +91,18 @@ export function onboardingLayout(width: number, height: number): OnboardingLayou
   };
 }
 
-function ProgressDots({ count, index }: { count: number; index: number }) {
+function ProgressDots({ count, index, dark = false, compact = false }: { count: number; index: number; dark?: boolean; compact?: boolean }) {
   return (
-    <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 6, marginBottom: 12 }}>
+    <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 7, marginBottom: compact ? 7 : 12 }}>
       {Array.from({ length: count }, (_, i) => (
         <View
           key={i}
           style={{
-            width: 10,
-            height: 10,
-            backgroundColor: i <= index ? C.charm : C.lightFill,
+            width: i === index ? 13 : 10,
+            height: i === index ? 13 : 10,
+            backgroundColor: i < index ? C.charm : i === index ? (dark ? C.cream : C.white) : dark ? C.blueMid : C.lightFill,
             borderWidth: 2,
-            borderColor: i <= index ? C.charmDark : C.paleEdge,
+            borderColor: i <= index ? C.charmDark : dark ? C.blue : C.paleEdge,
           }}
         />
       ))}
@@ -309,16 +308,34 @@ export function OnboardingScreen({ premiumUnlocked, accessState, onPurchase, onR
   const layout = onboardingLayout(width, height);
   const pages: Page[] = premiumUnlocked ? ['hook', 'lessons', 'destiny'] : ['hook', 'lessons', 'destiny', 'paywall'];
   const [index, setIndex] = useState(0);
+  const [restoring, setRestoring] = useState(false);
   const page = pages[Math.min(index, pages.length - 1)];
   const isLast = index >= pages.length - 1;
+  const paywallCompact = layout.compact || width < 390 || height < 780;
 
   const footer =
     page === 'paywall' ? (
-      <TouchableOpacity onPress={onDone} style={{ alignSelf: 'center', padding: 7 }}>
-        <PixelText font="body" size={15} color={C.blueDeep}>
-          Continue with the free adventure
-        </PixelText>
-      </TouchableOpacity>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+        <TouchableOpacity
+          disabled={restoring}
+          onPress={async () => {
+            setRestoring(true);
+            let restored = false;
+            try {
+              restored = await onRestore();
+            } finally {
+              setRestoring(false);
+            }
+            if (restored) onDone();
+          }}
+          style={{ padding: 7 }}
+        >
+          <PixelText font="body" size={14} color={C.creamBlue}>{restoring ? 'Restoring...' : 'Restore purchases'}</PixelText>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={onDone} style={{ padding: 7 }}>
+          <PixelText font="body" size={14} color={C.creamBlue}>Continue free &gt;</PixelText>
+        </TouchableOpacity>
+      </View>
     ) : (
       <PixelButton
         bg={C.faith}
@@ -338,37 +355,27 @@ export function OnboardingScreen({ premiumUnlocked, accessState, onPurchase, onR
       title={page === 'paywall' ? 'CLAIM THY CROWN' : 'WELCOME, SMALL LEGEND'}
       zIndex={80}
       footer={footer}
-      contentMaxWidth={layout.contentMaxWidth}
-      contentPadding={layout.contentPadding}
+      contentMaxWidth={page === 'paywall' ? 620 : layout.contentMaxWidth}
+      contentPadding={page === 'paywall' ? (paywallCompact ? 8 : 10) : layout.contentPadding}
+      backgroundColor={page === 'paywall' ? '#0a3768' : C.sky}
+      headerBackgroundColor={page === 'paywall' ? '#082c56' : C.blueDeep}
+      headerBorderColor={page === 'paywall' ? '#b8790a' : C.blueDark}
+      footerBackgroundColor={page === 'paywall' ? '#082c56' : C.skyDeep}
+      footerBorderColor={page === 'paywall' ? '#236aa8' : C.paleEdge}
     >
-      <ProgressDots count={pages.length} index={index} />
+      <ProgressDots count={pages.length} index={index} dark={page === 'paywall'} compact={page === 'paywall' && paywallCompact} />
       {page === 'hook' && <HookPage layout={layout} />}
       {page === 'lessons' && <LessonsPage compact={layout.compact} />}
       {page === 'destiny' && <DestinyPage compact={layout.compact} />}
       {page === 'paywall' && (
-        <View>
-          <View style={{ backgroundColor: C.blueDeep, borderWidth: 3, borderColor: C.inkSoft, overflow: 'hidden', marginBottom: 12 }}>
-            <Image source={FEATURE_ART.holding} resizeMode="cover" style={{ width: '100%', height: layout.compact ? 102 : 128 }} />
-            <View style={{ paddingHorizontal: 12, paddingVertical: layout.compact ? 9 : 12, alignItems: 'center' }}>
-              <PixelText font="pixel" size={layout.compact ? 8 : 10} color={C.charm} style={{ textAlign: 'center' }}>
-                YOUR STORY DOES NOT END AT NOBLE
-              </PixelText>
-              <PixelText font="body" size={layout.compact ? 15 : 17} color={C.cream} style={{ textAlign: 'center', marginTop: 7 }}>
-                Build a barony, grow a dynasty, face royal decisions, and chase the crown across every life you begin.
-              </PixelText>
-            </View>
-          </View>
-          <PaywallPanel
-            planIds={PAYWALL_PLAN_IDS}
-            unlocked={premiumUnlocked}
-            accessState={accessState}
-            onPurchase={onPurchase}
-            onRestore={onRestore}
-            onUnlocked={onDone}
-            ctaLabel="BEGIN MY FULL ADVENTURE"
-            variant="onboarding"
-          />
-        </View>
+        <OnboardingPaywallPanel
+          compact={paywallCompact}
+          unlocked={premiumUnlocked}
+          accessState={accessState}
+          onPurchase={onPurchase}
+          onRestore={onRestore}
+          onUnlocked={onDone}
+        />
       )}
     </FullScreenPage>
   );

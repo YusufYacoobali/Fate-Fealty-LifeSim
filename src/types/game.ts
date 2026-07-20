@@ -247,7 +247,6 @@ export interface HoldingState extends HoldingResources {
 export interface HoldingActionDef {
   id: string;
   name: string;
-  icon: string;
   desc: string;
   minRankIdx: number;
 }
@@ -255,7 +254,6 @@ export interface HoldingActionDef {
 export interface HoldingUpgradeDef {
   id: string;
   name: string;
-  icon: string;
   desc: string;
   price: number;
   minRankIdx: number;

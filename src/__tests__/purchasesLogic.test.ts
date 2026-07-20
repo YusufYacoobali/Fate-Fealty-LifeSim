@@ -1,4 +1,5 @@
 import {
+  annualSubscriptionValue,
   ENTITLEMENT_ID,
   entitlementActive,
   isProductionRevenueCatKey,
@@ -6,6 +7,17 @@ import {
   PLAN_IDS,
   pickPackage,
 } from '@/services/purchasesLogic';
+
+describe('annualSubscriptionValue', () => {
+  it('calculates the monthly equivalent and saving against twelve monthly payments', () => {
+    expect(annualSubscriptionValue(9.99, 2.99)).toEqual({ perMonth: 0.8325, savingsPercent: 72 });
+  });
+
+  it('never reports negative savings and rejects unusable prices', () => {
+    expect(annualSubscriptionValue(36, 2.99)).toEqual({ perMonth: 3, savingsPercent: 0 });
+    expect(annualSubscriptionValue(0, 2.99)).toBeNull();
+  });
+});
 
 describe('entitlementActive (gate on entitlement, never product)', () => {
   it('uses the RevenueCat pro entitlement', () => {

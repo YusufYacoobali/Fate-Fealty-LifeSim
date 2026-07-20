@@ -11,7 +11,7 @@ export const OUTCOME_MESSAGES: Record<PurchaseOutcome, string> = {
   purchased: 'Premium unlocked. Long may you reign!',
   cancelled: 'Purchase cancelled.',
   unavailable: 'The royal treasury is unreachable. Try again later.',
-  error: 'Something went awry. No coin was taken — try again.',
+  error: 'Something went awry. No coin was taken. Try again.',
 };
 
 export function usePurchaseFlow(
@@ -25,7 +25,7 @@ export function usePurchaseFlow(
     async (plan: PlanId): Promise<PurchaseOutcome | null> => {
       if (busy) return null;
       setBusy(true);
-      setMessage('Summoning the royal treasury…');
+      setMessage('Summoning the royal treasury...');
       try {
         const outcome = await onPurchase(plan);
         setMessage(OUTCOME_MESSAGES[outcome]);
@@ -40,7 +40,7 @@ export function usePurchaseFlow(
   const restore = useCallback(async (): Promise<boolean> => {
     if (busy) return false;
     setBusy(true);
-    setMessage('Consulting the ledgers…');
+    setMessage('Consulting the ledgers...');
     try {
       const restored = await onRestore();
       setMessage(restored ? 'Premium restored.' : 'No previous purchase was found.');

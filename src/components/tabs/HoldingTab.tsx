@@ -13,7 +13,7 @@ import {
 } from '@/engine/holdingEngine';
 import { RANKS } from '@/data/ranks';
 import { C, PANEL } from '@/theme/theme';
-import { FEATURE_ART, HOLDING_ACTION_ART } from '@/assets/generatedAssets';
+import { FEATURE_ART, HOLDING_ACTION_ART, HOLDING_RESOURCE_ART, HOLDING_UPGRADE_ART } from '@/assets/generatedAssets';
 import { PixelBox } from '../ui/PixelBox';
 import { PixelButton } from '../ui/PixelButton';
 import { PixelText } from '../ui/PixelText';
@@ -25,18 +25,21 @@ interface Props {
   onUpgrade: (id: string) => void;
 }
 
-const RESOURCE_STYLE: Record<HoldingResource, { label: string; icon: string; color: string; dark: string }> = {
-  stores: { label: 'STORES', icon: '🌾', color: '#d8ad62', dark: '#966c2f' },
-  security: { label: 'SECURITY', icon: '🛡️', color: C.blue, dark: C.blueDark },
-  loyalty: { label: 'LOYALTY', icon: '♥', color: C.faith, dark: C.faithDark },
+const RESOURCE_STYLE: Record<HoldingResource, { label: string; color: string; dark: string }> = {
+  stores: { label: 'STORES', color: '#d8ad62', dark: '#966c2f' },
+  security: { label: 'SECURITY', color: C.blue, dark: C.blueDark },
+  loyalty: { label: 'LOYALTY', color: C.faith, dark: C.faithDark },
 };
 
 function ResourceMeter({ resource, value, note }: { resource: HoldingResource; value: number; note: string }) {
   const style = RESOURCE_STYLE[resource];
   return (
     <View style={{ marginBottom: 12 }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-        <PixelText font="pixel" size={7} color={style.dark}>{style.icon} {style.label}</PixelText>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+          <Image source={HOLDING_RESOURCE_ART[resource]} resizeMode="contain" style={{ width: 24, height: 24 }} />
+          <PixelText font="pixel" size={7} color={style.dark}>{style.label}</PixelText>
+        </View>
         <PixelText font="pixel" size={7} color={value < 15 ? C.bad : C.inkSoft}>{value}%</PixelText>
       </View>
       <StatBar value={value} color={style.color} dark={style.dark} height={14} trackBg={C.lightFill} trackBorder={C.inkSoft} />
@@ -185,6 +188,7 @@ export function HoldingTab({ state, onAction, onUpgrade }: Props) {
           const availability = holdingUpgradeAvailability(state, upgrade.id);
           const owned = state.holding.upgrades.includes(upgrade.id);
           const active = isHoldingUpgradeActive(state, upgrade.id);
+          const art = HOLDING_UPGRADE_ART[upgrade.id as keyof typeof HOLDING_UPGRADE_ART];
           return (
             <PixelButton
               key={upgrade.id}
@@ -195,8 +199,10 @@ export function HoldingTab({ state, onAction, onUpgrade }: Props) {
               onPress={() => onUpgrade(upgrade.id)}
               innerStyle={{ padding: 11, minHeight: 76 }}
             >
-              <View style={{ flexDirection: 'row', gap: 9 }}>
-                <PixelText size={21}>{upgrade.icon}</PixelText>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <View style={{ width: 50, height: 50, flexShrink: 0, backgroundColor: C.lightFill, borderWidth: 2, borderColor: C.inkSoft, alignItems: 'center', justifyContent: 'center' }}>
+                  <Image source={art} resizeMode="contain" style={{ width: 44, height: 44 }} />
+                </View>
                 <View style={{ flex: 1 }}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 6 }}>
                     <PixelText font="pixel" size={6} color={C.textDark}>{upgrade.name}</PixelText>

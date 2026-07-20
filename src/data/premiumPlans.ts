@@ -23,7 +23,7 @@ export const PREMIUM_PLANS: Record<PlanId, PremiumPlan> = {
     name: 'YEARLY',
     fallbackPrice: '$9.99',
     period: 'per year',
-    blurb: 'Under $0.84 a month.',
+    blurb: 'Best value for a full year.',
     badge: 'BEST VALUE | SAVE 72%',
     ctaNote: 'Renews yearly. Cancel anytime.',
   },
@@ -50,7 +50,7 @@ export const PREMIUM_PLANS: Record<PlanId, PremiumPlan> = {
 export const PAYWALL_PLAN_IDS: PlanId[] = ['annual', 'monthly'];
 
 /** The premium shop: everything, yearly first, lifetime as the anchor. */
-export const SHOP_PLAN_IDS: PlanId[] = ['annual', 'lifetime', 'monthly'];
+export const SHOP_PLAN_IDS: PlanId[] = ['annual', 'monthly', 'lifetime'];
 
 export const PREMIUM_BENEFIT_DETAILS = [
   {
@@ -66,13 +66,23 @@ export const PREMIUM_BENEFIT_DETAILS = [
     body: 'Unlock premium ruler events, story arcs, goals, and deeds.',
   },
   {
-    title: 'KEEP A FAVOURITE LIFE',
-    body: 'Turn off permadeath when you want the adventure to continue.',
+    title: 'KEEP AGING',
+    body: 'Turn off permadeath so lethal moments do not end your life and you can keep aging.',
   },
   {
     title: 'GET FUTURE CHAPTERS',
     body: 'Every future premium chapter is included while you have access.',
   },
+] as const;
+
+/** Short enough to keep the onboarding paywall on one screen. */
+export const PREMIUM_BENEFIT_LINES = [
+  'Baron and Monarch ranks',
+  'Royal Holding orders and buildings',
+  'Premium events and story arcs',
+  'Extra goals and deeds',
+  'Stop death and keep aging',
+  'Future premium chapters',
 ] as const;
 
 /** Compact copy retained for content checks and any small sales surface. */

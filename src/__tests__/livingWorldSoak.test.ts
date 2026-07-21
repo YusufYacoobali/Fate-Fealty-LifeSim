@@ -22,7 +22,7 @@ describe('living-world seeded soak', () => {
     setRandomSource(seededSource(99173));
     let years = 0;
     for (let life = 0; life < 30; life++) {
-      let state = createLife({ settings: { autoScroll: true, difficulty: 'Normal', liveForever: false, haptics: false } });
+      let state = createLife({ settings: { autoScroll: true, difficulty: 'Normal', liveForever: false, haptics: false, music: false, soundEffects: false } });
       for (let guard = 0; guard < 120 && !state.dead; guard++) {
         state = resolveEvents(state);
         if (state.dead || state.event) break;

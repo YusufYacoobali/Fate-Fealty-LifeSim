@@ -6,6 +6,8 @@ import { makeState } from './helpers';
 describe('settings persistence', () => {
   it('defaults Live Forever to off', () => {
     expect(DEFAULT_SETTINGS.liveForever).toBe(false);
+    expect(DEFAULT_SETTINGS.music).toBe(true);
+    expect(DEFAULT_SETTINGS.soundEffects).toBe(true);
   });
 
   it('migrates the old inverted permadeath setting', () => {
@@ -21,6 +23,8 @@ describe('settings persistence', () => {
       difficulty: 'Brutal',
       liveForever: true,
       haptics: false,
+      music: true,
+      soundEffects: true,
     });
   });
 

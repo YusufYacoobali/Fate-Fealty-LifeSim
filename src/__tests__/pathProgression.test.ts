@@ -9,10 +9,10 @@ describe('pathProgression', () => {
   });
 
   it('canPromote respects age, progress and stat gates', () => {
-    const s = makeState({ age: 12, rankProgress: 100, stats: { health: 60, charm: 50, wits: 50, faith: 50 } });
-    // Squire needs age>=14 and wits>=48 and progress>=100.
+    const s = makeState({ age: 11, rankProgress: 100, stats: { health: 60, charm: 50, wits: 50, faith: 50 } });
+    // Squire needs age>=12 and wits>=48 and progress>=100.
     expect(canPromote(s)).toBe(false); // too young
-    s.age = 14;
+    s.age = 12;
     expect(canPromote(s)).toBe(true);
     s.stats.wits = 40;
     expect(canPromote(s)).toBe(false); // wits too low

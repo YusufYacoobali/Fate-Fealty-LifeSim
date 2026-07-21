@@ -95,6 +95,8 @@ export function normalizeGameState(parsed: GameState): GameState {
       difficulty: savedSettings.difficulty ?? 'Normal',
       liveForever,
       haptics: savedSettings.haptics ?? true,
+      music: savedSettings.music ?? true,
+      soundEffects: savedSettings.soundEffects ?? true,
     },
     gender: parsed.gender ?? 'unspecified',
     pronouns: parsed.pronouns ?? defaultPronouns(parsed.gender ?? 'unspecified'),

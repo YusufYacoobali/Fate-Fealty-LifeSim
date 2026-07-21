@@ -52,7 +52,7 @@ function chooseOption(s: GameState, choices: Choice[]): Choice {
 }
 
 function runLife(difficulty: Difficulty, useHolding: boolean): GameState {
-  let s = createLife({ settings: { autoScroll: true, difficulty, liveForever: false, haptics: false } });
+  let s = createLife({ settings: { autoScroll: true, difficulty, liveForever: false, haptics: false, music: false, soundEffects: false } });
   s.lifetimeUnlocked = true;
   let guard = 0;
   while (!s.dead && guard < 400) {

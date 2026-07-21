@@ -466,6 +466,8 @@ export interface GameSettings {
   difficulty: Difficulty;
   liveForever: boolean;
   haptics: boolean;
+  music: boolean;
+  soundEffects: boolean;
 }
 
 export type Tab = 'life' | 'do' | 'kin' | 'hold' | 'shop' | 'me';

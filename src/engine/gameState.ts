@@ -37,6 +37,8 @@ export const DEFAULT_SETTINGS: GameSettings = {
   difficulty: 'Normal',
   liveForever: false,
   haptics: true,
+  music: true,
+  soundEffects: true,
 };
 
 function emptyPaths(): PathProgress {

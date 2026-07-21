@@ -58,13 +58,13 @@ describe('gameReducer', () => {
   });
 
   it('locks Live Forever behind premium access', () => {
-    const locked = gameReducer(makeState({ lifetimeUnlocked: false, settings: { autoScroll: true, difficulty: 'Normal', liveForever: false, haptics: false } }), {
+    const locked = gameReducer(makeState({ lifetimeUnlocked: false, settings: { autoScroll: true, difficulty: 'Normal', liveForever: false, haptics: false, music: false, soundEffects: false } }), {
       type: 'SET_SETTINGS',
       settings: { liveForever: true },
     });
     expect(locked.settings.liveForever).toBe(false);
 
-    const unlocked = gameReducer(makeState({ lifetimeUnlocked: true, settings: { autoScroll: true, difficulty: 'Normal', liveForever: false, haptics: false } }), {
+    const unlocked = gameReducer(makeState({ lifetimeUnlocked: true, settings: { autoScroll: true, difficulty: 'Normal', liveForever: false, haptics: false, music: false, soundEffects: false } }), {
       type: 'SET_SETTINGS',
       settings: { liveForever: true },
     });
@@ -72,7 +72,7 @@ describe('gameReducer', () => {
   });
 
   it('turns Live Forever off when premium access is removed', () => {
-    const s = gameReducer(makeState({ lifetimeUnlocked: true, tab: 'hold', settings: { autoScroll: true, difficulty: 'Normal', liveForever: true, haptics: false } }), {
+    const s = gameReducer(makeState({ lifetimeUnlocked: true, tab: 'hold', settings: { autoScroll: true, difficulty: 'Normal', liveForever: true, haptics: false, music: false, soundEffects: false } }), {
       type: 'SET_LIFETIME_UNLOCKED',
       unlocked: false,
     });

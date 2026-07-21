@@ -9,7 +9,7 @@ import { LIFE_GOALS } from '@/data/goals';
 
 describe('24-action yearly clock', () => {
   it('charges valid actions, rejects invalid attempts for free, caps at 24, and resets on age up', () => {
-    let state = makeState({ age: 18, settings: { autoScroll: true, difficulty: 'Normal', liveForever: true, haptics: false } });
+    let state = makeState({ age: 18, settings: { autoScroll: true, difficulty: 'Normal', liveForever: true, haptics: false, music: false, soundEffects: false } });
     state = gameReducer(state, { type: 'DO_ACTIVITY', id: 'church' });
     expect(state.actionClock.used).toBe(1);
 

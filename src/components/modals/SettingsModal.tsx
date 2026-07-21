@@ -1,5 +1,5 @@
 import React from 'react';
-import { Linking, View } from 'react-native';
+import { Linking, ScrollView, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
 import { Difficulty, GameSettings } from '@/types/game';
@@ -60,7 +60,7 @@ export function SettingsModal({ settings, premiumUnlocked, onSetSettings, onLock
 
   return (
     <ModalBackdrop zIndex={55}>
-      <View style={PANEL.parchModal}>
+      <ScrollView style={{ maxHeight: '100%' }} contentContainerStyle={PANEL.parchModal}>
         <View style={{ backgroundColor: C.light, borderWidth: 3, borderColor: C.inkSoft, borderBottomColor: C.blue, borderRightColor: C.blue, paddingHorizontal: 8, paddingVertical: 6 }}>
           <PixelText font="pixel" size={9} color={C.white} style={{ textAlign: 'center' }}>
             ⚙️ SETTINGS
@@ -96,6 +96,18 @@ export function SettingsModal({ settings, premiumUnlocked, onSetSettings, onLock
               Haptics
             </PixelText>
             <Pill label={settings.haptics ? 'ON' : 'OFF'} color={C.white} bg={settings.haptics ? C.faithDark : C.bad} onPress={() => onSetSettings({ haptics: !settings.haptics })} />
+          </Row>
+          <Row>
+            <PixelText font="body" size={17} color={C.textDark}>
+              Music
+            </PixelText>
+            <Pill label={settings.music ? 'ON' : 'OFF'} color={C.white} bg={settings.music ? C.faithDark : C.bad} onPress={() => onSetSettings({ music: !settings.music })} />
+          </Row>
+          <Row>
+            <PixelText font="body" size={17} color={C.textDark}>
+              Sound effects
+            </PixelText>
+            <Pill label={settings.soundEffects ? 'ON' : 'OFF'} color={C.white} bg={settings.soundEffects ? C.faithDark : C.bad} onPress={() => onSetSettings({ soundEffects: !settings.soundEffects })} />
           </Row>
           <PixelText font="body" size={13} color={C.textMuted} style={{ borderTopWidth: 2, borderTopColor: '#c9b483', paddingTop: 8 }}>
             Tap a setting to change it. Live Forever prevents death and lets thy current life keep aging.
@@ -134,7 +146,7 @@ export function SettingsModal({ settings, premiumUnlocked, onSetSettings, onLock
             </PixelText>
           </PixelButton>
         </View>
-      </View>
+      </ScrollView>
     </ModalBackdrop>
   );
 }

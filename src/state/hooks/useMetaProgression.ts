@@ -39,7 +39,7 @@ export function useMetaProgression(state: GameState, meta: AppMetaApi, loaded: b
     if (newly.length > 0) {
       m = { ...m, achievements: unlocked };
       changed = true;
-      setNewAchievements((q) => [...q, ...newly]);
+      setNewAchievements((q) => [...q, ...newly.filter((id) => !q.includes(id))]);
     }
 
     if (changed) {

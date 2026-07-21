@@ -68,3 +68,9 @@ export function useGameAudio(state: GameState, loaded: boolean): void {
       .catch((error) => console.warn('[audio] success sound failed', error));
   }, [loaded, state.gold, state.settings.soundEffects, successPlayer, successStatus.isLoaded]);
 }
+
+/** Keeps frequent audio status updates inside a null child component. */
+export function GameAudioController({ state, loaded }: { state: GameState; loaded: boolean }) {
+  useGameAudio(state, loaded);
+  return null;
+}

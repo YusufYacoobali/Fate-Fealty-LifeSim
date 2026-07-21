@@ -39,7 +39,7 @@ import { OnboardingScreen } from '@/screens/OnboardingScreen';
 import { PremiumShopScreen } from '@/screens/PremiumShopScreen';
 import { MIN_ANDROID_BOTTOM_NAV_GUARD } from '@/components/systemLayout';
 import { useGameFeedback } from '@/state/hooks/useGameFeedback';
-import { useGameAudio } from '@/state/hooks/useGameAudio';
+import { GameAudioController } from '@/state/hooks/useGameAudio';
 import { haptic } from '@/services/haptics';
 
 export function GameScreen() {
@@ -77,13 +77,13 @@ export function GameScreen() {
 
   // Promotion/death haptics ride on engine transitions.
   useGameFeedback(state);
-  useGameAudio(state, loaded);
 
   // Attributes for the ME tab need labels too.
   const meStats = stats.map((s) => ({ ...s, label: STAT_STYLES[s.key].label }));
 
   return (
     <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: C.blue }}>
+      <GameAudioController state={state} loaded={loaded} />
       <View style={{ flex: 1, backgroundColor: C.sky }}>
         <Header
           portrait={rank.portrait}

@@ -2,7 +2,7 @@
   "expo": {
     "name": "Fate & Fealty",
     "slug": "medieval-life-simulator",
-    "version": "1.0.0",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon/icon-ios.png",
     "newArchEnabled": true,

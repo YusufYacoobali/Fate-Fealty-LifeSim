@@ -41,7 +41,7 @@ const LESSONS = [
   {
     asset: HOLDING_ACTION_ART.work_land,
     title: 'MANAGE THY HOLDING',
-    body: 'From age 6, your holding needs one order each year. Prosperity is the lowest of Stores, Security, and Loyalty. Raise it to grow the population and earn yearly gold and reputation.',
+    body: 'From age 6, your holding needs one order each year. Prosperity is how well you are managing your land. Raise it to grow the population and earn yearly gold and reputation.',
   },
   {
     asset: RANK_PORTRAITS.Knight,

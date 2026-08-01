@@ -14,20 +14,20 @@ export default function App() {
     VT323_400Regular,
   });
 
-  if (!fontsLoaded) {
-    return (
-      <View style={{ flex: 1, backgroundColor: C.ink, alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator color={C.charm} size="large" />
-      </View>
-    );
-  }
-
   return (
-    <SafeAreaProvider>
-      <GameProvider>
-        <StatusBar style="light" />
-        <GameScreen />
-      </GameProvider>
-    </SafeAreaProvider>
+    <>
+      <StatusBar hidden />
+      {!fontsLoaded ? (
+        <View style={{ flex: 1, backgroundColor: C.ink, alignItems: 'center', justifyContent: 'center' }}>
+          <ActivityIndicator color={C.charm} size="large" />
+        </View>
+      ) : (
+        <SafeAreaProvider>
+          <GameProvider>
+            <GameScreen />
+          </GameProvider>
+        </SafeAreaProvider>
+      )}
+    </>
   );
 }

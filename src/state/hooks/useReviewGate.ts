@@ -10,10 +10,19 @@ import { AppMetaApi } from './useAppMeta';
  */
 export function useReviewGate(state: GameState, loaded: boolean, meta: AppMetaApi) {
   const prevFeedLen = useRef(state.feed.length);
+  const trackingStarted = useRef(false);
   const [reviewVisible, setReviewVisible] = useState(false);
 
   useEffect(() => {
     if (!loaded || !meta.ready) return;
+
+    // Hydration restores entries already represented by persisted totalEntries.
+    // Establish the baseline first so relaunching cannot count them twice.
+    if (!trackingStarted.current) {
+      prevFeedLen.current = state.feed.length;
+      trackingStarted.current = true;
+      return;
+    }
 
     const delta = entriesDelta(prevFeedLen.current, state.feed.length);
     prevFeedLen.current = state.feed.length;

@@ -2,6 +2,7 @@ import { ALL_EVENTS, EVENTS_BY_ID } from '@/content';
 import { ANNUAL_MESSAGES } from '@/content/annualMessages';
 import { BASE_EXPANSION_EVENTS } from '@/content/baseExpansionEvents';
 import { createLife } from '@/engine/gameState';
+import { PAYWALL_PLAN_IDS, PREMIUM_BENEFITS, SHOP_PLAN_IDS } from '@/data/premiumPlans';
 
 const KNOWN_KIN_IDS = new Set(createLife().kin.map((k) => k.id));
 
@@ -63,6 +64,16 @@ describe('content integrity', () => {
     const premium = ALL_EVENTS.filter((e) => e.premium);
     expect(premium.length).toBeGreaterThanOrEqual(25);
     expect(premium.length).toBeLessThanOrEqual(35);
+  });
+
+  it('advertises the Holding as a premium feature', () => {
+    expect(PREMIUM_BENEFITS.some((benefit) => benefit.includes('HOLD'))).toBe(true);
+  });
+
+  it('keeps onboarding subscriptions separate from the complete Royal Shop', () => {
+    expect(PAYWALL_PLAN_IDS).toEqual(['annual', 'monthly']);
+    expect(PAYWALL_PLAN_IDS).not.toContain('lifetime');
+    expect(SHOP_PLAN_IDS).toEqual(['annual', 'monthly', 'lifetime']);
   });
 
   it('includes a generous free/base content pool', () => {

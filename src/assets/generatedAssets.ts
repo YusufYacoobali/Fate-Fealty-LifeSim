@@ -15,6 +15,71 @@ export const UI_ICONS = {
   settings: require('../../assets/generated/ui-settings.png'),
 } as const satisfies Record<string, ImageSourcePropType>;
 
+export const FEATURE_ART = {
+  work: require('../../assets/generated/work-occupations-banner.png'),
+  holding: require('../../assets/generated/holding-overview-banner.png'),
+} as const satisfies Record<string, ImageSourcePropType>;
+
+export const PAYWALL_ART = {
+  hero: require('../../assets/generated/paywall-progression-hero.png'),
+  crown: require('../../assets/generated/paywall-crown.png'),
+  stories: require('../../assets/generated/paywall-stories.png'),
+  holding: require('../../assets/generated/paywall-holding.png'),
+  check: require('../../assets/generated/paywall-check-badge.png'),
+  monthly: require('../../assets/generated/paywall-monthly-shield.png'),
+} as const satisfies Record<string, ImageSourcePropType>;
+
+export const CAREER_FAMILY_ART = {
+  agriculture: require('../../assets/generated/activity-fields.png'),
+  craft: require('../../assets/generated/activity-blacksmith.png'),
+  trade: require('../../assets/generated/activity-market.png'),
+  church: require('../../assets/generated/activity-church.png'),
+  martial: require('../../assets/generated/activity-train.png'),
+  court: require('../../assets/generated/shop-quill.png'),
+  outlaw: require('../../assets/generated/activity-poach.png'),
+} as const satisfies Record<string, ImageSourcePropType>;
+
+export const CAREER_ACTION_ART = {
+  work: require('../../assets/generated/career-action-work.png'),
+  train: require('../../assets/generated/career-action-train.png'),
+  promote: require('../../assets/generated/career-action-promote.png'),
+  resign: require('../../assets/generated/career-action-resign.png'),
+  borrow: require('../../assets/generated/career-action-borrow.png'),
+  repay: require('../../assets/generated/career-action-repay.png'),
+  rank_duty: require('../../assets/generated/career-action-rank-duty.png'),
+  odd_job: require('../../assets/generated/career-action-odd-job.png'),
+  craft: require('../../assets/generated/career-action-craft.png'),
+  trade: require('../../assets/generated/career-action-trade.png'),
+} as const satisfies Record<string, ImageSourcePropType>;
+
+export const HOLDING_ACTION_ART = {
+  work_land: require('../../assets/generated/activity-fields.png'),
+  secure_bounds: require('../../assets/generated/activity-train.png'),
+  open_stores: require('../../assets/generated/shop-bread.png'),
+  sell_surplus: require('../../assets/generated/activity-market.png'),
+  collect_dues: require('../../assets/generated/shop-quill.png'),
+  hold_feast: require('../../assets/generated/activity-feast.png'),
+  muster_levy: require('../../assets/generated/activity-tournament.png'),
+  royal_progress: require('../../assets/generated/portrait-monarch.png'),
+} as const satisfies Record<string, ImageSourcePropType>;
+
+export const HOLDING_RESOURCE_ART = {
+  stores: require('../../assets/generated/holding-resource-stores.png'),
+  security: require('../../assets/generated/holding-resource-security.png'),
+  loyalty: require('../../assets/generated/holding-resource-loyalty.png'),
+} as const satisfies Record<string, ImageSourcePropType>;
+
+export const HOLDING_UPGRADE_ART = {
+  fenced_field: require('../../assets/generated/holding-upgrade-fenced-field.png'),
+  smokehouse: require('../../assets/generated/holding-upgrade-smokehouse.png'),
+  stable: require('../../assets/generated/holding-upgrade-stable.png'),
+  granary: require('../../assets/generated/holding-upgrade-granary.png'),
+  watchtower: require('../../assets/generated/holding-upgrade-watchtower.png'),
+  watermill: require('../../assets/generated/holding-upgrade-watermill.png'),
+  stewards_hall: require('../../assets/generated/holding-upgrade-stewards-hall.png'),
+  royal_road: require('../../assets/generated/holding-upgrade-royal-road.png'),
+} as const satisfies Record<string, ImageSourcePropType>;
+
 export const ACTIVITY_ICONS: Record<string, ImageSourcePropType> = {
   tavern: require('../../assets/generated/activity-tavern.png'),
   dice: require('../../assets/generated/activity-dice.png'),
@@ -52,6 +117,7 @@ export const KIN_KIND_ICONS: Record<KinKind, ImageSourcePropType> = {
   friend: require('../../assets/generated/kin-friend.png'),
   foe: require('../../assets/generated/kin-foe.png'),
   liege: require('../../assets/generated/kin-liege.png'),
+  acquaintance: require('../../assets/generated/kin-friend.png'),
 };
 
 export const KIN_ID_ICONS: Record<string, ImageSourcePropType> = {
@@ -76,13 +142,14 @@ export const TRAIT_ICONS: Record<string, ImageSourcePropType> = {
   sickly: require('../../assets/generated/trait-sickly.png'),
   hale: require('../../assets/generated/trait-hale.png'),
   silver_tongue: require('../../assets/generated/trait-silver_tongue.png'),
-  dullard: require('../../assets/generated/trait-dullard.png'),
   bookish: require('../../assets/generated/trait-bookish.png'),
   pious: require('../../assets/generated/trait-pious.png'),
   heathen: require('../../assets/generated/trait-heathen.png'),
   lucky: require('../../assets/generated/trait-lucky.png'),
-  ill_starred: require('../../assets/generated/trait-ill_starred.png'),
+  golden_child: require('../../assets/generated/trait-golden_child.png'),
   comely: require('../../assets/generated/trait-comely.png'),
+  goose_cursed: require('../../assets/generated/trait-goose_cursed.png'),
+  royal_bastard: require('../../assets/generated/trait-royal_bastard.png'),
   war_hero: require('../../assets/generated/trait-war_hero.png'),
   living_saint: require('../../assets/generated/trait-living_saint.png'),
   notorious_outlaw: require('../../assets/generated/trait-notorious_outlaw.png'),

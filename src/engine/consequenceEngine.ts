@@ -7,13 +7,13 @@
  * so balancing (e.g. difficulty scaling on damage) lives in one place.
  */
 
-import { Effects, GameState, PathKey, StatKey } from '@/types/game';
+import { Effects, GameState, PathKey, STAT_KEYS } from '@/types/game';
 import { addMemory, addMoney, addTag, pushFeed, removeTag } from './gameState';
 import { clamp } from './random';
 import { promote, demote } from './pathProgression';
 import { killKin as killKinMember, spawnKin } from './kinFactory';
+import { applyRelationshipShift } from './relationshipEngine';
 
-const STAT_KEYS: StatKey[] = ['health', 'charm', 'wits', 'faith'];
 // Normal deeds earn rank slowly; explicit promotion-claim scenes keep full value.
 const RANK_PROGRESS_GAIN_MULTIPLIER = 0.65;
 
@@ -76,6 +76,14 @@ export function applyEffects(s: GameState, eff?: Effects): GameState {
     }
   }
 
+  // --- Holding resources (visible only inside the HOLD tab) ---
+  if (eff.holding) {
+    for (const key of ['stores', 'security', 'loyalty'] as const) {
+      const delta = eff.holding[key];
+      if (delta != null) s.holding[key] = clamp(s.holding[key] + delta);
+    }
+  }
+
   // --- tags ---
   if (eff.addTags) for (const t of eff.addTags) addTag(s, t);
   if (eff.removeTags) for (const t of eff.removeTags) removeTag(s, t);
@@ -86,7 +94,11 @@ export function applyEffects(s: GameState, eff?: Effects): GameState {
   // --- kin relationship ---
   if (eff.kinRel) {
     const k = s.kin.find((m) => m.id === eff.kinRel!.id);
-    if (k) k.rel = clamp(k.rel + eff.kinRel.delta);
+    if (k) {
+      const legacy = k.rel;
+      applyRelationshipShift(s, k.id, { affinity: eff.kinRel.delta }, { affinity: eff.kinRel.delta });
+      k.rel = clamp(legacy + eff.kinRel.delta);
+    }
   }
 
   // --- kin roster changes (new spouse/child, or a death) ---
@@ -111,7 +123,7 @@ export function applyEffects(s: GameState, eff?: Effects): GameState {
   }
 
   // --- death (handled last so any stat/gold context is already applied) ---
-  if (eff.death && s.settings.permadeath) {
+  if (eff.death && !s.settings.liveForever) {
     killPlayer(s, eff.death);
   }
 

@@ -9,6 +9,7 @@ export interface ProgressSnapshot {
   achievements: string[];
   dynasty: DynastyRecord[];
   lifetimeUnlocked: boolean;
+  currentState: GameState;
 }
 
 /**
@@ -38,7 +39,7 @@ export function useMetaProgression(state: GameState, meta: AppMetaApi, loaded: b
     if (newly.length > 0) {
       m = { ...m, achievements: unlocked };
       changed = true;
-      setNewAchievements((q) => [...q, ...newly]);
+      setNewAchievements((q) => [...q, ...newly.filter((id) => !q.includes(id))]);
     }
 
     if (changed) {
@@ -52,9 +53,9 @@ export function useMetaProgression(state: GameState, meta: AppMetaApi, loaded: b
 
   const getProgress = useCallback((): ProgressSnapshot => {
     const m = meta.metaRef.current;
-    return { stats: m.stats, achievements: m.achievements, dynasty: m.dynasty, lifetimeUnlocked: m.lifetimeUnlocked };
+    return { stats: m.stats, achievements: m.achievements, dynasty: m.dynasty, lifetimeUnlocked: m.lifetimeUnlocked, currentState: state };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [state]);
 
   return { newAchievements, dismissAchievement, getProgress };
 }

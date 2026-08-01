@@ -7,6 +7,9 @@
 import { GameState, KinKind, KinMember, NewKinSpec } from '@/types/game';
 import { CHILD_NAMES, FIRST_NAMES } from '@/data/names';
 import { pick, rnd } from './random';
+import { defaultPronouns } from '@/data/identity';
+import { ENTRY_CAREERS } from '@/data/careers';
+import { makePlayerRelationship } from './relationshipEngine';
 
 interface KindDefaults {
   name: () => string;
@@ -73,6 +76,15 @@ const DEFAULTS: Record<KinKind, KindDefaults> = {
     rel: 50,
     age: () => rnd(35, 60),
   },
+  acquaintance: {
+    name: () => pick(FIRST_NAMES),
+    role: 'Acquaintance',
+    emoji: '🧑',
+    trait: 'Unfamiliar',
+    bio: 'A person of Swineford whose story is still unfolding.',
+    rel: 50,
+    age: () => rnd(16, 45),
+  },
   mother: { name: () => pick(FIRST_NAMES), role: 'Thy Mother', emoji: '👩‍🌾', trait: 'Loving', bio: 'Thy mother.', rel: 75, age: () => rnd(40, 55) },
   father: { name: () => pick(FIRST_NAMES), role: 'Thy Father', emoji: '👨‍🌾', trait: 'Weary', bio: 'Thy father.', rel: 60, age: () => rnd(40, 60) },
 };
@@ -92,8 +104,20 @@ export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
     kind: spec.kind,
     alive: true,
     isHeir: spec.isHeir,
+    gender: 'unspecified',
+    pronouns: defaultPronouns('unspecified'),
+    attraction: 'any',
+    stats: { health: rnd(45, 90), charm: rnd(25, 75), wits: rnd(25, 75), faith: rnd(15, 75) },
+    traits: [spec.trait ?? d.trait],
+    gold: rnd(0, 25),
+    rankIdx: spec.kind === 'liege' ? Math.max(2, s.rankIdx) : spec.kind === 'foe' ? 2 : 0,
+    occupation: { careerId: pick(ENTRY_CAREERS).id, experience: rnd(0, 45), performance: rnd(35, 75), workedThisYear: 0 },
+    debts: [],
+    healthTags: [],
+    memories: [],
   };
   s.kin = [...s.kin, member];
+  s.world.relationships.push(makePlayerRelationship(member, s.age));
   return member;
 }
 

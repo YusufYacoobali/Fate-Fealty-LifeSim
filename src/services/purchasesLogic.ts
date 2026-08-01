@@ -2,12 +2,21 @@
  * PURE premium-entitlement logic — no native imports, fully unit-testable.
  *
  * The app gates on the RevenueCat ENTITLEMENT (`pro`), never on a specific
- * Google Play product id. Today that entitlement is granted by the
- * non-consumable Lifetime Pass.
+ * Google Play product id. The entitlement is granted by any premium plan:
+ * monthly or yearly subscription, or the non-consumable Lifetime Pass.
  */
 
 /** The RevenueCat entitlement identifier every product grants. */
 export const ENTITLEMENT_ID = 'pro';
+
+/**
+ * The purchasable plans. Ids deliberately match RevenueCat's standard package
+ * accessors on an offering (`offering.monthly` / `.annual` / `.lifetime`,
+ * i.e. dashboard packages `$rc_monthly` / `$rc_annual` / `$rc_lifetime`).
+ */
+export type PlanId = 'monthly' | 'annual' | 'lifetime';
+
+export const PLAN_IDS: PlanId[] = ['monthly', 'annual', 'lifetime'];
 
 /** Minimal shape of RevenueCat's CustomerInfo that we rely on. */
 export interface CustomerInfoLike {
@@ -21,6 +30,22 @@ export function entitlementActive(info: CustomerInfoLike | null | undefined): bo
 
 export type PurchaseOutcome = 'purchased' | 'cancelled' | 'unavailable' | 'error';
 
+export interface AnnualSubscriptionValue {
+  perMonth: number;
+  savingsPercent: number;
+}
+
+/** Compares one annual payment with twelve monthly payments. */
+export function annualSubscriptionValue(annualPrice: number, monthlyPrice: number): AnnualSubscriptionValue | null {
+  if (!Number.isFinite(annualPrice) || !Number.isFinite(monthlyPrice) || annualPrice <= 0 || monthlyPrice <= 0) {
+    return null;
+  }
+  return {
+    perMonth: annualPrice / 12,
+    savingsPercent: Math.max(0, Math.round((1 - annualPrice / (monthlyPrice * 12)) * 100)),
+  };
+}
+
 /**
  * Merge a fresh entitlement reading into the locally cached unlock flag.
  *
@@ -33,12 +58,19 @@ export function mergeEntitlement(_cached: boolean, fresh: boolean | null): boole
   return fresh;
 }
 
+/** Minimal shape of a RevenueCat offering that we rely on. */
+export interface OfferingLike {
+  monthly?: unknown;
+  annual?: unknown;
+  lifetime?: unknown;
+}
+
 /**
- * Pick the lifetime package from RevenueCat's current offering. The dashboard
- * package must be `$rc_lifetime`, exposed by the SDK as `offering.lifetime`.
+ * Pick a plan's package from RevenueCat's current offering. Never falls back
+ * to a different package: a missing plan means that plan is not for sale.
  */
-export function pickLifetimePackage<T extends { lifetime?: unknown; availablePackages?: unknown }>(offering: T | null | undefined): T['lifetime'] | null {
-  return (offering?.lifetime as T['lifetime'] | null | undefined) ?? null;
+export function pickPackage(offering: OfferingLike | null | undefined, plan: PlanId): unknown | null {
+  return offering?.[plan] ?? null;
 }
 
 export function isProductionRevenueCatKey(key: string | null | undefined, platform: 'android' | 'ios'): boolean {

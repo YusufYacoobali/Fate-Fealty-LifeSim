@@ -10,6 +10,7 @@ import {
   selectKin,
   selectedKin,
   selectGoal,
+  selectRankClimb,
   selectRankPath,
   selectStats,
   selectTraits,
@@ -25,25 +26,32 @@ import { DoTab } from '@/components/tabs/DoTab';
 import { KinTab } from '@/components/tabs/KinTab';
 import { ShopTab } from '@/components/tabs/ShopTab';
 import { MeTab } from '@/components/tabs/MeTab';
+import { HoldingTab } from '@/components/tabs/HoldingTab';
 import { EventModal } from '@/components/modals/EventModal';
 import { SettingsModal } from '@/components/modals/SettingsModal';
 import { DeathScreen } from '@/components/modals/DeathScreen';
 import { ReviewPrompt } from '@/components/modals/ReviewPrompt';
+import { ShopPromoPrompt } from '@/components/modals/ShopPromoPrompt';
 import { CharacterCreation } from '@/components/modals/CharacterCreation';
 import { AchievementToast } from '@/components/modals/AchievementToast';
 import { ChronicleScreen } from '@/components/modals/ChronicleScreen';
-import { OnboardingModal } from '@/components/modals/OnboardingModal';
-import { ProShopModal } from '@/components/modals/ProShopModal';
+import { OnboardingScreen } from '@/screens/OnboardingScreen';
+import { PremiumShopScreen } from '@/screens/PremiumShopScreen';
 import { MIN_ANDROID_BOTTOM_NAV_GUARD } from '@/components/systemLayout';
 import { useGameFeedback } from '@/state/hooks/useGameFeedback';
+import { GameAudioController } from '@/state/hooks/useGameAudio';
 import { haptic } from '@/services/haptics';
 
 export function GameScreen() {
   const {
     state,
     dispatch,
+    loaded,
     reviewVisible,
     resolveReview,
+    shopPromoVisible,
+    shopPromoMessageIndex,
+    resolveShopPromo,
     creating,
     requestNewLife,
     createCharacter,
@@ -53,10 +61,10 @@ export function GameScreen() {
     onboardingVisible,
     completeOnboarding,
     restartOnboarding,
-    lifetimeUnlocked,
+    premiumUnlocked,
     premiumAccessState,
-    purchaseLifetime,
-    restoreLifetime,
+    purchasePlan,
+    restorePremium,
   } = useGame();
   const rank = currentRank(state);
   const stats = selectStats(state);
@@ -75,6 +83,7 @@ export function GameScreen() {
 
   return (
     <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: C.blue }}>
+      <GameAudioController state={state} loaded={loaded} />
       <View style={{ flex: 1, backgroundColor: C.sky }}>
         <Header
           portrait={rank.portrait}
@@ -90,25 +99,43 @@ export function GameScreen() {
 
         {/* content area */}
         <View style={{ flex: 1, position: 'relative' }}>
-          {state.tab === 'life' && <LifeFeed feed={selectFeed(state)} autoScroll={state.settings.autoScroll} />}
+          {state.tab === 'life' && <LifeFeed feed={selectFeed(state)} autoScroll={state.settings.autoScroll} filter={state.world.feedFilter} onFilter={(filter) => dispatch({ type: 'SET_FEED_FILTER', filter })} />}
           {state.tab === 'do' && (
             <DoTab
               cat={state.doCat}
               age={state.age}
+              state={state}
               onCat={(c) => dispatch({ type: 'SET_CAT', cat: c })}
               onActivity={(id) => {
                 haptic('light', buzz);
                 dispatch({ type: 'DO_ACTIVITY', id });
               }}
+              onCareer={(action, careerId) => dispatch({ type: 'CAREER_ACTION', action, careerId })}
             />
           )}
           {state.tab === 'kin' && (
             <KinTab
+              state={state}
               kin={selectKin(state)}
               detail={selectedKin(state)}
+              filter={state.world.relationFilter}
+              onFilter={(filter) => dispatch({ type: 'SET_REL_FILTER', filter })}
               onOpen={(id) => dispatch({ type: 'OPEN_KIN', id })}
               onBack={() => dispatch({ type: 'CLOSE_KIN' })}
               onInteract={(id, action) => dispatch({ type: 'KIN_INTERACT', id, action })}
+            />
+          )}
+          {state.tab === 'hold' && (
+            <HoldingTab
+              state={state}
+              onAction={(id) => {
+                haptic('medium', buzz);
+                dispatch({ type: 'MANAGE_HOLDING', id });
+              }}
+              onUpgrade={(id) => {
+                haptic('success', buzz);
+                dispatch({ type: 'BUY_HOLDING_UPGRADE', id });
+              }}
             />
           )}
           {state.tab === 'shop' && (
@@ -118,6 +145,7 @@ export function GameScreen() {
               income={state.income}
               expenses={state.expenses}
               inventory={state.inventory}
+              actionAvailable={state.actionClock.used < state.actionClock.cap}
               onBuy={(item) => {
                 haptic('medium', buzz);
                 dispatch({ type: 'BUY', item });
@@ -133,6 +161,7 @@ export function GameScreen() {
               age={state.age}
               stats={meStats}
               rankPath={selectRankPath(state)}
+              rankClimb={selectRankClimb(state)}
               traits={selectTraits(state)}
               goal={goal}
               bio={selectBio(state)}
@@ -151,9 +180,17 @@ export function GameScreen() {
             dispatch({ type: 'AGE_UP' });
           }}
           disabled={state.dead || !!state.event}
+          actionsUsed={state.actionClock.used}
+          actionCap={state.actionClock.cap}
         />
         <View style={{ backgroundColor: C.blueDeep, paddingBottom: bottomNavInset }}>
-          <NavBar active={state.tab} onTab={(t) => dispatch({ type: 'SET_TAB', tab: t })} />
+          <NavBar
+            active={state.tab}
+            lockedTabs={{}}
+            onTab={(t) => {
+              dispatch({ type: 'SET_TAB', tab: t });
+            }}
+          />
         </View>
 
         {/* overlays */}
@@ -170,7 +207,7 @@ export function GameScreen() {
         {state.settingsOpen && !state.dead && (
           <SettingsModal
             settings={state.settings}
-            lifetimeUnlocked={lifetimeUnlocked}
+            premiumUnlocked={premiumUnlocked}
             onSetSettings={(patch) => dispatch({ type: 'SET_SETTINGS', settings: patch })}
             onLockedFeaturePress={() => {
               haptic('light', buzz);
@@ -207,14 +244,52 @@ export function GameScreen() {
         {reviewVisible && !state.dead && !state.event && !state.settingsOpen && !creating && (
           <ReviewPrompt onResolved={resolveReview} />
         )}
+        {shopPromoVisible &&
+          !reviewVisible &&
+          !state.dead &&
+          !state.event &&
+          !state.settingsOpen &&
+          !creating &&
+          !onboardingVisible &&
+          !chronicleOpen &&
+          !cartOpen && (
+            <ShopPromoPrompt
+              messageIndex={shopPromoMessageIndex}
+              onExplore={() => {
+                haptic('light', buzz);
+                resolveShopPromo();
+                setCartOpen(true);
+              }}
+              onDismiss={resolveShopPromo}
+            />
+          )}
         {chronicleOpen && <ChronicleScreen progress={getProgress()} onClose={() => setChronicleOpen(false)} />}
-        {cartOpen && <ProShopModal unlocked={lifetimeUnlocked} accessState={premiumAccessState} onPurchase={purchaseLifetime} onRestore={restoreLifetime} onClose={() => setCartOpen(false)} />}
+        {cartOpen && (
+          <PremiumShopScreen
+            unlocked={premiumUnlocked}
+            accessState={premiumAccessState}
+            onPurchase={purchasePlan}
+            onRestore={restorePremium}
+            onClose={() => setCartOpen(false)}
+          />
+        )}
         {onboardingVisible && !creating && !state.dead && !state.event && (
-          <OnboardingModal unlocked={lifetimeUnlocked} accessState={premiumAccessState} onPurchase={purchaseLifetime} onRestore={restoreLifetime} onDone={completeOnboarding} />
+          <OnboardingScreen
+            premiumUnlocked={premiumUnlocked}
+            accessState={premiumAccessState}
+            onPurchase={purchasePlan}
+            onRestore={restorePremium}
+            onDone={completeOnboarding}
+          />
         )}
         {creating && (
           <CharacterCreation
             initialDifficulty={state.settings.difficulty}
+            premiumUnlocked={premiumUnlocked}
+            onLockedTraitPress={() => {
+              haptic('light', buzz);
+              setCartOpen(true);
+            }}
             onBegin={(options) => {
               haptic('success', buzz);
               createCharacter(options);

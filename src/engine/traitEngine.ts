@@ -5,9 +5,8 @@
  */
 
 import { GameState, TraitDef } from '@/types/game';
-import { TRAITS, birthTraits, traitById } from '@/data/traits';
+import { TRAITS, traitById } from '@/data/traits';
 import { addTag, pushFeed } from './gameState';
-import { clamp, pick } from './random';
 import { C } from '@/theme/theme';
 
 export function traitsOf(s: GameState): TraitDef[] {
@@ -39,19 +38,6 @@ export function grantTrait(s: GameState, id: string, announce = true): boolean {
     pushFeed(s, 'TRAIT GAINED', C.purpleDark, `You are now ${t.name}. ${t.blurb}`, 'good', { traitId: t.id });
   }
   return true;
-}
-
-/** Roll a birth trait and apply its flat starting-stat shifts. */
-export function assignBirthTrait(s: GameState): void {
-  const t = pick(birthTraits());
-  s.traits = [t.id];
-  addTag(s, `trait_${t.id}`);
-  if (t.startStats) {
-    for (const k of ['health', 'charm', 'wits', 'faith'] as const) {
-      const d = t.startStats[k];
-      if (d != null) s.stats[k] = clamp(s.stats[k] + d);
-    }
-  }
 }
 
 /** Grant any acquired traits whose conditions are now met. */

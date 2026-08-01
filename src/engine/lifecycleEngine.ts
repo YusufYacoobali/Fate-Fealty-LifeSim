@@ -14,7 +14,7 @@ import { addMemory, addTag, hasTag, pushFeed, removeTag } from './gameState';
 import { chance, rnd } from './random';
 import { C } from '@/theme/theme';
 
-const MORTAL_KINDS: KinKind[] = ['spouse', 'mother', 'father', 'sibling', 'liege'];
+const MORTAL_KINDS: KinKind[] = ['spouse', 'mother', 'father', 'sibling', 'liege', 'friend', 'foe', 'acquaintance'];
 
 /** Elderly kin have a rising yearly chance of passing away. */
 export function tickKinMortality(s: GameState): GameState {
@@ -29,10 +29,10 @@ export function tickKinMortality(s: GameState): GameState {
       removeTag(s, 'married');
       addTag(s, 'widowed');
       addMemory(s, 'widowed', 3);
-      pushFeed(s, 'BEREAVEMENT', C.bad, `${k.name}, your spouse, has passed away at ${k.age}. You are left a widow.`, 'bad');
+      pushFeed(s, 'BEREAVEMENT', C.bad, `${k.name}, your spouse, has passed away at ${k.age}. You are widowed.`, 'bad', {}, k.id, 'npc');
     } else {
       addMemory(s, `${k.kind}_died`, 2);
-      pushFeed(s, 'BEREAVEMENT', C.bad, `${k.name}, your ${k.kind}, has died at the age of ${k.age}.`, 'bad');
+      pushFeed(s, 'BEREAVEMENT', C.bad, `${k.name}, your ${k.kind}, has died at the age of ${k.age}.`, 'bad', {}, k.id, 'npc');
     }
   }
   return s;

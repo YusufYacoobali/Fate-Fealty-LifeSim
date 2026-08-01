@@ -43,6 +43,18 @@ describe('consequenceEngine.applyEffects', () => {
     expect(s.paths.martial).toBe(4);
   });
 
+  it('applies and clamps Holding resource effects', () => {
+    const s = makeState({ lifetimeUnlocked: true, holding: { stores: 95, security: 4, loyalty: 50, upgrades: [], lastActionAge: null, criticalYears: 0 } });
+    applyEffects(s, { holding: { stores: 20, security: -20, loyalty: 7 } });
+    expect(s.holding).toMatchObject({ stores: 100, security: 0, loyalty: 57 });
+  });
+
+  it('applies core Holding resources without premium access', () => {
+    const s = makeState({ lifetimeUnlocked: false });
+    applyEffects(s, { holding: { stores: -40, loyalty: 20 } });
+    expect(s.holding).toMatchObject({ stores: 20, loyalty: 80 });
+  });
+
   it('slows ordinary rank progress but keeps promotion-claim progress full strength', () => {
     const ordinary = makeState({ rankProgress: 0 });
     applyEffects(ordinary, { rankProgress: 10 });
@@ -64,14 +76,14 @@ describe('consequenceEngine.applyEffects', () => {
     expect(s.tags).not.toContain('married');
   });
 
-  it('kills the player on death effect only when permadeath is on', () => {
+  it('kills the player on a death effect only when Live Forever is off', () => {
     const on = makeState();
     applyEffects(on, { death: 'tested to death' });
     expect(on.dead).toBe(true);
     expect(on.deathCause).toBe('tested to death');
 
     const off = makeState();
-    off.settings.permadeath = false;
+    off.settings.liveForever = true;
     applyEffects(off, { death: 'should not die' });
     expect(off.dead).toBe(false);
   });

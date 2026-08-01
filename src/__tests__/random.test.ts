@@ -24,7 +24,7 @@ describe('random RandomSource injection (DIP)', () => {
   it('the same seed yields identical whole lives (deterministic simulation)', () => {
     const run = () => {
       setRandomSource(seededSource(99));
-      let s = createLife({ settings: { autoScroll: true, difficulty: 'Normal', permadeath: true, haptics: false } });
+      let s = createLife({ settings: { autoScroll: true, difficulty: 'Normal', liveForever: false, haptics: false, music: false, soundEffects: false } });
       // Advance a few years without events to keep it choice-free & deterministic.
       for (let i = 0; i < 5 && !s.event && !s.dead; i++) ageUp(s);
       return { age: s.age, stats: s.stats, feedLen: s.feed.length };

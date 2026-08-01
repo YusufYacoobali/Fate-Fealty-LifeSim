@@ -1,6 +1,5 @@
 import {
   agingMultiplierFromTraits,
-  assignBirthTrait,
   grantAcquiredTraits,
   grantTrait,
   hasTrait,
@@ -9,6 +8,7 @@ import {
 } from '@/engine/traitEngine';
 import { addMemory, createLife } from '@/engine/gameState';
 import { meetsCondition } from '@/engine/eventPicker';
+import { availableBirthTraits, birthTraits } from '@/data/traits';
 import { makeState } from './helpers';
 
 describe('birth traits', () => {
@@ -22,27 +22,50 @@ describe('birth traits', () => {
     }
   });
 
-  it('assignBirthTrait applies flat starting-stat shifts', () => {
-    // Seed so we deterministically land on a known trait, then assert stat moved.
-    const s = makeState({ stats: { health: 50, charm: 50, wits: 50, faith: 50 } });
-    s.traits = [];
-    s.tags = [];
-    assignBirthTrait(s);
-    expect(s.traits.length).toBe(1);
-    // Whatever was rolled, the tag must mirror it.
-    expect(s.tags).toContain(`trait_${s.traits[0]}`);
+  it('a chosen birth trait applies its flat starting-stat shifts', () => {
+    // Silver-Tongued grants +12 charm on top of the 25..55 base roll.
+    const s = createLife({ birthTraitId: 'silver_tongue' });
+    expect(s.traits).toEqual(['silver_tongue']);
+    expect(s.tags).toContain('trait_silver_tongue');
+    expect(s.stats.charm).toBeGreaterThanOrEqual(37);
+    expect(s.stats.charm).toBeLessThanOrEqual(67);
+  });
+
+  it('Golden Child starts strong in every stat', () => {
+    const s = createLife({ birthTraitId: 'golden_child', lifetimeUnlocked: true });
+
+    expect(s.stats.health).toBeGreaterThanOrEqual(95);
+    expect(s.stats.charm).toBeGreaterThanOrEqual(40);
+    expect(s.stats.wits).toBeGreaterThanOrEqual(40);
+    expect(s.stats.faith).toBeGreaterThanOrEqual(30);
+    expect(rollBonusFromTraits(s)).toBeCloseTo(0.06);
+  });
+
+  it('offers exactly seven free and four Premium birth traits', () => {
+    expect(availableBirthTraits(false)).toHaveLength(7);
+    expect(birthTraits().filter((trait) => trait.premium)).toHaveLength(4);
+    expect(birthTraits()).toHaveLength(11);
+    expect(birthTraits().some((trait) => trait.id === 'dullard')).toBe(false);
+  });
+
+  it('prevents free lives from selecting a Premium birth trait', () => {
+    const free = createLife({ birthTraitId: 'royal_bastard', lifetimeUnlocked: false });
+    const premium = createLife({ birthTraitId: 'royal_bastard', lifetimeUnlocked: true });
+
+    expect(free.traits).not.toEqual(['royal_bastard']);
+    expect(premium.traits).toEqual(['royal_bastard']);
   });
 });
 
 describe('passive trait modifiers', () => {
-  it('Born Lucky adds a positive roll bonus; Ill-Starred subtracts', () => {
+  it('Born Lucky and Golden Child add positive roll bonuses', () => {
     const lucky = makeState();
     lucky.traits = ['lucky'];
     expect(rollBonusFromTraits(lucky)).toBeCloseTo(0.08);
 
-    const cursed = makeState();
-    cursed.traits = ['ill_starred'];
-    expect(rollBonusFromTraits(cursed)).toBeLessThan(0);
+    const golden = makeState();
+    golden.traits = ['golden_child'];
+    expect(rollBonusFromTraits(golden)).toBeCloseTo(0.06);
   });
 
   it('Sickly raises and Hale lowers the aging multiplier', () => {

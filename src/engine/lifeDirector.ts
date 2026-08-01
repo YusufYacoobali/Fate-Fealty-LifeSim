@@ -24,7 +24,11 @@ import { assignLifeGoalIfDue, checkLifeGoal } from './goalEngine';
 import { tickAilments, tickImprisonment, tickKinMortality } from './lifecycleEngine';
 import { pickEvent } from './eventPicker';
 import { popReadyArc } from './storyGraph';
-import { chance, rnd } from './random';
+import { chance } from './random';
+import { tickHoldingYear } from './holdingEngine';
+import { tickCareerAndEconomy } from './careerEngine';
+import { simulateLivingWorld } from './worldEngine';
+import { tickRelationshipDecay } from './relationshipEngine';
 
 const EVENT_CHANCE = 0.34;
 
@@ -36,9 +40,7 @@ export function ageUp(s: GameState): GameState {
   s.selectedKinId = null;
 
   // --- 1. age the living kin ---
-  for (const k of s.kin) {
-    if (k.alive && k.kind !== 'friend') k.age += 1;
-  }
+  for (const k of s.kin) if (k.alive) k.age += 1;
 
   // --- 2. annual flavour (1-2 beats) ---
   const beats = chance(0.5) ? 2 : 1;
@@ -47,15 +49,39 @@ export function ageUp(s: GameState): GameState {
     if (!msg) continue;
     applyEffects(s, msg.effects);
     pushFeed(s, `AGE ${s.age} · ${msg.tag}`, msg.tagColor, msg.text, msg.tone);
+    checkDeath(s);
     if (s.dead) return s; // a flavour beat can, rarely, be fatal
   }
 
   // --- 3. attrition of age + ongoing world states ---
   const decay = agingDamage(s);
   if (decay > 0) applyEffects(s, { health: -decay });
+  checkDeath(s);
+  if (s.dead) return s;
   tickKinMortality(s);
   tickAilments(s);
+  checkDeath(s);
+  if (s.dead) return s;
   tickImprisonment(s);
+  checkDeath(s);
+  if (s.dead) return s;
+
+  // Careers, household costs, mutual relationships, and autonomous people all
+  // close their outgoing year before the next story begins.
+  tickCareerAndEconomy(s);
+  checkDeath(s);
+  if (s.dead) return s;
+  tickRelationshipDecay(s);
+  simulateLivingWorld(s);
+
+  // Resolve the outgoing year's estate management. A health collapse is
+  // finalised before another story is offered while Live Forever is enabled
+  // recovers at 1 Health and continues normally.
+  tickHoldingYear(s);
+  if (s.stats.health <= 0) {
+    checkDeath(s);
+    if (s.dead) return s;
+  }
 
   // --- 4. story arc continuation OR new main event ---
   const arcNode = popReadyArc(s);
@@ -75,13 +101,4 @@ export function ageUp(s: GameState): GameState {
   checkDeath(s);
 
   return s;
-}
-
-/** A tiny bit of randomised income flavour the Life Director can call on. */
-export function passiveIncome(s: GameState): number {
-  // Owning a cottage or steed implies a steadier purse.
-  let n = 0;
-  if (s.inventory.includes('cottage')) n += rnd(1, 3);
-  if (s.inventory.includes('steed')) n += rnd(0, 2);
-  return n;
 }

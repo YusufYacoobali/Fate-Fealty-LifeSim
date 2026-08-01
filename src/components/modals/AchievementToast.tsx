@@ -16,19 +16,26 @@ interface Props {
  */
 export function AchievementToast({ id, onDone }: Props) {
   const anim = useRef(new Animated.Value(0)).current;
+  const onDoneRef = useRef(onDone);
   const a = id ? achievementById(id) : undefined;
+
+  useEffect(() => {
+    onDoneRef.current = onDone;
+  }, [onDone]);
 
   useEffect(() => {
     if (!a) return;
     anim.setValue(0);
-    Animated.sequence([
+    const sequence = Animated.sequence([
       Animated.spring(anim, { toValue: 1, useNativeDriver: true, friction: 7 }),
       Animated.delay(2200),
       Animated.timing(anim, { toValue: 0, duration: 280, useNativeDriver: true }),
-    ]).start(({ finished }) => {
-      if (finished) onDone();
+    ]);
+    sequence.start(({ finished }) => {
+      if (finished) onDoneRef.current();
     });
-  }, [id, a, anim, onDone]);
+    return () => sequence.stop();
+  }, [id, a, anim]);
 
   if (!a) return null;
 

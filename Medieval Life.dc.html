@@ -249,9 +249,9 @@
           <div style="background:#63b3ed;border:3px solid #1a2e4a;box-shadow:inset -2px -2px 0 #2b6cb0;padding:6px 8px;font-family:'Press Start 2P';font-size:9px;color:#fff;text-align:center">⚙️ SETTINGS</div>
           <div style="margin:13px 0;display:flex;flex-direction:column;gap:9px">
             <div style="display:flex;justify-content:space-between;align-items:center;font-family:'VT323';font-size:17px;color:#3a3320"><span>Difficulty</span><span style="font-family:'Press Start 2P';font-size:7px;color:#2b6cb0;background:#cfe6ff;border:2px solid #1a2e4a;padding:4px 6px">{{ difficulty }}</span></div>
-            <div style="display:flex;justify-content:space-between;align-items:center;font-family:'VT323';font-size:17px;color:#3a3320"><span>Permadeath</span><span style="font-family:'Press Start 2P';font-size:7px;color:{{ permadeathColor }};background:#fff;border:2px solid #1a2e4a;padding:4px 6px">{{ permadeathLabel }}</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-family:'VT323';font-size:17px;color:#3a3320"><span>Live Forever</span><span style="font-family:'Press Start 2P';font-size:7px;color:{{ liveForeverColor }};background:#fff;border:2px solid #1a2e4a;padding:4px 6px">{{ liveForeverLabel }}</span></div>
             <div class="pbtn" onClick="{{ onToggleAutoScroll }}" style="display:flex;justify-content:space-between;align-items:center;font-family:'VT323';font-size:17px;color:#3a3320"><span>Auto-scroll feed</span><span style="font-family:'Press Start 2P';font-size:7px;color:#fff;background:{{ autoScrollColor }};border:2px solid #1a2e4a;padding:4px 6px">{{ autoScrollLabel }}</span></div>
-            <div style="font-family:'VT323';font-size:13px;color:#8a7440;line-height:1.1;border-top:2px dashed #c9b483;padding-top:8px">Difficulty & permadeath are set in the Tweaks panel.</div>
+            <div style="font-family:'VT323';font-size:13px;color:#8a7440;line-height:1.1;border-top:2px dashed #c9b483;padding-top:8px">Live Forever prevents death and lets thy current life keep aging.</div>
           </div>
           <div style="display:flex;gap:7px">
             <div class="pbtn" onClick="{{ onRestart }}" style="flex:1;text-align:center;background:#fc8181;border:3px solid #1a2e4a;box-shadow:inset -2px -2px 0 #c2484a;padding:9px;font-family:'Press Start 2P';font-size:8px;color:#fff">RESTART</div>
@@ -275,7 +275,7 @@
   </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:360,&quot;height&quot;:740},&quot;difficulty&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Merciful&quot;,&quot;Normal&quot;,&quot;Brutal&quot;],&quot;default&quot;:&quot;Normal&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Game&quot;},&quot;permadeath&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Game&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:360,&quot;height&quot;:740},&quot;difficulty&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Merciful&quot;,&quot;Normal&quot;,&quot;Brutal&quot;],&quot;default&quot;:&quot;Normal&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Game&quot;},&quot;liveForever&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Game&quot;}}">
 class Component extends DCLogic {
   feedRef = React.createRef();
 
@@ -315,7 +315,7 @@ class Component extends DCLogic {
   pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
   clamp(v){ return Math.max(0, Math.min(100, Math.round(v))); }
   diff(){ return this.props.difficulty ?? 'Normal'; }
-  permadeath(){ return this.props.permadeath ?? true; }
+  liveForever(){ return this.props.liveForever ?? false; }
 
   money(s, delta){
     const before = s.gold;
@@ -450,7 +450,7 @@ class Component extends DCLogic {
     if(s.age > 45){ this.apply(s, { health: -this.rnd(1, Math.floor((s.age-40)/4)+2) }); }
 
     let died = false, cause = '';
-    if(this.permadeath()){
+    if(!this.liveForever()){
       if(s.stats.health <= 0){ died = true; cause = this.pick(['Succumbed to a mild cough.','The plague, finally.','A goose-related incident.','Fell into the turnip cellar.']); }
       else if(s.age > 60 && Math.random() < (s.age-58)/60){ died = true; cause = 'Died peacefully of being very, very old.'; }
     }
@@ -741,7 +741,7 @@ class Component extends DCLogic {
       settingsOpen:s.settingsOpen, onCloseSettings:()=>this.closeSettings(), onRestart:()=>this.newLife(),
       onToggleAutoScroll:()=>this.toggleAutoScroll(),
       autoScrollLabel: s.settings.autoScroll?'ON':'OFF', autoScrollColor: s.settings.autoScroll?'#5fb04f':'#c24a4a',
-      difficulty: this.diff(), permadeathLabel: this.permadeath()?'ON':'OFF', permadeathColor: this.permadeath()?'#c24a4a':'#5fb04f',
+      difficulty: this.diff(), liveForeverLabel: this.liveForever()?'ON':'OFF', liveForeverColor: this.liveForever()?'#5fb04f':'#c24a4a',
       eventOpen: !!s.event && !s.dead, event,
       dead:s.dead, deathCause:s.deathCause, epitaph:s.epitaph, onNewLife:()=>this.newLife(),
     };

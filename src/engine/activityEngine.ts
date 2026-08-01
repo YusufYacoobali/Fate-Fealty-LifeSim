@@ -7,21 +7,18 @@
  * promotion, and memories all work uniformly.
  */
 
-import { GameState, KinKind } from '@/types/game';
+import { GameState } from '@/types/game';
 import { ACTIVITY_DEFS } from '@/data/activities';
 import { applyEffects } from './consequenceEngine';
-import { hasTag, pushFeed, removeTag } from './gameState';
+import { countLivingKin, hasTag, pushFeed, removeTag } from './gameState';
 import { checkLifeGoal } from './goalEngine';
 import { spawnKin } from './kinFactory';
-import { chance, pick, rnd } from './random';
+import { chance, pick } from './random';
 import { C } from '@/theme/theme';
+import { isIncapacitated } from './lifecycleEngine';
 
 /** Chance a tavern night yields a real drinking companion (adults only). */
 export const TAVERN_FRIEND_CHANCE = 0.12;
-
-function livingKinOfKind(s: GameState, kind: KinKind): number {
-  return s.kin.filter((k) => k.alive && k.kind === kind).length;
-}
 
 /** Shared cure: clears the ongoing illness state and announces it. */
 function cureIllness(s: GameState): void {
@@ -32,6 +29,29 @@ function cureIllness(s: GameState): void {
 }
 
 type Handler = (s: GameState) => void;
+
+const ACTIVITY_COSTS: Record<string, number> = {
+  tavern: 2, dice: 3, feast: 4, pilgrimage: 3, tournament: 5,
+  leech: 5, bathhouse: 3, herbalist: 4,
+};
+
+export interface ActivityAvailability {
+  available: boolean;
+  reason?: string;
+}
+
+export function activityAvailability(s: GameState, id: string): ActivityAvailability {
+  if (s.dead) return { available: false, reason: 'Thy life is ended' };
+  if (s.event) return { available: false, reason: 'Resolve the current event' };
+  if (s.actionClock.used >= s.actionClock.cap) return { available: false, reason: 'No actions remain this year' };
+  if (isIncapacitated(s)) return { available: false, reason: 'Imprisoned' };
+  const def = ACTIVITY_DEFS.find((activity) => activity.id === id);
+  if (!def) return { available: false, reason: 'Unknown activity' };
+  if (def.minAge != null && s.age < def.minAge) return { available: false, reason: `Requires age ${def.minAge}` };
+  const cost = ACTIVITY_COSTS[id] ?? 0;
+  if (s.gold < cost) return { available: false, reason: `Needs ${cost} gold` };
+  return { available: true };
+}
 
 function blocked(s: GameState, tag: string, text: string) {
   pushFeed(s, tag, C.amber, text, 'plain');
@@ -52,7 +72,7 @@ const HANDLERS: Record<string, Handler> = {
     ]), 'good');
     // Sometimes the "new friend" is real: a modest chance to gain a drinking
     // companion, capped so the roster can't fill up with tavern acquaintances.
-    if (s.age >= 16 && chance(TAVERN_FRIEND_CHANCE) && livingKinOfKind(s, 'friend') <= 2) {
+    if (s.age >= 16 && chance(TAVERN_FRIEND_CHANCE) && countLivingKin(s, 'friend') <= 2) {
       const mate = spawnKin(s, { kind: 'friend', role: 'Tavern Friend', trait: 'Merry', rel: 55 });
       pushFeed(s, 'NEW FRIEND', C.good, `${mate.name} matched you tale for tale until dawn. You have made a true friend at the Sloshed Squire.`, 'good');
     }

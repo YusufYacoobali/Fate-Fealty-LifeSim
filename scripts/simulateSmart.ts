@@ -14,7 +14,7 @@ const LIVES = 300;
 let bestRank = 0;
 
 for (let i = 0; i < LIVES; i++) {
-  let s = createLife({ settings: { autoScroll: true, difficulty: 'Normal', permadeath: true, haptics: false } });
+  let s = createLife({ settings: { autoScroll: true, difficulty: 'Normal', liveForever: false, haptics: false, music: false, soundEffects: false } });
   s.lifetimeUnlocked = true;
   let guard = 0;
   while (!s.dead && guard < 400) {

@@ -26,8 +26,8 @@ export const PREMIUM_EVENTS: GameEvent[] = [
     ageMin: 28,
     ranks: ['Baron'],
     choices: [
-      { label: 'Promise fair rule', outcome: { text: 'You promise justice first and coin second. The crowd cheers like people who have heard promises before, but want to believe.', effects: { reputation: 12, faith: 6, gold: -8, addTags: ['kind_ruler'], memory: { tag: 'kind_rule', weight: 3 } }, tone: 'good' } },
-      { label: 'Demand proper dues', outcome: { text: 'You remind them that loyalty has fees. The strong nod. The poor stare at the mud.', effects: { gold: 20, reputation: -10, charm: 4, addTags: ['cruel_ruler'], memory: { tag: 'hard_rule', weight: 3 } }, tone: 'plain' } },
+      { label: 'Promise fair rule', outcome: { text: 'You promise justice first and coin second. The crowd cheers like people who have heard promises before, but want to believe.', effects: { reputation: 12, faith: 6, gold: -8, holding: { loyalty: 15 }, addTags: ['kind_ruler'], memory: { tag: 'kind_rule', weight: 3 } }, tone: 'good' } },
+      { label: 'Demand proper dues', outcome: { text: 'You remind them that loyalty has fees. The strong nod. The poor stare at the mud.', effects: { gold: 20, reputation: -10, charm: 4, holding: { loyalty: -14 }, addTags: ['cruel_ruler'], memory: { tag: 'hard_rule', weight: 3 } }, tone: 'plain' } },
     ],
   },
   {
@@ -39,8 +39,8 @@ export const PREMIUM_EVENTS: GameEvent[] = [
     ageMin: 28,
     ranks: ['Baron'],
     choices: [
-      { label: 'Forgive the theft', outcome: { text: 'You send them home with grain enough for winter. Nobles call it weakness. Everyone else calls it dinner.', effects: { gold: -12, reputation: 14, faith: 6, addTags: ['kind_ruler'], memory: { tag: 'fed_the_poor', weight: 4 } }, tone: 'good' } },
-      { label: 'Make an example', outcome: { text: 'The stocks fill by sunset. Your barns remain full, and your halls grow quieter.', effects: { gold: 8, reputation: -14, faith: -6, addTags: ['cruel_ruler'], memory: { tag: 'punished_hunger', weight: 4 } }, tone: 'bad' } },
+      { label: 'Forgive the theft', outcome: { text: 'You send them home with grain enough for winter. Nobles call it weakness. Everyone else calls it dinner.', effects: { gold: -12, reputation: 14, faith: 6, holding: { stores: -10, loyalty: 12 }, addTags: ['kind_ruler'], memory: { tag: 'fed_the_poor', weight: 4 } }, tone: 'good' } },
+      { label: 'Make an example', outcome: { text: 'The stocks fill by sunset. Your barns remain full, and your halls grow quieter.', effects: { gold: 8, reputation: -14, faith: -6, holding: { security: 4, loyalty: -10 }, addTags: ['cruel_ruler'], memory: { tag: 'punished_hunger', weight: 4 } }, tone: 'bad' } },
     ],
   },
   {
@@ -52,8 +52,8 @@ export const PREMIUM_EVENTS: GameEvent[] = [
     ageMin: 29,
     ranks: ['Baron'],
     choices: [
-      { label: 'Ride out yourself', successChance: (s) => 0.35 + s.stats.charm / 300 + s.stats.health / 350, success: { text: 'You drive the raiders off and return with a dented helm and a louder legend.', effects: { charm: 10, health: -8, reputation: 12, rankProgress: 16, path: { martial: 4 }, memory: { tag: 'border_defender', weight: 4 } }, tone: 'good' }, failure: { text: 'The raid breaks your line. You survive, but the songs do not flatter your horse.', effects: { health: -16, gold: -18, reputation: -8, path: { martial: 2 } }, tone: 'bad' } },
-      { label: 'Pay scouts and guards (20g)', costGold: 20, outcome: { text: 'Paid guards do paid work. The raiders find easier prey, and your villagers sleep.', effects: { gold: -20, reputation: 8, wits: 4 }, tone: 'good' } },
+      { label: 'Ride out yourself', successChance: (s) => 0.35 + s.stats.charm / 300 + s.stats.health / 350, success: { text: 'You drive the raiders off and return with a dented helm and a louder legend.', effects: { charm: 10, health: -8, reputation: 12, rankProgress: 16, holding: { security: 16, loyalty: 6 }, path: { martial: 4 }, memory: { tag: 'border_defender', weight: 4 } }, tone: 'good' }, failure: { text: 'The raid breaks your line. You survive, but the songs do not flatter your horse.', effects: { health: -16, gold: -18, reputation: -8, holding: { security: -20, loyalty: -8 }, path: { martial: 2 } }, tone: 'bad' } },
+      { label: 'Pay scouts and guards (20g)', costGold: 20, outcome: { text: 'Paid guards do paid work. The raiders find easier prey, and your villagers sleep.', effects: { gold: -20, reputation: 8, wits: 4, holding: { security: 12 } }, tone: 'good' } },
     ],
   },
   {
@@ -65,8 +65,8 @@ export const PREMIUM_EVENTS: GameEvent[] = [
     ageMin: 30,
     ranks: ['Baron'],
     choices: [
-      { label: 'Keep taxes light', outcome: { text: 'The treasury groans, but the people bless your name in every bakehouse.', effects: { gold: -10, reputation: 12, faith: 4, addTags: ['kind_ruler'] }, tone: 'good' } },
-      { label: 'Fill the coffers', outcome: { text: 'Coin pours in. So do complaints. You discover complaints cannot be minted.', effects: { gold: 28, reputation: -12, faith: -3, addTags: ['cruel_ruler'] }, tone: 'plain' } },
+      { label: 'Keep taxes light', outcome: { text: 'The treasury groans, but the people bless your name in every bakehouse.', effects: { gold: -10, reputation: 12, faith: 4, holding: { loyalty: 12 }, addTags: ['kind_ruler'] }, tone: 'good' } },
+      { label: 'Fill the coffers', outcome: { text: 'Coin pours in. So do complaints. You discover complaints cannot be minted.', effects: { gold: 28, reputation: -12, faith: -3, holding: { loyalty: -18 }, addTags: ['cruel_ruler'] }, tone: 'plain' } },
     ],
   },
   {
@@ -134,8 +134,8 @@ export const PREMIUM_EVENTS: GameEvent[] = [
     ageMin: 30,
     ranks: ['Baron'],
     choices: [
-      { label: 'Open the stores (30g)', costGold: 30, outcome: { text: 'Herbs, bread, and clean straw save more lives than any sermon. People remember.', effects: { gold: -30, reputation: 18, faith: 8, addTags: ['kind_ruler'], memory: { tag: 'plague_relief', weight: 5 } }, tone: 'good' } },
-      { label: 'Seal the manor', outcome: { text: 'Your household survives behind locked gates. Outside, the bells do not stop.', effects: { health: 6, reputation: -18, faith: -8, addTags: ['cruel_ruler'], memory: { tag: 'sealed_manor', weight: 5 } }, tone: 'bad' } },
+      { label: 'Open the stores (30g)', costGold: 30, outcome: { text: 'Herbs, bread, and clean straw save more lives than any sermon. People remember.', effects: { gold: -30, reputation: 18, faith: 8, holding: { stores: -18, loyalty: 20 }, addTags: ['kind_ruler'], memory: { tag: 'plague_relief', weight: 5 } }, tone: 'good' } },
+      { label: 'Seal the manor', outcome: { text: 'Your household survives behind locked gates. Outside, the bells do not stop.', effects: { health: 6, reputation: -18, faith: -8, holding: { security: 6, loyalty: -20 }, addTags: ['cruel_ruler'], memory: { tag: 'sealed_manor', weight: 5 } }, tone: 'bad' } },
     ],
   },
   {
@@ -176,8 +176,8 @@ export const PREMIUM_EVENTS: GameEvent[] = [
     ageMin: 35,
     ranks: ['Monarch'],
     choices: [
-      { label: 'Sell royal jewels', outcome: { text: 'The crown jewels shrink. The kingdom eats. A fair trade, unless you ask jewelers.', effects: { gold: 45, reputation: 10, faith: 4, addTags: ['kind_ruler'] }, tone: 'good' } },
-      { label: 'Raise royal taxes', outcome: { text: 'The treasury fattens overnight. So does the list of people muttering near tavern doors.', effects: { gold: 75, reputation: -16, addTags: ['cruel_ruler'] }, tone: 'plain' } },
+      { label: 'Sell royal jewels', outcome: { text: 'The crown jewels shrink. The kingdom eats. A fair trade, unless you ask jewelers.', effects: { gold: 45, reputation: 10, faith: 4, holding: { stores: 8, loyalty: 5 }, addTags: ['kind_ruler'] }, tone: 'good' } },
+      { label: 'Raise royal taxes', outcome: { text: 'The treasury fattens overnight. So does the list of people muttering near tavern doors.', effects: { gold: 75, reputation: -16, holding: { loyalty: -20 }, addTags: ['cruel_ruler'] }, tone: 'plain' } },
     ],
   },
   {
@@ -190,8 +190,8 @@ export const PREMIUM_EVENTS: GameEvent[] = [
     ranks: ['Monarch'],
     once: true,
     choices: [
-      { label: 'Meet them in battle', successChance: (s) => 0.36 + s.stats.charm / 350 + s.reputation / 350, success: { text: 'The rebellion breaks. You return with torn banners and a kingdom that suddenly remembers its manners.', effects: { health: -12, charm: 12, reputation: 18, addTags: ['rebellion_crushed'], memory: { tag: 'crushed_rebellion', weight: 6 } }, tone: 'good' }, failure: { text: 'Your army scatters. The duke takes your throne, your seal, and your best chair.', effects: { death: 'Overthrown in rebellion. The new ruler kept the chair.' }, tone: 'bad' } },
-      { label: 'Offer pardon', outcome: { text: 'You offer mercy with one hand and hold guards behind the door with the other. It works.', effects: { reputation: 12, faith: 8, gold: -25, addTags: ['kind_ruler', 'rebellion_survived'], memory: { tag: 'pardoned_rebels', weight: 5 } }, tone: 'good' } },
+      { label: 'Meet them in battle', successChance: (s) => 0.36 + s.stats.charm / 350 + s.reputation / 350, success: { text: 'The rebellion breaks. You return with torn banners and a kingdom that suddenly remembers its manners.', effects: { health: -12, charm: 12, reputation: 18, holding: { security: 25, loyalty: 10 }, addTags: ['rebellion_crushed'], memory: { tag: 'crushed_rebellion', weight: 6 } }, tone: 'good' }, failure: { text: 'Your army scatters. The duke takes your throne, your seal, and your best chair.', effects: { holding: { security: -30, loyalty: -25 }, death: 'Overthrown in rebellion. The new ruler kept the chair.' }, tone: 'bad' } },
+      { label: 'Offer pardon', outcome: { text: 'You offer mercy with one hand and hold guards behind the door with the other. It works.', effects: { reputation: 12, faith: 8, gold: -25, holding: { security: 5, loyalty: 18 }, addTags: ['kind_ruler', 'rebellion_survived'], memory: { tag: 'pardoned_rebels', weight: 5 } }, tone: 'good' } },
     ],
   },
   {

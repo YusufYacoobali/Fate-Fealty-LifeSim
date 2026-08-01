@@ -2,7 +2,7 @@ import React from 'react';
 import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { StatBar } from '../ui/StatBar';
-import { C } from '@/theme/theme';
+import { C, PANEL } from '@/theme/theme';
 import { rankPortraitAsset, statIconAsset, traitIconAsset } from '@/assets/generatedAssets';
 
 interface StatVM {
@@ -20,6 +20,13 @@ interface RankVM {
   bg: string;
   sd: string;
   fg: string;
+}
+
+interface RankClimbVM {
+  from: string;
+  to: string;
+  progress: number;
+  locked: boolean;
 }
 
 function displayLockedRank(name: string) {
@@ -50,13 +57,14 @@ interface Props {
   age: number;
   stats: StatVM[];
   rankPath: RankVM[];
+  rankClimb: RankClimbVM | null;
   traits: TraitVM[];
   goal: GoalVM | null;
   bio: string;
   onLockedRankPress?: () => void;
 }
 
-export function MeTab({ portrait, firstName, epithet, classRank, age, stats, rankPath, traits, goal, bio, onLockedRankPress }: Props) {
+export function MeTab({ portrait, firstName, epithet, classRank, age, stats, rankPath, rankClimb, traits, goal, bio, onLockedRankPress }: Props) {
   const portraitAsset = rankPortraitAsset(classRank);
 
   return (
@@ -111,6 +119,24 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
           </TouchableOpacity>
         ))}
       </View>
+      {rankClimb && (
+        <View style={{ marginTop: 6 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 3 }}>
+            <PixelText font="body" size={12} color={C.textMuted}>{rankClimb.from} PATH</PixelText>
+            <PixelText font="body" size={12} color={rankClimb.locked ? C.textMuted : C.blueDark}>
+              {rankClimb.locked ? `${rankClimb.to} REQUIRES PREMIUM` : `${rankClimb.progress}% TO ${rankClimb.to}`}
+            </PixelText>
+          </View>
+          <StatBar
+            value={rankClimb.progress}
+            color={rankClimb.locked ? '#9aa8b8' : C.charm}
+            dark={rankClimb.locked ? '#667486' : C.charmDark}
+            height={6}
+            trackBg={C.lightFill}
+            trackBorder={C.paleEdge}
+          />
+        </View>
+      )}
 
       {/* attributes */}
       <PixelText font="pixel" size={7} color={C.blueDeep} style={{ marginTop: 14, marginBottom: 8 }}>
@@ -145,7 +171,7 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
       <PixelText font="pixel" size={7} color={C.blueDeep} style={{ marginTop: 14, marginBottom: 8 }}>
         THY AMBITION
       </PixelText>
-      <View style={{ backgroundColor: C.parch, borderWidth: 3, borderColor: C.parchBorder, borderTopColor: C.parchSl, borderLeftColor: C.parchSl, borderBottomColor: C.parchSd, borderRightColor: C.parchSd, padding: 9 }}>
+      <View style={PANEL.parchCard}>
         {goal ? (
           <>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
@@ -207,7 +233,7 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
       </View>
 
       {/* bio */}
-      <View style={{ marginTop: 13, backgroundColor: C.parch, borderWidth: 3, borderColor: C.parchBorder, borderTopColor: C.parchSl, borderLeftColor: C.parchSl, borderBottomColor: C.parchSd, borderRightColor: C.parchSd, padding: 9 }}>
+      <View style={[PANEL.parchCard, { marginTop: 13 }]}>
         <PixelText font="body" size={16} color={C.textBrown}>
           {bio}
         </PixelText>

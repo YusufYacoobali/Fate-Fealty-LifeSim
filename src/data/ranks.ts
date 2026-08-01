@@ -4,7 +4,7 @@ export interface RankDef {
   key: RankKey;
   short: string;
   portrait: string;
-  /** Lifetime Pass rank; free players stop before this. */
+  /** Premium rank; free players stop before this. */
   premium?: boolean;
   /** Hidden requirements for promotion INTO this rank (checked against state). */
   promote: {
@@ -18,7 +18,7 @@ export interface RankDef {
 
 /**
  * The visible class ladder. Free players climb PEASANT -> SQUIRE -> KNIGHT -> NOBLE.
- * Lifetime Pass owners can keep going to BARON -> MONARCH.
+ * Premium owners can keep going to BARON -> MONARCH.
  * Promotion is driven by hidden rankProgress plus strict gating requirements.
  */
 export const RANKS: RankDef[] = [
@@ -32,33 +32,33 @@ export const RANKS: RankDef[] = [
     key: 'Squire',
     short: 'SQUIRE',
     portrait: '🧒',
-    promote: { minAge: 14, progress: 100, stats: { wits: 48 } },
+    promote: { minAge: 12, progress: 100, stats: { wits: 48 } },
   },
   {
     key: 'Knight',
     short: 'KNIGHT',
     portrait: '🛡️',
-    promote: { minAge: 20, progress: 100, stats: { wits: 64, charm: 56 } },
+    promote: { minAge: 15, progress: 100, stats: { wits: 64, charm: 56 } },
   },
   {
     key: 'Noble',
     short: 'NOBLE',
     portrait: '👑',
-    promote: { minAge: 28, minGold: 120, progress: 100, stats: { charm: 72, wits: 58 } },
+    promote: { minAge: 20, minGold: 120, progress: 100, stats: { charm: 72, wits: 58 } },
   },
   {
     key: 'Baron',
     short: 'BARON',
-    portrait: 'B',
+    portrait: '🏰',
     premium: true,
-    promote: { minAge: 38, minGold: 260, progress: 100, stats: { charm: 84, wits: 76 } },
+    promote: { minAge: 23, minGold: 260, progress: 100, stats: { charm: 84, wits: 76 } },
   },
   {
     key: 'Monarch',
     short: 'KING',
-    portrait: 'M',
+    portrait: '👑',
     premium: true,
-    promote: { minAge: 50, minGold: 420, progress: 100, stats: { charm: 92, wits: 88, faith: 68 } },
+    promote: { minAge: 28, minGold: 420, progress: 100, stats: { charm: 92, wits: 88, faith: 68 } },
   },
 ];
 

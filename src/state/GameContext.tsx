@@ -8,9 +8,10 @@ import { useScheduledReminders } from './hooks/useScheduledReminders';
 import { useCharacterCreation } from './hooks/useCharacterCreation';
 import { useMetaProgression, ProgressSnapshot } from './hooks/useMetaProgression';
 import { usePremium } from './hooks/usePremium';
+import { useShopPromoGate } from './hooks/useShopPromoGate';
 import type { PremiumAccessState } from './hooks/usePremium';
 import { NewLifeOptions } from './gameReducer';
-import { PurchaseOutcome } from '@/services/purchases';
+import { PlanId, PurchaseOutcome } from '@/services/purchases';
 
 interface GameContextValue {
   state: GameState;
@@ -18,6 +19,9 @@ interface GameContextValue {
   loaded: boolean;
   reviewVisible: boolean;
   resolveReview: () => void;
+  shopPromoVisible: boolean;
+  shopPromoMessageIndex: number;
+  resolveShopPromo: () => void;
   creating: boolean;
   requestNewLife: () => void;
   createCharacter: (options: NewLifeOptions) => void;
@@ -27,10 +31,10 @@ interface GameContextValue {
   onboardingVisible: boolean;
   completeOnboarding: () => void;
   restartOnboarding: () => void;
-  lifetimeUnlocked: boolean;
+  premiumUnlocked: boolean;
   premiumAccessState: PremiumAccessState;
-  purchaseLifetime: () => Promise<PurchaseOutcome>;
-  restoreLifetime: () => Promise<boolean>;
+  purchasePlan: (plan: PlanId) => Promise<PurchaseOutcome>;
+  restorePremium: () => Promise<boolean>;
 }
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -56,6 +60,12 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     }
   }, [game.loaded, meta.ready, meta.metaRef, game.state.lifeNo]);
 
+  const shopPromo = useShopPromoGate(game.state, game.loaded, meta, {
+    eligible: premium.premiumAccessState === 'inactive',
+    blocked: creation.creating || onboardingVisible || progression.newAchievements.length > 0,
+    reviewVisible: review.reviewVisible,
+  });
+
   const completeOnboarding = useCallback(() => {
     meta.update({ tutorialSeen: true });
     setOnboardingVisible(false);
@@ -73,6 +83,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       loaded: game.loaded,
       reviewVisible: review.reviewVisible,
       resolveReview: review.resolveReview,
+      shopPromoVisible: shopPromo.shopPromoVisible,
+      shopPromoMessageIndex: shopPromo.shopPromoMessageIndex,
+      resolveShopPromo: shopPromo.resolveShopPromo,
       creating: creation.creating,
       requestNewLife: creation.requestNewLife,
       createCharacter: creation.createCharacter,
@@ -82,10 +95,10 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       onboardingVisible,
       completeOnboarding,
       restartOnboarding,
-      lifetimeUnlocked: premium.lifetimeUnlocked,
+      premiumUnlocked: premium.premiumUnlocked,
       premiumAccessState: premium.premiumAccessState,
-      purchaseLifetime: premium.purchaseLifetime,
-      restoreLifetime: premium.restoreLifetime,
+      purchasePlan: premium.purchasePlan,
+      restorePremium: premium.restorePremium,
     }),
     [
       game.state,
@@ -93,6 +106,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       game.loaded,
       review.reviewVisible,
       review.resolveReview,
+      shopPromo.shopPromoVisible,
+      shopPromo.shopPromoMessageIndex,
+      shopPromo.resolveShopPromo,
       creation.creating,
       creation.requestNewLife,
       creation.createCharacter,
@@ -102,10 +118,10 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       onboardingVisible,
       completeOnboarding,
       restartOnboarding,
-      premium.lifetimeUnlocked,
+      premium.premiumUnlocked,
       premium.premiumAccessState,
-      premium.purchaseLifetime,
-      premium.restoreLifetime,
+      premium.purchasePlan,
+      premium.restorePremium,
     ],
   );
 

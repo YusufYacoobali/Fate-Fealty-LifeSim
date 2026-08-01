@@ -4,7 +4,7 @@ import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
 import { Choice, GameEvent, GameState } from '@/types/game';
 import { isChoiceAvailable, isChoiceEnabled } from '@/engine/eventPicker';
-import { C } from '@/theme/theme';
+import { C, PANEL } from '@/theme/theme';
 import { ModalBackdrop } from './ModalBackdrop';
 
 interface Props {
@@ -19,7 +19,7 @@ export function EventModal({ state, event, onChoose }: Props) {
 
   return (
     <ModalBackdrop zIndex={50}>
-      <View style={{ backgroundColor: C.parch, borderWidth: 4, borderColor: C.inkSoft, borderTopColor: C.parchSl, borderLeftColor: C.parchSl, borderBottomColor: C.parchSd, borderRightColor: C.parchSd, padding: 14 }}>
+      <View style={PANEL.parchModal}>
         <View style={{ backgroundColor: C.health, borderWidth: 3, borderColor: C.inkSoft, borderBottomColor: C.healthDark, borderRightColor: C.healthDark, paddingHorizontal: 8, paddingVertical: 6 }}>
           <PixelText font="pixel" size={9} color={C.white} style={{ textAlign: 'center' }}>
             {event.title}

@@ -1,10 +1,23 @@
 import {
+  annualSubscriptionValue,
   ENTITLEMENT_ID,
   entitlementActive,
   isProductionRevenueCatKey,
   mergeEntitlement,
-  pickLifetimePackage,
+  PLAN_IDS,
+  pickPackage,
 } from '@/services/purchasesLogic';
+
+describe('annualSubscriptionValue', () => {
+  it('calculates the monthly equivalent and saving against twelve monthly payments', () => {
+    expect(annualSubscriptionValue(9.99, 2.99)).toEqual({ perMonth: 0.8325, savingsPercent: 72 });
+  });
+
+  it('never reports negative savings and rejects unusable prices', () => {
+    expect(annualSubscriptionValue(36, 2.99)).toEqual({ perMonth: 3, savingsPercent: 0 });
+    expect(annualSubscriptionValue(0, 2.99)).toBeNull();
+  });
+});
 
 describe('entitlementActive (gate on entitlement, never product)', () => {
   it('uses the RevenueCat pro entitlement', () => {
@@ -35,16 +48,24 @@ describe('mergeEntitlement', () => {
   });
 });
 
-describe('pickLifetimePackage', () => {
-  it('uses the current offering lifetime package', () => {
-    const lifetime = { identifier: '$rc_lifetime' };
-    const offering = { lifetime, availablePackages: [{ identifier: '$rc_monthly' }] };
-    expect(pickLifetimePackage(offering)).toBe(lifetime);
+describe('pickPackage', () => {
+  const monthly = { identifier: '$rc_monthly' };
+  const annual = { identifier: '$rc_annual' };
+  const lifetime = { identifier: '$rc_lifetime' };
+  const offering = { monthly, annual, lifetime };
+
+  it('picks each plan from its standard offering accessor', () => {
+    expect(pickPackage(offering, 'monthly')).toBe(monthly);
+    expect(pickPackage(offering, 'annual')).toBe(annual);
+    expect(pickPackage(offering, 'lifetime')).toBe(lifetime);
   });
 
-  it('does not fall back to another package when lifetime is missing', () => {
-    expect(pickLifetimePackage({ availablePackages: [{ identifier: '$rc_monthly' }] })).toBeNull();
-    expect(pickLifetimePackage(null)).toBeNull();
+  it('never falls back to a different package when a plan is missing', () => {
+    for (const plan of PLAN_IDS) {
+      expect(pickPackage({}, plan)).toBeNull();
+      expect(pickPackage(null, plan)).toBeNull();
+    }
+    expect(pickPackage({ monthly }, 'lifetime')).toBeNull();
   });
 });
 

@@ -57,26 +57,44 @@ describe('gameReducer', () => {
     expect(s.settings.difficulty).toBe('Brutal');
   });
 
-  it('locks permadeath behind the Lifetime Pass', () => {
-    const locked = gameReducer(makeState({ lifetimeUnlocked: false, settings: { autoScroll: true, difficulty: 'Normal', permadeath: false, haptics: false } }), {
+  it('locks Live Forever behind premium access', () => {
+    const locked = gameReducer(makeState({ lifetimeUnlocked: false, settings: { autoScroll: true, difficulty: 'Normal', liveForever: false, haptics: false, music: false, soundEffects: false } }), {
       type: 'SET_SETTINGS',
-      settings: { permadeath: true },
+      settings: { liveForever: true },
     });
-    expect(locked.settings.permadeath).toBe(false);
+    expect(locked.settings.liveForever).toBe(false);
 
-    const unlocked = gameReducer(makeState({ lifetimeUnlocked: true, settings: { autoScroll: true, difficulty: 'Normal', permadeath: false, haptics: false } }), {
+    const unlocked = gameReducer(makeState({ lifetimeUnlocked: true, settings: { autoScroll: true, difficulty: 'Normal', liveForever: false, haptics: false, music: false, soundEffects: false } }), {
       type: 'SET_SETTINGS',
-      settings: { permadeath: true },
+      settings: { liveForever: true },
     });
-    expect(unlocked.settings.permadeath).toBe(true);
+    expect(unlocked.settings.liveForever).toBe(true);
   });
 
-  it('turns permadeath off when Lifetime Pass access is removed', () => {
-    const s = gameReducer(makeState({ lifetimeUnlocked: true, settings: { autoScroll: true, difficulty: 'Normal', permadeath: true, haptics: false } }), {
+  it('turns Live Forever off when premium access is removed', () => {
+    const s = gameReducer(makeState({ lifetimeUnlocked: true, tab: 'hold', settings: { autoScroll: true, difficulty: 'Normal', liveForever: true, haptics: false, music: false, soundEffects: false } }), {
       type: 'SET_LIFETIME_UNLOCKED',
       unlocked: false,
     });
-    expect(s.settings.permadeath).toBe(false);
+    expect(s.settings.liveForever).toBe(false);
+    expect(s.tab).toBe('hold');
+  });
+
+  it('raises the yearly action limit to 50 with Premium and restores the free limit when access ends', () => {
+    const premium = gameReducer(makeState({
+      lifetimeUnlocked: false,
+      actionClock: { used: 20, cap: 24, lifetimeUsed: 20, fullYears: 0 },
+    }), {
+      type: 'SET_LIFETIME_UNLOCKED',
+      unlocked: true,
+    });
+    expect(premium.actionClock.cap).toBe(50);
+    expect(premium.actionClock.used).toBe(20);
+
+    premium.actionClock.used = 37;
+    const free = gameReducer(premium, { type: 'SET_LIFETIME_UNLOCKED', unlocked: false });
+    expect(free.actionClock.cap).toBe(24);
+    expect(free.actionClock.used).toBe(24);
   });
 
   it('NEW_LIFE with a blank name falls back to a random one', () => {
@@ -84,9 +102,10 @@ describe('gameReducer', () => {
     expect(s.first.length).toBeGreaterThan(0);
   });
 
-  it('CONTINUE_AS_HEIR carries forward half the gold', () => {
-    const s = gameReducer(makeState({ age: 50, gold: 80 }), { type: 'CONTINUE_AS_HEIR' });
+  it('CONTINUE_AS_HEIR carries forward half the gold and hereditary rank', () => {
+    const s = gameReducer(makeState({ age: 50, gold: 80, rankIdx: 2 }), { type: 'CONTINUE_AS_HEIR' });
     expect(s.age).toBe(0);
     expect(s.gold).toBe(8 + 40); // base starting gold + inherited half
+    expect(s.rankIdx).toBe(2);
   });
 });

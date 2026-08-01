@@ -10,9 +10,9 @@ export const NOBLE_EVENTS: GameEvent[] = [
     ageMin: 20,
     ranks: ['Noble'],
     choices: [
-      { label: 'Forgive their taxes', outcome: { text: 'You waved the tax away. The village weeps with gratitude; your peers mutter about "soft sentiment".', effects: { gold: -10, faith: 6, reputation: 12, path: { court: 1 }, memory: { tag: 'good_lord', weight: 3 } }, tone: 'good' } },
-      { label: 'Collect every coin', outcome: { text: 'Coin is coin. The village goes hungry and your coffers swell. Old Maud will not look at you.', effects: { gold: 18, reputation: -12, kinRel: { id: 'mother', delta: -25 }, memory: { tag: 'cruel_lord', weight: 3 } }, tone: 'bad' } },
-      { label: 'Halve it, and look generous', outcome: { text: 'A middle path. You keep some coin and most of your good name. Very politic.', effects: { gold: 6, reputation: 4, wits: 2 }, tone: 'good' } },
+      { label: 'Forgive their taxes', outcome: { text: 'You waved the tax away. The village weeps with gratitude; your peers mutter about "soft sentiment".', effects: { gold: -10, faith: 6, reputation: 12, holding: { stores: -5, loyalty: 12 }, path: { court: 1 }, memory: { tag: 'good_lord', weight: 3 } }, tone: 'good' } },
+      { label: 'Collect every coin', outcome: { text: 'Coin is coin. The village goes hungry and your coffers swell. Old Maud will not look at you.', effects: { gold: 18, reputation: -12, holding: { stores: -4, loyalty: -15 }, kinRel: { id: 'mother', delta: -25 }, memory: { tag: 'cruel_lord', weight: 3 } }, tone: 'bad' } },
+      { label: 'Halve it, and look generous', outcome: { text: 'A middle path. You keep some coin and most of your good name. Very politic.', effects: { gold: 6, reputation: 4, wits: 2, holding: { loyalty: 4 } }, tone: 'good' } },
     ],
   },
   {

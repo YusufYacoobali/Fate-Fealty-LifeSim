@@ -22,7 +22,7 @@ export interface ActionAvailability {
 
 export function timedActionAvailability(state: GameState): ActionAvailability {
   if (state.dead) return { available: false, reason: 'Thy life is ended' };
-  if (state.event) return { available: false, reason: 'Resolve the current event' };
+  if (state.pendingEvent) return { available: false, reason: 'Resolve the current event' };
   if (state.tags.includes('imprisoned')) return { available: false, reason: 'Imprisoned' };
   if (state.actionClock.used >= state.actionClock.cap) return { available: false, reason: 'No actions remain this year' };
   return { available: true };

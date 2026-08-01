@@ -6,16 +6,24 @@ import { Choice, GameEvent, GameState } from '@/types/game';
 import { isChoiceAvailable, isChoiceEnabled } from '@/engine/eventPicker';
 import { C, PANEL } from '@/theme/theme';
 import { ModalBackdrop } from './ModalBackdrop';
+import { strongestConditionReasons } from '@/engine/worldSimulation';
+import { WorldConditionKey } from '@/types/game';
+import { storyEligibilityReasons } from '@/content/persistentStories';
 
 interface Props {
   state: GameState;
   event: GameEvent;
-  onChoose: (event: GameEvent, choice: Choice) => void;
+  onChoose: (choice: Choice) => void;
 }
 
 export function EventModal({ state, event, onChoose }: Props) {
   const text = typeof event.text === 'function' ? event.text(state) : event.text;
   const choices = event.choices.filter((c) => isChoiceAvailable(state, c));
+  const story = state.pendingEvent?.storyInstanceId
+    ? state.world.activeStories.find((item) => item.id === state.pendingEvent!.storyInstanceId)
+    : undefined;
+  const conditionKey = (Object.keys(state.world.conditions) as WorldConditionKey[])
+    .sort((a, b) => Math.abs(state.world.conditions[b] - 50) - Math.abs(state.world.conditions[a] - 50))[0];
 
   return (
     <ModalBackdrop zIndex={50}>
@@ -25,6 +33,13 @@ export function EventModal({ state, event, onChoose }: Props) {
             {event.title}
           </PixelText>
         </View>
+
+        {story && <PixelText font="pixel" size={6} color={C.purpleDark} style={{ textAlign: 'center', marginTop: 8 }}>
+          {story.templateId.replaceAll('_', ' ').toUpperCase()} · {story.currentBeatId.replace('_', ' ').toUpperCase()}
+        </PixelText>}
+        {story && <PixelText font="body" size={13} color={C.textMuted} style={{ textAlign: 'center', marginTop: 3 }}>
+          Why now: {(story ? storyEligibilityReasons(state, story.templateId) : strongestConditionReasons(state, conditionKey)).join(', ')}.
+        </PixelText>}
 
         <PixelText font="body" size={18} color={C.textDark} style={{ marginVertical: 12, marginHorizontal: 2 }}>
           {text}
@@ -39,7 +54,7 @@ export function EventModal({ state, event, onChoose }: Props) {
                 bg={C.light}
                 shadow={C.blue}
                 light={C.sky}
-                onPress={() => onChoose(event, c)}
+                onPress={() => onChoose(c)}
                 disabled={!enabled}
                 innerStyle={{ padding: 9 }}
               >

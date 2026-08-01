@@ -13,8 +13,6 @@ import { chance, clamp, pick, rnd } from './random';
 import { C } from '@/theme/theme';
 import { pickNarrative } from './narrativeEngine';
 
-export const PLAYER_ID = 'player';
-
 const neutral = (value = 50): RelationshipPerspective => ({ affinity: value, trust: value, respect: value, attraction: 0 });
 
 function flagsFor(kind: KinKind): RelationshipFlag[] {
@@ -26,11 +24,11 @@ function flagsFor(kind: KinKind): RelationshipFlag[] {
   return [];
 }
 
-export function makePlayerRelationship(kin: KinMember, age: number): Relationship {
+export function makePlayerRelationship(playerId: string, kin: KinMember, age: number): Relationship {
   const attraction = kin.kind === 'spouse' ? 72 : 0;
   return {
-    id: `rel_player_${kin.id}`,
-    aId: PLAYER_ID,
+    id: `rel_${playerId}_${kin.id}`,
+    aId: playerId,
     bId: kin.id,
     aToB: { ...neutral(kin.rel), attraction },
     bToA: { ...neutral(kin.rel), attraction },
@@ -42,27 +40,28 @@ export function makePlayerRelationship(kin: KinMember, age: number): Relationshi
 }
 
 export function relationshipWith(state: GameState, characterId: string): Relationship {
-  let relation = state.world.relationships.find(
-    (item) => (item.aId === PLAYER_ID && item.bId === characterId) || (item.bId === PLAYER_ID && item.aId === characterId),
+  let relation = Object.values(state.world.relationships).find(
+    (item) => (item.aId === state.playerCharacterId && item.bId === characterId) || (item.bId === state.playerCharacterId && item.aId === characterId),
   );
   if (!relation) {
-    const kin = state.kin.find((item) => item.id === characterId);
-    relation = makePlayerRelationship(kin!, state.age);
-    state.world.relationships.push(relation);
+    const kin = state.world.characters[characterId];
+    if (!kin) throw new Error(`Cannot create relationship with missing character ${characterId}`);
+    relation = makePlayerRelationship(state.playerCharacterId, kin, state.age);
+    state.world.relationships[relation.id] = relation;
   }
   return relation;
 }
 
-export function perspectives(relation: Relationship): { player: RelationshipPerspective; other: RelationshipPerspective } {
-  return relation.aId === PLAYER_ID
+export function perspectives(state: GameState, relation: Relationship): { player: RelationshipPerspective; other: RelationshipPerspective } {
+  return relation.aId === state.playerCharacterId
     ? { player: relation.aToB, other: relation.bToA }
     : { player: relation.bToA, other: relation.aToB };
 }
 
 export function syncLegacyBond(state: GameState, characterId: string): void {
-  const kin = state.kin.find((item) => item.id === characterId);
+  const kin = state.world.characters[characterId];
   if (!kin) return;
-  const { player, other } = perspectives(relationshipWith(state, characterId));
+  const { player, other } = perspectives(state, relationshipWith(state, characterId));
   kin.rel = clamp(Math.round((player.affinity + other.affinity + player.trust + other.trust) / 4));
 }
 
@@ -72,7 +71,7 @@ export function relationMatchesFilter(state: GameState, kin: KinMember, filter: 
   if (!kin.alive) return false;
   const flags = relationshipWith(state, kin.id).flags;
   if (filter === 'family') return flags.includes('family');
-  if (filter === 'romance') return flags.includes('spouse') || perspectives(relationshipWith(state, kin.id)).other.attraction >= 25;
+  if (filter === 'romance') return flags.includes('spouse') || perspectives(state, relationshipWith(state, kin.id)).other.attraction >= 25;
   if (filter === 'friends') return flags.includes('friend');
   if (filter === 'rivals') return flags.includes('rival') || flags.includes('feud');
   if (filter === 'authority') return flags.includes('authority');
@@ -85,7 +84,7 @@ function driftToward(value: number, target: number, amount: number): number {
 }
 
 export function tickRelationshipDecay(state: GameState): GameState {
-  for (const relation of state.world.relationships) {
+  for (const relation of Object.values(state.world.relationships)) {
     const family = relation.flags.includes('family') || relation.flags.includes('spouse');
     const feud = relation.flags.includes('feud');
     const contact = relation.interactionsThisYear;
@@ -98,8 +97,8 @@ export function tickRelationshipDecay(state: GameState): GameState {
       view.attraction = Math.max(0, view.attraction - (relation.flags.includes('spouse') ? 1 : 5));
     }
     relation.interactionsThisYear = 0;
-    const kinId = relation.aId === PLAYER_ID ? relation.bId : relation.aId;
-    if (kinId !== PLAYER_ID) syncLegacyBond(state, kinId);
+    const kinId = relation.aId === state.playerCharacterId ? relation.bId : relation.bId === state.playerCharacterId ? relation.aId : null;
+    if (kinId) syncLegacyBond(state, kinId);
   }
   return state;
 }
@@ -124,6 +123,9 @@ export type SystemicKinAction =
 export function isRomanceEligible(state: GameState, kin: KinMember): boolean {
   if (!kin.alive || state.age < 18 || kin.age < 18) return false;
   if (['mother', 'father', 'sibling', 'child'].includes(kin.kind)) return false;
+  const player = state.world.characters[state.playerCharacterId];
+  if (kin.spouseId && kin.spouseId !== state.playerCharacterId) return false;
+  if (player?.spouseId && player.spouseId !== kin.id) return false;
   if (state.tags.includes('married') && kin.kind !== 'spouse') return false;
   return attractionAllows(state.attraction, kin.gender) && attractionAllows(kin.attraction, state.gender);
 }
@@ -132,7 +134,7 @@ export function contextualActions(state: GameState, kin: KinMember): SystemicKin
   if (!kin.alive) return [];
   const relation = relationshipWith(state, kin.id);
   const result: SystemicKinAction[] = ['time', 'praise', 'help', 'gift', 'favour'];
-  if (perspectives(relation).other.affinity < 45) result.push('apologize');
+  if (perspectives(state, relation).other.affinity < 45) result.push('apologize');
   if (relation.flags.includes('rival') || relation.flags.includes('feud')) result.push('reconcile', 'plot');
   else result.push('insult');
   if (isRomanceEligible(state, kin)) result.push('flirt', 'court', 'propose');
@@ -148,7 +150,7 @@ export function applyRelationshipShift(
   otherDelta: Partial<RelationshipPerspective>,
 ): Relationship {
   const relation = relationshipWith(state, kinId);
-  const views = perspectives(relation);
+  const views = perspectives(state, relation);
   for (const [key, value] of Object.entries(playerDelta)) views.player[key as keyof RelationshipPerspective] = clamp(views.player[key as keyof RelationshipPerspective] + (value ?? 0));
   for (const [key, value] of Object.entries(otherDelta)) views.other[key as keyof RelationshipPerspective] = clamp(views.other[key as keyof RelationshipPerspective] + (value ?? 0));
   relation.lastInteractionAge = state.age;
@@ -166,7 +168,7 @@ const TIME_LINES = [
 
 export function performSystemicRelationshipAction(state: GameState, kin: KinMember, action: SystemicKinAction): GameState {
   const relation = relationshipWith(state, kin.id);
-  const views = perspectives(relation);
+  const views = perspectives(state, relation);
   switch (action) {
     case 'time':
       applyRelationshipShift(state, kin.id, { affinity: 5, trust: 3 }, { affinity: rnd(4, 8), trust: 3 });
@@ -251,6 +253,11 @@ export function performSystemicRelationshipAction(state: GameState, kin: KinMemb
       relation.flags = relation.flags.filter((flag) => flag !== 'spouse');
       relation.flags.push('former_spouse');
       kin.kind = 'acquaintance';
+      if (state.world.characters[state.playerCharacterId]) delete state.world.characters[state.playerCharacterId].spouseId;
+      if (state.world.characters[kin.id]) {
+        delete state.world.characters[kin.id].spouseId;
+        state.world.characters[kin.id].kind = 'acquaintance';
+      }
       removeTag(state, 'married');
       addTag(state, 'divorced');
       applyRelationshipShift(state, kin.id, { affinity: -12, trust: -12 }, { affinity: -18, trust: -20 });
@@ -261,6 +268,9 @@ export function performSystemicRelationshipAction(state: GameState, kin: KinMemb
 }
 
 function marry(state: GameState, kin: KinMember, relation: Relationship): void {
+  const player = state.world.characters[state.playerCharacterId];
+  const spouse = state.world.characters[kin.id];
+  if ((player?.spouseId && player.spouseId !== kin.id) || (spouse?.spouseId && spouse.spouseId !== state.playerCharacterId)) return;
   kin.kind = 'spouse';
   kin.role = 'Thy Spouse';
   if (!relation.flags.includes('spouse')) relation.flags.push('spouse');
@@ -268,14 +278,22 @@ function marry(state: GameState, kin: KinMember, relation: Relationship): void {
   addTag(state, 'married');
   addTag(state, 'chose_marriage');
   addMemory(state, 'married', 3, kin.name);
-  state.world.households[0].memberIds = Array.from(new Set([...state.world.households[0].memberIds, kin.id]));
+  if (player) player.spouseId = kin.id;
+  if (spouse) {
+    spouse.spouseId = state.playerCharacterId;
+    spouse.kind = 'spouse';
+    spouse.role = 'Thy Spouse';
+    spouse.householdId = player?.householdId ?? 'house_player';
+  }
+  const household = state.world.households.find((item) => item.id === (player?.householdId ?? 'house_player')) ?? state.world.households[0];
+  household.memberIds = Array.from(new Set([...household.memberIds, kin.id]));
   pushFeed(state, 'WEDDING', C.good, `You marry ${kin.name} by your own choosing. Bells ring, bread vanishes, and two families pretend not to count the gifts.`, 'good');
 }
 
 export function maybeCreateNpcProposal(state: GameState): void {
   if (state.world.proposalFromId || state.tags.includes('married') || state.age < 18) return;
   const candidates = state.kin.filter((kin) => isRomanceEligible(state, kin)).filter((kin) => {
-    const other = perspectives(relationshipWith(state, kin.id)).other;
+    const other = perspectives(state, relationshipWith(state, kin.id)).other;
     return other.affinity >= 65 && other.trust >= 55 && other.attraction >= 55;
   });
   if (!candidates.length || !chance(0.18)) return;

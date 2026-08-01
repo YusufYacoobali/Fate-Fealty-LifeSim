@@ -35,7 +35,7 @@ describe('reviewLogic.shouldPromptReview', () => {
     expect(shouldPromptReview(ready, dead)).toBe(false);
 
     const ev = goodMomentState();
-    ev.event = { id: 'x', category: 'peasant', title: 't', text: 't', choices: [] };
+    ev.pendingEvent = { eventId: 'x' };
     expect(shouldPromptReview(ready, ev)).toBe(false);
 
     const settings = goodMomentState();

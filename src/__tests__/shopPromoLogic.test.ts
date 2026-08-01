@@ -39,7 +39,7 @@ describe('shopPromoLogic.shouldPromptShopPromo', () => {
     expect(shouldPromptShopPromo(meta, bad, false)).toBe(false);
 
     const event = goodMomentState();
-    event.event = { id: 'x', category: 'peasant', title: 'A choice', text: 'Choose.', choices: [] };
+    event.pendingEvent = { eventId: 'x' };
     expect(shouldPromptShopPromo(meta, event, false)).toBe(false);
 
     const settings = goodMomentState();

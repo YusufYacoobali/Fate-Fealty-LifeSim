@@ -9,7 +9,7 @@
  *   5. Ticks rank/path progression (may auto-promote).
  *   6. Runs the death engine.
  *
- * The returned state may carry `event != null`, meaning the UI should open a
+ * The returned state may carry `pendingEvent != null`, meaning the UI should open a
  * popup and wait for the player's choice before the year is truly "done".
  */
 
@@ -29,13 +29,16 @@ import { tickHoldingYear } from './holdingEngine';
 import { tickCareerAndEconomy } from './careerEngine';
 import { simulateLivingWorld } from './worldEngine';
 import { tickRelationshipDecay } from './relationshipEngine';
+import { resolveScheduledConsequences, tickPersistentSociety, tickWorldConditions } from './worldSimulation';
+import { duePersistentStoryEvent, maybeStartMajorStory, maybeStartRelationshipStory, maybeStartSupportingStory } from './persistentStoryEngine';
 
 const EVENT_CHANCE = 0.34;
 
 export function ageUp(s: GameState): GameState {
-  if (s.dead || s.event) return s; // guard: don't advance mid-popup
+  if (s.dead || s.pendingEvent) return s; // guard: don't advance mid-popup
 
   s.age += 1;
+  s.world.currentYear += 1;
   s.tab = 'life';
   s.selectedKinId = null;
 
@@ -73,6 +76,9 @@ export function ageUp(s: GameState): GameState {
   if (s.dead) return s;
   tickRelationshipDecay(s);
   simulateLivingWorld(s);
+  tickPersistentSociety(s);
+  tickWorldConditions(s);
+  resolveScheduledConsequences(s);
 
   // Resolve the outgoing year's estate management. A health collapse is
   // finalised before another story is offered while Live Forever is enabled
@@ -84,11 +90,19 @@ export function ageUp(s: GameState): GameState {
   }
 
   // --- 4. story arc continuation OR new main event ---
-  const arcNode = popReadyArc(s);
-  if (arcNode) {
-    s.event = arcNode;
-  } else if (chance(EVENT_CHANCE)) {
-    s.event = pickEvent(s);
+  maybeStartMajorStory(s);
+  maybeStartSupportingStory(s);
+  maybeStartRelationshipStory(s);
+  const persistentStory = duePersistentStoryEvent(s);
+  const arcNode = persistentStory ? null : popReadyArc(s);
+  const selectedEvent = persistentStory
+    ?? arcNode
+    ?? ((s.world.pacing.quietYearsSinceStory >= 3 || chance(EVENT_CHANCE)) ? pickEvent(s) : null);
+  if (selectedEvent) {
+    s.pendingEvent ??= { eventId: selectedEvent.id };
+    s.world.pacing.quietYearsSinceStory = 0;
+  } else {
+    s.world.pacing.quietYearsSinceStory += 1;
   }
 
   // --- 5. progression + newly-earned acquired traits + life goal ---

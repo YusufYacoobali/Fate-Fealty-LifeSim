@@ -17,6 +17,7 @@ import { killPlayer, legacyScore } from './consequenceEngine';
 import { addMemory, countLivingKin, hasTag, pushFeed } from './gameState';
 import { chance, pick, rnd } from './random';
 import { C } from '@/theme/theme';
+import { appendWorldHistory } from './worldJournal';
 
 const HEALTH_DEATHS = [
   'Succumbed to a mild cough that turned out not to be mild.',
@@ -94,6 +95,9 @@ export function checkDeath(s: GameState): GameState {
 
 function finalise(s: GameState): GameState {
   if (!s.epitaph) s.epitaph = pick(EPITAPHS);
+  if (!s.world.history.some((entry) => entry.type === 'death' && entry.participantIds.includes(s.playerCharacterId))) {
+    appendWorldHistory(s, { id: `history_death_${s.nextId++}`, year: s.world.currentYear, type: 'death', participantIds: [s.playerCharacterId], familyIds: [s.world.characters[s.playerCharacterId]?.birthFamilyId ?? ''].filter(Boolean), causes: [s.deathCause], summary: `${s.first} died at ${s.age}. ${s.deathCause}`, salience: 5 });
+  }
   addMemory(s, 'died', 5, s.deathCause);
   pushFeed(s, `AGE ${s.age} · THE END`, C.bad, `You died at ${s.age}. ${s.deathCause}`, 'bad');
   return s;
@@ -108,6 +112,26 @@ export interface DeathSummary {
   cause: string;
   epitaph: string;
   legacy: number;
+  chronicle: string[];
+}
+
+export function buildLifeChronicle(s: GameState): string[] {
+  const relevant = s.world.history
+    .filter((entry) => entry.participantIds.includes(s.playerCharacterId) || entry.year >= s.playerRun.startedYear)
+    .sort((a, b) => b.salience - a.salience || a.year - b.year)
+    .slice(0, 5)
+    .sort((a, b) => a.year - b.year)
+    .map((entry) => `${entry.year}: ${entry.summary}`);
+  const closest = Object.values(s.world.relationships)
+    .filter((relationship) => relationship.aId === s.playerCharacterId || relationship.bId === s.playerCharacterId)
+    .sort((a, b) => (b.aToB.affinity + b.bToA.affinity) - (a.aToB.affinity + a.bToA.affinity))[0];
+  if (closest) {
+    const otherId = closest.aId === s.playerCharacterId ? closest.bId : closest.aId;
+    const other = s.world.characters[otherId];
+    if (other) relevant.push(`${other.name} remained one of the strongest threads in this life.`);
+  }
+  if (!relevant.length) relevant.push(`${s.first} lived through ${s.age} changing years in Swineford.`);
+  return relevant.slice(0, 6);
 }
 
 export function buildDeathSummary(s: GameState, rankKey: string): DeathSummary {
@@ -121,6 +145,7 @@ export function buildDeathSummary(s: GameState, rankKey: string): DeathSummary {
     cause: s.deathCause,
     epitaph: s.epitaph,
     legacy: legacyScore(s),
+    chronicle: buildLifeChronicle(s),
   };
 }
 

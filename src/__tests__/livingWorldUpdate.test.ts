@@ -24,7 +24,7 @@ describe('24-action yearly clock', () => {
     expect(state.actionClock.used).toBe(24);
     expect(state.stats.faith).toBe(faith);
 
-    state.event = null;
+    state.pendingEvent = null;
     state = gameReducer(state, { type: 'AGE_UP' });
     expect(state.actionClock.used).toBe(0);
     expect(state.actionClock.fullYears).toBe(1);
@@ -74,9 +74,9 @@ describe('mutual relationships and living characters', () => {
   it('decays neglected positive bonds while retaining both perspectives', () => {
     const state = makeState({ age: 20 });
     const relation = relationshipWith(state, 'mother');
-    const before = perspectives(relation).other.affinity;
+    const before = perspectives(state, relation).other.affinity;
     tickRelationshipDecay(state);
-    expect(perspectives(relation).other.affinity).toBeLessThan(before);
+    expect(perspectives(state, relation).other.affinity).toBeLessThan(before);
     expect(relation.aToB).not.toBe(relation.bToA);
   });
 
@@ -103,7 +103,7 @@ describe('mutual relationships and living characters', () => {
   it('advances autonomous careers without exceeding the living-cast cap', () => {
     const state = makeState({ age: 25 });
     simulateLivingWorld(state);
-    expect(state.kin.filter((kin) => kin.alive).length).toBeLessThanOrEqual(30);
+    expect(Object.values(state.world.characters).filter((kin) => kin.alive).length).toBeLessThanOrEqual(60);
     expect(state.kin.some((kin) => kin.occupation.careerId != null)).toBe(true);
   });
 });
@@ -136,7 +136,7 @@ describe('save migration', () => {
     expect(migrated.first).toBe('Legacy');
     expect(migrated.age).toBe(33);
     expect(migrated.actionClock.cap).toBe(24);
-    expect(migrated.world.relationships).toHaveLength(4);
+    expect(Object.values(migrated.world.relationships)).toHaveLength(4);
     expect(migrated.kin[0].pronouns.id).toBe('they');
   });
 });

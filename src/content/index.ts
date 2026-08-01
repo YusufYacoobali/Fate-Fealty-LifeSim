@@ -17,6 +17,7 @@ import { WAR_EVENTS } from './warEvents';
 import { STORY_ARCS } from './storyArcs';
 import { BASE_EXPANSION_EVENTS } from './baseExpansionEvents';
 import { PREMIUM_EVENTS } from './premiumEvents';
+import { PERSISTENT_WORLD_EVENTS } from './persistentWorldEvents';
 
 export const ALL_EVENTS: GameEvent[] = [
   ...CHILD_EVENTS,
@@ -32,6 +33,7 @@ export const ALL_EVENTS: GameEvent[] = [
   ...BASE_EXPANSION_EVENTS,
   ...PREMIUM_EVENTS,
   ...STORY_ARCS,
+  ...PERSISTENT_WORLD_EVENTS,
 ];
 
 export const EVENTS_BY_ID: Record<string, GameEvent> = ALL_EVENTS.reduce(

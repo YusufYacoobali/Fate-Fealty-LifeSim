@@ -48,7 +48,7 @@ const ACTION_META: Record<KinAction, { label: string; hint: string; bg: string; 
 export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, onInteract }: Props) {
   if (detail) {
     const relation = relationshipWith(state, detail.id);
-    const views = perspectives(relation);
+    const views = perspectives(state, relation);
     const career = careerById(detail.occupation.careerId);
     const actions = contextualActions(state, detail);
     return (
@@ -78,6 +78,12 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
         <View style={PANEL.parchCard}>
           <PixelText font="pixel" size={6} color={C.amber}>TRAIT — {detail.trait}</PixelText>
           <PixelText font="body" size={16} color={C.textBrown} style={{ marginTop: 5 }}>{detail.bio}</PixelText>
+          {!!detail.personalityTraits?.length && <PixelText font="body" size={14} color={C.textMuted} style={{ marginTop: 5 }}>Nature: {detail.personalityTraits.join(', ')}</PixelText>}
+          {detail.ambition && <PixelText font="body" size={14} color={C.textMuted}>Ambition: {detail.ambition.replaceAll('_', ' ')}</PixelText>}
+          <PixelText font="body" size={14} color={C.textMuted}>Secret: {detail.secretRevealed ? detail.secret?.replaceAll('_', ' ') : 'Unknown'}</PixelText>
+          {!!detail.parentIds?.length && <PixelText font="body" size={14} color={C.textMuted}>Parents: {detail.parentIds.map((id) => state.world.characters[id]?.name).filter(Boolean).join(', ')}</PixelText>}
+          {!!detail.childIds?.length && <PixelText font="body" size={14} color={C.textMuted}>Children: {detail.childIds.map((id) => state.world.characters[id]?.name).filter(Boolean).join(', ')}</PixelText>}
+          {!!detail.worldMemories?.length && <PixelText font="body" size={14} color={C.textMuted} style={{ marginTop: 5 }}>Remembers: {detail.worldMemories.slice(-2).map((memory) => memory.summary).join(' · ')}</PixelText>}
           {!!relation.sharedMemories.length && <PixelText font="body" size={14} color={C.textMuted} style={{ marginTop: 5 }}>Shared: {relation.sharedMemories.join(', ')}</PixelText>}
         </View>
         {detail.alive && <>

@@ -39,7 +39,7 @@ export function shouldPromptReview(meta: AppMeta, state: GameState): boolean {
   if (meta.totalEntries < REVIEW_ENTRY_THRESHOLD) return false;
 
   // Never interrupt another overlay or a sombre moment.
-  if (state.dead || state.event || state.settingsOpen) return false;
+  if (state.dead || state.pendingEvent || state.settingsOpen) return false;
 
   return hasRecentGoodOutcome(state);
 }

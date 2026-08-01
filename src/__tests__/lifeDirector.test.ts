@@ -1,6 +1,6 @@
 import { ageUp } from '@/engine/lifeDirector';
 import { applyChoice } from '@/engine/storyGraph';
-import { isChoiceAvailable } from '@/engine/eventPicker';
+import { eventById, isChoiceAvailable } from '@/engine/eventPicker';
 import { cloneState } from '@/engine/gameState';
 import { makeState } from './helpers';
 
@@ -31,7 +31,7 @@ describe('lifeDirector.ageUp', () => {
 
   it('is a no-op while an event popup is open or the player is dead', () => {
     const withEvent = makeState({ age: 5 });
-    withEvent.event = { id: 'x', category: 'peasant', title: 't', text: 't', choices: [] };
+    withEvent.pendingEvent = { eventId: 'x' };
     ageUp(withEvent);
     expect(withEvent.age).toBe(5);
 
@@ -45,8 +45,8 @@ describe('lifeDirector.ageUp', () => {
     let guard = 0;
     while (!s.dead && guard < 500) {
       guard++;
-      if (s.event) {
-        const ev = s.event;
+      if (s.pendingEvent) {
+        const ev = eventById(s.pendingEvent.eventId)!;
         const choices = ev.choices.filter((c) => isChoiceAvailable(s, c));
         s = cloneState(s);
         applyChoice(s, ev, choices[0]);

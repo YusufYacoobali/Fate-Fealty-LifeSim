@@ -44,9 +44,20 @@ export function applyEffects(s: GameState, eff?: Effects): GameState {
   if (!eff) return s;
 
   const harsh = harshness(s);
+  const target = eff.targetCharacterId && eff.targetCharacterId !== s.playerCharacterId
+    ? s.world.characters[eff.targetCharacterId]
+    : null;
+
+  if (target) {
+    for (const k of STAT_KEYS) {
+      const d = eff[k];
+      if (d != null) target.stats[k] = clamp(target.stats[k] + (d < 0 ? d * harsh : d));
+    }
+    if (eff.gold != null) target.gold = Math.max(0, target.gold + eff.gold);
+  }
 
   // --- stats ---
-  for (const k of STAT_KEYS) {
+  for (const k of target ? [] : STAT_KEYS) {
     const d = eff[k];
     if (d != null) {
       const scaled = d < 0 ? d * harsh : d;
@@ -55,7 +66,7 @@ export function applyEffects(s: GameState, eff?: Effects): GameState {
   }
 
   // --- gold ---
-  if (eff.gold != null) addMoney(s, eff.gold);
+  if (eff.gold != null && !target) addMoney(s, eff.gold);
 
   // --- rank progress (hidden) ---
   if (eff.rankProgress != null) {
@@ -93,11 +104,20 @@ export function applyEffects(s: GameState, eff?: Effects): GameState {
 
   // --- kin relationship ---
   if (eff.kinRel) {
-    const k = s.kin.find((m) => m.id === eff.kinRel!.id);
+    const resolvedKinId = s.pendingEvent?.bindings?.[eff.kinRel.id] ?? eff.kinRel.id;
+    const k = s.kin.find((m) => m.id === resolvedKinId);
     if (k) {
       const legacy = k.rel;
       applyRelationshipShift(s, k.id, { affinity: eff.kinRel.delta }, { affinity: eff.kinRel.delta });
       k.rel = clamp(legacy + eff.kinRel.delta);
+    }
+  }
+  if (eff.boundKinRel) {
+    const kinId = s.pendingEvent?.bindings?.[eff.boundKinRel.role];
+    const kin = kinId ? s.kin.find((member) => member.id === kinId) : undefined;
+    if (kin) {
+      applyRelationshipShift(s, kin.id, { affinity: eff.boundKinRel.delta }, { affinity: eff.boundKinRel.delta });
+      kin.rel = clamp(kin.rel + eff.boundKinRel.delta);
     }
   }
 
@@ -120,6 +140,30 @@ export function applyEffects(s: GameState, eff?: Effects): GameState {
   if (eff.exile) {
     addTag(s, 'exiled');
     addMemory(s, 'exiled', 3);
+  }
+
+  if (eff.worldConditions) {
+    for (const key of Object.keys(eff.worldConditions) as Array<keyof typeof s.world.conditions>) {
+      const delta = eff.worldConditions[key];
+      if (delta != null) s.world.conditions[key] = clamp(s.world.conditions[key] + delta);
+    }
+  }
+  if (eff.familyReputation) {
+    const playerFamilyId = s.world.characters[s.playerCharacterId]?.birthFamilyId;
+    const family = s.world.families[eff.familyReputation.familyId ?? playerFamilyId ?? ''];
+    if (family) family.reputation = clamp(family.reputation + eff.familyReputation.delta, -100, 100);
+  }
+  if (eff.storyVariables && s.pendingEvent?.storyInstanceId) {
+    const story = s.world.activeStories.find((item) => item.id === s.pendingEvent!.storyInstanceId);
+    if (story) Object.assign(story.variables, eff.storyVariables);
+  }
+  if (eff.revealSecretOf) {
+    const character = s.world.characters[eff.revealSecretOf];
+    if (character) character.secretRevealed = true;
+  }
+  if (eff.schedule) {
+    const scheduled = Array.isArray(eff.schedule) ? eff.schedule : [eff.schedule];
+    for (const item of scheduled) s.world.scheduledConsequences.push({ ...item, targetIds: [...item.targetIds], id: `consequence_${s.nextId++}` });
   }
 
   // --- death (handled last so any stat/gold context is already applied) ---

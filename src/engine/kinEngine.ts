@@ -17,7 +17,7 @@ export interface KinActionAvailability {
 
 export function kinActionAvailability(state: GameState, id: string, action: KinAction): KinActionAvailability {
   if (state.dead) return { available: false, reason: 'Thy life is ended' };
-  if (state.event) return { available: false, reason: 'Resolve the current event' };
+  if (state.pendingEvent) return { available: false, reason: 'Resolve the current event' };
   if (state.actionClock.used >= state.actionClock.cap) return { available: false, reason: 'No actions remain this year' };
   const kin = state.kin.find((member) => member.id === id);
   if (!kin || !kin.alive) return { available: false, reason: 'This person is no longer living' };

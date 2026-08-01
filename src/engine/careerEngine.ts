@@ -14,7 +14,7 @@ export interface CareerActionAvailability {
 }
 
 export function careerActionAvailability(state: GameState, action: CareerAction, careerId?: string): CareerActionAvailability {
-  if (state.dead || state.event) return { available: false, reason: 'Unavailable just now' };
+  if (state.dead || state.pendingEvent) return { available: false, reason: 'Unavailable just now' };
   if (state.actionClock.used >= state.actionClock.cap) return { available: false, reason: 'No actions remain this year' };
   const current = careerById(state.occupation.careerId);
   if (action === 'apply') {

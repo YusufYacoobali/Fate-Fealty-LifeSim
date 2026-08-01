@@ -72,7 +72,7 @@ export function holdingActionAvailability(s: GameState, id: string): HoldingAvai
   const action = holdingActionById(id);
   if (!action) return { available: false, reason: 'Unknown action' };
   if (s.dead) return { available: false, reason: 'Thy life is ended' };
-  if (s.event) return { available: false, reason: 'Resolve the current event' };
+  if (s.pendingEvent) return { available: false, reason: 'Resolve the current event' };
   if (s.actionClock.used >= s.actionClock.cap) return { available: false, reason: 'No actions remain this year' };
   if (s.age < HOLDING_UNLOCK_AGE) return { available: false, reason: `Unlocks at age ${HOLDING_UNLOCK_AGE}` };
   if (s.tags.includes('imprisoned')) return { available: false, reason: 'Imprisoned' };
@@ -168,7 +168,7 @@ export function manageHolding(s: GameState, id: string): GameState {
 export function holdingUpgradeAvailability(s: GameState, id: string): HoldingAvailability {
   const upgrade = holdingUpgradeById(id);
   if (!upgrade) return { available: false, reason: 'Unknown upgrade' };
-  if (s.dead || s.event) return { available: false, reason: 'Unavailable just now' };
+  if (s.dead || s.pendingEvent) return { available: false, reason: 'Unavailable just now' };
   if (s.actionClock.used >= s.actionClock.cap) return { available: false, reason: 'No actions remain this year' };
   if (s.age < HOLDING_UNLOCK_AGE) return { available: false, reason: `Unlocks at age ${HOLDING_UNLOCK_AGE}` };
   if (s.tags.includes('imprisoned')) return { available: false, reason: 'Imprisoned' };

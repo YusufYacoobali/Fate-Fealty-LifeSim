@@ -8,6 +8,7 @@ import { C } from '@/theme/theme';
 import { ACTIVITY_ICONS } from '@/assets/generatedAssets';
 import { CareerPanel } from './career-panel';
 import { CareerAction } from '@/engine/careerEngine';
+import { deriveLifeRole } from '@/content/persistentStories';
 
 interface Props {
   cat: ActivityCategory | 'all';
@@ -19,7 +20,8 @@ interface Props {
 }
 
 export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
-  const activities = ACTIVITY_DEFS.filter((a) => cat === 'all' || a.cat === cat);
+  const role = deriveLifeRole(state);
+  const activities = ACTIVITY_DEFS.filter((a) => (!a.roles || a.roles.includes(role)) && (cat === 'all' || a.cat === cat));
 
   return (
     <View style={{ flex: 1 }}>

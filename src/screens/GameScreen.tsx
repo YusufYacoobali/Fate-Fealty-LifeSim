@@ -41,12 +41,15 @@ import { MIN_ANDROID_BOTTOM_NAV_GUARD } from '@/components/systemLayout';
 import { useGameFeedback } from '@/state/hooks/useGameFeedback';
 import { GameAudioController } from '@/state/hooks/useGameAudio';
 import { haptic } from '@/services/haptics';
+import { WorldStatusPanel } from '@/components/WorldStatusPanel';
+import { eventById } from '@/engine/eventPicker';
 
 export function GameScreen() {
   const {
     state,
     dispatch,
     loaded,
+    saveCompatibilityBlocked,
     reviewVisible,
     resolveReview,
     shopPromoVisible,
@@ -74,6 +77,7 @@ export function GameScreen() {
   const [cartOpen, setCartOpen] = useState(false);
   const insets = useSafeAreaInsets();
   const bottomNavInset = Math.max(insets.bottom, MIN_ANDROID_BOTTOM_NAV_GUARD);
+  const currentEvent = state.pendingEvent ? eventById(state.pendingEvent.eventId) : undefined;
 
   // Promotion/death haptics ride on engine transitions.
   useGameFeedback(state);
@@ -99,7 +103,10 @@ export function GameScreen() {
 
         {/* content area */}
         <View style={{ flex: 1, position: 'relative' }}>
-          {state.tab === 'life' && <LifeFeed feed={selectFeed(state)} autoScroll={state.settings.autoScroll} filter={state.world.feedFilter} onFilter={(filter) => dispatch({ type: 'SET_FEED_FILTER', filter })} />}
+          {state.tab === 'life' && <View style={{ flex: 1 }}>
+            <WorldStatusPanel state={state} saveCompatibilityBlocked={saveCompatibilityBlocked} />
+            <LifeFeed feed={selectFeed(state)} autoScroll={state.settings.autoScroll} filter={state.world.feedFilter} onFilter={(filter) => dispatch({ type: 'SET_FEED_FILTER', filter })} />
+          </View>}
           {state.tab === 'do' && (
             <DoTab
               cat={state.doCat}
@@ -179,7 +186,7 @@ export function GameScreen() {
             haptic('light', buzz);
             dispatch({ type: 'AGE_UP' });
           }}
-          disabled={state.dead || !!state.event}
+          disabled={state.dead || !!state.pendingEvent}
           actionsUsed={state.actionClock.used}
           actionCap={state.actionClock.cap}
         />
@@ -194,13 +201,13 @@ export function GameScreen() {
         </View>
 
         {/* overlays */}
-        {state.event && !state.dead && (
+        {currentEvent && !state.dead && (
           <EventModal
             state={state}
-            event={state.event}
-            onChoose={(event, choice) => {
+            event={currentEvent}
+            onChoose={(choice) => {
               haptic('medium', buzz);
-              dispatch({ type: 'CHOOSE', event, choice });
+              dispatch({ type: 'CHOOSE', choice });
             }}
           />
         )}
@@ -238,16 +245,16 @@ export function GameScreen() {
           <DeathScreen
             state={state}
             onNewLife={requestNewLife}
-            onContinueHeir={() => dispatch({ type: 'CONTINUE_AS_HEIR' })}
+            onContinueHeir={(heirId) => dispatch({ type: 'CONTINUE_AS_HEIR', heirId })}
           />
         )}
-        {reviewVisible && !state.dead && !state.event && !state.settingsOpen && !creating && (
+        {reviewVisible && !state.dead && !state.pendingEvent && !state.settingsOpen && !creating && (
           <ReviewPrompt onResolved={resolveReview} />
         )}
         {shopPromoVisible &&
           !reviewVisible &&
           !state.dead &&
-          !state.event &&
+          !state.pendingEvent &&
           !state.settingsOpen &&
           !creating &&
           !onboardingVisible &&
@@ -273,7 +280,7 @@ export function GameScreen() {
             onClose={() => setCartOpen(false)}
           />
         )}
-        {onboardingVisible && !creating && !state.dead && !state.event && (
+        {onboardingVisible && !creating && !state.dead && !state.pendingEvent && (
           <OnboardingScreen
             premiumUnlocked={premiumUnlocked}
             accessState={premiumAccessState}

@@ -28,7 +28,7 @@ describe('storyGraph.applyChoice', () => {
     const s = makeState({ gold: 10 });
     applyChoice(s, leaf, leaf.choices[0]);
     expect(s.stats.wits).toBe(51);
-    expect(s.event).toBeNull();
+    expect(s.pendingEvent).toBeNull();
     expect(s.feed[s.feed.length - 1].text).toBe('done');
   });
 
@@ -70,6 +70,6 @@ describe('storyGraph arc queueing', () => {
     const rideChoice = oath.choices[0];
     const result = applyChoice(s, oath, rideChoice);
     expect(result.openNow?.id).toBe('arc_war_1');
-    expect(s.event?.id).toBe('arc_war_1');
+    expect(s.pendingEvent?.eventId).toBe('arc_war_1');
   });
 });

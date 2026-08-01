@@ -58,6 +58,6 @@ export function shopPromoMessageIndex(shownCount: number): number {
 export function shouldPromptShopPromo(meta: AppMeta, state: GameState, premiumUnlocked: boolean): boolean {
   if (premiumUnlocked) return false;
   if (meta.totalEntries - meta.shopPromoLastEntry < SHOP_PROMO_ENTRY_FREQUENCY) return false;
-  if (state.dead || state.event || state.settingsOpen) return false;
+  if (state.dead || state.pendingEvent || state.settingsOpen) return false;
   return hasRecentGoodOutcome(state);
 }

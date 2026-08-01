@@ -17,6 +17,7 @@ interface GameContextValue {
   state: GameState;
   dispatch: React.Dispatch<GameAction>;
   loaded: boolean;
+  saveCompatibilityBlocked: boolean;
   reviewVisible: boolean;
   resolveReview: () => void;
   shopPromoVisible: boolean;
@@ -81,6 +82,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       state: game.state,
       dispatch: game.dispatch,
       loaded: game.loaded,
+      saveCompatibilityBlocked: game.saveCompatibilityBlocked,
       reviewVisible: review.reviewVisible,
       resolveReview: review.resolveReview,
       shopPromoVisible: shopPromo.shopPromoVisible,
@@ -104,6 +106,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       game.state,
       game.dispatch,
       game.loaded,
+      game.saveCompatibilityBlocked,
       review.reviewVisible,
       review.resolveReview,
       shopPromo.shopPromoVisible,

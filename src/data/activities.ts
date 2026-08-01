@@ -26,6 +26,20 @@ export const ACTIVITY_DEFS: ActivityDef[] = [
   { id: 'leech', cat: 'health', name: 'DOCTOR', icon: '🩸', iconBg: '#f3a0a0', desc: 'Leeches cure all' },
   { id: 'bathhouse', cat: 'health', name: 'BATHHOUSE', icon: '🛁', iconBg: C.teal, desc: 'A rare hot bath' },
   { id: 'herbalist', cat: 'health', name: 'HERBALIST', icon: '🌿', iconBg: C.faith, desc: 'A potent tonic' },
+  { id: 'village_service', cat: 'work', name: 'VILLAGE DUTY', icon: '🧺', iconBg: C.faith, desc: 'Help thy neighbours', minAge: 8, roles: ['commoner'] },
+  { id: 'gather_fuel', cat: 'work', name: 'GATHER FUEL', icon: '🪵', iconBg: C.charm, desc: 'Prepare the household', minAge: 6, roles: ['commoner'] },
+  { id: 'manage_workshop', cat: 'work', name: 'WORKSHOP', icon: '⚒️', iconBg: C.light, desc: 'Build thy trade', minAge: 16, roles: ['artisan_merchant'] },
+  { id: 'guild_bargain', cat: 'work', name: 'GUILD', icon: '⚖️', iconBg: C.charm, desc: 'Win guild influence', minAge: 18, roles: ['artisan_merchant'] },
+  { id: 'hear_confession', cat: 'faith', name: 'CONFESSION', icon: '🕯️', iconBg: C.faith, desc: 'Guide a troubled soul', minAge: 18, roles: ['clergy'] },
+  { id: 'copy_manuscript', cat: 'faith', name: 'SCRIPTORIUM', icon: '📜', iconBg: C.light, desc: 'Preserve wisdom', minAge: 12, roles: ['clergy'] },
+  { id: 'lead_patrol', cat: 'martial', name: 'PATROL', icon: '🛡️', iconBg: C.light, desc: 'Keep the roads safe', minAge: 16, roles: ['martial'] },
+  { id: 'drill_levy', cat: 'martial', name: 'DRILL LEVY', icon: '⚔️', iconBg: C.health, desc: 'Prepare for war', minAge: 18, roles: ['martial'] },
+  { id: 'hear_petitions', cat: 'work', name: 'PETITIONS', icon: '📜', iconBg: C.purple, desc: 'Judge local disputes', minAge: 18, roles: ['landed_noble'] },
+  { id: 'host_court', cat: 'leisure', name: 'HOST COURT', icon: '🏰', iconBg: C.charm, desc: 'Manage alliances', minAge: 18, roles: ['landed_noble'] },
+  { id: 'hold_council', cat: 'work', name: 'COUNCIL', icon: '👑', iconBg: C.purple, desc: 'Rule through counsel', minAge: 18, roles: ['monarch'] },
+  { id: 'royal_audience', cat: 'leisure', name: 'AUDIENCE', icon: '⚜️', iconBg: C.charm, desc: 'Shape legitimacy', minAge: 18, roles: ['monarch'] },
+  { id: 'plan_heist', cat: 'crime', name: 'PLAN HEIST', icon: '🗝️', iconBg: C.health, desc: 'Prepare a rich theft', minAge: 16, roles: ['outlaw'] },
+  { id: 'rally_gang', cat: 'crime', name: 'RALLY GANG', icon: '🗡️', iconBg: C.purple, desc: 'Secure outlaw loyalty', minAge: 16, roles: ['outlaw'] },
 ];
 
 export interface CatDef {

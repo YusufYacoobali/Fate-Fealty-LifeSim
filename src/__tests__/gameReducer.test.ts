@@ -1,6 +1,7 @@
 import { gameReducer } from '@/state/gameReducer';
 import { SHOP_ITEMS } from '@/data/shop';
 import { makeState } from './helpers';
+import { spawnKin } from '@/engine/kinFactory';
 
 describe('gameReducer', () => {
   it('AGE_UP advances the year', () => {
@@ -103,9 +104,19 @@ describe('gameReducer', () => {
   });
 
   it('CONTINUE_AS_HEIR carries forward half the gold and hereditary rank', () => {
-    const s = gameReducer(makeState({ age: 50, gold: 80, rankIdx: 2 }), { type: 'CONTINUE_AS_HEIR' });
+    const original = makeState({ age: 50, gold: 80, rankIdx: 2 });
+    const child = spawnKin(original, { kind: 'child', age: 0, isHeir: true });
+    child.gold = 8;
+    const s = gameReducer(original, { type: 'CONTINUE_AS_HEIR', heirId: child.id });
     expect(s.age).toBe(0);
     expect(s.gold).toBe(8 + 40); // base starting gold + inherited half
     expect(s.rankIdx).toBe(2);
+  });
+
+  it('does not manufacture an heir when no living child exists', () => {
+    const original = makeState({ age: 50, gold: 80 });
+    const s = gameReducer(original, { type: 'CONTINUE_AS_HEIR' });
+    expect(s.playerCharacterId).toBe(original.playerCharacterId);
+    expect(Object.values(s.world.characters).filter((character) => character.parentIds?.includes(original.playerCharacterId))).toHaveLength(0);
   });
 });

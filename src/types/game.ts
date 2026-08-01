@@ -162,9 +162,70 @@ export interface KinMember extends CharacterCore {
   householdId?: string;
   healthTags: string[];
   memories: string[];
+  /** Stable genealogy/world-simulation links introduced by save schema v3. */
+  birthFamilyId?: string;
+  parentIds?: string[];
+  childIds?: string[];
+  spouseId?: string;
+  personalityTraits?: string[];
+  ambition?: NpcAmbition;
+  secret?: NpcSecret;
+  secretRevealed?: boolean;
+  vulnerability?: NpcVulnerability;
+  importance?: CharacterImportance;
+  lifeRole?: LifeRole;
+  worldMemories?: CharacterMemory[];
+  deathYear?: number;
+  deathCause?: string;
 }
 
 export type WorldCharacter = KinMember;
+
+export type CharacterImportance = 'core' | 'supporting' | 'background';
+export type NpcAmbition =
+  | 'protect_family'
+  | 'gain_land'
+  | 'marry_well'
+  | 'join_clergy'
+  | 'gain_status'
+  | 'become_wealthy'
+  | 'avenge_family'
+  | 'master_craft'
+  | 'win_glory'
+  | 'seek_freedom';
+export type NpcSecret =
+  | 'none'
+  | 'hidden_debt'
+  | 'forbidden_faith'
+  | 'illegitimate_child'
+  | 'cowardice_in_battle'
+  | 'stolen_property'
+  | 'secret_lover'
+  | 'false_lineage'
+  | 'criminal_contact'
+  | 'betrayed_friend';
+export type NpcVulnerability =
+  | 'pride'
+  | 'poverty'
+  | 'sick_relative'
+  | 'disputed_birth'
+  | 'loneliness'
+  | 'greed'
+  | 'fear'
+  | 'envy';
+
+export interface CharacterMemory {
+  id: string;
+  year: number;
+  type: string;
+  actorIds: string[];
+  storyInstanceId?: string;
+  choiceId?: string;
+  sentiment: number;
+  salience: 1 | 2 | 3 | 4 | 5;
+  inherited: boolean;
+  summary: string;
+}
 
 export interface RelationshipPerspective {
   affinity: number;
@@ -191,17 +252,157 @@ export interface Household {
   id: string;
   memberIds: string[];
   wealth: number;
+  headId?: string;
+  foodSecurity?: number;
+  status?: number;
+}
+
+export interface FamilyMemory {
+  id: string;
+  year: number;
+  type: string;
+  sentiment: number;
+  salience: number;
+  summary: string;
+}
+
+export interface FamilyState {
+  id: string;
+  name: string;
+  memberIds: string[];
+  reputation: number;
+  wealthTier: number;
+  allyFamilyIds: string[];
+  enemyFamilyIds: string[];
+  inheritedMemories: FamilyMemory[];
+}
+
+export type RngAlgorithm = 'mulberry32-v1';
+export interface PersistedRngState {
+  algorithm: RngAlgorithm;
+  state: number;
+  draws: number;
+}
+
+export interface WorldConditions {
+  foodSecurity: number;
+  prosperity: number;
+  publicOrder: number;
+  warThreat: number;
+  diseasePressure: number;
+  religiousTension: number;
+}
+
+export type WorldConditionKey = keyof WorldConditions;
+export interface ConditionModifier {
+  id: string;
+  condition: WorldConditionKey;
+  label: string;
+  delta: number;
+  /** Annual pressure is applied once per yearly tick; one-shot modifiers are consumed. */
+  application?: 'annual' | 'once';
+  sourceId: string;
+  expiresYear?: number;
+  hiddenUntilRevealed?: boolean;
+}
+
+export type LifeRole = 'commoner' | 'artisan_merchant' | 'clergy' | 'martial' | 'landed_noble' | 'monarch' | 'outlaw';
+export type StoryScale = 'major' | 'medium' | 'relationship';
+export type StoryStatus = 'active' | 'paused' | 'completed' | 'failed' | 'cancelled';
+
+export interface StoryInstance {
+  id: string;
+  templateId: string;
+  scale: StoryScale;
+  status: StoryStatus;
+  bindings: Record<string, string>;
+  variables: Record<string, string | number | boolean | null>;
+  currentBeatId: string;
+  startedYear: number;
+  nextEligibleYear: number;
+  lastBeatYear: number;
+  generationStarted: number;
+}
+
+export type ConsequenceScope = 'character' | 'family' | 'household' | 'world';
+export type ConsequenceDescriptor =
+  | { type: 'effects'; effects: Effects; targetId?: string }
+  | { type: 'relationship'; aId: string; bId: string; affinity: number; trust?: number }
+  | { type: 'condition'; condition: WorldConditionKey; delta: number; label: string }
+  | { type: 'memory'; targetId: string; memoryType: string; sentiment: number; salience: 1 | 2 | 3 | 4 | 5; summary: string }
+  | { type: 'history'; historyType: string; summary: string; salience: number };
+
+export interface ScheduledConsequence {
+  id: string;
+  sourceStoryInstanceId?: string;
+  sourceChoiceId?: string;
+  dueYear: number;
+  expiresYear?: number;
+  scope: ConsequenceScope;
+  targetIds: string[];
+  condition?: { kind: 'character_alive' | 'condition_at_least' | 'condition_at_most'; key?: WorldConditionKey; value?: number };
+  resolution: ConsequenceDescriptor;
+  explanation: string;
+}
+
+export interface WorldHistoryEntry {
+  id: string;
+  year: number;
+  type: string;
+  participantIds: string[];
+  familyIds: string[];
+  storyInstanceId?: string;
+  choiceId?: string;
+  causes: string[];
+  summary: string;
+  salience: number;
+}
+
+export interface PacingState {
+  lastMajorYear: number | null;
+  lastImportantYear: number | null;
+  quietYearsSinceStory: number;
+  majorEventsThisLife: number;
+  mediumStoriesStarted: number;
+  immediateChainDepth: number;
+}
+
+export interface PlayerRunState {
+  /** World year in which control of the current character began. */
+  startedYear: number;
+  generation: number;
+  roleProgress: Partial<Record<LifeRole, number>>;
+}
+
+export interface PendingEvent {
+  eventId: string;
+  storyInstanceId?: string;
+  bindings?: Record<string, string>;
 }
 
 export type RelationFilter = 'all' | 'family' | 'romance' | 'friends' | 'acquaintances' | 'rivals' | 'authority' | 'deceased';
 
 export interface WorldState {
-  relationships: Relationship[];
+  relationships: Record<string, Relationship>;
   households: Household[];
   relationFilter: RelationFilter;
   feedFilter: FeedFilter;
   proposalFromId: string | null;
   recentNarrativeIds: string[];
+  /** Schema-v3 persistent simulation data. Arrays above remain UI adapters. */
+  currentYear: number;
+  worldSeed: number;
+  rngState: PersistedRngState;
+  contentVersion: number;
+  characters: Record<string, WorldCharacter>;
+  families: Record<string, FamilyState>;
+  conditions: WorldConditions;
+  conditionModifiers: ConditionModifier[];
+  activeStories: StoryInstance[];
+  scheduledConsequences: ScheduledConsequence[];
+  history: WorldHistoryEntry[];
+  pacing: PacingState;
+  recoveryNotice: boolean;
 }
 
 export interface ActionClock {
@@ -285,6 +486,8 @@ export interface Effects {
   memory?: { tag: string; weight?: number; note?: string };
   /** Shift a specific kin member's relationship. */
   kinRel?: { id: string; delta: number };
+  /** Shift the character bound to a persistent-story role. */
+  boundKinRel?: { role: string; delta: number };
   /** Add one or more new kin members (spouse, child, etc.). */
   addKin?: NewKinSpec | NewKinSpec[];
   /** Mark a kin member (by id or kind) as deceased. */
@@ -297,6 +500,13 @@ export interface Effects {
   /** Lighter consequences that get recorded as tags + memories. */
   prison?: boolean;
   exile?: boolean;
+  /** Persistent-world extensions. Existing effects still target the player. */
+  targetCharacterId?: string;
+  worldConditions?: Partial<WorldConditions>;
+  familyReputation?: { familyId?: string; delta: number };
+  storyVariables?: Record<string, string | number | boolean | null>;
+  revealSecretOf?: string;
+  schedule?: Omit<ScheduledConsequence, 'id'> | Array<Omit<ScheduledConsequence, 'id'>>;
 }
 
 export interface Condition {
@@ -348,6 +558,8 @@ export interface Outcome {
 }
 
 export interface Choice {
+  /** Stable content id used by story transitions and save-safe history. */
+  id?: string;
   label: string;
   hint?: string;
   /** Only show this choice when the condition holds. */
@@ -425,6 +637,7 @@ export interface ActivityDef {
   desc: string;
   /** Youngest age that may attempt this (default 0). Shown as a lock in the UI. */
   minAge?: number;
+  roles?: LifeRole[];
 }
 
 export type CareerFamily = 'agriculture' | 'craft' | 'trade' | 'church' | 'martial' | 'court' | 'outlaw';
@@ -477,6 +690,10 @@ export type Tab = 'life' | 'do' | 'kin' | 'hold' | 'shop' | 'me';
 // ---------------------------------------------------------------------------
 
 export interface GameState {
+  schemaVersion: 3;
+  playerCharacterId: string;
+  playerRun: PlayerRunState;
+  pendingEvent: PendingEvent | null;
   // --- identity ---
   first: string;
   epithet: string;
@@ -503,6 +720,7 @@ export interface GameState {
   firedOnce: string[]; // ids of `once` events already seen
 
   // --- relationships ---
+  /** @deprecated Compatibility projection. Canonical people live in world.characters. */
   kin: KinMember[];
   world: WorldState;
 
@@ -522,7 +740,6 @@ export interface GameState {
   tab: Tab;
   selectedKinId: string | null;
   settingsOpen: boolean;
-  event: GameEvent | null;
 
   // --- life goal (assigned at coming-of-age) ---
   goalId: string | null;

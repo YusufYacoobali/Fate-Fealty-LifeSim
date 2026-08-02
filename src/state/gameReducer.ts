@@ -6,7 +6,7 @@
 
 import { AttractionPreference, FeedFilter, GameSettings, GameState, GenderIdentity, PronounSet, RelationFilter, ShopItem, Tab } from '@/types/game';
 import { ActivityCategory } from '@/types/game';
-import { addMoney, clonePlayerActionState, cloneState, createLife, pushFeed, syncKinToWorld, syncPlayerFromWorld, syncPlayerToWorld } from '@/engine/gameState';
+import { addMoney, cloneState, createLife, pushFeed, syncKinToWorld, syncPlayerFromWorld, syncPlayerToWorld } from '@/engine/gameState';
 import { ageUp } from '@/engine/lifeDirector';
 import { applyChoice } from '@/engine/storyGraph';
 import { activityAvailability, doActivity } from '@/engine/activityEngine';
@@ -61,9 +61,8 @@ function timed(
   original: GameState,
   localAvailable: (state: GameState) => boolean,
   perform: (state: GameState) => GameState,
-  cloneWorking: (state: GameState) => GameState = clonePlayerActionState,
 ): GameState {
-  const state = cloneWorking(original);
+  const state = cloneState(original);
   return runWithWorldRng(state.world, () => {
     if (!timedActionAvailability(state).available || !localAvailable(state)) return state;
     perform(state);
@@ -120,7 +119,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'KIN_INTERACT': {
-      return timed(state, (s) => kinActionAvailability(s, action.id, action.action).available, (s) => interactKin(s, action.id, action.action), cloneState);
+      return timed(state, (s) => kinActionAvailability(s, action.id, action.action).available, (s) => interactKin(s, action.id, action.action));
     }
 
     case 'MANAGE_HOLDING': {
@@ -188,7 +187,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
     case 'CLAIM_DAILY_REWARD': {
       if (state.dead) return state;
-      const s = clonePlayerActionState(state);
+      const s = cloneState(state);
       addMoney(s, Math.max(0, Math.floor(action.gold)));
       const amount = Math.max(0, Math.floor(action.bonusAmount ?? 0));
       if (action.bonus === 'health') s.stats.health = Math.min(100, s.stats.health + amount);

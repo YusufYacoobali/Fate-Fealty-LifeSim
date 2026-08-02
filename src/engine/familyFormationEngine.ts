@@ -1,5 +1,6 @@
 import { GameState, ExpectedChild, WorldCharacter } from '@/types/game';
 import { spawnKin } from './kinFactory';
+import { CHILD_NAMES } from '@/data/names';
 import { chance, clamp, pick } from './random';
 import { appendWorldHistory } from './worldJournal';
 import { pushFeed } from './gameState';
@@ -26,7 +27,20 @@ function resolveExpectedChild(state: GameState, expected: ExpectedChild): void {
     expected.status = 'cancelled';
     return;
   }
-  const child = spawnKin(state, { kind: 'child', age: 0, isHeir: parents.includes(state.world.characters[state.playerCharacterId]) });
+  // Only the controlled character's own arrivals join the player's kin roster.
+  // Everyone else's children are ordinary villagers, or the player would be
+  // charged upkeep for — and offered parental actions on — half of Swineford.
+  const playerRaisesChild = expected.parentIds.includes(state.playerCharacterId);
+  const child = playerRaisesChild
+    ? spawnKin(state, { kind: 'child', age: 0, isHeir: true })
+    : spawnKin(state, {
+        kind: 'acquaintance',
+        age: 0,
+        name: pick(CHILD_NAMES),
+        role: `Child of ${parents.map((parent) => parent.name).join(' and ')}`,
+        emoji: '🧒',
+        rel: 50,
+      });
   const generatedFamilyId = child.birthFamilyId;
   const generatedHouseholdId = child.householdId;
   const generatedParentIds = [...(child.parentIds ?? [])];

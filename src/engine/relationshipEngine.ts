@@ -39,17 +39,36 @@ export function makePlayerRelationship(playerId: string, kin: KinMember, age: nu
   };
 }
 
-export function relationshipWith(state: GameState, characterId: string): Relationship {
-  let relation = Object.values(state.world.relationships).find(
+/**
+ * Read-only lookup. Returns undefined when the player has no record with this
+ * character yet — normal for anyone born or arriving after the life began.
+ * Selectors and components must use this; only engine code that is already
+ * mutating a cloned state may use `relationshipWith`.
+ */
+export function findRelationship(state: GameState, characterId: string): Relationship | undefined {
+  return Object.values(state.world.relationships).find(
     (item) => (item.aId === state.playerCharacterId && item.bId === characterId) || (item.bId === state.playerCharacterId && item.aId === characterId),
   );
-  if (!relation) {
-    const kin = state.world.characters[characterId];
-    if (!kin) throw new Error(`Cannot create relationship with missing character ${characterId}`);
-    relation = makePlayerRelationship(state.playerCharacterId, kin, state.age);
-    state.world.relationships[relation.id] = relation;
-  }
+}
+
+/** Lookup that lazily creates the missing record. Mutates `state`. */
+export function relationshipWith(state: GameState, characterId: string): Relationship {
+  const existing = findRelationship(state, characterId);
+  if (existing) return existing;
+  const kin = state.world.characters[characterId];
+  if (!kin) throw new Error(`Cannot create relationship with missing character ${characterId}`);
+  const relation = makePlayerRelationship(state.playerCharacterId, kin, state.age);
+  state.world.relationships[relation.id] = relation;
   return relation;
+}
+
+/**
+ * The relationship as the UI should read it, without writing anything: a real
+ * record when one exists, otherwise the same defaults `relationshipWith` would
+ * have created.
+ */
+export function readRelationship(state: GameState, kin: KinMember): Relationship {
+  return findRelationship(state, kin.id) ?? makePlayerRelationship(state.playerCharacterId, kin, state.age);
 }
 
 export function perspectives(state: GameState, relation: Relationship): { player: RelationshipPerspective; other: RelationshipPerspective } {
@@ -69,9 +88,12 @@ export function relationMatchesFilter(state: GameState, kin: KinMember, filter: 
   if (filter === 'all') return kin.alive;
   if (filter === 'deceased') return !kin.alive;
   if (!kin.alive) return false;
-  const flags = relationshipWith(state, kin.id).flags;
+  // Read-only: this runs inside a selector on every render, so it must never
+  // create the missing record it is reading.
+  const relation = readRelationship(state, kin);
+  const flags = relation.flags;
   if (filter === 'family') return flags.includes('family');
-  if (filter === 'romance') return flags.includes('spouse') || perspectives(state, relationshipWith(state, kin.id)).other.attraction >= 25;
+  if (filter === 'romance') return flags.includes('spouse') || perspectives(state, relation).other.attraction >= 25;
   if (filter === 'friends') return flags.includes('friend');
   if (filter === 'rivals') return flags.includes('rival') || flags.includes('feud');
   if (filter === 'authority') return flags.includes('authority');
@@ -138,7 +160,8 @@ export function isRomanceEligible(state: GameState, kin: KinMember): boolean {
 
 export function contextualActions(state: GameState, kin: KinMember): SystemicKinAction[] {
   if (!kin.alive) return [];
-  const relation = relationshipWith(state, kin.id);
+  // Read-only: the kin detail screen calls this during render.
+  const relation = readRelationship(state, kin);
   const result: SystemicKinAction[] = ['time', 'praise', 'help', 'gift', 'favour'];
   if (perspectives(state, relation).other.trust >= 35) result.push('confide');
   if (perspectives(state, relation).other.affinity < 45) result.push('apologize', 'forgive');

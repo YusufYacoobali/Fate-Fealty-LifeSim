@@ -409,7 +409,16 @@ function createLifeFromWorldSeed(opts: FreshLifeOptions, worldSeed: number): Gam
   };
 }
 
-/** Deep-enough clone for safe mutation by engine functions. */
+/**
+ * Deep-enough clone for safe mutation by engine functions, and the only clone
+ * path the reducer uses.
+ *
+ * An earlier structural-sharing variant existed for "player-only" actions, but
+ * it shared `world.relationships` and every non-player character — both of which
+ * activity handlers legitimately mutate (nursing a relative, teaching a child,
+ * gaining a tavern friend), so those actions wrote through to the previous
+ * state. Keeping one honest clone is worth more than the microseconds saved.
+ */
 export function cloneState(s: GameState): GameState {
   const cloneCharacter = cloneWorldCharacter;
   const characters = Object.fromEntries(Object.entries(s.world.characters).map(([id, character]) => [id, cloneCharacter(character)]));
@@ -467,43 +476,6 @@ export function cloneState(s: GameState): GameState {
     pendingEvent: s.pendingEvent ? { ...s.pendingEvent, bindings: s.pendingEvent.bindings ? { ...s.pendingEvent.bindings } : undefined } : null,
   };
   return cloned;
-}
-
-/**
- * Structural-sharing clone for actions proven to touch only the controlled
- * character, player-run collections and small world aggregates. Annual/NPC and
- * relationship transactions continue to use the defensive full clone.
- */
-export function clonePlayerActionState(s: GameState): GameState {
-  const player = cloneWorldCharacter(s.world.characters[s.playerCharacterId]);
-  const characters = { ...s.world.characters, [s.playerCharacterId]: player };
-  return {
-    ...s,
-    stats: { ...s.stats }, paths: { ...s.paths }, tags: [...s.tags], traits: [...s.traits],
-    memories: s.memories.map((memory) => ({ ...memory })), activeArcs: s.activeArcs.map((arc) => ({ ...arc })),
-    firedOnce: [...s.firedOnce], kin: Object.values(characters).filter((character) => character.id !== s.playerCharacterId),
-    world: {
-      ...s.world,
-      rngState: { ...s.world.rngState }, conditions: { ...s.world.conditions }, characters,
-      families: Object.fromEntries(Object.entries(s.world.families).map(([id, family]) => [id, { ...family, memberIds: [...family.memberIds], allyFamilyIds: [...family.allyFamilyIds], enemyFamilyIds: [...family.enemyFamilyIds], inheritedMemories: family.inheritedMemories.map((memory) => ({ ...memory })) }])),
-      households: s.world.households.map((household) => ({ ...household, memberIds: [...household.memberIds] })),
-      conditionModifiers: s.world.conditionModifiers.map((modifier) => ({ ...modifier })),
-      scheduledConsequences: [...s.world.scheduledConsequences], history: [...s.world.history],
-      activeStories: s.world.activeStories.map((story) => ({ ...story, bindings: { ...story.bindings }, variables: { ...story.variables } })),
-      pacing: { ...s.world.pacing }, recentNarrativeIds: [...s.world.recentNarrativeIds],
-      contentLedger: Object.fromEntries(Object.entries(s.world.contentLedger).map(([id, entry]) => [id, { ...entry }])),
-      repetitionLedger: { ...s.world.repetitionLedger }, recentDomains: [...s.world.recentDomains],
-      expectedChildren: s.world.expectedChildren.map((child) => ({ ...child, parentIds: [...child.parentIds] })),
-      factions: Object.fromEntries(Object.entries(s.world.factions).map(([id, faction]) => [id, { ...faction }])) as typeof s.world.factions,
-      // Safe to share for player-only activities; relationship actions use cloneState.
-      relationships: s.world.relationships,
-    },
-    playerRun: { ...s.playerRun, roleProgress: { ...s.playerRun.roleProgress } },
-    actionClock: { ...s.actionClock }, occupation: { ...s.occupation }, debts: s.debts.map((debt) => ({ ...debt })),
-    inventory: [...s.inventory], holding: { ...s.holding, upgrades: [...s.holding.upgrades] }, feed: [...s.feed],
-    settings: { ...s.settings },
-    pendingEvent: s.pendingEvent ? { ...s.pendingEvent, bindings: s.pendingEvent.bindings ? { ...s.pendingEvent.bindings } : undefined } : null,
-  };
 }
 
 function cloneConsequence(resolution: ConsequenceDescriptor): ConsequenceDescriptor {

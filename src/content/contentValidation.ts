@@ -76,6 +76,11 @@ export function validateContent(): ContentValidationIssue[] {
       else choiceIds.add(choice.id);
       if (!choice.outcome && (!choice.success || !choice.failure)) error('unsafe_choice', event.id, `Choice ${choice.id ?? choice.label} has no complete outcome.`);
       if (!choice.forecast) warn('missing_forecast', event.id, `Choice ${choice.id ?? choice.label} has no qualitative forecast.`);
+      // Domain curation drops uncurated selectable events from the registry, so
+      // a chain can be broken by rebalancing quotas rather than by editing it.
+      for (const outcome of [choice.outcome, choice.success, choice.failure]) {
+        if (outcome?.next && !EVENTS_BY_ID[outcome.next]) error('dangling_next', event.id, `Choice ${choice.id ?? choice.label} continues to missing event ${outcome.next}.`);
+      }
     }
     if (!event.arcNodeOnly) {
       for (const token of tokensFrom(event)) if (!event.actorRoles?.[token]) error('unbound_token', event.id, `Token role ${token} is not declared.`);

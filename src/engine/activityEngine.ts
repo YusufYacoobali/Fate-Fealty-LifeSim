@@ -38,11 +38,22 @@ function cureIllness(s: GameState): void {
 
 type Handler = (s: GameState) => void;
 
-const ACTIVITY_COSTS: Record<string, number> = {
+/**
+ * The single source of truth for what an activity costs. `activityAvailability`
+ * gates on these, and the handlers below charge from the same table — if the two
+ * ever drift, the UI blocks an action the handler would happily have run at a
+ * lower price (or vice versa).
+ */
+const ACTIVITY_COSTS = {
   tavern: 2, dice: 3, feast: 4, pilgrimage: 3, tournament: 5,
-  leech: 5, bathhouse: 3, herbalist: 4,
+  leech: 3, bathhouse: 2, herbalist: 4,
   arrange_gathering: 3, bribe_official: 20, run_caravan: 8, repair_household: 5,
-};
+} as const satisfies Record<string, number>;
+
+/** Gold an activity requires up front; 0 for activities that cost nothing. */
+function costOf(id: string): number {
+  return (ACTIVITY_COSTS as Record<string, number>)[id] ?? 0;
+}
 
 export interface ActivityAvailability {
   available: boolean;
@@ -58,7 +69,7 @@ export function activityAvailability(s: GameState, id: string): ActivityAvailabi
   if (!def) return { available: false, reason: 'Unknown activity' };
   if (def.minAge != null && s.age < def.minAge) return { available: false, reason: `Requires age ${def.minAge}` };
   if (def.roles && !def.roles.includes(deriveLifeRole(s))) return { available: false, reason: `Requires the ${def.roles[0].replaceAll('_', ' ')} life` };
-  const cost = ACTIVITY_COSTS[id] ?? 0;
+  const cost = costOf(id);
   if (s.gold < cost) return { available: false, reason: `Needs ${cost} gold` };
   return { available: true };
 }
@@ -73,8 +84,8 @@ function one(lines: readonly string[]): string {
 
 const HANDLERS: Record<string, Handler> = {
   tavern: (s) => {
-    if (s.gold < 2) return blocked(s, 'TAVERN', 'You had no coin for ale, so you watched others drink. Bleak.');
-    applyEffects(s, { gold: -2, charm: 5, health: -2, faith: -1, path: { court: 1 } });
+    if (s.gold < ACTIVITY_COSTS.tavern) return blocked(s, 'TAVERN', 'You had no coin for ale, so you watched others drink. Bleak.');
+    applyEffects(s, { gold: -ACTIVITY_COSTS.tavern, charm: 5, health: -2, faith: -1, path: { court: 1 } });
     pushFeed(s, 'TAVERN', C.amber, one([
       'A night at the Sloshed Squire! You sang, spilled ale, and were applauded by a bench.',
       'You joined a tavern argument over whether soup can be sinful. Nobody won, but everyone shouted well.',
@@ -88,7 +99,7 @@ const HANDLERS: Record<string, Handler> = {
     }
   },
   dice: (s) => {
-    if (s.gold < 3) return blocked(s, 'DICE', "You can't gamble with an empty purse. The dice men shoo you away.");
+    if (s.gold < ACTIVITY_COSTS.dice) return blocked(s, 'DICE', "You can't gamble with an empty purse. The dice men shoo you away.");
     if (chance(0.45)) {
       applyEffects(s, { gold: 9, charm: 2, path: { court: 1 } });
       pushFeed(s, 'DICE', C.good, one([
@@ -106,8 +117,8 @@ const HANDLERS: Record<string, Handler> = {
     }
   },
   feast: (s) => {
-    if (s.gold < 4) return blocked(s, 'FEAST', 'A feast needs coin and you have none. You gnaw a turnip alone. Festive.');
-    applyEffects(s, { gold: -4, health: 6, charm: 3, faith: -1, path: { court: 2 } });
+    if (s.gold < ACTIVITY_COSTS.feast) return blocked(s, 'FEAST', 'A feast needs coin and you have none. You gnaw a turnip alone. Festive.');
+    applyEffects(s, { gold: -ACTIVITY_COSTS.feast, health: 6, charm: 3, faith: -1, path: { court: 2 } });
     pushFeed(s, 'FEAST', C.amber, 'You hosted a roaring feast — roast goose (NOT Sir Quackbeard), much mead, more merriment.', 'good');
   },
   fair: (s) => {
@@ -152,8 +163,8 @@ const HANDLERS: Record<string, Handler> = {
     ]), 'good');
   },
   pilgrimage: (s) => {
-    if (s.gold < 3) return blocked(s, 'PILGRIMAGE', 'You lacked the 3 gold for the road. The shrine remains un-pilgrimaged.');
-    applyEffects(s, { gold: -3, faith: 14, health: -6, wits: 2, path: { church: 3 }, memory: { tag: 'pilgrim', weight: 2 } });
+    if (s.gold < ACTIVITY_COSTS.pilgrimage) return blocked(s, 'PILGRIMAGE', 'You lacked the 3 gold for the road. The shrine remains un-pilgrimaged.');
+    applyEffects(s, { gold: -ACTIVITY_COSTS.pilgrimage, faith: 14, health: -6, wits: 2, path: { church: 3 }, memory: { tag: 'pilgrim', weight: 2 } });
     pushFeed(s, 'PILGRIMAGE', C.good, 'You walked to the holy shrine and back. Blisters and blessings, in equal and abundant measure.', 'good');
   },
   train: (s) => {
@@ -182,7 +193,7 @@ const HANDLERS: Record<string, Handler> = {
     }
   },
   tournament: (s) => {
-    if (s.gold < 5) return blocked(s, 'TOURNEY', 'Entry costs 5 gold you do not have. You watch the joust from the cheap mud.');
+    if (s.gold < ACTIVITY_COSTS.tournament) return blocked(s, 'TOURNEY', 'Entry costs 5 gold you do not have. You watch the joust from the cheap mud.');
     if (chance(0.5)) {
       applyEffects(s, { gold: 5, charm: 12, health: -12, path: { martial: 3 }, rankProgress: 7 });
       pushFeed(s, 'TOURNEY', C.good, one([
@@ -243,9 +254,9 @@ const HANDLERS: Record<string, Handler> = {
     }
   },
   leech: (s) => {
-    if (s.gold < 3) return blocked(s, 'DOCTOR', 'The leech-doctor demands 3 gold up front. You have not got it. You stay ill.');
+    if (s.gold < ACTIVITY_COSTS.leech) return blocked(s, 'DOCTOR', 'The leech-doctor demands 3 gold up front. You have not got it. You stay ill.');
     const good = chance(0.6);
-    applyEffects(s, { gold: -3, health: good ? 9 : -5 });
+    applyEffects(s, { gold: -ACTIVITY_COSTS.leech, health: good ? 9 : -5 });
     pushFeed(s, 'DOCTOR', C.bad, good ? one([
       'The leech-doctor applied eleven leeches. Astonishingly, you feel better.',
       'The doctor named each leech and charged by personality. It worked anyway.',
@@ -258,13 +269,13 @@ const HANDLERS: Record<string, Handler> = {
     if (good) cureIllness(s);
   },
   bathhouse: (s) => {
-    if (s.gold < 2) return blocked(s, 'BATHHOUSE', 'A bath costs 2 gold. You cannot afford to be clean. You remain fragrant.');
-    applyEffects(s, { gold: -2, health: 5, charm: 5 });
+    if (s.gold < ACTIVITY_COSTS.bathhouse) return blocked(s, 'BATHHOUSE', 'A bath costs 2 gold. You cannot afford to be clean. You remain fragrant.');
+    applyEffects(s, { gold: -ACTIVITY_COSTS.bathhouse, health: 5, charm: 5 });
     pushFeed(s, 'BATHHOUSE', C.good, 'A rare hot bath! You emerge smelling of lavender instead of livestock. People stare, impressed.', 'good');
   },
   herbalist: (s) => {
-    if (s.gold < 4) return blocked(s, 'HERBALIST', 'The herb-wife wants 4 gold for her tonic. Your purse says no.');
-    applyEffects(s, { gold: -4, health: 10, wits: 1 });
+    if (s.gold < ACTIVITY_COSTS.herbalist) return blocked(s, 'HERBALIST', 'The herb-wife wants 4 gold for her tonic. Your purse says no.');
+    applyEffects(s, { gold: -ACTIVITY_COSTS.herbalist, health: 10, wits: 1 });
     pushFeed(s, 'HERBALIST', C.good, 'The herb-wife brewed you a tonic. It tastes of regret and pondwater, but it works wonders.', 'good');
     cureIllness(s);
   },
@@ -290,7 +301,9 @@ const ROLE_HANDLERS: Record<string, Handler> = {
     if (!child) return blocked(s, 'TEACHING', 'No child in thy household is ready for a lesson.');
     child.childDevelopment ??= { completedMilestones: [], education: 'none', investment: 0, favour: 0 };
     child.childDevelopment.education = 'household'; child.childDevelopment.investment += 8; child.stats.wits = Math.min(100, child.stats.wits + 3);
-    applyEffects(s, { boundKinRel: { role: child.id, delta: 3 }, wits: 1, memory: { tag: 'taught_child', weight: 2, note: child.name } });
+    // kinRel, not boundKinRel: boundKinRel resolves through pendingEvent
+    // bindings, and activities only ever run while no event is pending.
+    applyEffects(s, { kinRel: { id: child.id, delta: 3 }, wits: 1, memory: { tag: 'taught_child', weight: 2, note: child.name } });
     pushFeed(s, 'TEACH CHILD', C.blue, `You teach ${child.name} letters, figures, and when not to correct an elder in public.`, 'good');
   },
   arrange_gathering: (s) => { applyEffects(s, { gold: -3, charm: 4, familyReputation: { delta: 2 }, householdState: { status: 2 } }); pushFeed(s, 'HOUSEHOLD GATHERING', C.charmDark, 'Bread, ale and careful seating bring several households together without a feud.', 'good'); },

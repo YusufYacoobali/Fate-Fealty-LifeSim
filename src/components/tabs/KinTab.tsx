@@ -4,7 +4,7 @@ import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
 import { GameState, KinMember, RelationFilter } from '@/types/game';
 import { KinAction } from '@/engine/kinEngine';
-import { contextualActions, perspectives, relationshipWith } from '@/engine/relationshipEngine';
+import { contextualActions, perspectives, readRelationship } from '@/engine/relationshipEngine';
 import { careerById } from '@/data/careers';
 import { relColor, relLabel } from '@/state/viewModel';
 import { C, PANEL } from '@/theme/theme';
@@ -54,7 +54,7 @@ const ACTION_META: Record<KinAction, { label: string; hint: string; bg: string; 
 export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, onInteract }: Props) {
   const [treeOpen, setTreeOpen] = React.useState(false);
   if (detail) {
-    const relation = relationshipWith(state, detail.id);
+    const relation = readRelationship(state, detail);
     const views = perspectives(state, relation);
     const career = careerById(detail.occupation.careerId);
     const actions = contextualActions(state, detail);

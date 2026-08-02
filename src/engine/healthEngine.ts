@@ -2,6 +2,7 @@ import { GameState, WorldCharacter } from '@/types/game';
 import { HEALTH_CONDITION_BY_ID } from '@/content/healthConditions';
 import { chance, clamp, pick } from './random';
 import { unlinkSpouse } from './characterState';
+import { killPlayer } from './consequenceEngine';
 import { appendWorldHistory } from './worldJournal';
 
 function killCharacter(state: GameState, character: WorldCharacter, cause: string): void {
@@ -35,8 +36,13 @@ function progressCharacterHealth(state: GameState, character: WorldCharacter): v
     }
     if (condition.severity >= definition.mortalityAtSeverity && chance(Math.min(0.65, (condition.severity - definition.mortalityAtSeverity + 8) / 70))) {
       if (character.id === state.playerCharacterId) {
+        // Write through to the canonical character too: tickStructuredHealth
+        // mirrors the registry back onto state.stats afterwards, so setting only
+        // state.stats.health here would be silently undone. killPlayer keeps the
+        // condition's name as the cause instead of a generic health collapse.
+        character.stats.health = 0;
         state.stats.health = 0;
-        state.deathCause = definition.name;
+        if (!state.settings.liveForever) killPlayer(state, definition.name);
       } else killCharacter(state, character, definition.name);
       return;
     }

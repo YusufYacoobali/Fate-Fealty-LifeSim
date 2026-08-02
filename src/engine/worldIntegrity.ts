@@ -1,4 +1,5 @@
 import { GameState } from '@/types/game';
+import { findRelationship } from './relationshipEngine';
 
 function createsAncestryCycle(state: GameState, childId: string, proposedParentId: string, visited = new Set<string>()): boolean {
   if (childId === proposedParentId) return true;
@@ -52,9 +53,37 @@ export function worldIntegrityIssues(state: GameState): string[] {
   return Array.from(new Set(issues));
 }
 
+/**
+ * Saves written before family formation distinguished whose child was whose can
+ * contain villagers permanently flagged as the player's children, which inflates
+ * household upkeep and offers parental actions on strangers. Demote anyone the
+ * player neither fathered nor took in.
+ */
+function repairKinship(state: GameState): void {
+  const player = state.world.characters[state.playerCharacterId];
+  for (const character of Object.values(state.world.characters)) {
+    if (character.id === state.playerCharacterId || character.kind !== 'child') continue;
+    const isPlayerChild = Boolean(character.parentIds?.includes(state.playerCharacterId))
+      || Boolean(character.guardianIds?.includes(state.playerCharacterId))
+      || Boolean(player?.childIds?.includes(character.id));
+    if (isPlayerChild) continue;
+    character.kind = 'acquaintance';
+    if (character.role === 'Thy Child') {
+      const parentNames = (character.parentIds ?? [])
+        .map((id) => state.world.characters[id]?.name)
+        .filter((name): name is string => Boolean(name));
+      character.role = parentNames.length ? `Child of ${parentNames.join(' and ')}` : 'A Swineford Villager';
+    }
+    character.isHeir = false;
+    const relationship = findRelationship(state, character.id);
+    if (relationship) relationship.flags = relationship.flags.filter((flag) => flag !== 'family');
+  }
+}
+
 /** Repair is intentionally reserved for world creation/load recovery. */
 export function repairWorldIntegrity(state: GameState): GameState {
   const characters = state.world.characters;
+  repairKinship(state);
   for (const character of Object.values(characters)) {
     character.parentIds = Array.from(new Set(character.parentIds ?? [])).filter((id) => Boolean(characters[id]) && id !== character.id && !createsAncestryCycle(state, character.id, id));
     character.childIds = Array.from(new Set(character.childIds ?? [])).filter((id) => Boolean(characters[id]) && id !== character.id);

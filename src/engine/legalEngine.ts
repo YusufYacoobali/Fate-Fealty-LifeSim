@@ -52,12 +52,23 @@ export function tickLegalSystem(state: GameState): GameState {
   return state;
 }
 
+/**
+ * Whether a trial is owed this year. Pure: the charge is only consumed once the
+ * Life Director has actually committed to opening the trial, so a year that
+ * cannot show it does not silently discard the charge.
+ */
 export function dueLegalEvent(state: GameState): GameEvent | null {
   const legal = state.world.characters[state.playerCharacterId]?.legalState;
   if (!legal || legal.status === 'imprisoned') return null;
-  const unresolved = legal.charges.find((charge) => !charge.resolved);
-  if (!unresolved || legal.suspicion < 35) return null;
+  if (legal.suspicion < 35 || !legal.charges.some((charge) => !charge.resolved)) return null;
+  return LEGAL_SYSTEM_EVENTS[0];
+}
+
+/** Consume the pending charge. Call only when the trial is being presented. */
+export function beginLegalTrial(state: GameState): void {
+  const legal = state.world.characters[state.playerCharacterId]?.legalState;
+  const unresolved = legal?.charges.find((charge) => !charge.resolved);
+  if (!legal || !unresolved) return;
   legal.status = 'awaiting_trial';
   unresolved.resolved = true;
-  return LEGAL_SYSTEM_EVENTS[0];
 }

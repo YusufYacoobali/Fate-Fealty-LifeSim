@@ -33,7 +33,7 @@ import { resolveScheduledConsequences, tickPersistentSociety, tickWorldCondition
 import { duePersistentStoryEvent, maybeStartMajorStory, maybeStartRelationshipStory, maybeStartSupportingStory } from './persistentStoryEngine';
 import { tickFamilyFormation } from './familyFormationEngine';
 import { tickStructuredHealth } from './healthEngine';
-import { dueLegalEvent, tickLegalSystem } from './legalEngine';
+import { beginLegalTrial, dueLegalEvent, tickLegalSystem } from './legalEngine';
 import { tickFactions } from './factionEngine';
 
 const EVENT_CHANCE = 0.34;
@@ -111,7 +111,11 @@ export function ageUp(s: GameState): GameState {
     ?? arcNode
     ?? ((s.world.pacing.quietYearsSinceStory >= 3 || chance(EVENT_CHANCE)) ? pickEvent(s) : null);
   if (selectedEvent) {
-    s.pendingEvent ??= { eventId: selectedEvent.id, bindings: bindEventActors(s, selectedEvent) };
+    // Only commit the trial's charge once the popup is genuinely being opened.
+    if (!s.pendingEvent) {
+      if (legalEvent) beginLegalTrial(s);
+      s.pendingEvent = { eventId: selectedEvent.id, bindings: bindEventActors(s, selectedEvent) };
+    }
     s.world.pacing.quietYearsSinceStory = 0;
   } else {
     s.world.pacing.quietYearsSinceStory += 1;

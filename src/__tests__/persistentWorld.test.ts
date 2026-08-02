@@ -11,6 +11,7 @@ import { Relationship } from '@/types/game';
 import { RENAMED_CONTENT_FIXTURE } from './fixtures/contentRecoveryFixtures';
 import { isRomanceEligible } from '@/engine/relationshipEngine';
 import { unlinkSpouse } from '@/engine/characterState';
+import { CURRENT_CONTENT_VERSION } from '@/content/contentVersion';
 
 describe('persistent deterministic world', () => {
   it('creates the same world and continuation from the same seed and actions', () => {
@@ -190,7 +191,7 @@ describe('persistent stories and update recovery', () => {
     expect(story.currentBeatId).toBe('beat_5');
     expect(story.bindings.rival).toBe('roderick');
     expect(state.world.scheduledConsequences[0].resolution.type).toBe('history');
-    expect(state.world.contentVersion).toBe(2);
+    expect(state.world.contentVersion).toBe(CURRENT_CONTENT_VERSION);
   });
 
   it('resolves delayed consequences on their due year', () => {

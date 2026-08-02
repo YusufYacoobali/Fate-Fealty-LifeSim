@@ -18,6 +18,13 @@ import { C } from '@/theme/theme';
 import { isIncapacitated } from './lifecycleEngine';
 import { deriveLifeRole } from '@/content/persistentStories';
 
+function crimeCharge(s: GameState, offence: string, severity: number, evidence: number) {
+  const victims = Object.values(s.world.characters).filter((character) => character.alive && character.id !== s.playerCharacterId);
+  const victim = victims.length ? pick(victims) : undefined;
+  const witnesses = victims.filter((character) => character.id !== victim?.id);
+  return { offence, severity, evidence, victimIds: victim ? [victim.id] : [], witnessIds: witnesses.length ? [pick(witnesses).id] : [] };
+}
+
 /** Chance a tavern night yields a real drinking companion (adults only). */
 export const TAVERN_FRIEND_CHANCE = 0.12;
 
@@ -34,6 +41,7 @@ type Handler = (s: GameState) => void;
 const ACTIVITY_COSTS: Record<string, number> = {
   tavern: 2, dice: 3, feast: 4, pilgrimage: 3, tournament: 5,
   leech: 5, bathhouse: 3, herbalist: 4,
+  arrange_gathering: 3, bribe_official: 20, run_caravan: 8, repair_household: 5,
 };
 
 export interface ActivityAvailability {
@@ -200,7 +208,7 @@ const HANDLERS: Record<string, Handler> = {
         'The forest kept your secret. The stew did not.',
       ]), 'good');
     } else {
-      applyEffects(s, { gold: -6, health: -8, charm: -3, path: { outlaw: 1 }, reputation: -6 });
+      applyEffects(s, { gold: -6, health: -8, charm: -3, path: { outlaw: 1 }, reputation: -6, legal: { suspicion: 18, notoriety: 4, status: 'accused', charge: crimeCharge(s, 'poaching in the crown wood', 28, 62) } });
       pushFeed(s, 'CAUGHT!', C.bad, one([
         "The King's foresters caught you mid-poach. You were fined, thrashed, and shamed.",
         'A forester found you whispering apologies to a snare. The fine was immediate.',
@@ -213,7 +221,7 @@ const HANDLERS: Record<string, Handler> = {
       applyEffects(s, { gold: 7, faith: -3, path: { outlaw: 2 }, reputation: -2 });
       pushFeed(s, 'PICKPOCKET', C.good, "Light fingers, fat purse. You lifted a merchant's coin and whistled away innocently.", 'good');
     } else {
-      applyEffects(s, { gold: -3, health: -5, charm: -3, path: { outlaw: 1 }, reputation: -5 });
+      applyEffects(s, { gold: -3, health: -5, charm: -3, path: { outlaw: 1 }, reputation: -5, legal: { suspicion: 22, notoriety: 5, status: 'accused', charge: crimeCharge(s, 'theft from a named victim', 34, 70) } });
       pushFeed(s, 'CAUGHT!', C.bad, 'A guard caught your hand in a stranger’s pocket. A public ear-flicking ensued. Humbling.', 'bad');
     }
   },
@@ -226,7 +234,7 @@ const HANDLERS: Record<string, Handler> = {
         'You took a purse and left a speech about fairness. The merchant hated both.',
       ]), 'good');
     } else {
-      applyEffects(s, { gold: -5, health: -14, charm: -5, path: { outlaw: 2 }, reputation: -10 });
+      applyEffects(s, { gold: -5, health: -14, charm: -5, path: { outlaw: 2 }, reputation: -10, legal: { suspicion: 30, notoriety: 9, status: 'awaiting_trial', charge: crimeCharge(s, 'armed robbery on the road', 68, 76) } });
       pushFeed(s, 'AMBUSHED!', C.bad, one([
         "Your ambush failed spectacularly. The merchant's guards thrashed you into the ditch.",
         'You shouted "stand and deliver" from behind the wrong hedge.',
@@ -277,6 +285,36 @@ const ROLE_HANDLERS: Record<string, Handler> = {
   royal_audience: (s) => { applyEffects(s, { charm: 5, faith: 2, reputation: 4 }); pushFeed(s, 'AUDIENCE', C.charmDark, 'You receive petitioners and remind the court who wears the crown.', 'good'); },
   plan_heist: (s) => { applyEffects(s, { wits: 4, faith: -2, path: { outlaw: 2 } }); pushFeed(s, 'HEIST', C.purpleDark, 'Maps, gossip, and a borrowed key make a dangerous plan.', 'plain'); },
   rally_gang: (s) => { applyEffects(s, { charm: 4, reputation: -3, path: { outlaw: 2 }, worldConditions: { publicOrder: -2 } }); pushFeed(s, 'OUTLAW BAND', C.healthDark, 'You bind dangerous people with promises of danger and profit.', 'plain'); },
+  teach_child: (s) => {
+    const child = s.kin.find((kin) => kin.alive && kin.kind === 'child' && kin.age >= 4 && kin.age < 18);
+    if (!child) return blocked(s, 'TEACHING', 'No child in thy household is ready for a lesson.');
+    child.childDevelopment ??= { completedMilestones: [], education: 'none', investment: 0, favour: 0 };
+    child.childDevelopment.education = 'household'; child.childDevelopment.investment += 8; child.stats.wits = Math.min(100, child.stats.wits + 3);
+    applyEffects(s, { boundKinRel: { role: child.id, delta: 3 }, wits: 1, memory: { tag: 'taught_child', weight: 2, note: child.name } });
+    pushFeed(s, 'TEACH CHILD', C.blue, `You teach ${child.name} letters, figures, and when not to correct an elder in public.`, 'good');
+  },
+  arrange_gathering: (s) => { applyEffects(s, { gold: -3, charm: 4, familyReputation: { delta: 2 }, householdState: { status: 2 } }); pushFeed(s, 'HOUSEHOLD GATHERING', C.charmDark, 'Bread, ale and careful seating bring several households together without a feud.', 'good'); },
+  care_relative: (s) => {
+    const patient = s.kin.find((kin) => kin.alive && ((kin.healthConditions?.length ?? 0) > 0 || kin.stats.health < 55));
+    if (!patient) return blocked(s, 'FAMILY CARE', 'No relative presently needs sustained care.');
+    const condition = patient.healthConditions?.sort((a, b) => b.severity - a.severity)[0];
+    if (condition) condition.severity = Math.max(0, condition.severity - 12);
+    patient.stats.health = Math.min(100, patient.stats.health + 4); applyEffects(s, { health: -2, memory: { tag: 'cared_for_family', weight: 2, note: patient.name } });
+    pushFeed(s, 'FAMILY CARE', C.tealDark, `You spend the season helping ${patient.name} eat, rest and remain part of household life.`, 'good');
+  },
+  rest: (s) => { const player = s.world.characters[s.playerCharacterId]; const condition = player?.healthConditions?.sort((a, b) => b.severity - a.severity)[0]; if (condition) condition.severity = Math.max(0, condition.severity - 10); applyEffects(s, { health: 6 }); pushFeed(s, 'REST', C.tealDark, 'You surrender a season to sleep, broth and the radical practice of doing less.', 'good'); },
+  treat_patient: (s) => { const patient = s.kin.find((kin) => kin.alive && (kin.healthConditions?.length ?? 0) > 0); if (!patient) return blocked(s, 'TREATMENT', 'No known patient needs treatment just now.'); const condition = patient.healthConditions![0]; const success = chance(0.35 + s.stats.wits / 250); condition.diagnosed = true; condition.severity = Math.max(0, condition.severity + (success ? -18 : 5)); applyEffects(s, { wits: 2, reputation: success ? 2 : -1 }); pushFeed(s, 'TREAT PATIENT', success ? C.good : C.healthDark, success ? `${patient.name} improves under thy careful treatment.` : `${patient.name} survives thy treatment but does not thank it.`, success ? 'good' : 'bad'); },
+  fence_goods: (s) => { const success = chance(0.48 + s.stats.charm / 300); applyEffects(s, success ? { gold: 12, path: { outlaw: 2 }, legal: { suspicion: 6, notoriety: 2 } } : { gold: -3, legal: { suspicion: 18, notoriety: 4, status: 'accused', charge: crimeCharge(s, 'receiving stolen goods', 30, 58) }, reputation: -4 }); pushFeed(s, 'FENCE GOODS', success ? C.good : C.healthDark, success ? 'A careful buyer turns questionable goods into very spendable coin.' : 'The buyer was an informer with an excellent memory for faces.', success ? 'good' : 'bad'); },
+  bribe_official: (s) => { const legal = s.world.characters[s.playerCharacterId]?.legalState; applyEffects(s, { gold: -20, faith: -3, legal: { suspicion: -22, notoriety: chance(0.25) ? 5 : 0 } }); pushFeed(s, 'BRIBERY', C.amber, legal?.suspicion ? 'An official develops a more flexible memory, though not necessarily a loyal one.' : 'The official accepts the coin and invents a problem thy payment has solved.', 'plain'); },
+  scout_target: (s) => { applyEffects(s, { wits: 4, path: { outlaw: 1 }, addTags: ['crime_prepared'], legal: { suspicion: 2 } }); pushFeed(s, 'SCOUT TARGET', C.purpleDark, 'You learn the locks, habits, witnesses and exits before deciding whether to become foolish.', 'plain'); },
+  study_trade: (s) => { s.occupation.experience += 8; s.occupation.performance = Math.min(100, s.occupation.performance + 3); applyEffects(s, { wits: 3 }); pushFeed(s, 'STUDY TRADE', C.blue, 'You study accounts, tools and the expensive mistakes of older professionals.', 'good'); },
+  seek_patron: (s) => { const success = chance(0.35 + s.stats.charm / 220 + s.reputation / 400); if (success) { const patrons = s.kin.filter((kin) => kin.alive && (kin.rankIdx >= 2 || kin.kind === 'liege')); s.occupation.patronId = patrons.length ? pick(patrons).id : 'aldric'; } applyEffects(s, success ? { charm: 2, rankProgress: 6, faction: { factionId: 'crown', playerStanding: 3 }, addTags: ['has_patron'] } : { charm: 1, reputation: -1 }); pushFeed(s, 'SEEK PATRON', success ? C.charmDark : C.amber, success ? 'An influential household agrees to speak thy name where advancement is decided.' : 'Thy request receives courtesy, watered ale and no promise.', success ? 'good' : 'plain'); },
+  run_caravan: (s) => { const success = chance(0.45 + s.stats.wits / 350 + s.stats.charm / 400); applyEffects(s, success ? { gold: 20, worldConditions: { prosperity: 2 }, faction: { factionId: 'guilds', playerStanding: 3 } } : { gold: -8, health: -4, worldConditions: { prosperity: -1 } }); pushFeed(s, 'CARAVAN', success ? C.good : C.healthDark, success ? 'The caravan returns with foreign cloth, local gossip and a respectable profit.' : 'Mud, tolls and thieves consume the venture before Swineford sees a profit.', success ? 'good' : 'bad'); },
+  preach_sermon: (s) => { applyEffects(s, { faith: 4, charm: 2, faction: { factionId: 'church', playerStanding: 3 }, worldConditions: { religiousTension: s.stats.faith >= 60 ? -2 : 1 } }); pushFeed(s, 'SERMON', C.faithDark, 'You speak of duty, mercy and sins sufficiently vague to trouble every listener.', 'good'); },
+  gather_intelligence: (s) => { const secretOwner = s.kin.find((kin) => kin.alive && (kin.secrets?.length ?? 0) > 0 && !kin.secretRevealed); if (secretOwner && chance(0.45 + s.stats.wits / 300)) { secretOwner.secretRevealed = true; secretOwner.secrets!.forEach((secret) => { secret.knownByIds = Array.from(new Set([...secret.knownByIds, s.playerCharacterId])); }); } applyEffects(s, { wits: 3, faction: { factionId: 'crown', playerStanding: 1 } }); pushFeed(s, 'INTELLIGENCE', C.purpleDark, secretOwner?.secretRevealed ? `Patient listening reveals something ${secretOwner.name} meant to keep hidden.` : 'You collect rumours, compare contradictions and learn where questions make people nervous.', 'plain'); },
+  negotiate_levy: (s) => { const success = chance(0.4 + s.stats.charm / 250 + s.reputation / 500); applyEffects(s, success ? { charm: 3, worldConditions: { warThreat: -2, publicOrder: 2 }, faction: { factionId: 'commons', playerStanding: 4 } } : { reputation: -2, faction: { factionId: 'crown', playerStanding: -3 } }); pushFeed(s, 'LEVY BARGAIN', success ? C.good : C.healthDark, success ? 'The levy is reduced and the poorest households keep both grain and sons.' : 'The collector rejects thy argument and marks Swineford as reluctant.', success ? 'good' : 'bad'); },
+  repair_household: (s) => { applyEffects(s, { gold: -5, householdState: { quality: 10, capacity: 1 } }); pushFeed(s, 'REPAIR HOME', C.amber, 'Fresh timber, patched thatch and five vanished gold make the household safer.', 'good'); },
+  manage_stores: (s) => { applyEffects(s, { wits: 2, householdState: { food: 10 }, worldConditions: { foodSecurity: 1 } }); pushFeed(s, 'MANAGE STORES', C.faithDark, 'You air damp grain, count every sack and discover that rats respect no inventory.', 'good'); },
 };
 
 export function doActivity(s: GameState, id: string): GameState {

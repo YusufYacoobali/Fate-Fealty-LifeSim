@@ -22,7 +22,7 @@ import { tickProgression } from './pathProgression';
 import { grantAcquiredTraits } from './traitEngine';
 import { assignLifeGoalIfDue, checkLifeGoal } from './goalEngine';
 import { tickAilments, tickImprisonment, tickKinMortality } from './lifecycleEngine';
-import { pickEvent } from './eventPicker';
+import { bindEventActors, pickEvent } from './eventPicker';
 import { popReadyArc } from './storyGraph';
 import { chance } from './random';
 import { tickHoldingYear } from './holdingEngine';
@@ -31,6 +31,10 @@ import { simulateLivingWorld } from './worldEngine';
 import { tickRelationshipDecay } from './relationshipEngine';
 import { resolveScheduledConsequences, tickPersistentSociety, tickWorldConditions } from './worldSimulation';
 import { duePersistentStoryEvent, maybeStartMajorStory, maybeStartRelationshipStory, maybeStartSupportingStory } from './persistentStoryEngine';
+import { tickFamilyFormation } from './familyFormationEngine';
+import { tickStructuredHealth } from './healthEngine';
+import { dueLegalEvent, tickLegalSystem } from './legalEngine';
+import { tickFactions } from './factionEngine';
 
 const EVENT_CHANCE = 0.34;
 
@@ -62,6 +66,10 @@ export function ageUp(s: GameState): GameState {
   checkDeath(s);
   if (s.dead) return s;
   tickKinMortality(s);
+  tickFamilyFormation(s);
+  tickStructuredHealth(s);
+  checkDeath(s);
+  if (s.dead) return s;
   tickAilments(s);
   checkDeath(s);
   if (s.dead) return s;
@@ -78,6 +86,8 @@ export function ageUp(s: GameState): GameState {
   simulateLivingWorld(s);
   tickPersistentSociety(s);
   tickWorldConditions(s);
+  tickFactions(s);
+  tickLegalSystem(s);
   resolveScheduledConsequences(s);
 
   // Resolve the outgoing year's estate management. A health collapse is
@@ -93,13 +103,15 @@ export function ageUp(s: GameState): GameState {
   maybeStartMajorStory(s);
   maybeStartSupportingStory(s);
   maybeStartRelationshipStory(s);
-  const persistentStory = duePersistentStoryEvent(s);
-  const arcNode = persistentStory ? null : popReadyArc(s);
-  const selectedEvent = persistentStory
+  const legalEvent = dueLegalEvent(s);
+  const persistentStory = legalEvent ? null : duePersistentStoryEvent(s);
+  const arcNode = legalEvent || persistentStory ? null : popReadyArc(s);
+  const selectedEvent = legalEvent
+    ?? persistentStory
     ?? arcNode
     ?? ((s.world.pacing.quietYearsSinceStory >= 3 || chance(EVENT_CHANCE)) ? pickEvent(s) : null);
   if (selectedEvent) {
-    s.pendingEvent ??= { eventId: selectedEvent.id };
+    s.pendingEvent ??= { eventId: selectedEvent.id, bindings: bindEventActors(s, selectedEvent) };
     s.world.pacing.quietYearsSinceStory = 0;
   } else {
     s.world.pacing.quietYearsSinceStory += 1;

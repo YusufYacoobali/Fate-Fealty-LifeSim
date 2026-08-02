@@ -56,12 +56,74 @@ function cancelStory(state: GameState, story: StoryInstance, reason: string): vo
   appendWorldHistory(state, recoveryHistory(state, story, reason));
 }
 
+function applyCharacterAliases(state: GameState): boolean {
+  let changed = false;
+  const redirect = (id: string) => {
+    const redirected = CONTENT_ALIASES.characters[id] ?? id;
+    if (redirected !== id) changed = true;
+    return redirected;
+  };
+  for (const [oldId, newId] of Object.entries(CONTENT_ALIASES.characters)) {
+    const oldCharacter = state.world.characters[oldId];
+    if (!oldCharacter) continue;
+    if (!state.world.characters[newId]) state.world.characters[newId] = { ...oldCharacter, id: newId };
+    delete state.world.characters[oldId];
+    if (state.playerCharacterId === oldId) state.playerCharacterId = newId;
+    changed = true;
+  }
+  for (const character of Object.values(state.world.characters)) {
+    character.parentIds = (character.parentIds ?? []).map(redirect);
+    character.childIds = (character.childIds ?? []).map(redirect);
+    character.guardianIds = (character.guardianIds ?? []).map(redirect);
+    if (character.spouseId) character.spouseId = redirect(character.spouseId);
+    for (const secret of character.secrets ?? []) secret.knownByIds = secret.knownByIds.map(redirect);
+    for (const charge of character.legalState?.charges ?? []) {
+      charge.victimIds = charge.victimIds.map(redirect);
+      charge.witnessIds = charge.witnessIds.map(redirect);
+    }
+  }
+  const relationships: typeof state.world.relationships = {};
+  for (const relationship of Object.values(state.world.relationships)) {
+    relationship.aId = redirect(relationship.aId);
+    relationship.bId = redirect(relationship.bId);
+    relationships[relationship.id] = relationship;
+  }
+  state.world.relationships = relationships;
+  for (const family of Object.values(state.world.families)) family.memberIds = family.memberIds.map(redirect);
+  for (const household of state.world.households) {
+    household.memberIds = household.memberIds.map(redirect);
+    if (household.headId) household.headId = redirect(household.headId);
+  }
+  for (const story of state.world.activeStories) for (const role of Object.keys(story.bindings)) story.bindings[role] = redirect(story.bindings[role]);
+  if (state.pendingEvent?.bindings) for (const role of Object.keys(state.pendingEvent.bindings)) state.pendingEvent.bindings[role] = redirect(state.pendingEvent.bindings[role]);
+  for (const consequence of state.world.scheduledConsequences) consequence.targetIds = consequence.targetIds.map(redirect);
+  for (const entry of state.world.history) entry.participantIds = entry.participantIds.map(redirect);
+  for (const expected of state.world.expectedChildren) expected.parentIds = expected.parentIds.map(redirect);
+  for (const faction of Object.values(state.world.factions)) if (faction.leaderId) faction.leaderId = redirect(faction.leaderId);
+  return changed;
+}
+
+function applyCareerAliases(state: GameState): boolean {
+  let changed = false;
+  for (const character of Object.values(state.world.characters)) {
+    const careerId = character.occupation.careerId;
+    const alias = careerId ? CONTENT_ALIASES.careers[careerId] : undefined;
+    if (alias) { character.occupation.careerId = alias; changed = true; }
+  }
+  const playerCareer = state.occupation.careerId;
+  const playerAlias = playerCareer ? CONTENT_ALIASES.careers[playerCareer] : undefined;
+  if (playerAlias) { state.occupation.careerId = playerAlias; changed = true; }
+  return changed;
+}
+
 export function recoverSavedContent(state: GameState): RecoveryResult {
   const notices: string[] = [];
   let recovered = false;
   if (state.world.contentVersion > CURRENT_CONTENT_VERSION) {
     throw new Error(`This save uses content version ${state.world.contentVersion}, but this build supports ${CURRENT_CONTENT_VERSION}.`);
   }
+
+  if (applyCharacterAliases(state) || applyCareerAliases(state)) recovered = true;
 
   while (state.world.contentVersion < CURRENT_CONTENT_VERSION) {
     const migration = CONTENT_MIGRATIONS[state.world.contentVersion];

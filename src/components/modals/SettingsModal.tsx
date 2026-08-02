@@ -109,6 +109,12 @@ export function SettingsModal({ settings, premiumUnlocked, onSetSettings, onLock
             </PixelText>
             <Pill label={settings.soundEffects ? 'ON' : 'OFF'} color={C.white} bg={settings.soundEffects ? C.faithDark : C.bad} onPress={() => onSetSettings({ soundEffects: !settings.soundEffects })} />
           </Row>
+          <Row>
+            <PixelText font="body" size={17} color={C.textDark}>
+              Reduced motion
+            </PixelText>
+            <Pill label={settings.reducedMotion ? 'ON' : 'OFF'} color={C.white} bg={settings.reducedMotion ? C.faithDark : C.bad} onPress={() => onSetSettings({ reducedMotion: !settings.reducedMotion })} />
+          </Row>
           <PixelText font="body" size={13} color={C.textMuted} style={{ borderTopWidth: 2, borderTopColor: '#c9b483', paddingTop: 8 }}>
             Tap a setting to change it. Live Forever prevents death and lets thy current life keep aging.
           </PixelText>

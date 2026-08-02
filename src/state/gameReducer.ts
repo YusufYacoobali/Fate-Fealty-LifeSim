@@ -6,7 +6,7 @@
 
 import { AttractionPreference, FeedFilter, GameSettings, GameState, GenderIdentity, PronounSet, RelationFilter, ShopItem, Tab } from '@/types/game';
 import { ActivityCategory } from '@/types/game';
-import { clonePlayerActionState, cloneState, createLife, pushFeed, syncKinToWorld, syncPlayerFromWorld, syncPlayerToWorld } from '@/engine/gameState';
+import { addMoney, clonePlayerActionState, cloneState, createLife, pushFeed, syncKinToWorld, syncPlayerFromWorld, syncPlayerToWorld } from '@/engine/gameState';
 import { ageUp } from '@/engine/lifeDirector';
 import { applyChoice } from '@/engine/storyGraph';
 import { activityAvailability, doActivity } from '@/engine/activityEngine';
@@ -20,6 +20,7 @@ import { checkDeath } from '@/engine/deathEngine';
 import { runWithWorldRng } from '@/engine/random';
 import { eventById } from '@/engine/eventPicker';
 import { continueAsHeir } from '@/engine/successionEngine';
+import { DailyRewardBonus } from '@/services/dailyRewards';
 
 export type GameAction =
   | { type: 'HYDRATE'; state: GameState }
@@ -42,6 +43,7 @@ export type GameAction =
   | { type: 'TOGGLE_AUTOSCROLL' }
   | { type: 'SET_SETTINGS'; settings: Partial<GameSettings> }
   | { type: 'SET_LIFETIME_UNLOCKED'; unlocked: boolean }
+  | { type: 'CLAIM_DAILY_REWARD'; gold: number; streak: number; bonus?: DailyRewardBonus; bonusAmount?: number }
   | { type: 'NEW_LIFE'; options?: NewLifeOptions }
   | { type: 'CONTINUE_AS_HEIR'; heirId?: string };
 
@@ -182,6 +184,21 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       s.lifetimeUnlocked = action.unlocked;
       s.settings = proLockedSettings(s.settings, action.unlocked);
       return syncActionLimit(s);
+    }
+
+    case 'CLAIM_DAILY_REWARD': {
+      if (state.dead) return state;
+      const s = clonePlayerActionState(state);
+      addMoney(s, Math.max(0, Math.floor(action.gold)));
+      const amount = Math.max(0, Math.floor(action.bonusAmount ?? 0));
+      if (action.bonus === 'health') s.stats.health = Math.min(100, s.stats.health + amount);
+      if (action.bonus === 'stores') s.holding.stores = Math.min(100, s.holding.stores + amount);
+      if (action.bonus === 'reputation') s.reputation = Math.min(100, s.reputation + amount);
+      const extra = action.bonus === 'health' ? ' and restorative herbs'
+        : action.bonus === 'stores' ? ' and grain for the household'
+          : action.bonus === 'reputation' ? ' and the goodwill of the village' : '';
+      pushFeed(s, `DAILY GIFT · DAY ${action.streak}`, '#a36a1f', `The steward grants thee ${action.gold} gold${extra}.`, 'good');
+      return finishEngineTransaction(s);
     }
 
     case 'NEW_LIFE': {

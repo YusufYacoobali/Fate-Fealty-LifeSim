@@ -35,7 +35,7 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     ageMin: 10,
     choices: [
       { label: 'Buy a bottle (5g)', costGold: 5, outcome: { text: 'You drink it and feel warmth in the soul, or possibly leek. The friar calls both miracles.', effects: { gold: -5, faith: 7, health: -2 }, tone: 'plain' } },
-      { label: 'Expose the soup', successChance: (s) => 0.45 + s.stats.wits / 250, success: { text: 'You find a turnip floating in the relic jar. The crowd turns on him with ladles.', effects: { wits: 5, reputation: 5, charm: 3 }, tone: 'good' }, failure: { text: 'The friar declares the turnip a sign. You are booed by people holding soup.', effects: { charm: -4, faith: -2 }, tone: 'bad' } },
+      { label: 'Expose the soup', successChance: (s) => 0.45 + s.stats.wits / 250, success: { text: 'You find a turnip floating in the relic jar. The crowd turns on him with ladles.', effects: { wits: 5, reputation: 5, charm: 3, memory: { tag: 'exposed_holy_soup', weight: 2 } }, tone: 'good' }, failure: { text: 'The friar declares the turnip a sign. You are booed by people holding soup.', effects: { charm: -4, faith: -2, memory: { tag: 'mocked_by_soup_pilgrims', weight: 2 } }, tone: 'bad' } },
       { label: 'Ask for bread too', outcome: { text: 'The friar, impressed by your theology of lunch, gives you a heel of bread.', effects: { health: 3, wits: 1 }, tone: 'good' } },
     ],
   },
@@ -60,7 +60,7 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     choices: [
       { label: 'Buy the toe (7g)', costGold: 7, outcome: { text: 'The toe is wax. Your faith wobbles, but your candle supply improves.', effects: { gold: -7, faith: 4, wits: -2 }, tone: 'plain' } },
       { label: 'Ask it to bless you', outcome: { text: 'Nothing happens. The seller says the toe is shy before crowds.', effects: { charm: 2, faith: -2 }, tone: 'plain' } },
-      { label: 'Report him to the priest', outcome: { text: 'The priest confiscates the toe, then quietly asks if there were any fingers.', effects: { reputation: 4, faith: 3 }, tone: 'good' } },
+      { label: 'Report him to the priest', outcome: { text: 'The priest confiscates the toe, then quietly asks if there were any fingers.', effects: { reputation: 4, faith: 3, memory: { tag: 'reported_false_relic', weight: 2 } }, tone: 'good' } },
     ],
   },
   {
@@ -404,7 +404,7 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     ageMin: 18,
     requires: { hasTags: ['married'] },
     choices: [
-      { label: 'Wake them gently', outcome: { text: 'They wake, nod gravely, and pretend the snore was theological agreement.', effects: { faith: 3, charm: 3 }, tone: 'good' } },
+      { label: 'Wake them gently', outcome: { text: 'They wake, nod gravely, and pretend the snore was theological agreement.', effects: { faith: 3, charm: 3, memory: { tag: 'spouse_sermon_kindness', weight: 2 } }, tone: 'good' } },
       { label: 'Let it happen', outcome: { text: 'The priest takes it personally. The pew takes it loudly.', effects: { charm: -2, faith: -2, health: 2 }, tone: 'plain' } },
     ],
   },

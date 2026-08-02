@@ -54,6 +54,12 @@ export function tickAilments(s: GameState): GameState {
 /** While `imprisoned`, years pass in a cell until a chance of release. */
 export function tickImprisonment(s: GameState): GameState {
   if (!hasTag(s, 'imprisoned')) return s;
+  const legal = s.world.characters[s.playerCharacterId]?.legalState;
+  if (legal?.status === 'imprisoned' && legal.sentenceYearsRemaining > 0) {
+    applyEffects(s, { health: -rnd(1, 3) });
+    pushFeed(s, 'IMPRISONED', C.bad, `${legal.sentenceYearsRemaining} year${legal.sentenceYearsRemaining === 1 ? '' : 's'} remain in thy sentence.`, 'bad');
+    return s;
+  }
   if (chance(0.4)) {
     removeTag(s, 'imprisoned');
     addTag(s, 'ex_convict');

@@ -6,10 +6,13 @@ import { appendCharacterMemory, appendFamilyMemory } from './worldJournal';
 
 function developChild(state: GameState, child: WorldCharacter): void {
   if (![6, 12, 18].includes(child.age)) return;
+  child.childDevelopment ??= { completedMilestones: [], education: 'none', investment: 0, favour: 0 };
+  if (child.childDevelopment.completedMilestones.includes(child.age)) return;
   const household = state.world.households.find((item) => item.id === child.householdId);
-  const security = household?.foodSecurity ?? 50;
+  const security = Math.round(((household?.foodSecurity ?? 50) + (household?.storedFood ?? 50) + clamp(50 + (household?.wealth ?? 0))) / 3);
+  const caregivers = Array.from(new Set([...(child.parentIds ?? []), ...(child.guardianIds ?? [])]));
   const parentRelations = Object.values(state.world.relationships).filter((relation) =>
-    (child.parentIds ?? []).some((parentId) => (relation.aId === child.id && relation.bId === parentId) || (relation.bId === child.id && relation.aId === parentId)),
+    caregivers.some((parentId) => (relation.aId === child.id && relation.bId === parentId) || (relation.bId === child.id && relation.aId === parentId)),
   );
   const parentalSupport = parentRelations.length
     ? parentRelations.reduce((total, relation) => total + relation.aToB.affinity + relation.bToA.affinity, 0) / (parentRelations.length * 2)
@@ -17,18 +20,24 @@ function developChild(state: GameState, child: WorldCharacter): void {
   const trauma = (child.worldMemories ?? []).filter((memory) => memory.sentiment < -15 && memory.salience >= 3).length;
   const family = child.birthFamilyId ? state.world.families[child.birthFamilyId] : undefined;
   child.stats.health = clamp(child.stats.health + (security >= 55 ? 4 : -4) - Math.min(3, trauma));
-  child.stats.wits = clamp(child.stats.wits + (child.age === 12 ? 5 : 2) + (parentalSupport >= 65 ? 2 : 0));
-  child.stats.charm = clamp(child.stats.charm + rnd(-1, 4));
+  const education = child.childDevelopment.education;
+  const educationalSupport = Math.round(child.childDevelopment.investment / 8) + (education !== 'none' ? 2 : 0);
+  child.stats.wits = clamp(child.stats.wits + (child.age === 12 ? 5 : 2) + (parentalSupport >= 65 ? 2 : 0) + educationalSupport);
+  child.stats.charm = clamp(child.stats.charm + rnd(-1, 4) + Math.round(child.childDevelopment.favour / 10));
   child.stats.faith = clamp(child.stats.faith + ((family?.reputation ?? 0) >= 20 ? 2 : 0));
   if (child.age === 12) child.personalityTraits = Array.from(new Set([...(child.personalityTraits ?? []), parentalSupport >= 65 ? 'confident' : trauma ? 'guarded' : 'independent'])).slice(0, 3);
   if (child.age === 18) {
     if (security < 40) child.ambition = 'become_wealthy';
     else if (parentalSupport >= 70) child.ambition = 'protect_family';
+    else if (education === 'church') child.ambition = 'join_clergy';
+    else if (education === 'craft') child.ambition = 'master_craft';
+    else if (education === 'martial') child.ambition = 'win_glory';
     child.importance = 'supporting';
   }
+  child.childDevelopment.completedMilestones.push(child.age);
   appendCharacterMemory(child, {
     id: `memory_milestone_${state.nextId++}`, year: state.world.currentYear, type: `development_${child.age}`,
-    actorIds: child.parentIds ?? [], sentiment: security >= 55 ? 20 : -20, salience: child.age === 18 ? 3 : 2,
+    actorIds: caregivers, sentiment: security >= 55 ? 20 : -20, salience: child.age === 18 ? 3 : 2,
     inherited: false, summary: security >= 55 ? `${child.name} was supported through a formative year.` : `${child.name} remembers hardship during a formative year.`,
   });
 }
@@ -87,15 +96,52 @@ function archiveOldBackgroundCharacters(state: GameState): void {
       if (other.id === character.id) continue;
       other.parentIds = (other.parentIds ?? []).filter((id) => id !== character.id);
       other.childIds = (other.childIds ?? []).filter((id) => id !== character.id);
+      other.guardianIds = (other.guardianIds ?? []).filter((id) => id !== character.id);
+      for (const secret of other.secrets ?? []) secret.knownByIds = secret.knownByIds.filter((id) => id !== character.id);
+      for (const charge of other.legalState?.charges ?? []) {
+        charge.victimIds = charge.victimIds.filter((id) => id !== character.id);
+        charge.witnessIds = charge.witnessIds.filter((id) => id !== character.id);
+      }
       if (other.spouseId === character.id) delete other.spouseId;
     }
+    state.world.expectedChildren = state.world.expectedChildren.filter((expected) => !expected.parentIds.includes(character.id));
+    for (const faction of Object.values(state.world.factions)) if (faction.leaderId === character.id) delete faction.leaderId;
     delete state.world.characters[character.id];
     for (const [id, relationship] of Object.entries(state.world.relationships)) if (relationship.aId === character.id || relationship.bId === character.id) delete state.world.relationships[id];
     for (const family of Object.values(state.world.families)) family.memberIds = family.memberIds.filter((id) => id !== character.id);
     for (const household of state.world.households) household.memberIds = household.memberIds.filter((id) => id !== character.id);
   }
 
+  // Reconcile both sides before pruning empty households. Older generated
+  // worlds may contain a character-side household link that predates the
+  // corresponding member list; treating either side alone as authoritative
+  // can otherwise strand a living person when an old head is archived.
+  const householdById = new Map(state.world.households.map((household) => [household.id, household]));
+  for (const character of Object.values(state.world.characters)) {
+    const household = character.householdId ? householdById.get(character.householdId) : undefined;
+    if (household) household.memberIds = Array.from(new Set([...household.memberIds, character.id]));
+    else {
+      const relativeHouseholdId = [character.spouseId, ...(character.parentIds ?? []), ...(character.guardianIds ?? [])]
+        .filter((id): id is string => Boolean(id))
+        .map((id) => state.world.characters[id]?.householdId)
+        .find((id): id is string => Boolean(id && householdById.has(id)));
+      const fallback = householdById.get(relativeHouseholdId ?? '') ?? state.world.households.find((item) => item.id === state.world.characters[state.playerCharacterId]?.householdId) ?? state.world.households[0];
+      if (fallback) {
+        character.householdId = fallback.id;
+        fallback.memberIds = Array.from(new Set([...fallback.memberIds, character.id]));
+      }
+    }
+  }
+  for (const household of state.world.households) household.memberIds = household.memberIds.filter((id) => state.world.characters[id]?.householdId === household.id);
   state.world.households = state.world.households.filter((household) => household.memberIds.length > 0);
+  for (const household of state.world.households) {
+    if (!household.headId || !state.world.characters[household.headId] || !household.memberIds.includes(household.headId)) {
+      household.headId = household.memberIds
+        .map((id) => state.world.characters[id])
+        .filter((character): character is WorldCharacter => Boolean(character))
+        .sort((a, b) => Number(b.alive) - Number(a.alive) || b.age - a.age || a.id.localeCompare(b.id))[0]?.id;
+    }
+  }
   for (const [familyId, family] of Object.entries(state.world.families)) {
     if (family.memberIds.length === 0) delete state.world.families[familyId];
   }
@@ -130,6 +176,10 @@ export function tickPersistentSociety(state: GameState): GameState {
     household.headId = living.sort((a, b) => b.age - a.age)[0]?.id ?? household.headId;
     household.foodSecurity = clamp((household.foodSecurity ?? 50) + Math.round((state.world.conditions.foodSecurity - 50) / 15));
     household.status = clamp((household.status ?? 50) + Math.round((state.world.conditions.prosperity - 50) / 25));
+    household.residenceQuality = clamp((household.residenceQuality ?? 50) - (living.length > (household.capacity ?? 4) ? 3 : 0));
+    household.storedFood = clamp((household.storedFood ?? household.foodSecurity ?? 50) + Math.round((state.world.conditions.foodSecurity - 50) / 12) - Math.max(0, living.length - 3));
+    if (living.length > (household.capacity ?? 4)) household.status = clamp((household.status ?? 50) - 2);
+    if ((household.storedFood ?? 50) < 25) for (const member of living) member.stats.health = clamp(member.stats.health - 2);
   }
   archiveOldBackgroundCharacters(state);
   boundSettledStories(state);

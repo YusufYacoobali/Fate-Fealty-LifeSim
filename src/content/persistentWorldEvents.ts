@@ -208,36 +208,102 @@ const ROLE_CHOICES: Record<string, GameEvent['choices']> = {
   ],
 };
 
-const ROLE_STORY_EVENTS: GameEvent[] = Object.entries(ROLE_LABELS).flatMap(([role, title]) => [1, 2, 3].map((beat): GameEvent => ({
-  id: `story_role_${role}_${beat}`,
-  category: 'arc',
-  arc: `role_${role}`,
-  arcNodeOnly: true,
-  title: `${title} · ${beat}`,
-  text: (state) => renderBoundText(state, beat === 1
-    ? '{{contact.name}} offers an opportunity suited to the life you have chosen.'
-    : beat === 2
-      ? 'The work deepens, and its cost becomes clearer than its promised reward.'
-      : '{{contact.name}} asks how this chapter of your vocation should be remembered.'),
-  choices: ROLE_CHOICES[role],
-})));
+const ROLE_STORY_EVENTS: GameEvent[] = Object.entries(ROLE_LABELS).flatMap(([role, title]) => {
+  const chapters = [1, 2, 3].map((beat): GameEvent => ({
+    id: `story_role_${role}_${beat}`, category: 'arc', arc: `role_${role}`, arcNodeOnly: true,
+    title: `${title} · ${beat}`,
+    text: (state) => renderBoundText(state, beat === 1
+      ? '{{contact.name}} offers an opportunity suited to the life you have chosen.'
+      : beat === 2 ? 'The work deepens, and its cost becomes clearer than its promised reward.'
+        : '{{contact.name}} reveals who has profited from your labour and who has quietly paid for it.'),
+    choices: ROLE_CHOICES[role],
+  }));
+  const reckoning: GameEvent = {
+    id: `story_role_${role}_4`, category: 'arc', arc: `role_${role}`, arcNodeOnly: true,
+    title: `${title} · THE RECKONING`,
+    text: (state) => renderBoundText(state, '{{contact.name}} asks whether duty or ambition should decide the final course of this work.'),
+    choices: [
+      { id: 'duty', label: 'Keep faith with those who depend on thee', outcome: { text: 'You place duty above the brighter prize.', effects: { faith: 2, boundKinRel: { role: 'contact', delta: 5 }, storyVariables: { resolution: 'duty' } }, tone: 'good' } },
+      { id: 'ambition', label: 'Take the chance to rise', outcome: { text: 'You accept the cost of becoming harder to overlook.', effects: { reputation: 4, faith: -1, storyVariables: { resolution: 'ambition' } }, tone: 'plain' } },
+    ],
+  };
+  const endings = (['duty', 'ambition'] as const).map((ending): GameEvent => ({
+    id: `story_role_${role}_5_${ending}`, category: 'arc', arc: `role_${role}`, arcNodeOnly: true,
+    title: ending === 'duty' ? `${title} · A TRUST KEPT` : `${title} · A NAME ADVANCED`,
+    text: ending === 'duty' ? 'The work endures because people believe your word has weight.' : 'The opportunity carries you forward, leaving both admirers and resentments behind.',
+    choices: [{ id: 'accept_ending', label: 'Carry this chapter forward', outcome: { text: 'Your vocation has changed both your place and your name in Swineford.', effects: { reputation: ending === 'duty' ? 2 : 4, familyReputation: { delta: ending === 'duty' ? 2 : 1 } }, tone: 'good' } }],
+  }));
+  return [...chapters, reckoning, ...endings];
+});
 
 const RELATIONSHIP_LABELS: Record<string, string> = {
   friendship_test: 'A FRIENDSHIP TESTED', rival_reckoning: 'A RIVAL RECKONING', marriage_strain: 'STRAIN IN THE MARRIAGE',
+  blood_between_siblings: 'BLOOD BETWEEN SIBLINGS', parent_and_child: 'PARENT AND CHILD', hidden_affair: 'THE HIDDEN AFFAIR',
 };
 
-const RELATIONSHIP_EVENTS: GameEvent[] = Object.entries(RELATIONSHIP_LABELS).flatMap(([id, title]) => [1, 2, 3].map((beat): GameEvent => ({
-  id: `story_${id}_${beat}`,
-  category: 'arc',
-  arc: id,
-  arcNodeOnly: true,
-  title: `${title} · ${beat}`,
-  text: (state) => renderBoundText(state, beat === 1 ? '{{other.name}} asks something difficult of you.' : beat === 2 ? 'What was left unsaid has grown heavier with time.' : '{{other.name}} asks what the two of you truly mean to one another.'),
-  choices: [
-    { label: 'Answer with loyalty', outcome: { text: 'You choose loyalty even where it carries a price.', effects: { charm: 2, boundKinRel: { role: 'other', delta: 5 }, storyVariables: { loyal: true } }, tone: 'good' } },
-    { label: 'Demand honesty', outcome: { text: 'You refuse comfortable lies and ask for the whole truth.', effects: { wits: 2, storyVariables: { honest: true } }, tone: 'plain' } },
-    { label: 'Protect thy pride', outcome: { text: 'Pride wins the moment. Whether it wins the years remains uncertain.', effects: { charm: -1, storyVariables: { proud: true } }, tone: 'bad' } },
-  ],
-})));
+const RELATIONSHIP_EVENTS: GameEvent[] = Object.entries(RELATIONSHIP_LABELS).flatMap(([id, title]) => {
+  const chapters = [1, 2, 3].map((beat): GameEvent => ({
+    id: `story_${id}_${beat}`, category: 'arc', arc: id, arcNodeOnly: true, title: `${title} · ${beat}`,
+    text: (state) => renderBoundText(state, beat === 1 ? '{{other.name}} asks something difficult of you.' : beat === 2 ? 'What was left unsaid has grown heavier with time.' : '{{other.name}} reveals the earlier hurt that still shapes every conversation.'),
+    choices: [
+      { id: 'loyalty', label: 'Answer with loyalty', outcome: { text: 'You choose loyalty even where it carries a price.', effects: { charm: 2, boundKinRel: { role: 'other', delta: 5 }, storyVariables: { loyal: true } }, tone: 'good' } },
+      { id: 'honesty', label: 'Demand honesty', outcome: { text: 'You refuse comfortable lies and ask for the whole truth.', effects: { wits: 2, storyVariables: { honest: true } }, tone: 'plain' } },
+      { id: 'pride', label: 'Protect thy pride', outcome: { text: 'Pride wins the moment. Whether it wins the years remains uncertain.', effects: { charm: -1, boundKinRel: { role: 'other', delta: -3 }, storyVariables: { proud: true } }, tone: 'bad' } },
+    ],
+  }));
+  const decision: GameEvent = {
+    id: `story_${id}_4`, category: 'arc', arc: id, arcNodeOnly: true, title: `${title} · THE CHOICE`,
+    text: (state) => renderBoundText(state, '{{other.name}} asks whether this bond can be repaired or must finally be broken.'),
+    choices: [
+      { id: 'mend', label: 'Mend what remains', outcome: { text: 'Repair begins with an honest accounting of the hurt.', effects: { boundKinRel: { role: 'other', delta: 8 }, storyVariables: { resolution: 'mend' } }, tone: 'good' } },
+      { id: 'break', label: 'End the bond', outcome: { text: 'You decide that a clean ending is kinder than another false beginning.', effects: { boundKinRel: { role: 'other', delta: -10 }, storyVariables: { resolution: 'break' } }, tone: 'bad' } },
+    ],
+  };
+  const endings = (['mend', 'break'] as const).map((ending): GameEvent => ({
+    id: `story_${id}_5_${ending}`, category: 'arc', arc: id, arcNodeOnly: true,
+    title: ending === 'mend' ? `${title} · A BOND REMADE` : `${title} · THE LAST WORD`,
+    text: ending === 'mend' ? 'Trust returns slowly, made stronger by knowing what nearly destroyed it.' : 'The relationship ends, but its memories continue to shape both households.',
+    choices: [{ id: 'accept_ending', label: 'Remember what happened', outcome: { text: 'This bond becomes part of the family history.', effects: { memory: { tag: 'relationship_reckoning', weight: 4, note: ending === 'mend' ? 'A damaged relationship was repaired.' : 'An important relationship ended.' } }, tone: ending === 'mend' ? 'good' : 'plain' } }],
+  }));
+  return [...chapters, decision, ...endings];
+});
 
-export const PERSISTENT_WORLD_EVENTS: GameEvent[] = [...BRANCHING_MAJOR_STORY_EVENTS, ...ROLE_STORY_EVENTS, ...RELATIONSHIP_EVENTS];
+const DOMAIN_STORY_LABELS: Record<string, string> = {
+  pestilence_year: 'THE PESTILENCE YEAR', charter_swineford: 'THE CHARTER OF SWINEFORD', empty_throne: 'THE EMPTY THRONE',
+  the_accused: 'THE ACCUSED', healers_burden: "THE HEALER'S BURDEN", ashes_household: 'ASHES OF THE HOUSEHOLD',
+  divided_parish: 'THE DIVIDED PARISH', guild_election: 'THE GUILD ELECTION', royal_bastard: 'THE ROYAL BASTARD',
+  relic_hunter: 'THE RELIC HUNTER', secret_brotherhood: 'THE SECRET BROTHERHOOD',
+};
+const PREMIUM_STORIES = new Set(['royal_bastard', 'relic_hunter', 'secret_brotherhood']);
+
+const DOMAIN_STORY_EVENTS: GameEvent[] = Object.entries(DOMAIN_STORY_LABELS).flatMap(([id, title]) => {
+  const common = { category: 'arc' as const, arc: id, arcNodeOnly: true, premium: PREMIUM_STORIES.has(id) };
+  const chapters = [1, 2, 3].map((beat): GameEvent => ({
+    ...common, id: `story_${id}_${beat}`, title: `${title} · ${beat}`,
+    text: (state) => renderBoundText(state, beat === 1
+      ? `{{other.name}} draws you into ${title.toLowerCase()}, where public duty and private loyalty cannot both remain simple.`
+      : beat === 2 ? 'The first decision has changed who trusts you, and the danger now reaches a household that expected protection.'
+        : '{{other.name}} returns with evidence that an earlier promise has consequences no one can ignore.'),
+    choices: [
+      { id: 'protect_people', label: 'Protect the people most exposed', outcome: { text: 'You accept a personal cost to shelter those with the least power.', effects: { faith: 2, boundKinRel: { role: 'other', delta: 4 }, faction: { factionId: 'commons', playerStanding: 3 }, storyVariables: { approach: 'mercy' } }, tone: 'good' } },
+      { id: 'secure_truth', label: 'Find proof before acting', outcome: { text: 'You refuse to let urgency make the decision blind.', effects: { wits: 3, legal: { suspicion: -2 }, storyVariables: { approach: 'evidence' } }, tone: 'plain' } },
+      { id: 'take_advantage', label: 'Use the crisis to gain influence', outcome: { text: 'The opening is real, as is the resentment it creates.', effects: { reputation: 4, faction: { factionId: 'guilds', playerStanding: 2 }, boundKinRel: { role: 'other', delta: -3 }, storyVariables: { approach: 'advantage' } }, tone: 'plain' } },
+    ],
+  }));
+  const decision: GameEvent = {
+    ...common, id: `story_${id}_4`, title: `${title} · THE RECKONING`,
+    text: (state) => renderBoundText(state, '{{other.name}} demands a final answer before the matter passes beyond anyone’s control.'),
+    choices: [
+      { id: 'reconcile', label: 'Build a settlement all sides can survive', outcome: { text: 'No one receives everything, but the settlement may outlive the crisis.', effects: { worldConditions: { publicOrder: 3 }, storyVariables: { resolution: 'reconcile' } }, tone: 'good' } },
+      { id: 'hardline', label: 'Choose a side and enforce its victory', outcome: { text: 'The contest ends decisively and creates enemies just as decisively.', effects: { reputation: 5, worldConditions: { publicOrder: -2 }, storyVariables: { resolution: 'hardline' } }, tone: 'plain' } },
+    ],
+  };
+  const endings = (['reconciled', 'hard'] as const).map((ending): GameEvent => ({
+    ...common, id: `story_${id}_5_${ending}`, title: ending === 'reconciled' ? `${title} · AN UNEASY PEACE` : `${title} · THE PRICE OF VICTORY`,
+    text: ending === 'reconciled' ? 'The settlement holds because every side has something left to protect.' : 'Victory settles the immediate question while planting the next generation’s grievance.',
+    choices: [{ id: 'accept_ending', label: 'Let history record the outcome', outcome: { text: 'Swineford will remember both what was saved and what was spent.', effects: { familyReputation: { delta: ending === 'reconciled' ? 3 : 1 }, memory: { tag: 'story_reckoning', weight: 5, note: `The outcome of ${title.toLowerCase()} changed Swineford.` } }, tone: ending === 'reconciled' ? 'good' : 'plain' } }],
+  }));
+  return [...chapters, decision, ...endings];
+});
+
+export const PERSISTENT_WORLD_EVENTS: GameEvent[] = [...BRANCHING_MAJOR_STORY_EVENTS, ...ROLE_STORY_EVENTS, ...RELATIONSHIP_EVENTS, ...DOMAIN_STORY_EVENTS];

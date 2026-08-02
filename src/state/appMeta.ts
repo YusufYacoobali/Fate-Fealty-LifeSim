@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { DailyRewardProgress, DEFAULT_DAILY_REWARD } from '@/services/dailyRewards';
 
 /**
  * App-level metadata that lives ACROSS individual lives (the per-life save is
@@ -49,7 +50,7 @@ export interface AppMeta {
   shopPromoLastEntry: number;
   /** Number of shop promos shown, used to rotate the playful message. */
   shopPromoCount: number;
-  /** True once we've scheduled the recurring reminder. */
+  /** True once we've successfully scheduled the rolling reminder rotation. */
   notificationsScheduled: boolean;
   /** True if the user declined notification permission (don't keep asking). */
   notificationsDenied: boolean;
@@ -65,6 +66,11 @@ export interface AppMeta {
   achievements: string[];
   /** Hall of Legends — most-recent lives first. */
   dynasty: DynastyRecord[];
+  /** Calendar-day reward state, stored outside any individual life. */
+  dailyReward: DailyRewardProgress;
+  /** Wall-clock activity markers for the contextual return hook. */
+  lastActiveAt: number | null;
+  lastRumourAt: number | null;
 }
 
 export const DEFAULT_META: AppMeta = {
@@ -80,6 +86,9 @@ export const DEFAULT_META: AppMeta = {
   stats: DEFAULT_STATS,
   achievements: [],
   dynasty: [],
+  dailyReward: DEFAULT_DAILY_REWARD,
+  lastActiveAt: null,
+  lastRumourAt: null,
 };
 
 const META_KEY = 'mls:meta:v1';
@@ -94,6 +103,7 @@ export async function loadMeta(): Promise<AppMeta> {
       ...parsed,
       lifetimeUnlocked: false,
       stats: { ...DEFAULT_STATS, ...(parsed.stats ?? {}) },
+      dailyReward: { ...DEFAULT_DAILY_REWARD, ...(parsed.dailyReward ?? {}) },
       achievements: parsed.achievements ?? [],
       dynasty: parsed.dynasty ?? [],
     };

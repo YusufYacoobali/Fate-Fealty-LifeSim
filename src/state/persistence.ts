@@ -8,10 +8,11 @@ import { CURRENT_CONTENT_VERSION } from '@/content/contentVersion';
 import { syncPlayerFromWorld } from '@/engine/gameState';
 import { createStateDefaults } from '@/engine/stateDefaults';
 
-const SAVE_KEY = 'mls:world:v3';
+const SAVE_KEY = 'mls:world:v4';
+const LEGACY_SAVE_KEY = 'mls:world:v3';
 
-interface SaveEnvelopeV3 {
-  schemaVersion: 3;
+interface SaveEnvelopeV4 {
+  schemaVersion: 4;
   savedAt: number;
   game: GameState;
 }
@@ -31,7 +32,7 @@ export async function saveGame(state: GameState): Promise<void> {
       kin: [],
       pendingEvent: state.pendingEvent,
     };
-    const envelope: SaveEnvelopeV3 = { schemaVersion: 3, savedAt: Date.now(), game: toSave };
+    const envelope: SaveEnvelopeV4 = { schemaVersion: 4, savedAt: Date.now(), game: toSave };
     await AsyncStorage.setItem(SAVE_KEY, JSON.stringify(envelope));
   } catch (e) {
     // Saving is best-effort; never crash the game over it.
@@ -46,16 +47,20 @@ export interface LoadGameResult {
 
 export async function loadGame(): Promise<LoadGameResult> {
   try {
-    const raw = await AsyncStorage.getItem(SAVE_KEY);
+    const currentRaw = await AsyncStorage.getItem(SAVE_KEY);
+    const legacyRaw = currentRaw ? null : await AsyncStorage.getItem(LEGACY_SAVE_KEY);
+    const raw = currentRaw ?? legacyRaw;
     if (!raw) return { state: null, blockedByFutureVersion: false };
-    const envelope = JSON.parse(raw) as SaveEnvelopeV3;
-    if (envelope.schemaVersion !== 3 || envelope.game.schemaVersion !== 3) return { state: null, blockedByFutureVersion: true };
+    const envelope = JSON.parse(raw) as { schemaVersion: number; savedAt: number; game: GameState };
+    if (![3, 4].includes(envelope.schemaVersion) || ![3, 4].includes(envelope.game.schemaVersion as number)) return { state: null, blockedByFutureVersion: true };
+    if (envelope.schemaVersion > 4 || (envelope.game.schemaVersion as number) > 4) return { state: null, blockedByFutureVersion: true };
     const parsed = normalizeGameState(envelope.game);
     if (parsed.world.contentVersion > CURRENT_CONTENT_VERSION) {
       console.warn('[persistence] save belongs to a newer content version; leaving it untouched');
       return { state: null, blockedByFutureVersion: true };
     }
     recoverSavedContent(parsed);
+    if (legacyRaw) await saveGame(parsed);
     // Defensive reset of transient UI.
     parsed.settingsOpen = false;
     parsed.selectedKinId = null;
@@ -84,15 +89,23 @@ export function normalizeGameState(parsed: GameState): GameState {
       : false;
   const clampResource = (value: number | undefined, fallback: number) =>
     Math.max(0, Math.min(100, typeof value === 'number' ? value : fallback));
+  const normalizeGender = (value: unknown, id: string): 'woman' | 'man' => {
+    if (value === 'woman' || value === 'man') return value;
+    let hash = 0;
+    for (let index = 0; index < id.length; index++) hash = ((hash * 31) + id.charCodeAt(index)) >>> 0;
+    return hash % 2 === 0 ? 'woman' : 'man';
+  };
 
   const oldKin = Array.isArray(parsed.kin) ? parsed.kin : [];
   const normalizedTraits = Array.from(new Set((parsed.traits ?? []).map((id) => id === 'ill_starred' ? 'golden_child' : id)));
   const normalizedTags = Array.from(new Set((parsed.tags ?? []).map((tag) => tag === 'trait_ill_starred' ? 'trait_golden_child' : tag)));
-  const kin: KinMember[] = oldKin.map((member) => ({
+  const kin: KinMember[] = oldKin.map((member) => {
+    const gender = normalizeGender(member.gender, member.id);
+    return ({
     ...member,
-    gender: member.gender ?? 'unspecified',
-    pronouns: member.pronouns ?? defaultPronouns(member.gender ?? 'unspecified'),
-    attraction: member.attraction ?? (member.id === 'goose' ? 'none' : 'any'),
+    gender,
+    pronouns: defaultPronouns(gender),
+    attraction: member.id === 'goose' ? 'none' : gender === 'woman' ? 'men' : 'women',
     stats: member.stats ?? { health: 65, charm: 50, wits: 50, faith: 45 },
     traits: member.traits ?? [member.trait ?? 'Ordinary'],
     gold: typeof member.gold === 'number' ? member.gold : 5,
@@ -101,7 +114,13 @@ export function normalizeGameState(parsed: GameState): GameState {
     debts: Array.isArray(member.debts) ? member.debts : [],
     healthTags: Array.isArray(member.healthTags) ? member.healthTags : [],
     memories: Array.isArray(member.memories) ? member.memories : [],
-  }));
+    healthConditions: member.healthConditions ?? [],
+    legalState: member.legalState ?? { status: member.healthTags?.includes('imprisoned') ? 'imprisoned' : 'free', suspicion: 0, notoriety: 0, charges: [], sentenceYearsRemaining: member.healthTags?.includes('imprisoned') ? 1 : 0 },
+    secrets: member.secrets ?? (member.secret && member.secret !== 'none' ? [{ id: `secret_${member.id}`, type: member.secret, knownByIds: [], revealed: Boolean(member.secretRevealed), severity: 35, createdYear: parsed.world?.currentYear ?? 1320 }] : []),
+    guardianIds: member.guardianIds ?? [], lineageStatus: member.lineageStatus ?? 'marital',
+    childDevelopment: member.childDevelopment ?? { completedMilestones: [], education: 'none', investment: 0, favour: 0 },
+    factionInfluence: member.factionInfluence ?? 0,
+  }); });
   const savedRelationships = parsed.world?.relationships as unknown;
   const relationshipList: Relationship[] = Array.isArray(savedRelationships)
     ? savedRelationships
@@ -128,14 +147,17 @@ export function normalizeGameState(parsed: GameState): GameState {
     return [normalized.id, normalized];
   }));
 
+  const fallbackGender = normalizeGender(parsed.gender, playerCharacterId);
   const fallbackPlayer: KinMember = {
     id: playerCharacterId, name: parsed.first, role: 'Thyself', emoji: '🧑', rel: 100,
     trait: normalizedTraits[0] ?? 'Ordinary', bio: `${parsed.first}'s life in Swineford.`, kind: 'acquaintance',
-    age: parsed.age, alive: !parsed.dead, gender: parsed.gender ?? 'unspecified',
-    pronouns: parsed.pronouns ?? defaultPronouns(parsed.gender ?? 'unspecified'), attraction: parsed.attraction ?? 'any',
+    age: parsed.age, alive: !parsed.dead, gender: fallbackGender,
+    pronouns: defaultPronouns(fallbackGender), attraction: fallbackGender === 'woman' ? 'men' : 'women',
     stats: { ...parsed.stats }, traits: normalizedTraits, gold: parsed.gold, rankIdx: parsed.rankIdx,
     occupation: { ...(parsed.occupation ?? { careerId: null, experience: 0, performance: 50, workedThisYear: 0 }) },
     debts: [...(parsed.debts ?? [])], healthTags: [], memories: [], parentIds: [], childIds: [], worldMemories: [],
+    healthConditions: [], legalState: { status: 'free', suspicion: 0, notoriety: 0, charges: [], sentenceYearsRemaining: 0 },
+    secrets: [], guardianIds: [], lineageStatus: 'marital', childDevelopment: { completedMilestones: [], education: 'none', investment: 0, favour: 0 }, factionInfluence: 0,
   };
   const characters = parsed.world?.characters && Object.keys(parsed.world.characters).length
     ? parsed.world.characters
@@ -147,11 +169,23 @@ export function normalizeGameState(parsed: GameState): GameState {
     stats: fallbackPlayer.stats, traits: fallbackPlayer.traits, gold: fallbackPlayer.gold,
     rankIdx: fallbackPlayer.rankIdx, occupation: fallbackPlayer.occupation, debts: fallbackPlayer.debts,
   });
+  for (const character of Object.values(characters)) {
+    character.gender = normalizeGender(character.gender, character.id);
+    character.pronouns = defaultPronouns(character.gender);
+    character.attraction = character.id === 'goose' ? 'none' : character.gender === 'woman' ? 'men' : 'women';
+    character.healthConditions ??= [];
+    character.legalState ??= { status: character.healthTags?.includes('imprisoned') ? 'imprisoned' : 'free', suspicion: 0, notoriety: 0, charges: [], sentenceYearsRemaining: 0 };
+    character.secrets ??= character.secret && character.secret !== 'none' ? [{ id: `secret_${character.id}`, type: character.secret, knownByIds: [], revealed: Boolean(character.secretRevealed), severity: 35, createdYear: parsed.world?.currentYear ?? 1320 }] : [];
+    character.guardianIds ??= [];
+    character.lineageStatus ??= 'marital';
+    character.childDevelopment ??= { completedMilestones: [], education: 'none', investment: 0, favour: 0 };
+    character.factionInfluence ??= 0;
+  }
   const canonicalKin = Object.values(characters).filter((character) => character.id !== playerCharacterId);
 
   const normalized: GameState = {
     ...parsed,
-    schemaVersion: 3,
+    schemaVersion: 4,
     playerCharacterId,
     playerRun: parsed.playerRun
       ? { ...parsed.playerRun, roleProgress: { ...(parsed.playerRun.roleProgress ?? {}) } }
@@ -167,14 +201,15 @@ export function normalizeGameState(parsed: GameState): GameState {
       haptics: savedSettings.haptics ?? true,
       music: savedSettings.music ?? true,
       soundEffects: savedSettings.soundEffects ?? true,
+      reducedMotion: savedSettings.reducedMotion ?? false,
     },
-    gender: parsed.gender ?? 'unspecified',
-    pronouns: parsed.pronouns ?? defaultPronouns(parsed.gender ?? 'unspecified'),
-    attraction: parsed.attraction ?? 'any',
+    gender: fallbackGender,
+    pronouns: defaultPronouns(fallbackGender),
+    attraction: fallbackGender === 'woman' ? 'men' : 'women',
     kin: canonicalKin,
     world: {
       relationships,
-      households: parsed.world?.households ?? [{ id: 'house_player', memberIds: ['player'], wealth: parsed.gold ?? 0 }],
+      households: (parsed.world?.households ?? [{ id: 'house_player', memberIds: [playerCharacterId], wealth: parsed.gold ?? 0 }]).map((household) => ({ ...household, residenceQuality: household.residenceQuality ?? 45, capacity: household.capacity ?? Math.max(4, household.memberIds.length + 2), storedFood: household.storedFood ?? household.foodSecurity ?? 50 })),
       relationFilter: parsed.world?.relationFilter ?? 'all',
       feedFilter: parsed.world?.feedFilter ?? 'all',
       proposalFromId: parsed.world?.proposalFromId ?? null,
@@ -192,6 +227,11 @@ export function normalizeGameState(parsed: GameState): GameState {
       history: parsed.world?.history ?? [],
       pacing: parsed.world?.pacing ?? stateDefaults.pacing,
       recoveryNotice: parsed.world?.recoveryNotice ?? false,
+      contentLedger: parsed.world?.contentLedger ?? stateDefaults.contentLedger,
+      repetitionLedger: parsed.world?.repetitionLedger ?? stateDefaults.repetitionLedger,
+      recentDomains: parsed.world?.recentDomains ?? stateDefaults.recentDomains,
+      expectedChildren: parsed.world?.expectedChildren ?? stateDefaults.expectedChildren,
+      factions: parsed.world?.factions ?? stateDefaults.factions,
     },
     actionClock: {
       // Keep Premium progress above 24 while RevenueCat rechecks access. The
@@ -219,6 +259,7 @@ export function normalizeGameState(parsed: GameState): GameState {
 export async function clearSave(): Promise<void> {
   try {
     await AsyncStorage.removeItem(SAVE_KEY);
+    await AsyncStorage.removeItem(LEGACY_SAVE_KEY);
   } catch (e) {
     console.warn('[persistence] clear failed', e);
   }

@@ -13,7 +13,7 @@
 import { Choice, GameEvent, GameState, Outcome } from '@/types/game';
 import { applyEffects } from './consequenceEngine';
 import { pushFeed } from './gameState';
-import { eventById } from './eventPicker';
+import { eventById, recordEventResolution } from './eventPicker';
 import { chance } from './random';
 import { rollBonusFromTraits, grantAcquiredTraits } from './traitEngine';
 import { checkLifeGoal } from './goalEngine';
@@ -56,6 +56,7 @@ export function applyChoice(s: GameState, event: GameEvent, ch: Choice): ChoiceR
   }
 
   const outcome = resolveOutcome(ch, s);
+  recordEventResolution(s, event, ch.id ?? ch.label);
   let openNow: GameEvent | null = null;
 
   if (outcome) {

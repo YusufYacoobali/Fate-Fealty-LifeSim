@@ -43,6 +43,8 @@ import { GameAudioController } from '@/state/hooks/useGameAudio';
 import { haptic } from '@/services/haptics';
 import { WorldStatusPanel } from '@/components/WorldStatusPanel';
 import { eventById } from '@/engine/eventPicker';
+import { DailyRewardModal } from '@/components/modals/DailyRewardModal';
+import { ReturnRumourModal } from '@/components/modals/ReturnRumourModal';
 
 export function GameScreen() {
   const {
@@ -68,6 +70,12 @@ export function GameScreen() {
     premiumAccessState,
     purchasePlan,
     restorePremium,
+    dailyRewardStatus,
+    claimDailyReward,
+    dismissDailyReward,
+    returnRumour,
+    followReturnRumour,
+    dismissReturnRumour,
   } = useGame();
   const rank = currentRank(state);
   const stats = selectStats(state);
@@ -78,6 +86,28 @@ export function GameScreen() {
   const insets = useSafeAreaInsets();
   const bottomNavInset = Math.max(insets.bottom, MIN_ANDROID_BOTTOM_NAV_GUARD);
   const currentEvent = state.pendingEvent ? eventById(state.pendingEvent.eventId) : undefined;
+  const passivePromptsAllowed =
+    !state.dead &&
+    !state.pendingEvent &&
+    !state.settingsOpen &&
+    !creating &&
+    !onboardingVisible &&
+    !chronicleOpen &&
+    !cartOpen &&
+    newAchievements.length === 0;
+  // Exactly one low-priority prompt may be visible. This prevents circular
+  // "hide when the other is open" checks from leaving every prompt hidden.
+  const passivePrompt: 'daily' | 'rumour' | 'review' | 'shop' | null = !passivePromptsAllowed
+    ? null
+    : dailyRewardStatus
+      ? 'daily'
+      : returnRumour
+        ? 'rumour'
+        : reviewVisible
+          ? 'review'
+          : shopPromoVisible
+            ? 'shop'
+            : null;
 
   // Promotion/death haptics ride on engine transitions.
   useGameFeedback(state);
@@ -248,28 +278,24 @@ export function GameScreen() {
             onContinueHeir={(heirId) => dispatch({ type: 'CONTINUE_AS_HEIR', heirId })}
           />
         )}
-        {reviewVisible && !state.dead && !state.pendingEvent && !state.settingsOpen && !creating && (
-          <ReviewPrompt onResolved={resolveReview} />
+        {passivePrompt === 'review' && <ReviewPrompt onResolved={resolveReview} />}
+        {passivePrompt === 'shop' && (
+          <ShopPromoPrompt
+            messageIndex={shopPromoMessageIndex}
+            onExplore={() => {
+              haptic('light', buzz);
+              resolveShopPromo();
+              setCartOpen(true);
+            }}
+            onDismiss={resolveShopPromo}
+          />
         )}
-        {shopPromoVisible &&
-          !reviewVisible &&
-          !state.dead &&
-          !state.pendingEvent &&
-          !state.settingsOpen &&
-          !creating &&
-          !onboardingVisible &&
-          !chronicleOpen &&
-          !cartOpen && (
-            <ShopPromoPrompt
-              messageIndex={shopPromoMessageIndex}
-              onExplore={() => {
-                haptic('light', buzz);
-                resolveShopPromo();
-                setCartOpen(true);
-              }}
-              onDismiss={resolveShopPromo}
-            />
-          )}
+        {passivePrompt === 'daily' && dailyRewardStatus && (
+          <DailyRewardModal status={dailyRewardStatus} onClaim={claimDailyReward} onLater={dismissDailyReward} />
+        )}
+        {passivePrompt === 'rumour' && returnRumour && (
+          <ReturnRumourModal rumour={returnRumour} onFollow={followReturnRumour} onDismiss={dismissReturnRumour} />
+        )}
         {chronicleOpen && <ChronicleScreen progress={getProgress()} onClose={() => setChronicleOpen(false)} />}
         {cartOpen && (
           <PremiumShopScreen

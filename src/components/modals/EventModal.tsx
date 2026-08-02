@@ -66,6 +66,14 @@ export function EventModal({ state, event, onChoose }: Props) {
                     {c.hint}
                   </PixelText>
                 ) : null}
+                {c.forecast && <View style={{ marginTop: 5, gap: 2 }}>
+                  <PixelText font="body" size={13} color={c.forecast.risk === 'high' ? C.bad : c.forecast.risk === 'medium' ? C.amber : C.good}>
+                    Risk: {c.forecast.risk} · Advantage: {c.forecast.positive.join(', ')}
+                  </PixelText>
+                  <PixelText font="body" size={12} color={C.textMuted}>
+                    Cost: {c.forecast.negative.join(', ')}{c.forecast.warnsDelayedConsequence ? ' · This may return in later years.' : ''}
+                  </PixelText>
+                </View>}
               </PixelButton>
             );
           })}

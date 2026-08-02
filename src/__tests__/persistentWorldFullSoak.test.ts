@@ -7,6 +7,7 @@ import { spawnKin } from '@/engine/kinFactory';
 import { worldIntegrityIssues } from '@/engine/worldIntegrity';
 import { PERSISTENT_STORY_TEMPLATES, STORY_TEMPLATE_BY_ID } from '@/content/persistentStories';
 import { applyChoice } from '@/engine/storyGraph';
+import { runWithWorldRng } from '@/engine/random';
 import { Difficulty, GameState, LifeRole } from '@/types/game';
 
 const FULL = process.env.MLS_FULL_SOAK === '1';
@@ -27,7 +28,7 @@ function resolvePending(state: GameState): GameState {
   return state;
 }
 
-function assertBounds(state: GameState): void {
+function assertBounds(state: GameState, context = 'soak world'): void {
   for (const value of Object.values(state.stats)) expect(value).toBeGreaterThanOrEqual(0);
   for (const value of Object.values(state.stats)) expect(value).toBeLessThanOrEqual(100);
   for (const value of Object.values(state.world.conditions)) expect(value).toBeGreaterThanOrEqual(0);
@@ -37,7 +38,8 @@ function assertBounds(state: GameState): void {
   const livingPopulation = Object.values(state.world.characters).filter((character) => character.alive).length;
   expect(livingPopulation).toBeGreaterThanOrEqual(30);
   expect(livingPopulation).toBeLessThanOrEqual(60);
-  expect(worldIntegrityIssues(state)).toEqual([]);
+  const integrity = worldIntegrityIssues(state);
+  if (integrity.length) throw new Error(`${context}: ${integrity.join('; ')}`);
 }
 
 function configureRole(state: GameState, role: LifeRole): void {
@@ -59,7 +61,7 @@ function runLife(seed: number, difficulty: Difficulty, role?: LifeRole): GameSta
     if (!state.dead && !state.pendingEvent) state = gameReducer(state, { type: 'AGE_UP' });
   }
   state = resolvePending(state);
-  assertBounds(state);
+  assertBounds(state, `seed ${seed}, difficulty ${difficulty}, role ${role ?? 'natural'}`);
   expect(state.dead).toBe(true);
   return state;
 }
@@ -102,29 +104,48 @@ describe('persistent-world full soak matrix', () => {
     }
   });
 
-  it('covers every flagship route and ending with fixed seeds', () => {
-    const flagships = PERSISTENT_STORY_TEMPLATES.filter((template) => template.scale === 'major');
-    for (const [templateIndex, template] of flagships.entries()) {
-      const prefix = { rivals_rise: 'rival', lean_harvest: 'harvest', disputed_inheritance: 'inheritance', war_swineford: 'war', ambitious_child: 'child' }[template.id]!;
-      for (const route of ['bold', 'cautious', 'family'] as const) {
-        for (const resolution of ['reconcile', 'hardline'] as const) {
-          const state = createLife({ worldSeed: 90_000 + templateIndex * 100 + route.length + resolution.length });
-          const roleIds = Object.keys(template.roles);
-          const actors = Object.values(state.world.characters).filter((character) => character.id !== state.playerCharacterId);
-          const bindings = Object.fromEntries(roleIds.map((role, index) => [role, actors[index].id]));
-          const story = { id: `soak_${template.id}_${route}_${resolution}`, templateId: template.id, scale: 'major' as const, status: 'active' as const, bindings, variables: {}, currentBeatId: 'beat_3', startedYear: 1320, nextEligibleYear: 1320, lastBeatYear: 1319, generationStarted: 1 };
-          state.world.activeStories.push(story);
-          state.pendingEvent = { eventId: `story_${prefix}_3`, storyInstanceId: story.id, bindings };
-          const routeEvent = eventById(state.pendingEvent.eventId)!;
-          applyChoice(state, routeEvent, routeEvent.choices.find((choice) => choice.id === route)!);
-          expect(story.currentBeatId).toBe(`beat_4_${route}`);
-          story.currentBeatId = 'beat_5';
-          state.pendingEvent = { eventId: `story_${prefix}_5`, storyInstanceId: story.id, bindings };
-          const endingEvent = eventById(state.pendingEvent.eventId)!;
-          applyChoice(state, endingEvent, endingEvent.choices.find((choice) => choice.id === resolution)!);
-          expect(story.currentBeatId).toBe(resolution === 'reconcile' ? 'beat_6_reconciled' : 'beat_6_hard');
-          expect(STORY_TEMPLATE_BY_ID[template.id].beats[story.currentBeatId]).toBeDefined();
+  it('covers every persistent story route and ending with fixed seeds', () => {
+    for (const [templateIndex, template] of PERSISTENT_STORY_TEMPLATES.entries()) {
+      const makeStoryAt = (beatId: string, routeIndex: number) => {
+        const state = createLife({ worldSeed: 90_000 + templateIndex * 100 + routeIndex });
+        state.lifetimeUnlocked = true;
+        const actors = Object.values(state.world.characters).filter((character) => character.id !== state.playerCharacterId);
+        const bindings = Object.fromEntries(Object.keys(template.roles).map((role, index) => [role, actors[index % actors.length].id]));
+        const story = { id: `soak_${template.id}_${beatId}_${routeIndex}`, templateId: template.id, scale: template.scale, status: 'active' as const, bindings, variables: {}, currentBeatId: beatId, startedYear: state.world.currentYear, nextEligibleYear: state.world.currentYear, lastBeatYear: state.world.currentYear - 1, generationStarted: 1 };
+        state.world.activeStories.push(story);
+        const event = eventById(template.beats[beatId].eventId)!;
+        state.pendingEvent = { eventId: event.id, storyInstanceId: story.id, bindings };
+        return { state, story, event };
+      };
+
+      for (const beat of Object.values(template.beats).filter((candidate) => candidate.transitions?.length)) {
+        for (const [routeIndex, transition] of beat.transitions!.entries()) {
+          const { state, story, event } = makeStoryAt(beat.id, routeIndex);
+          const choice = event.choices.find((candidate) => {
+            const value = candidate.outcome?.effects?.storyVariables?.[transition.when.variable];
+            return transition.when.truthy ? Boolean(value) : value === transition.when.equals;
+          });
+          expect(choice).toBeDefined();
+          runWithWorldRng(state.world, () => applyChoice(state, event, choice!));
+          expect(story.currentBeatId).toBe(transition.beatId);
         }
+        if (beat.nextBeatId) {
+          const { state, story, event } = makeStoryAt(beat.id, 50);
+          const fallback = event.choices.find((candidate) => !(beat.transitions ?? []).some((transition) => {
+            const value = candidate.outcome?.effects?.storyVariables?.[transition.when.variable];
+            return transition.when.truthy ? Boolean(value) : value === transition.when.equals;
+          }));
+          expect(fallback).toBeDefined();
+          runWithWorldRng(state.world, () => applyChoice(state, event, fallback!));
+          expect(story.currentBeatId).toBe(beat.nextBeatId);
+        }
+      }
+
+      for (const [endingIndex, ending] of Object.values(template.beats).filter((beat) => beat.endsStory).entries()) {
+        const { state, story, event } = makeStoryAt(ending.id, 70 + endingIndex);
+        runWithWorldRng(state.world, () => applyChoice(state, event, event.choices[0]));
+        expect(story.status).toBe('completed');
+        expect(STORY_TEMPLATE_BY_ID[template.id].beats[ending.id]).toBeDefined();
       }
     }
   });

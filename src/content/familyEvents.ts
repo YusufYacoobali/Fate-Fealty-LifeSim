@@ -29,6 +29,7 @@ export const FAMILY_EVENTS: GameEvent[] = [
     weight: 2,
     choices: [
       { label: 'Welcome the child with joy', outcome: { text: 'A healthy babe joins your household — your line continues. You weep, then panic about feeding it.', effects: { health: 2, charm: 2, faith: 4, addTags: ['has_heir'], addKin: { kind: 'child', isHeir: true, role: 'Thine Heir' }, memory: { tag: 'became_parent', weight: 3 } }, tone: 'good' } },
+      { label: 'Welcome the child quietly', outcome: { text: 'You keep the first days close to the household, making promises before making announcements.', effects: { faith: 2, addTags: ['has_heir'], addKin: { kind: 'child', isHeir: true, role: 'Thine Heir' }, memory: { tag: 'private_welcome', weight: 3 } }, tone: 'plain' } },
     ],
   },
   {

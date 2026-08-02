@@ -40,6 +40,22 @@ export const ACTIVITY_DEFS: ActivityDef[] = [
   { id: 'royal_audience', cat: 'leisure', name: 'AUDIENCE', icon: '⚜️', iconBg: C.charm, desc: 'Shape legitimacy', minAge: 18, roles: ['monarch'] },
   { id: 'plan_heist', cat: 'crime', name: 'PLAN HEIST', icon: '🗝️', iconBg: C.health, desc: 'Prepare a rich theft', minAge: 16, roles: ['outlaw'] },
   { id: 'rally_gang', cat: 'crime', name: 'RALLY GANG', icon: '🗡️', iconBg: C.purple, desc: 'Secure outlaw loyalty', minAge: 16, roles: ['outlaw'] },
+  { id: 'teach_child', cat: 'leisure', name: 'TEACH CHILD', icon: '📖', iconBg: C.light, desc: 'Shape a young mind', minAge: 18 },
+  { id: 'arrange_gathering', cat: 'leisure', name: 'GATHERING', icon: '🕯️', iconBg: C.charm, desc: 'Bring households together', minAge: 16 },
+  { id: 'care_relative', cat: 'health', name: 'FAMILY CARE', icon: '🤲', iconBg: C.teal, desc: 'Nurse an ailing relative', minAge: 10 },
+  { id: 'rest', cat: 'health', name: 'REST', icon: '🛏️', iconBg: C.light, desc: 'Recover in quiet', minAge: 4 },
+  { id: 'treat_patient', cat: 'health', name: 'TREAT PATIENT', icon: '🌿', iconBg: C.faith, desc: 'Practice healing', minAge: 14 },
+  { id: 'fence_goods', cat: 'crime', name: 'FENCE GOODS', icon: '🪙', iconBg: C.health, desc: 'Sell questionable wares', minAge: 14 },
+  { id: 'bribe_official', cat: 'crime', name: 'BRIBE', icon: '🤝', iconBg: C.charm, desc: 'Purchase official doubt', minAge: 16 },
+  { id: 'scout_target', cat: 'crime', name: 'SCOUT TARGET', icon: '👁️', iconBg: C.purple, desc: 'Prepare before acting', minAge: 12 },
+  { id: 'study_trade', cat: 'work', name: 'STUDY TRADE', icon: '📚', iconBg: C.light, desc: 'Improve professional skill', minAge: 10 },
+  { id: 'seek_patron', cat: 'work', name: 'SEEK PATRON', icon: '🏛️', iconBg: C.charm, desc: 'Find influential support', minAge: 16 },
+  { id: 'run_caravan', cat: 'work', name: 'CARAVAN', icon: '🐴', iconBg: C.amber, desc: 'Risk coin on the road', minAge: 16 },
+  { id: 'preach_sermon', cat: 'faith', name: 'PREACH', icon: '⛪', iconBg: C.faith, desc: 'Move the parish', minAge: 16 },
+  { id: 'gather_intelligence', cat: 'leisure', name: 'INTELLIGENCE', icon: '🪶', iconBg: C.purple, desc: 'Learn what power hides', minAge: 16 },
+  { id: 'negotiate_levy', cat: 'martial', name: 'NEGOTIATE LEVY', icon: '📜', iconBg: C.health, desc: 'Reduce the war burden', minAge: 18 },
+  { id: 'repair_household', cat: 'work', name: 'REPAIR HOME', icon: '🔨', iconBg: C.amber, desc: 'Strengthen thy roof', minAge: 12 },
+  { id: 'manage_stores', cat: 'work', name: 'MANAGE STORES', icon: '🌾', iconBg: C.faith, desc: 'Protect household food', minAge: 10 },
 ];
 
 export interface CatDef {

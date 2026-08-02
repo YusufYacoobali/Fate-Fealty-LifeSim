@@ -25,6 +25,7 @@ describe('settings persistence', () => {
       haptics: false,
       music: true,
       soundEffects: true,
+      reducedMotion: false,
     });
   });
 

@@ -31,6 +31,12 @@ const ACTION_META: Record<KinAction, { label: string; hint: string; bg: string; 
   time: { label: 'SPEND TIME', hint: 'affinity + trust', bg: C.faith, sd: C.faithDark },
   praise: { label: 'PRAISE', hint: 'respect + affinity', bg: C.light, sd: C.blue },
   help: { label: 'OFFER HELP', hint: 'strong trust gain', bg: C.teal, sd: C.tealDark },
+  confide: { label: 'CONFIDE', hint: 'share a secret · trust', bg: C.teal, sd: C.tealDark },
+  forgive: { label: 'FORGIVE', hint: 'release an old hurt', bg: C.faith, sd: C.faithDark },
+  educate_child: { label: 'TEACH CHILD', hint: 'shape learning + ambition', bg: C.light, sd: C.blue },
+  arrange_marriage: { label: 'ARRANGE MATCH', hint: 'join two households', bg: C.charm, sd: C.charmDark },
+  care_for_relative: { label: 'GIVE CARE', hint: 'health + lasting trust', bg: C.faith, sd: C.faithDark },
+  expose_secret: { label: 'EXPOSE SECRET', hint: 'truth with consequences', bg: C.health, sd: C.healthDark },
   gift: { label: 'GIVE GIFT', hint: '5g · affinity', bg: C.charm, sd: C.charmDark },
   favour: { label: 'ASK FAVOUR', hint: 'borrow coin', bg: C.teal, sd: C.tealDark },
   apologize: { label: 'APOLOGIZE', hint: 'repair trust', bg: C.light, sd: C.blue },
@@ -46,6 +52,7 @@ const ACTION_META: Record<KinAction, { label: string; hint: string; bg: string; 
 };
 
 export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, onInteract }: Props) {
+  const [treeOpen, setTreeOpen] = React.useState(false);
   if (detail) {
     const relation = relationshipWith(state, detail.id);
     const views = perspectives(state, relation);
@@ -80,6 +87,10 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
           <PixelText font="body" size={16} color={C.textBrown} style={{ marginTop: 5 }}>{detail.bio}</PixelText>
           {!!detail.personalityTraits?.length && <PixelText font="body" size={14} color={C.textMuted} style={{ marginTop: 5 }}>Nature: {detail.personalityTraits.join(', ')}</PixelText>}
           {detail.ambition && <PixelText font="body" size={14} color={C.textMuted}>Ambition: {detail.ambition.replaceAll('_', ' ')}</PixelText>}
+          <PixelText font="body" size={14} color={C.textMuted}>Health: {detail.healthConditions?.length ? detail.healthConditions.map((condition) => `${condition.conditionId.replaceAll('_', ' ')} (${condition.severity})`).join(', ') : 'No known condition'}</PixelText>
+          <PixelText font="body" size={14} color={C.textMuted}>Legal: {detail.legalState?.status?.replaceAll('_', ' ') ?? 'free'}{detail.legalState?.charges.some((charge) => !charge.resolved) ? ` · ${detail.legalState.charges.filter((charge) => !charge.resolved).length} open charge(s)` : ''}</PixelText>
+          <PixelText font="body" size={14} color={C.textMuted}>Faction: {detail.factionId?.replaceAll('_', ' ') ?? 'unaligned'} · Lineage: {detail.lineageStatus ?? 'marital'}</PixelText>
+          {!!detail.guardianIds?.length && <PixelText font="body" size={14} color={C.textMuted}>Guardians: {detail.guardianIds.map((id) => state.world.characters[id]?.name).filter(Boolean).join(', ')}</PixelText>}
           <PixelText font="body" size={14} color={C.textMuted}>Secret: {detail.secretRevealed ? detail.secret?.replaceAll('_', ' ') : 'Unknown'}</PixelText>
           {!!detail.parentIds?.length && <PixelText font="body" size={14} color={C.textMuted}>Parents: {detail.parentIds.map((id) => state.world.characters[id]?.name).filter(Boolean).join(', ')}</PixelText>}
           {!!detail.childIds?.length && <PixelText font="body" size={14} color={C.textMuted}>Children: {detail.childIds.map((id) => state.world.characters[id]?.name).filter(Boolean).join(', ')}</PixelText>}
@@ -111,9 +122,15 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
         </PixelButton>)}
       </ScrollView>
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 11, paddingBottom: 12, gap: 8 }}>
-        <PixelText font="pixel" size={8} color={C.blueDeep}>♥ PEOPLE & RELATIONSHIPS</PixelText>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+          <PixelText font="pixel" size={8} color={C.blueDeep}>♥ PEOPLE & RELATIONSHIPS</PixelText>
+          <PixelButton bg={treeOpen ? C.faith : C.light} shadow={treeOpen ? C.faithDark : C.blue} onPress={() => setTreeOpen((open) => !open)} innerStyle={{ paddingHorizontal: 7, paddingVertical: 5 }}>
+            <PixelText font="pixel" size={5} color={C.blueDark}>{treeOpen ? 'LIST' : 'FAMILY TREE'}</PixelText>
+          </PixelButton>
+        </View>
+        {treeOpen && <FamilyTree state={state} />}
         {!kin.length && <PixelText font="body" size={17} color={C.textMuted}>No one is recorded in this part of thy life.</PixelText>}
-        {kin.map((person) => <PixelButton key={person.id} bg={C.parch} shadow={C.parchSd} light={C.parchSl} outline={C.parchBorder} onPress={() => onOpen(person.id)} innerStyle={{ paddingHorizontal: 9, paddingVertical: 8 }}>
+        {!treeOpen && kin.map((person) => <PixelButton key={person.id} bg={C.parch} shadow={C.parchSd} light={C.parchSl} outline={C.parchBorder} onPress={() => onOpen(person.id)} innerStyle={{ paddingHorizontal: 9, paddingVertical: 8 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 9 }}>
             <KinIcon kin={person} size={32} fallbackSize={19} />
             <View style={{ flex: 1 }}><PixelText font="body" size={18} color={C.textDark}>{person.name}</PixelText><PixelText font="body" size={13} color={C.textMuted}>{person.alive ? person.role : `${person.role} · deceased`}</PixelText></View>
@@ -123,6 +140,30 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
       </ScrollView>
     </View>
   );
+}
+
+function FamilyTree({ state }: { state: GameState }) {
+  const player = state.world.characters[state.playerCharacterId];
+  const parents = (player?.parentIds ?? []).map((id) => state.world.characters[id]).filter(Boolean);
+  const siblings = Object.values(state.world.characters).filter((character) => character.id !== player?.id && character.parentIds?.some((id) => player?.parentIds?.includes(id)));
+  const children = (player?.childIds ?? []).map((id) => state.world.characters[id]).filter(Boolean);
+  const grandchildren = children.flatMap((child) => (child.childIds ?? []).map((id) => state.world.characters[id]).filter(Boolean));
+  const generations = [
+    { title: 'PARENTS', people: parents },
+    { title: 'THY GENERATION', people: [player, ...siblings].filter(Boolean) },
+    { title: 'CHILDREN', people: children },
+    { title: 'GRANDCHILDREN', people: grandchildren },
+  ];
+  return <ScrollView horizontal showsHorizontalScrollIndicator contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
+    {generations.map((generation) => <View key={generation.title} style={{ width: 150, ...PANEL.parchCard }}>
+      <PixelText font="pixel" size={6} color={C.amber}>{generation.title}</PixelText>
+      {!generation.people.length && <PixelText font="body" size={13} color={C.textMuted} style={{ marginTop: 6 }}>No recorded kin</PixelText>}
+      {generation.people.map((person) => <View key={person.id} style={{ borderTopWidth: 1, borderTopColor: C.parchSd, marginTop: 6, paddingTop: 5 }}>
+        <PixelText font="body" size={15} color={person.id === state.playerCharacterId ? C.blueDeep : C.textDark}>{person.name}</PixelText>
+        <PixelText font="body" size={12} color={C.textMuted}>{person.alive ? `${person.age} winters` : `died ${person.deathYear ?? ''}`} · {person.lineageStatus ?? 'marital'}</PixelText>
+      </View>)}
+    </View>)}
+  </ScrollView>;
 }
 
 function Dimension({ label, value }: { label: string; value: number }) {

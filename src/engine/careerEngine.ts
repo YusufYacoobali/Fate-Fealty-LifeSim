@@ -67,7 +67,7 @@ export function performCareerAction(state: GameState, action: CareerAction, care
   switch (action) {
     case 'apply': {
       const career = careerById(careerId ?? null)!;
-      state.occupation = { careerId: career.id, experience: 0, performance: 50, workedThisYear: 0 };
+      state.occupation = { careerId: career.id, experience: 0, performance: 50, workedThisYear: 0, apprenticeshipYears: career.tier === 0 ? 0 : undefined, guildStanding: ['craft', 'trade', 'medicine', 'entertainment', 'law'].includes(career.family) ? 5 : 0 };
       addTag(state, 'gainfully_employed');
       addTag(state, `career_family_${career.family}`);
       pushFeed(state, 'NEW OCCUPATION', C.good, `You take work as ${career.title}. ${career.desc}`, 'good');
@@ -75,11 +75,17 @@ export function performCareerAction(state: GameState, action: CareerAction, care
     }
     case 'work': {
       const career = current!;
-      const pay = career.wage + rnd(0, Math.max(1, career.tier + 1));
+      const prosperityFactor = 0.75 + state.world.conditions.prosperity / 200;
+      const guildFactor = ['craft', 'trade', 'medicine', 'entertainment', 'law'].includes(career.family) ? 1 + state.world.factions.guilds.playerStanding / 500 : 1;
+      const patronFactor = state.tags.includes('has_patron') ? 1.08 : 1;
+      const pay = Math.max(1, Math.round((career.wage + rnd(0, Math.max(1, career.tier + 1))) * prosperityFactor * guildFactor * patronFactor));
       addMoney(state, pay);
       state.occupation.experience += 5 + career.tier;
-      state.occupation.performance = Math.min(100, state.occupation.performance + rnd(1, 4));
+      const illnessPenalty = Math.min(4, state.world.characters[state.playerCharacterId]?.healthConditions?.length ?? 0);
+      state.occupation.performance = Math.min(100, state.occupation.performance + rnd(1, 4) - illnessPenalty);
       state.occupation.workedThisYear += 1;
+      if (career.tier === 0) state.occupation.apprenticeshipYears = (state.occupation.apprenticeshipYears ?? 0) + 1;
+      if (['craft', 'trade', 'medicine', 'entertainment', 'law'].includes(career.family)) state.occupation.guildStanding = Math.min(100, (state.occupation.guildStanding ?? 0) + 1);
       if (career.healthRisk) applyEffects(state, { health: -career.healthRisk });
       pushFeed(state, 'WORK', C.good, `${pickNarrative(state, 'career_work', WORK_LINES)} ${career.title} wages: ${pay}g.`, 'good');
       break;
@@ -92,7 +98,7 @@ export function performCareerAction(state: GameState, action: CareerAction, care
       break;
     case 'promote': {
       const next = careerById(current!.promotesTo!)!;
-      state.occupation = { careerId: next.id, experience: 10, performance: 55, workedThisYear: 0 };
+      state.occupation = { careerId: next.id, experience: 10, performance: 55, workedThisYear: 0, guildStanding: Math.min(100, (state.occupation.guildStanding ?? 0) + 10), patronId: state.occupation.patronId };
       addTag(state, `career_${next.id}`);
       pushFeed(state, 'CAREER RISE', C.purpleDark, `Your work is recognized. You are now ${next.title}.`, 'good');
       break;
@@ -180,7 +186,7 @@ export function tickCareerAndEconomy(state: GameState): GameState {
       pushFeed(state, 'WORK', C.bad, `You neglected your duties as ${current.title}. Your employer has noticed.`, 'bad');
       if (state.occupation.performance < 20 && chance(0.55)) {
         pushFeed(state, 'DISMISSED', C.bad, `You are dismissed from your post as ${current.title}. Even the door seems eager to see you out.`, 'bad');
-        state.occupation = { careerId: null, experience: 0, performance: 50, workedThisYear: 0 };
+        state.occupation = { careerId: null, experience: 0, performance: 50, workedThisYear: 0, dismissedYear: state.world.currentYear };
       }
     } else {
       state.occupation.performance = Math.min(100, state.occupation.performance + Math.min(8, state.occupation.workedThisYear));

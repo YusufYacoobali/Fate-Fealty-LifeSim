@@ -58,6 +58,7 @@ export interface StoryTemplate {
   beats: Record<string, PersistentStoryBeat>;
   cooldownYears: number;
   recovery: StoryRecovery;
+  premium?: boolean;
 }
 
 function flagshipStory(
@@ -107,7 +108,10 @@ function roleStory(role: LifeRole): StoryTemplate {
     beats: {
       beat_1: { id: 'beat_1', eventId: `story_${id}_1`, minDelay: 0, maxDelay: 0, nextBeatId: 'beat_2', importance: 'important' },
       beat_2: { id: 'beat_2', eventId: `story_${id}_2`, minDelay: 1, maxDelay: 3, nextBeatId: 'beat_3', importance: 'important' },
-      beat_3: { id: 'beat_3', eventId: `story_${id}_3`, minDelay: 1, maxDelay: 3, importance: 'important', endsStory: true },
+      beat_3: { id: 'beat_3', eventId: `story_${id}_3`, minDelay: 1, maxDelay: 3, nextBeatId: 'beat_4', importance: 'important' },
+      beat_4: { id: 'beat_4', eventId: `story_${id}_4`, minDelay: 1, maxDelay: 3, nextBeatId: 'beat_5_ambition', transitions: [{ beatId: 'beat_5_duty', when: { variable: 'resolution', equals: 'duty' } }], importance: 'important' },
+      beat_5_duty: { id: 'beat_5_duty', eventId: `story_${id}_5_duty`, minDelay: 2, maxDelay: 4, importance: 'important', endsStory: true },
+      beat_5_ambition: { id: 'beat_5_ambition', eventId: `story_${id}_5_ambition`, minDelay: 2, maxDelay: 4, importance: 'important', endsStory: true },
     },
     cooldownYears: 12,
     recovery: { recoveryBeatId: 'beat_3' },
@@ -124,7 +128,10 @@ function relationshipStory(id: string, kinds: string[]): StoryTemplate {
     beats: {
       beat_1: { id: 'beat_1', eventId: `story_${id}_1`, minDelay: 0, maxDelay: 0, nextBeatId: 'beat_2', importance: 'important' },
       beat_2: { id: 'beat_2', eventId: `story_${id}_2`, minDelay: 1, maxDelay: 3, nextBeatId: 'beat_3', importance: 'important' },
-      beat_3: { id: 'beat_3', eventId: `story_${id}_3`, minDelay: 1, maxDelay: 4, importance: 'important', endsStory: true },
+      beat_3: { id: 'beat_3', eventId: `story_${id}_3`, minDelay: 1, maxDelay: 4, nextBeatId: 'beat_4', importance: 'important' },
+      beat_4: { id: 'beat_4', eventId: `story_${id}_4`, minDelay: 1, maxDelay: 3, nextBeatId: 'beat_5_break', transitions: [{ beatId: 'beat_5_mend', when: { variable: 'resolution', equals: 'mend' } }], importance: 'important' },
+      beat_5_mend: { id: 'beat_5_mend', eventId: `story_${id}_5_mend`, minDelay: 2, maxDelay: 4, importance: 'important', endsStory: true },
+      beat_5_break: { id: 'beat_5_break', eventId: `story_${id}_5_break`, minDelay: 2, maxDelay: 4, importance: 'important', endsStory: true },
     },
     cooldownYears: 10,
     recovery: { recoveryBeatId: 'beat_3' },
@@ -141,6 +148,36 @@ const RELATIONSHIP_STORY_TEMPLATES = [
   relationshipStory('friendship_test', ['friend']),
   relationshipStory('rival_reckoning', ['foe']),
   relationshipStory('marriage_strain', ['spouse']),
+  relationshipStory('blood_between_siblings', ['sibling']),
+  relationshipStory('parent_and_child', ['mother', 'father', 'child']),
+  relationshipStory('hidden_affair', ['spouse']),
+];
+
+function domainStory(id: string, scale: 'major' | 'medium', eligibility: StoryEligibility, premium = false): StoryTemplate {
+  const roles = { other: { selector: { excludePlayer: true, minAge: 16, alive: true }, missingActor: substituteAdult } };
+  const beats: Record<string, PersistentStoryBeat> = {
+    beat_1: { id: 'beat_1', eventId: `story_${id}_1`, minDelay: 0, maxDelay: 0, nextBeatId: 'beat_2', importance: scale === 'major' ? 'major' : 'important' },
+    beat_2: { id: 'beat_2', eventId: `story_${id}_2`, minDelay: 1, maxDelay: 3, nextBeatId: 'beat_3', importance: 'important' },
+    beat_3: { id: 'beat_3', eventId: `story_${id}_3`, minDelay: 1, maxDelay: 3, nextBeatId: 'beat_4', importance: 'important' },
+    beat_4: { id: 'beat_4', eventId: `story_${id}_4`, minDelay: 1, maxDelay: 3, nextBeatId: 'beat_5_hard', transitions: [{ beatId: 'beat_5_reconciled', when: { variable: 'resolution', equals: 'reconcile' } }], importance: scale === 'major' ? 'major' : 'important' },
+    beat_5_reconciled: { id: 'beat_5_reconciled', eventId: `story_${id}_5_reconciled`, minDelay: 2, maxDelay: 4, importance: scale === 'major' ? 'major' : 'important', endsStory: true },
+    beat_5_hard: { id: 'beat_5_hard', eventId: `story_${id}_5_hard`, minDelay: 2, maxDelay: 4, importance: scale === 'major' ? 'major' : 'important', endsStory: true },
+  };
+  return { id, scale, eligibility, roles, initialBeatId: 'beat_1', beats, cooldownYears: scale === 'major' ? 30 : 14, recovery: { recoveryBeatId: 'beat_5_hard' }, premium };
+}
+
+const EXPANSION_STORY_TEMPLATES: StoryTemplate[] = [
+  domainStory('pestilence_year', 'major', { type: 'condition', condition: 'diseasePressure', atLeast: 48, minAge: 8 }),
+  domainStory('charter_swineford', 'major', { type: 'condition', condition: 'prosperity', atLeast: 55, minAge: 16 }),
+  domainStory('empty_throne', 'major', { type: 'condition', condition: 'publicOrder', atMost: 48, minAge: 18 }),
+  domainStory('the_accused', 'medium', { type: 'role', roles: ['commoner', 'artisan_merchant', 'outlaw'], minAge: 14 }),
+  domainStory('healers_burden', 'medium', { type: 'condition', condition: 'diseasePressure', atLeast: 38, minAge: 14 }),
+  domainStory('ashes_household', 'medium', { type: 'family_size', minimum: 2, minAge: 12 }),
+  domainStory('divided_parish', 'medium', { type: 'condition', condition: 'religiousTension', atLeast: 48, minAge: 14 }),
+  domainStory('guild_election', 'medium', { type: 'role', roles: ['artisan_merchant'], minAge: 18 }),
+  domainStory('royal_bastard', 'medium', { type: 'age', min: 18 }, true),
+  domainStory('relic_hunter', 'medium', { type: 'age', min: 16 }, true),
+  domainStory('secret_brotherhood', 'medium', { type: 'age', min: 18 }, true),
 ];
 
 export const PERSISTENT_STORY_TEMPLATES: StoryTemplate[] = [
@@ -153,7 +190,7 @@ export const PERSISTENT_STORY_TEMPLATES: StoryTemplate[] = [
     reeve: { selector: { excludePlayer: true, minAge: 21, alive: true }, missingActor: substituteAdult },
   }),
   flagshipStory('disputed_inheritance', 'story_inheritance', { type: 'family_size', minimum: 3, minAge: 18 }, {
-    claimant: { selector: { excludePlayer: true, minAge: 16, alive: true }, missingActor: { type: 'branch', beatId: 'beat_6' } },
+    claimant: { selector: { excludePlayer: true, minAge: 16, alive: true }, missingActor: { type: 'branch', beatId: 'beat_6_hard' } },
     witness: { selector: { excludePlayer: true, minAge: 18, alive: true }, missingActor: substituteAdult },
   }),
   flagshipStory('war_swineford', 'story_war', { type: 'condition', condition: 'warThreat', atLeast: 42, minAge: 14 }, {
@@ -166,6 +203,7 @@ export const PERSISTENT_STORY_TEMPLATES: StoryTemplate[] = [
   }),
   ...ROLE_STORY_TEMPLATES,
   ...RELATIONSHIP_STORY_TEMPLATES,
+  ...EXPANSION_STORY_TEMPLATES,
 ];
 
 export const STORY_TEMPLATE_BY_ID = Object.fromEntries(PERSISTENT_STORY_TEMPLATES.map((template) => [template.id, template]));
@@ -214,5 +252,6 @@ export function deriveLifeRole(state: GameState): LifeRole {
   if (['acolyte', 'cleric', 'prior'].includes(career)) return 'clergy';
   if (['levy', 'guard', 'marshal'].includes(career) || state.rankIdx >= 1) return 'martial';
   if (['apprentice', 'artisan', 'master_artisan', 'hawker', 'trader', 'merchant'].includes(career)) return 'artisan_merchant';
+  if (['herb_gatherer', 'barber_surgeon', 'physician', 'copyist', 'advocate', 'justice'].includes(career)) return 'artisan_merchant';
   return 'commoner';
 }

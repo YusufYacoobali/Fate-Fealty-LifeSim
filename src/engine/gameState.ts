@@ -45,6 +45,7 @@ export const DEFAULT_SETTINGS: GameSettings = {
   haptics: true,
   music: true,
   soundEffects: true,
+  reducedMotion: false,
 };
 
 function emptyPaths(): PathProgress {
@@ -60,13 +61,13 @@ function person(
   rel: number,
   trait: string,
   careerId: string | null,
-  gender: GenderIdentity = 'unspecified',
+  gender: GenderIdentity = 'man',
   emoji = '🧑',
 ): KinMember {
   return {
     id, name, kind, role, age, rel, trait, emoji, alive: true,
     bio: `${name} is ${trait.toLowerCase()}, with a life and ambitions beyond your own.`,
-    gender, pronouns: defaultPronouns(gender), attraction: 'any',
+    gender, pronouns: defaultPronouns(gender), attraction: gender === 'woman' ? 'men' : 'women',
     stats: { health: rnd(48, 92), charm: rnd(25, 78), wits: rnd(25, 78), faith: rnd(15, 75) },
     traits: [trait], gold: rnd(2, 35), rankIdx: kind === 'liege' ? 3 : kind === 'foe' ? 2 : 0,
     occupation: { careerId, experience: rnd(0, 55), performance: rnd(40, 78), workedThisYear: 0 },
@@ -78,7 +79,7 @@ function startingKin(): KinMember[] {
   const cast: KinMember[] = [
     { ...person('mother', 'Maud', 'mother', 'Thy Mother', 44, 72, 'Stern but loving', 'tenant_farmer', 'woman', '👩‍🌾'), bio: 'Raised you on turnips and tough love. Bakes a rye loaf that could fell an ox.' },
     { ...person('father', 'Old Cedric', 'father', 'Thy Father', 51, 55, 'Perpetually weary', 'farmhand', 'man', '👨‍🌾'), bio: 'A turnip farmer of forty years. Speaks mostly in grunts and weather complaints.' },
-    { ...person('goose', 'Sir Quackbeard', 'friend', 'Goose & Best Friend', 3, 95, 'Fiercely loyal', null, 'unspecified', '🪿'), attraction: 'none', bio: 'A goose of uncommon dignity. Has bitten three tax collectors and a bishop.' },
+    { ...person('goose', 'Sir Quackbeard', 'friend', 'Goose & Best Friend', 3, 95, 'Fiercely loyal', null, 'man', '🪿'), attraction: 'none', bio: 'A goose of uncommon dignity. Has bitten three tax collectors and a bishop.' },
     { ...person('roderick', 'Sir Roderick', 'foe', 'The Apple Thief', 29, 8, 'Insufferably smug', 'guard', 'man', '⚔️'), bio: 'A knight who once called you peasant scum and stole your apple. You have not forgotten.' },
     person('elswyth', 'Elswyth', 'acquaintance', 'A Distant Cousin', 12, 63, 'Competitive', 'apprentice', 'woman', '🧑‍🌾'),
     person('tomas', 'Tomas', 'acquaintance', 'Miller’s Child', 10, 58, 'Quick to laugh', 'farmhand', 'man'),
@@ -87,11 +88,11 @@ function startingKin(): KinMember[] {
     person('edwin', 'Edwin', 'acquaintance', 'Smith’s Apprentice', 19, 48, 'Earnest', 'apprentice', 'man', '🔨'),
     person('merek', 'Merek', 'acquaintance', 'Market Hawker', 24, 45, 'Silver-tongued', 'hawker', 'man', '🧺'),
     person('joan', 'Joan', 'acquaintance', 'Village Guard', 27, 52, 'Resolute', 'guard', 'woman', '🛡️'),
-    person('rowan', 'Rowan', 'acquaintance', 'Travelling Clerk', 22, 50, 'Bookish', 'clerk', 'nonbinary', '🪶'),
+    person('rowan', 'Rowan', 'acquaintance', 'Travelling Clerk', 22, 50, 'Bookish', 'clerk', 'man', '🪶'),
     person('beatrice', 'Beatrice', 'acquaintance', 'Guild Trader', 31, 46, 'Shrewd', 'trader', 'woman', '⚖️'),
     person('oswin', 'Brother Oswin', 'acquaintance', 'Parish Cleric', 38, 57, 'Pious', 'cleric', 'man', '⛪'),
     person('leofric', 'Leofric', 'acquaintance', 'Tenant Farmer', 34, 44, 'Patient', 'tenant_farmer', 'man', '🌾'),
-    person('mab', 'Mab', 'acquaintance', 'Mysterious Poacher', 26, 39, 'Cagey', 'poacher_job', 'nonbinary', '🦌'),
+    person('mab', 'Mab', 'acquaintance', 'Mysterious Poacher', 26, 39, 'Cagey', 'poacher_job', 'woman', '🦌'),
   ];
   const careers = ['farmhand', 'apprentice', 'hawker', 'acolyte', 'levy', 'clerk', 'poacher_job'];
   while (cast.length < 30) {
@@ -105,7 +106,7 @@ function startingKin(): KinMember[] {
       rnd(35, 62),
       pick(['Patient', 'Ambitious', 'Devout', 'Cunning', 'Loyal', 'Proud']),
       careers[index % careers.length],
-      pick(['woman', 'man', 'nonbinary'] as const),
+      pick(['woman', 'man'] as const),
     ));
   }
   return cast;
@@ -157,6 +158,7 @@ const VULNERABILITIES = ['pride', 'poverty', 'sick_relative', 'disputed_birth', 
 const FAMILY_NAMES = ['of Swineford', 'Ashcombe', 'Fenwick', 'Thorne', 'Mere', 'Godwin', 'Wren', 'Blackbriar', 'Underhill', 'Vale'];
 
 function enrichCharacter(character: WorldCharacter, index: number, familyId: string): WorldCharacter {
+  const secret = pick(SECRETS);
   return {
     ...character,
     birthFamilyId: familyId,
@@ -164,11 +166,18 @@ function enrichCharacter(character: WorldCharacter, index: number, familyId: str
     childIds: [...(character.childIds ?? [])],
     personalityTraits: Array.from(new Set([pick(PERSONALITIES), pick(PERSONALITIES), pick(PERSONALITIES)])).slice(0, 3),
     ambition: pick(AMBITIONS),
-    secret: pick(SECRETS),
+    secret,
     secretRevealed: false,
     vulnerability: pick(VULNERABILITIES),
     importance: index < 16 ? 'core' : 'background',
     worldMemories: [],
+    healthConditions: [],
+    legalState: { status: 'free', suspicion: 0, notoriety: 0, charges: [], sentenceYearsRemaining: 0 },
+    secrets: secret === 'none' ? [] : [{ id: `secret_${character.id}`, type: secret, knownByIds: [], revealed: false, severity: 35, createdYear: 1320 }],
+    guardianIds: [],
+    lineageStatus: 'marital',
+    childDevelopment: { completedMilestones: [], education: 'none', investment: 0, favour: 0 },
+    factionInfluence: 0,
   };
 }
 
@@ -177,7 +186,7 @@ function createLifeFromWorldSeed(opts: FreshLifeOptions, worldSeed: number): Gam
   const epithet = pick(EPITHETS);
   const settings = opts.settings ?? DEFAULT_SETTINGS;
   const inherit = opts.inherit ?? {};
-  const gender = opts.gender ?? 'unspecified';
+  const gender = opts.gender ?? 'man';
   const pronouns = opts.pronouns ?? defaultPronouns(gender);
   const inheritedRankIdx = Math.max(0, Math.min(RANKS.length - 1, inherit.rankIdx ?? 0));
   const holding: HoldingState = inherit.holding
@@ -274,7 +283,7 @@ function createLifeFromWorldSeed(opts: FreshLifeOptions, worldSeed: number): Gam
     bio: `Born in Swineford, ${first}'s story has only begun.`,
     gender,
     pronouns,
-    attraction: opts.attraction ?? 'any',
+    attraction: opts.attraction ?? (gender === 'woman' ? 'men' : 'women'),
     stats: { ...stats },
     traits: [birth.id],
     gold: 8 + (inherit.gold ?? 0),
@@ -310,11 +319,14 @@ function createLifeFromWorldSeed(opts: FreshLifeOptions, worldSeed: number): Gam
       wealth: index === 0 ? 8 : rnd(3, 35),
       foodSecurity: rnd(40, 75),
       status: rnd(20, 65),
+      residenceQuality: rnd(30, 65),
+      capacity: Math.max(4, memberIds.length + 2),
+      storedFood: rnd(30, 70),
     };
   });
   for (const household of households) for (const id of household.memberIds) characters[id].householdId = household.id;
   return {
-    schemaVersion: 3,
+    schemaVersion: 4,
     playerCharacterId: playerId,
     playerRun: { startedYear: 1320, generation: opts.lifeNo ?? 1, roleProgress: {} },
     pendingEvent: null,
@@ -322,7 +334,7 @@ function createLifeFromWorldSeed(opts: FreshLifeOptions, worldSeed: number): Gam
     epithet,
     gender,
     pronouns,
-    attraction: opts.attraction ?? 'any',
+    attraction: opts.attraction ?? (gender === 'woman' ? 'men' : 'women'),
     age: 0,
     gold: 8 + (inherit.gold ?? 0),
     income: 0,
@@ -361,6 +373,17 @@ function createLifeFromWorldSeed(opts: FreshLifeOptions, worldSeed: number): Gam
       history: [],
       pacing: { lastMajorYear: null, lastImportantYear: null, quietYearsSinceStory: 0, majorEventsThisLife: 0, mediumStoriesStarted: 0, immediateChainDepth: 0 },
       recoveryNotice: false,
+      contentLedger: {},
+      repetitionLedger: {},
+      recentDomains: [],
+      expectedChildren: [],
+      factions: {
+        crown: { id: 'crown', name: 'The Crown', influence: 62, playerStanding: 0, leaderId: 'aldric', lastActionYear: 1319 },
+        church: { id: 'church', name: 'The Church', influence: 58, playerStanding: 0, leaderId: 'oswin', lastActionYear: 1319 },
+        guilds: { id: 'guilds', name: 'The Guilds', influence: 48, playerStanding: 0, leaderId: 'beatrice', lastActionYear: 1319 },
+        commons: { id: 'commons', name: 'The Commons', influence: 54, playerStanding: 0, leaderId: 'leofric', lastActionYear: 1319 },
+        outlaws: { id: 'outlaws', name: 'The Outlaws', influence: 22, playerStanding: 0, leaderId: 'mab', lastActionYear: 1319 },
+      },
     },
     actionClock: { used: 0, cap: actionLimitForAccess(Boolean(opts.lifetimeUnlocked)), lifetimeUsed: 0, fullYears: 0 },
     occupation: { careerId: null, experience: 0, performance: 50, workedThisYear: 0 },
@@ -427,6 +450,11 @@ export function cloneState(s: GameState): GameState {
       history: s.world.history.map((entry) => ({ ...entry, participantIds: [...entry.participantIds], familyIds: [...entry.familyIds], causes: [...entry.causes] })),
       pacing: { ...s.world.pacing },
       recentNarrativeIds: [...s.world.recentNarrativeIds],
+      contentLedger: Object.fromEntries(Object.entries(s.world.contentLedger).map(([id, entry]) => [id, { ...entry }])),
+      repetitionLedger: { ...s.world.repetitionLedger },
+      recentDomains: [...s.world.recentDomains],
+      expectedChildren: s.world.expectedChildren.map((child) => ({ ...child, parentIds: [...child.parentIds] })),
+      factions: Object.fromEntries(Object.entries(s.world.factions).map(([id, faction]) => [id, { ...faction }])) as typeof s.world.factions,
     },
     actionClock: { ...s.actionClock },
     occupation: { ...s.occupation },
@@ -463,6 +491,10 @@ export function clonePlayerActionState(s: GameState): GameState {
       scheduledConsequences: [...s.world.scheduledConsequences], history: [...s.world.history],
       activeStories: s.world.activeStories.map((story) => ({ ...story, bindings: { ...story.bindings }, variables: { ...story.variables } })),
       pacing: { ...s.world.pacing }, recentNarrativeIds: [...s.world.recentNarrativeIds],
+      contentLedger: Object.fromEntries(Object.entries(s.world.contentLedger).map(([id, entry]) => [id, { ...entry }])),
+      repetitionLedger: { ...s.world.repetitionLedger }, recentDomains: [...s.world.recentDomains],
+      expectedChildren: s.world.expectedChildren.map((child) => ({ ...child, parentIds: [...child.parentIds] })),
+      factions: Object.fromEntries(Object.entries(s.world.factions).map(([id, faction]) => [id, { ...faction }])) as typeof s.world.factions,
       // Safe to share for player-only activities; relationship actions use cloneState.
       relationships: s.world.relationships,
     },

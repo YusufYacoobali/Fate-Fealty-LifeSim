@@ -12,7 +12,8 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
   const career = careerById(state.occupation.careerId);
   const debt = state.debts.reduce((sum, item) => sum + item.principal, 0);
   const actionsRemaining = Math.max(0, state.actionClock.cap - state.actionClock.used);
-  const currentArt = career ? CAREER_FAMILY_ART[career.family] : null;
+  const careerArt = (family: string) => CAREER_FAMILY_ART[family as keyof typeof CAREER_FAMILY_ART] ?? FEATURE_ART.work;
+  const currentArt = career ? careerArt(career.family) : null;
 
   const button = (action: CareerAction, label: string, hint: string, careerId?: string) => {
     const available = careerActionAvailability(state, action, careerId);
@@ -97,7 +98,7 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
             {ENTRY_CAREERS.map((entry) => {
               const availability = careerActionAvailability(state, 'apply', entry.id);
-              const art = CAREER_FAMILY_ART[entry.family];
+              const art = careerArt(entry.family);
               return (
                 <PixelButton
                   key={entry.id}

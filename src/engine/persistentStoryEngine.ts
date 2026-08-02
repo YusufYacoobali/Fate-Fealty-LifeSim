@@ -70,12 +70,16 @@ function templateOnCooldown(state: GameState, template: StoryTemplate): boolean 
   );
 }
 
+function templateEntitled(state: GameState, template: StoryTemplate): boolean {
+  return !template.premium || state.lifetimeUnlocked;
+}
+
 export function maybeStartMajorStory(state: GameState): StoryInstance | null {
   if (state.world.activeStories.some((story) => story.scale === 'major' && ['active', 'paused'].includes(story.status))) return null;
   if (state.world.pacing.majorEventsThisLife > 0 || state.age < 8) return null;
   if (!chance(state.world.pacing.quietYearsSinceStory >= 3 ? 0.75 : 0.28)) return null;
   const eligible = PERSISTENT_STORY_TEMPLATES.filter((template) =>
-    template.scale === 'major' && storyEligibilityMet(state, template.eligibility) && !storyPreviouslyCompletedThisLife(state, template.id) && !templateOnCooldown(state, template),
+    template.scale === 'major' && templateEntitled(state, template) && storyEligibilityMet(state, template.eligibility) && !storyPreviouslyCompletedThisLife(state, template.id) && !templateOnCooldown(state, template),
   );
   if (!eligible.length) return null;
   const shuffledStart = rnd(0, eligible.length - 1);
@@ -107,7 +111,7 @@ export function maybeStartSupportingStory(state: GameState): StoryInstance | nul
   const activeMedium = state.world.activeStories.filter((story) => story.scale === 'medium' && ['active', 'paused'].includes(story.status)).length;
   if (activeMedium >= 2 || state.world.pacing.mediumStoriesStarted >= 3 || state.age < 14 || !chance(0.2)) return null;
   const eligible = PERSISTENT_STORY_TEMPLATES.filter((template) =>
-    template.scale === 'medium' && storyEligibilityMet(state, template.eligibility) && !storyPreviouslyCompletedThisLife(state, template.id) && !templateOnCooldown(state, template),
+    template.scale === 'medium' && templateEntitled(state, template) && storyEligibilityMet(state, template.eligibility) && !storyPreviouslyCompletedThisLife(state, template.id) && !templateOnCooldown(state, template),
   );
   if (!eligible.length) return null;
   const template = pick(eligible);
@@ -133,10 +137,10 @@ export function maybeStartSupportingStory(state: GameState): StoryInstance | nul
 
 export function maybeStartRelationshipStory(state: GameState): StoryInstance | null {
   const active = state.world.activeStories.filter((story) => story.scale === 'relationship' && ['active', 'paused'].includes(story.status)).length;
-  const completedThisLife = state.world.history.filter((entry) => entry.type === 'story_completed' && entry.year >= state.playerRun.startedYear && entry.causes.some((cause) => ['friendship_test', 'rival_reckoning', 'marriage_strain'].includes(cause))).length;
+  const completedThisLife = state.world.history.filter((entry) => entry.type === 'story_completed' && entry.year >= state.playerRun.startedYear && entry.causes.some((cause) => STORY_TEMPLATE_BY_ID[cause]?.scale === 'relationship')).length;
   if (active >= 3 || completedThisLife >= 4 || state.age < 12 || !chance(0.16)) return null;
   const eligible = PERSISTENT_STORY_TEMPLATES.filter((template) =>
-    template.scale === 'relationship' && storyEligibilityMet(state, template.eligibility) && !storyPreviouslyCompletedThisLife(state, template.id) && !templateOnCooldown(state, template),
+    template.scale === 'relationship' && templateEntitled(state, template) && storyEligibilityMet(state, template.eligibility) && !storyPreviouslyCompletedThisLife(state, template.id) && !templateOnCooldown(state, template),
   );
   if (!eligible.length) return null;
   const template = pick(eligible);

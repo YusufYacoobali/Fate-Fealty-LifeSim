@@ -93,6 +93,7 @@ const DEFAULTS: Record<KinKind, KindDefaults> = {
 /** Create and append a new kin member, returning it. Mutates `s`. */
 export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
   const d = DEFAULTS[spec.kind];
+  const gender = pick(['woman', 'man'] as const);
   const member: KinMember = {
     id: `kin_${s.nextId++}`,
     name: spec.name ?? d.name(),
@@ -105,9 +106,9 @@ export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
     kind: spec.kind,
     alive: true,
     isHeir: spec.isHeir,
-    gender: 'unspecified',
-    pronouns: defaultPronouns('unspecified'),
-    attraction: 'any',
+    gender,
+    pronouns: defaultPronouns(gender),
+    attraction: gender === 'woman' ? 'men' : 'women',
     stats: { health: rnd(45, 90), charm: rnd(25, 75), wits: rnd(25, 75), faith: rnd(15, 75) },
     traits: [spec.trait ?? d.trait],
     gold: rnd(0, 25),
@@ -135,6 +136,11 @@ export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
     vulnerability: pick(['pride', 'poverty', 'loneliness', 'envy'] as const),
     importance: spec.kind === 'child' || spec.kind === 'spouse' ? 'core' : 'supporting',
     worldMemories: [],
+    healthConditions: [],
+    legalState: { status: 'free', suspicion: 0, notoriety: 0, charges: [], sentenceYearsRemaining: 0 },
+    secrets: [], guardianIds: [], lineageStatus: spec.kind === 'child' ? 'marital' : 'acknowledged',
+    childDevelopment: { completedMilestones: [], education: 'none', investment: 0, favour: 0 },
+    factionInfluence: 0,
   } satisfies Partial<WorldCharacter>);
   s.kin = [...s.kin, member];
   s.world.characters[member.id] = member;

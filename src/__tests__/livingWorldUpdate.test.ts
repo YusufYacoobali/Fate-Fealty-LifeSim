@@ -81,7 +81,7 @@ describe('mutual relationships and living characters', () => {
   });
 
   it('allows accepting an NPC proposal and marrying by choice', () => {
-    let state = makeState({ age: 22, attraction: 'any' });
+    let state = makeState({ age: 22, attraction: 'women' });
     const candidate = state.kin.find((kin) => kin.id === 'agnes')!;
     candidate.age = 22;
     state.world.proposalFromId = candidate.id;
@@ -137,7 +137,8 @@ describe('save migration', () => {
     expect(migrated.age).toBe(33);
     expect(migrated.actionClock.cap).toBe(24);
     expect(Object.values(migrated.world.relationships)).toHaveLength(4);
-    expect(migrated.kin[0].pronouns.id).toBe('they');
+    expect(['he', 'she']).toContain(migrated.kin[0].pronouns.id);
+    expect(['man', 'woman']).toContain(migrated.kin[0].gender);
   });
 });
 

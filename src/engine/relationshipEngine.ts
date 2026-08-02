@@ -8,7 +8,7 @@ import {
   RelationshipPerspective,
 } from '@/types/game';
 import { attractionAllows } from '@/data/identity';
-import { addMemory, addTag, pushFeed, removeTag } from './gameState';
+import { addMemory, addTag, appendWorldHistory, pushFeed, removeTag } from './gameState';
 import { chance, clamp, pick, rnd } from './random';
 import { C } from '@/theme/theme';
 import { pickNarrative } from './narrativeEngine';
@@ -112,6 +112,12 @@ export type SystemicKinAction =
   | 'plot'
   | 'apologize'
   | 'help'
+  | 'confide'
+  | 'forgive'
+  | 'educate_child'
+  | 'arrange_marriage'
+  | 'care_for_relative'
+  | 'expose_secret'
   | 'flirt'
   | 'court'
   | 'propose'
@@ -134,9 +140,14 @@ export function contextualActions(state: GameState, kin: KinMember): SystemicKin
   if (!kin.alive) return [];
   const relation = relationshipWith(state, kin.id);
   const result: SystemicKinAction[] = ['time', 'praise', 'help', 'gift', 'favour'];
-  if (perspectives(state, relation).other.affinity < 45) result.push('apologize');
+  if (perspectives(state, relation).other.trust >= 35) result.push('confide');
+  if (perspectives(state, relation).other.affinity < 45) result.push('apologize', 'forgive');
   if (relation.flags.includes('rival') || relation.flags.includes('feud')) result.push('reconcile', 'plot');
   else result.push('insult');
+  if (kin.kind === 'child' && kin.age < 18) result.push('educate_child');
+  if (kin.kind === 'child' && kin.age >= 14 && !kin.spouseId) result.push('arrange_marriage');
+  if (relation.flags.includes('family') && (kin.stats.health < 70 || Boolean(kin.healthConditions?.length))) result.push('care_for_relative');
+  if (kin.secrets?.some((secret) => !secret.revealed && secret.knownByIds.includes(state.playerCharacterId))) result.push('expose_secret');
   if (isRomanceEligible(state, kin)) result.push('flirt', 'court', 'propose');
   if (kin.kind === 'spouse') result.push('divorce');
   if (state.world.proposalFromId === kin.id) result.unshift('accept_proposal', 'reject_proposal');
@@ -182,6 +193,69 @@ export function performSystemicRelationshipAction(state: GameState, kin: KinMemb
       applyRelationshipShift(state, kin.id, { trust: 5 }, { affinity: 5, trust: 8, respect: 4 });
       pushFeed(state, 'HELPED', C.good, `You help ${kin.name} with a troublesome task. It remains troublesome, but now it is shared.`, 'good');
       break;
+    case 'confide': {
+      const player = state.world.characters[state.playerCharacterId];
+      const secret = player?.secrets?.find((item) => !item.revealed);
+      if (secret && !secret.knownByIds.includes(kin.id)) secret.knownByIds.push(kin.id);
+      applyRelationshipShift(state, kin.id, { trust: 5 }, { trust: 9, affinity: 4 });
+      relation.sharedMemories.push(`confided_${state.world.currentYear}`);
+      relation.sharedMemories = relation.sharedMemories.slice(-24);
+      addMemory(state, 'confided_in_someone', 3, kin.name);
+      pushFeed(state, 'CONFIDED', C.teal, `You trust ${kin.name} with something difficult to say aloud. ${kin.pronouns.subject} keeps it close.`, 'good');
+      break;
+    }
+    case 'forgive':
+      relation.flags = relation.flags.filter((flag) => flag !== 'feud');
+      applyRelationshipShift(state, kin.id, { affinity: 6, trust: 4 }, { affinity: 5, trust: 6, respect: 4 });
+      addMemory(state, 'offered_forgiveness', 3, kin.name);
+      pushFeed(state, 'FORGIVEN', C.good, `You forgive ${kin.name} without pretending the hurt never happened.`, 'good');
+      break;
+    case 'educate_child':
+      const development = kin.childDevelopment ?? { education: 'household' as const, investment: 0, favour: 0, completedMilestones: [] };
+      kin.childDevelopment = development;
+      development.education = state.stats.wits >= 60 ? 'craft' : 'household';
+      development.investment += 2;
+      development.favour += 1;
+      kin.stats.wits = clamp(kin.stats.wits + rnd(2, 5));
+      kin.ambition = kin.ambition ?? (state.stats.faith > state.stats.wits ? 'join_clergy' : 'master_craft');
+      applyRelationshipShift(state, kin.id, { respect: 2 }, { trust: 7, respect: 5 });
+      pushFeed(state, 'TAUGHT A CHILD', C.faith, `You teach ${kin.name} letters, figures, and which family stories improve with silence.`, 'good');
+      break;
+    case 'arrange_marriage': {
+      const candidates = Object.values(state.world.characters).filter((candidate) => candidate.alive && candidate.id !== kin.id && candidate.id !== state.playerCharacterId && candidate.age >= 16 && !candidate.spouseId && candidate.gender !== kin.gender && !candidate.parentIds?.some((id) => kin.parentIds?.includes(id)));
+      const spouse = candidates.sort((a, b) => Math.abs(a.age - kin.age) - Math.abs(b.age - kin.age) || a.id.localeCompare(b.id))[0];
+      if (!spouse) {
+        pushFeed(state, 'MATCHMAKING', C.bad, `No suitable household will presently agree to a match with ${kin.name}.`, 'plain');
+        break;
+      }
+      kin.spouseId = spouse.id;
+      spouse.spouseId = kin.id;
+      const arranged: Relationship = { id: `rel_${kin.id}_${spouse.id}`, aId: kin.id, bId: spouse.id, aToB: neutral(48), bToA: neutral(48), flags: ['spouse', 'family'], lastInteractionAge: state.age, interactionsThisYear: 0, sharedMemories: [`arranged_marriage_${state.world.currentYear}`] };
+      state.world.relationships[arranged.id] = arranged;
+      kin.householdId = spouse.householdId;
+      const household = state.world.households.find((item) => item.id === spouse.householdId);
+      if (household && !household.memberIds.includes(kin.id)) household.memberIds.push(kin.id);
+      applyRelationshipShift(state, kin.id, {}, { trust: views.other.trust >= 55 ? 3 : -6 });
+      pushFeed(state, 'A MATCH ARRANGED', C.charm, `${kin.name} is betrothed to ${spouse.name}. Two households begin discussing promises, bedding, and grain.`, 'good');
+      break;
+    }
+    case 'care_for_relative': {
+      const active = kin.healthConditions ?? [];
+      for (const condition of active) condition.severity = Math.max(1, condition.severity - 1);
+      kin.stats.health = clamp(kin.stats.health + rnd(4, 8));
+      applyRelationshipShift(state, kin.id, { affinity: 2 }, { affinity: 7, trust: 9 });
+      pushFeed(state, 'FAMILY CARE', C.good, `You bring food, clean bedding, and patient company to ${kin.name}.`, 'good');
+      break;
+    }
+    case 'expose_secret': {
+      const secret = kin.secrets?.find((item) => !item.revealed && item.knownByIds.includes(state.playerCharacterId));
+      if (!secret) break;
+      secret.revealed = true;
+      applyRelationshipShift(state, kin.id, { respect: -3 }, { affinity: -12, trust: -18 });
+      appendWorldHistory(state, { id: `history_secret_${state.nextId++}`, year: state.world.currentYear, type: 'secret_revealed', participantIds: [state.playerCharacterId, kin.id], familyIds: [kin.birthFamilyId].filter((id): id is string => Boolean(id)), causes: [secret.type], summary: `${kin.name}'s ${secret.type.replaceAll('_', ' ')} became public.`, salience: Math.max(2, secret.severity) });
+      pushFeed(state, 'SECRET EXPOSED', C.bad, `You reveal what ${kin.name} had hidden. Truth arrives without mercy for either of you.`, 'bad');
+      break;
+    }
     case 'gift':
       state.gold -= 5;
       state.expenses += 5;

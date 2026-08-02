@@ -110,9 +110,9 @@ export interface TraitDef {
 
 export type KinKind = 'mother' | 'father' | 'sibling' | 'spouse' | 'child' | 'friend' | 'foe' | 'liege' | 'acquaintance';
 
-export type GenderIdentity = 'woman' | 'man' | 'nonbinary' | 'unspecified';
+export type GenderIdentity = 'woman' | 'man';
 export type PronounId = 'she' | 'he' | 'they';
-export type AttractionPreference = 'women' | 'men' | 'any' | 'none';
+export type AttractionPreference = 'women' | 'men' | 'none';
 
 export interface PronounSet {
   id: PronounId;
@@ -126,6 +126,10 @@ export interface OccupationState {
   experience: number;
   performance: number;
   workedThisYear: number;
+  apprenticeshipYears?: number;
+  guildStanding?: number;
+  patronId?: string;
+  dismissedYear?: number;
 }
 
 export interface Debt {
@@ -177,9 +181,65 @@ export interface KinMember extends CharacterCore {
   worldMemories?: CharacterMemory[];
   deathYear?: number;
   deathCause?: string;
+  healthConditions?: HealthConditionState[];
+  legalState?: LegalState;
+  secrets?: CharacterSecretState[];
+  guardianIds?: string[];
+  lineageStatus?: LineageStatus;
+  childDevelopment?: ChildDevelopmentState;
+  factionId?: FactionKey;
+  factionInfluence?: number;
 }
 
 export type WorldCharacter = KinMember;
+
+export type HealthConditionKind = 'illness' | 'injury' | 'disability';
+export interface HealthConditionState {
+  id: string;
+  conditionId: string;
+  kind: HealthConditionKind;
+  severity: number;
+  diagnosed: boolean;
+  startedYear: number;
+  nextReviewYear: number;
+  sourceId?: string;
+}
+
+export type LegalStatus = 'free' | 'accused' | 'awaiting_trial' | 'imprisoned' | 'exiled' | 'outlawed';
+export interface LegalCharge {
+  id: string;
+  offence: string;
+  severity: number;
+  evidence: number;
+  victimIds: string[];
+  witnessIds: string[];
+  year: number;
+  resolved: boolean;
+}
+export interface LegalState {
+  status: LegalStatus;
+  suspicion: number;
+  notoriety: number;
+  charges: LegalCharge[];
+  sentenceYearsRemaining: number;
+}
+
+export interface CharacterSecretState {
+  id: string;
+  type: NpcSecret;
+  knownByIds: string[];
+  revealed: boolean;
+  severity: number;
+  createdYear: number;
+}
+
+export type LineageStatus = 'marital' | 'acknowledged' | 'disputed' | 'adopted' | 'ward';
+export interface ChildDevelopmentState {
+  completedMilestones: number[];
+  education: 'none' | 'household' | 'craft' | 'church' | 'martial' | 'court';
+  investment: number;
+  favour: number;
+}
 
 export type CharacterImportance = 'core' | 'supporting' | 'background';
 export type NpcAmbition =
@@ -255,6 +315,9 @@ export interface Household {
   headId?: string;
   foodSecurity?: number;
   status?: number;
+  residenceQuality?: number;
+  capacity?: number;
+  storedFood?: number;
 }
 
 export interface FamilyMemory {
@@ -367,6 +430,37 @@ export interface PacingState {
   immediateChainDepth: number;
 }
 
+export type ContentDomain = 'family' | 'health' | 'crime' | 'career' | 'politics' | 'household' | 'rare';
+export type ContentRarity = 'common' | 'uncommon' | 'rare';
+export interface ContentLedgerEntry {
+  lastYear: number;
+  timesResolved: number;
+  lastChoiceId?: string;
+}
+
+export type ExpectedChildRoute = 'pregnancy' | 'adoption' | 'wardship';
+export interface ExpectedChild {
+  id: string;
+  parentIds: string[];
+  route: ExpectedChildRoute;
+  dueYear: number;
+  householdId: string;
+  familyId: string;
+  status: 'expected' | 'resolved' | 'cancelled';
+  sourceChoiceId?: string;
+}
+
+export type FactionKey = 'crown' | 'church' | 'guilds' | 'commons' | 'outlaws';
+export interface FactionState {
+  id: FactionKey;
+  name: string;
+  influence: number;
+  playerStanding: number;
+  leaderId?: string;
+  activePressure?: string;
+  lastActionYear: number;
+}
+
 export interface PlayerRunState {
   /** World year in which control of the current character began. */
   startedYear: number;
@@ -403,6 +497,11 @@ export interface WorldState {
   history: WorldHistoryEntry[];
   pacing: PacingState;
   recoveryNotice: boolean;
+  contentLedger: Record<string, ContentLedgerEntry>;
+  repetitionLedger: Record<string, number>;
+  recentDomains: ContentDomain[];
+  expectedChildren: ExpectedChild[];
+  factions: Record<FactionKey, FactionState>;
 }
 
 export interface ActionClock {
@@ -507,6 +606,13 @@ export interface Effects {
   storyVariables?: Record<string, string | number | boolean | null>;
   revealSecretOf?: string;
   schedule?: Omit<ScheduledConsequence, 'id'> | Array<Omit<ScheduledConsequence, 'id'>>;
+  healthCondition?: { conditionId: string; severity: number; targetId?: string; diagnosed?: boolean };
+  removeHealthCondition?: { conditionId: string; targetId?: string };
+  legal?: { targetId?: string; suspicion?: number; notoriety?: number; status?: LegalStatus; charge?: Omit<LegalCharge, 'id' | 'year' | 'resolved'>; sentenceYears?: number };
+  faction?: { factionId: FactionKey; influence?: number; playerStanding?: number; pressure?: string };
+  householdState?: { householdId?: string; wealth?: number; food?: number; quality?: number; capacity?: number; status?: number };
+  createSecret?: { targetId?: string; type: NpcSecret; severity: number; knownByIds?: string[] };
+  expectChild?: { route: ExpectedChildRoute; parentIds?: string[]; dueInYears?: number };
 }
 
 export interface Condition {
@@ -534,6 +640,17 @@ export interface Condition {
    * swear to a liege only while lieges = 0).
    */
   kinCountAtMost?: Partial<Record<KinKind, number>>;
+  roles?: LifeRole[];
+  worldAtLeast?: Partial<WorldConditions>;
+  worldAtMost?: Partial<WorldConditions>;
+  hasHealthCondition?: string[];
+  missingHealthCondition?: string[];
+  legalStatuses?: LegalStatus[];
+  suspicionAtLeast?: number;
+  factionStandingAtLeast?: Partial<Record<FactionKey, number>>;
+  householdAtLeast?: Partial<{ wealth: number; food: number; quality: number; status: number }>;
+  hasKnownSecret?: boolean;
+  hasWorldMemoryType?: string[];
   /** Escape hatch for one-off logic. */
   custom?: (s: GameState) => boolean;
 }
@@ -575,6 +692,7 @@ export interface Choice {
   failure?: Outcome;
   /** For deterministic choices with no roll. */
   outcome?: Outcome;
+  forecast?: { risk: 'low' | 'medium' | 'high'; positive: string[]; negative: string[]; warnsDelayedConsequence?: boolean };
 }
 
 export type EventCategory =
@@ -588,6 +706,16 @@ export type EventCategory =
   | 'plague'
   | 'war'
   | 'arc';
+
+export interface EventActorRole {
+  minAge?: number;
+  maxAge?: number;
+  alive?: boolean;
+  excludePlayer?: boolean;
+  kinds?: KinKind[];
+  importance?: CharacterImportance[];
+  missingActor: 'clear_event' | 'substitute';
+}
 
 export interface GameEvent {
   id: string;
@@ -613,6 +741,12 @@ export interface GameEvent {
   /** Internal arc nodes are never picked by the random picker. */
   arcNodeOnly?: boolean;
   choices: Choice[];
+  domain?: ContentDomain;
+  rarity?: ContentRarity;
+  cooldownYears?: number;
+  repetitionGroup?: string;
+  actorRoles?: Record<string, EventActorRole>;
+  editorialScore?: 1 | 2 | 3 | 4 | 5;
 }
 
 /** A story arc that is mid-flight, waiting to continue on a later age-up. */
@@ -638,9 +772,10 @@ export interface ActivityDef {
   /** Youngest age that may attempt this (default 0). Shown as a lock in the UI. */
   minAge?: number;
   roles?: LifeRole[];
+  premium?: boolean;
 }
 
-export type CareerFamily = 'agriculture' | 'craft' | 'trade' | 'church' | 'martial' | 'court' | 'outlaw';
+export type CareerFamily = 'agriculture' | 'craft' | 'trade' | 'church' | 'martial' | 'court' | 'outlaw' | 'medicine' | 'entertainment' | 'law';
 
 export interface CareerDef {
   id: string;
@@ -656,6 +791,8 @@ export interface CareerDef {
   healthRisk?: number;
   promotesTo?: string;
   desc: string;
+  premium?: boolean;
+  prestige?: boolean;
 }
 
 export type ShopItemType = 'consumable' | 'perm';
@@ -681,6 +818,7 @@ export interface GameSettings {
   haptics: boolean;
   music: boolean;
   soundEffects: boolean;
+  reducedMotion?: boolean;
 }
 
 export type Tab = 'life' | 'do' | 'kin' | 'hold' | 'shop' | 'me';
@@ -690,7 +828,7 @@ export type Tab = 'life' | 'do' | 'kin' | 'hold' | 'shop' | 'me';
 // ---------------------------------------------------------------------------
 
 export interface GameState {
-  schemaVersion: 3;
+  schemaVersion: 4;
   playerCharacterId: string;
   playerRun: PlayerRunState;
   pendingEvent: PendingEvent | null;

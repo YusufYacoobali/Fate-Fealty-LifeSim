@@ -3,8 +3,8 @@ import { configureNotificationHandler, ensureDailyReminder } from '@/services/no
 import { AppMetaApi } from './useAppMeta';
 
 /**
- * Configures notification display and schedules the recurring daily
- * reminder once meta is ready. Single responsibility: reminder scheduling.
+ * Configures notification display and refreshes the rolling daily reminder
+ * rotation once meta is ready. Single responsibility: reminder scheduling.
  */
 export function useScheduledReminders(meta: AppMetaApi) {
   useEffect(() => {

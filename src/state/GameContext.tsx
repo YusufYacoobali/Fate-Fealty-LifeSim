@@ -12,6 +12,9 @@ import { useShopPromoGate } from './hooks/useShopPromoGate';
 import type { PremiumAccessState } from './hooks/usePremium';
 import { NewLifeOptions } from './gameReducer';
 import { PlanId, PurchaseOutcome } from '@/services/purchases';
+import { useRetentionLoops } from './hooks/useRetentionLoops';
+import type { DailyRewardStatus } from '@/services/dailyRewards';
+import type { ReturnRumour } from '@/services/returnRumour';
 
 interface GameContextValue {
   state: GameState;
@@ -36,6 +39,12 @@ interface GameContextValue {
   premiumAccessState: PremiumAccessState;
   purchasePlan: (plan: PlanId) => Promise<PurchaseOutcome>;
   restorePremium: () => Promise<boolean>;
+  dailyRewardStatus: DailyRewardStatus | null;
+  claimDailyReward: () => void;
+  dismissDailyReward: () => void;
+  returnRumour: ReturnRumour | null;
+  followReturnRumour: () => void;
+  dismissReturnRumour: () => void;
 }
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -53,6 +62,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const creation = useCharacterCreation(meta, game.loaded, game.dispatch);
   const progression = useMetaProgression(game.state, meta, game.loaded);
   const premium = usePremium(meta, game.loaded, game.dispatch);
+  const retention = useRetentionLoops(game.state, game.loaded, meta, game.dispatch);
+  const updateMeta = meta.update;
   const [onboardingVisible, setOnboardingVisible] = useState(false);
 
   useEffect(() => {
@@ -63,19 +74,19 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
   const shopPromo = useShopPromoGate(game.state, game.loaded, meta, {
     eligible: premium.premiumAccessState === 'inactive',
-    blocked: creation.creating || onboardingVisible || progression.newAchievements.length > 0,
+    blocked: creation.creating || onboardingVisible || progression.newAchievements.length > 0 || !!retention.dailyRewardStatus || !!retention.returnRumour,
     reviewVisible: review.reviewVisible,
   });
 
   const completeOnboarding = useCallback(() => {
-    meta.update({ tutorialSeen: true });
+    updateMeta({ tutorialSeen: true });
     setOnboardingVisible(false);
-  }, [meta]);
+  }, [updateMeta]);
 
   const restartOnboarding = useCallback(() => {
-    meta.update({ tutorialSeen: false });
+    updateMeta({ tutorialSeen: false });
     setOnboardingVisible(true);
-  }, [meta]);
+  }, [updateMeta]);
 
   const value = useMemo<GameContextValue>(
     () => ({
@@ -101,6 +112,12 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       premiumAccessState: premium.premiumAccessState,
       purchasePlan: premium.purchasePlan,
       restorePremium: premium.restorePremium,
+      dailyRewardStatus: retention.dailyRewardStatus,
+      claimDailyReward: retention.claimDailyReward,
+      dismissDailyReward: retention.dismissDailyReward,
+      returnRumour: retention.returnRumour,
+      followReturnRumour: retention.followReturnRumour,
+      dismissReturnRumour: retention.dismissReturnRumour,
     }),
     [
       game.state,
@@ -125,6 +142,12 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       premium.premiumAccessState,
       premium.purchasePlan,
       premium.restorePremium,
+      retention.dailyRewardStatus,
+      retention.claimDailyReward,
+      retention.dismissDailyReward,
+      retention.returnRumour,
+      retention.followReturnRumour,
+      retention.dismissReturnRumour,
     ],
   );
 

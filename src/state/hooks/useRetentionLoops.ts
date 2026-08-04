@@ -1,10 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
-import { DailyRewardStatus, evaluateDailyReward, progressAfterClaim } from '@/services/dailyRewards';
+import { DailyRewardProgress, DailyRewardStatus, evaluateDailyReward, progressAfterClaim } from '@/services/dailyRewards';
 import { buildReturnRumour, RETURN_RUMOUR_AFTER_MS, ReturnRumour } from '@/services/returnRumour';
 import { GameState } from '@/types/game';
 import { GameAction } from '../gameReducer';
 import { AppMetaApi } from './useAppMeta';
+
+/**
+ * TESTING SWITCH: re-open the daily gift at the start of every new life so the
+ * popup can be inspected on demand. Set to false to restore the once-a-day rule.
+ * While it is on, starting a life clears the last claim date, which also resets
+ * the streak to one.
+ */
+export const DAILY_REWARD_ON_EVERY_NEW_LIFE = true;
 
 /** Owns offline-only return loops. Neither path consumes game time or world RNG. */
 export function useRetentionLoops(
@@ -17,7 +25,9 @@ export function useRetentionLoops(
   const stateRef = useRef(state);
   stateRef.current = state;
   const [dailyRewardStatus, setDailyRewardStatus] = useState<DailyRewardStatus | null>(null);
+  const [dailyRewardProgress, setDailyRewardProgress] = useState<DailyRewardProgress | null>(null);
   const [returnRumour, setReturnRumour] = useState<ReturnRumour | null>(null);
+  const previousLifeNo = useRef(state.lifeNo);
 
   const refreshForActiveApp = useCallback((now: number) => {
     if (!loaded || !metaReady) return;
@@ -31,8 +41,20 @@ export function useRetentionLoops(
       updateMeta({ lastActiveAt: now });
     }
     const status = evaluateDailyReward(currentMeta.dailyReward, now);
+    setDailyRewardProgress(currentMeta.dailyReward);
     setDailyRewardStatus(status.eligible ? status : null);
   }, [loaded, metaReady, metaRef, updateMeta]);
+
+  useEffect(() => {
+    if (!loaded || !metaReady) return;
+    if (state.lifeNo === previousLifeNo.current) return;
+    previousLifeNo.current = state.lifeNo;
+    if (!DAILY_REWARD_ON_EVERY_NEW_LIFE) return;
+    updateMeta({ dailyReward: { ...metaRef.current.dailyReward, lastClaimDate: null } });
+    const status = evaluateDailyReward(metaRef.current.dailyReward, Date.now());
+    setDailyRewardProgress(metaRef.current.dailyReward);
+    setDailyRewardStatus(status.eligible ? status : null);
+  }, [state.lifeNo, loaded, metaReady, metaRef, updateMeta]);
 
   useEffect(() => {
     if (!loaded || !metaReady) return;
@@ -71,6 +93,7 @@ export function useRetentionLoops(
 
   return {
     dailyRewardStatus,
+    dailyRewardProgress,
     claimDailyReward,
     dismissDailyReward,
     returnRumour,

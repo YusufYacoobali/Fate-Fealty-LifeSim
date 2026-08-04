@@ -191,6 +191,9 @@ export function normalizeGameState(parsed: GameState): GameState {
       ? { ...parsed.playerRun, roleProgress: { ...(parsed.playerRun.roleProgress ?? {}) } }
       : { startedYear: parsed.world?.currentYear ?? parsed.bornYear + parsed.age, generation: parsed.lifeNo ?? 1, roleProgress: {} },
     pendingEvent: parsed.pendingEvent ?? null,
+    // A half-fought duel is not worth restoring: the player would return to an
+    // exchange with no memory of how they got there.
+    duel: null,
     traits: normalizedTraits,
     tags: normalizedTags,
     feed: (parsed.feed ?? []).map((entry) => entry.traitId === 'ill_starred' ? { ...entry, traitId: 'golden_child' } : entry),

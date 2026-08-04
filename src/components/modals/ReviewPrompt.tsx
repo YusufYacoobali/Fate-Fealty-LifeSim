@@ -53,7 +53,7 @@ export function ReviewPrompt({ onResolved }: Props) {
             paddingVertical: 6,
           }}
         >
-          <PixelText font="pixel" size={9} color="#3a2a08" style={{ textAlign: 'center' }}>
+          <PixelText font="pixel" size={10} color="#3a2a08" style={{ textAlign: 'center' }}>
             {step === 'ask' ? 'A MOMENT, GOOD SOUL' : step === 'rate' ? 'RATE THE TALE' : 'FARE THEE WELL'}
           </PixelText>
         </View>
@@ -65,12 +65,12 @@ export function ReviewPrompt({ onResolved }: Props) {
             </PixelText>
             <View style={{ gap: 8 }}>
               <PixelButton bg={C.faith} shadow={C.faithDark} onPress={onEnjoying} innerStyle={{ paddingVertical: 10, alignItems: 'center' }}>
-                <PixelText font="pixel" size={8} color={C.blueDark}>
+                <PixelText font="pixel" size={9} color={C.blueDark}>
                   AYE, 'TIS GRAND!
                 </PixelText>
               </PixelButton>
               <PixelButton bg={C.lightFill} shadow={C.paleEdge} onPress={() => setStep('sad')} innerStyle={{ paddingVertical: 10, alignItems: 'center' }}>
-                <PixelText font="pixel" size={8} color={C.blue}>
+                <PixelText font="pixel" size={9} color={C.blue}>
                   NOT YET...
                 </PixelText>
               </PixelButton>
@@ -83,12 +83,12 @@ export function ReviewPrompt({ onResolved }: Props) {
             </PixelText>
             <View style={{ gap: 8 }}>
               <PixelButton bg={C.faith} shadow={C.faithDark} onPress={onRateInStore} innerStyle={{ paddingVertical: 10, alignItems: 'center' }}>
-                <PixelText font="pixel" size={8} color={C.blueDark}>
+                <PixelText font="pixel" size={9} color={C.blueDark}>
                   RATE ON STORE
                 </PixelText>
               </PixelButton>
               <PixelButton bg={C.lightFill} shadow={C.paleEdge} onPress={onResolved} innerStyle={{ paddingVertical: 10, alignItems: 'center' }}>
-                <PixelText font="pixel" size={8} color={C.blue}>
+                <PixelText font="pixel" size={9} color={C.blue}>
                   DONE
                 </PixelText>
               </PixelButton>
@@ -100,7 +100,7 @@ export function ReviewPrompt({ onResolved }: Props) {
               Thy honesty is noted, and thy turnips respected. May thy next life fare better.
             </PixelText>
             <PixelButton bg={C.charm} shadow={C.charmDark} light="#fff1b0" onPress={onResolved} innerStyle={{ paddingVertical: 10, alignItems: 'center' }}>
-              <PixelText font="pixel" size={8} color="#3a2a08">
+              <PixelText font="pixel" size={9} color="#3a2a08">
                 ONWARD
               </PixelText>
             </PixelButton>

@@ -28,7 +28,7 @@ import { chance } from './random';
 import { tickHoldingYear } from './holdingEngine';
 import { tickCareerAndEconomy } from './careerEngine';
 import { simulateLivingWorld } from './worldEngine';
-import { tickRelationshipDecay } from './relationshipEngine';
+import { tickAffairs, tickRelationshipDecay } from './relationshipEngine';
 import { resolveScheduledConsequences, tickPersistentSociety, tickWorldConditions } from './worldSimulation';
 import { duePersistentStoryEvent, maybeStartMajorStory, maybeStartRelationshipStory, maybeStartSupportingStory } from './persistentStoryEngine';
 import { tickFamilyFormation } from './familyFormationEngine';
@@ -83,6 +83,7 @@ export function ageUp(s: GameState): GameState {
   checkDeath(s);
   if (s.dead) return s;
   tickRelationshipDecay(s);
+  tickAffairs(s);
   simulateLivingWorld(s);
   tickPersistentSociety(s);
   tickWorldConditions(s);

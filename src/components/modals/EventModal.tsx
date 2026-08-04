@@ -1,14 +1,13 @@
-import React from 'react';
-import { View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Pressable, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
+import { TypewriterText } from '../ui/TypewriterText';
 import { Choice, GameEvent, GameState } from '@/types/game';
 import { isChoiceAvailable, isChoiceEnabled } from '@/engine/eventPicker';
 import { C, PANEL } from '@/theme/theme';
 import { ModalBackdrop } from './ModalBackdrop';
-import { strongestConditionReasons } from '@/engine/worldSimulation';
-import { WorldConditionKey } from '@/types/game';
-import { storyEligibilityReasons } from '@/content/persistentStories';
+import { storyBeatLine, storyPresentation } from '@/content/storyPresentation';
 
 interface Props {
   state: GameState;
@@ -22,32 +21,67 @@ export function EventModal({ state, event, onChoose }: Props) {
   const story = state.pendingEvent?.storyInstanceId
     ? state.world.activeStories.find((item) => item.id === state.pendingEvent!.storyInstanceId)
     : undefined;
-  const conditionKey = (Object.keys(state.world.conditions) as WorldConditionKey[])
-    .sort((a, b) => Math.abs(state.world.conditions[b] - 50) - Math.abs(state.world.conditions[a] - 50))[0];
+
+  // The modal stays mounted as one event replaces another, so the reveal has to
+  // be reset explicitly rather than relying on a remount.
+  const [written, setWritten] = useState(false);
+  const [skipped, setSkipped] = useState(false);
+  useEffect(() => {
+    setWritten(false);
+    setSkipped(false);
+  }, [event.id]);
+
+  const instant = Boolean(state.settings.reducedMotion) || skipped;
+  const onWritten = useCallback(() => setWritten(true), []);
 
   return (
     <ModalBackdrop zIndex={50}>
       <View style={PANEL.parchModal}>
         <View style={{ backgroundColor: C.health, borderWidth: 3, borderColor: C.inkSoft, borderBottomColor: C.healthDark, borderRightColor: C.healthDark, paddingHorizontal: 8, paddingVertical: 6 }}>
-          <PixelText font="pixel" size={9} color={C.white} style={{ textAlign: 'center' }}>
+          <PixelText font="pixel" size={10} color={C.white} style={{ textAlign: 'center' }}>
             {event.title}
           </PixelText>
         </View>
 
-        {story && <PixelText font="pixel" size={6} color={C.purpleDark} style={{ textAlign: 'center', marginTop: 8 }}>
-          {story.templateId.replaceAll('_', ' ').toUpperCase()} · {story.currentBeatId.replace('_', ' ').toUpperCase()}
-        </PixelText>}
-        {story && <PixelText font="body" size={13} color={C.textMuted} style={{ textAlign: 'center', marginTop: 3 }}>
-          Why now: {(story ? storyEligibilityReasons(state, story.templateId) : strongestConditionReasons(state, conditionKey)).join(', ')}.
-        </PixelText>}
+        {story && (
+          <View style={{ backgroundColor: '#efe2fb', borderWidth: 2, borderColor: C.purple, borderBottomColor: C.purpleDark, borderRightColor: C.purpleDark, padding: 8, marginTop: 9 }}>
+            <PixelText font="pixel" size={8} color={C.purpleDark} style={{ textAlign: 'center' }}>
+              {storyPresentation(story.templateId).title.toUpperCase()}
+            </PixelText>
+            <PixelText font="body" size={16} color={C.textBrown} style={{ textAlign: 'center', marginTop: 5 }}>
+              {storyBeatLine(story.templateId, story.currentBeatId)}
+            </PixelText>
+          </View>
+        )}
 
-        <PixelText font="body" size={18} color={C.textDark} style={{ marginVertical: 12, marginHorizontal: 2 }}>
-          {text}
-        </PixelText>
+        {/* Tapping the passage finishes it at once — nobody should be made to
+            wait through a line they can already read. */}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Reveal the rest of the passage"
+          onPress={() => setSkipped(true)}
+          style={{ marginVertical: 12, marginHorizontal: 2 }}
+        >
+          <TypewriterText
+            text={text}
+            font="body"
+            size={18}
+            color={C.textDark}
+            cursorColor={C.amber}
+            instant={instant}
+            onDone={onWritten}
+          />
+        </Pressable>
 
-        <View style={{ gap: 7 }}>
+        {!written && (
+          <PixelText font="pixel" size={6} color={C.textMuted} style={{ textAlign: 'center', marginBottom: 8 }}>
+            TAP TO READ ON
+          </PixelText>
+        )}
+
+        <View style={{ gap: 7, opacity: written ? 1 : 0.45 }}>
           {choices.map((c, i) => {
-            const enabled = isChoiceEnabled(state, c);
+            const enabled = written && isChoiceEnabled(state, c);
             return (
               <PixelButton
                 key={i}
@@ -62,18 +96,10 @@ export function EventModal({ state, event, onChoose }: Props) {
                   {c.label}
                 </PixelText>
                 {c.hint ? (
-                  <PixelText font="body" size={13} color={C.blue} style={{ marginTop: 2 }}>
+                  <PixelText font="body" size={14} color={C.blue} style={{ marginTop: 2 }}>
                     {c.hint}
                   </PixelText>
                 ) : null}
-                {c.forecast && <View style={{ marginTop: 5, gap: 2 }}>
-                  <PixelText font="body" size={13} color={c.forecast.risk === 'high' ? C.bad : c.forecast.risk === 'medium' ? C.amber : C.good}>
-                    Risk: {c.forecast.risk} · Advantage: {c.forecast.positive.join(', ')}
-                  </PixelText>
-                  <PixelText font="body" size={12} color={C.textMuted}>
-                    Cost: {c.forecast.negative.join(', ')}{c.forecast.warnsDelayedConsequence ? ' · This may return in later years.' : ''}
-                  </PixelText>
-                </View>}
               </PixelButton>
             );
           })}

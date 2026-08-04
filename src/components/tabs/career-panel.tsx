@@ -30,7 +30,7 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
           {actionArt && <Image source={actionArt} resizeMode="contain" style={{ width: 34, height: 34 }} />}
-          <PixelText font="pixel" size={6} color={C.blueDark} style={{ flex: 1 }}>{label}</PixelText>
+          <PixelText font="pixel" size={7} color={C.blueDark} style={{ flex: 1 }}>{label}</PixelText>
         </View>
         <PixelText font="body" size={14} color={available.available ? C.textMuted : C.bad} style={{ marginTop: 5 }}>
           {available.available ? hint : available.reason}
@@ -44,7 +44,7 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
       <View style={{ borderWidth: 3, borderColor: C.inkSoft, backgroundColor: C.parch }}>
         <Image source={FEATURE_ART.work} resizeMode="cover" style={{ width: '100%', height: 112 }} />
         <View style={{ padding: 10, borderTopWidth: 3, borderTopColor: C.parchSd }}>
-          <PixelText font="pixel" size={8} color={C.blueDeep}>WORK BUILDS A LIFE</PixelText>
+          <PixelText font="pixel" size={9} color={C.blueDeep}>WORK BUILDS A LIFE</PixelText>
           <PixelText font="body" size={15} color={C.textDark} style={{ marginTop: 5 }}>
             Take a job, work shifts for gold, then train for experience and better performance. Higher career tiers pay more and help shape your reputation and story path.
           </PixelText>
@@ -62,7 +62,7 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
             </View>
           )}
           <View style={{ flex: 1 }}>
-            <PixelText font="pixel" size={7} color={C.blueDeep}>CURRENT OCCUPATION</PixelText>
+            <PixelText font="pixel" size={8} color={C.blueDeep}>CURRENT OCCUPATION</PixelText>
             <PixelText font="body" size={17} color={C.textDark} style={{ marginTop: 5 }}>
               {career ? `${career.title}. About ${career.wage}g per shift.` : 'Unemployed. Choose an occupation below.'}
             </PixelText>
@@ -75,7 +75,7 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
 
       {actionsRemaining === 0 && (
         <View style={{ backgroundColor: C.badBg, borderWidth: 2, borderColor: C.badBorder, padding: 9, marginTop: 8 }}>
-          <PixelText font="pixel" size={6} color={C.bad}>THE WORKDAY IS OVER</PixelText>
+          <PixelText font="pixel" size={7} color={C.bad}>THE WORKDAY IS OVER</PixelText>
           <PixelText font="body" size={14} color={C.textDark} style={{ marginTop: 4 }}>Age up to receive a fresh set of actions.</PixelText>
         </View>
       )}
@@ -94,7 +94,7 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
 
       {!career && (
         <>
-          <PixelText font="pixel" size={7} color={C.blueDeep} style={{ marginVertical: 8 }}>CHOOSE AN OCCUPATION</PixelText>
+          <PixelText font="pixel" size={8} color={C.blueDeep} style={{ marginVertical: 8 }}>CHOOSE AN OCCUPATION</PixelText>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
             {ENTRY_CAREERS.map((entry) => {
               const availability = careerActionAvailability(state, 'apply', entry.id);
@@ -112,7 +112,7 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
                   <View style={{ width: 38, height: 38, backgroundColor: C.lightFill, borderWidth: 2, borderColor: C.inkSoft, alignItems: 'center', justifyContent: 'center' }}>
                     <Image source={art} resizeMode="contain" style={{ width: 32, height: 32 }} />
                   </View>
-                  <PixelText font="pixel" size={6} color={C.textDark} style={{ marginTop: 6 }}>{entry.title.toUpperCase()}</PixelText>
+                  <PixelText font="pixel" size={7} color={C.textDark} style={{ marginTop: 6 }}>{entry.title.toUpperCase()}</PixelText>
                   <PixelText font="body" size={14} color={availability.available ? C.textMuted : C.bad} style={{ marginTop: 5 }}>
                     {availability.available ? `${entry.wage}g per shift. ${entry.desc}` : availability.reason}
                   </PixelText>

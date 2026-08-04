@@ -114,6 +114,89 @@ function maybeExpectNpcChild(state: GameState): void {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Player-directed family planning
+// ---------------------------------------------------------------------------
+
+/** Women bear children up to this age in the simulation. */
+export const CHILDBEARING_MAX_AGE = 44;
+
+/** Silver a household must find to take in a child of its own choosing. */
+export const ADOPTION_COST = 15;
+
+/** True when one of these people already has an arrival on the way. */
+export function hasPendingArrival(state: GameState, ids: string[]): boolean {
+  return state.world.expectedChildren.some((expected) => expected.status === 'expected' && expected.parentIds.some((id) => ids.includes(id)));
+}
+
+/** Whichever of the couple could carry a child, or null when neither can. */
+export function childbearingPartner(state: GameState, partnerId: string): WorldCharacter | null {
+  const couple = [state.world.characters[state.playerCharacterId], state.world.characters[partnerId]];
+  for (const person of couple) {
+    if (person?.alive && person.gender === 'woman' && person.age >= 16 && person.age <= CHILDBEARING_MAX_AGE) return person;
+  }
+  return null;
+}
+
+/**
+ * How this couple could come by a child right now. A pregnancy when one of them
+ * can carry one; otherwise the household may take in a child that needs a home,
+ * which is also the only road open to a couple of the same gender.
+ */
+export function familyPlanningRoute(state: GameState, partnerId: string): 'pregnancy' | 'adoption' | null {
+  const partner = state.world.characters[partnerId];
+  if (!partner?.alive || partner.spouseId !== state.playerCharacterId) return null;
+  if (state.age < 18 || partner.age < 18) return null;
+  if (hasPendingArrival(state, [state.playerCharacterId, partnerId])) return null;
+  return childbearingPartner(state, partnerId) ? 'pregnancy' : 'adoption';
+}
+
+/** Odds of a year of trying bearing fruit, from the mother's age and health. */
+function conceptionChance(mother: WorldCharacter): number {
+  const decline = Math.max(0, mother.age - 28) * 0.022;
+  return Math.min(0.62, Math.max(0.07, 0.55 - decline + (mother.stats.health - 50) / 400));
+}
+
+function expectChild(state: GameState, route: ExpectedChild['route'], parents: WorldCharacter[], carrier: WorldCharacter): void {
+  state.world.expectedChildren.push({
+    id: `expected_${state.nextId++}`,
+    parentIds: parents.map((parent) => parent.id),
+    route,
+    dueYear: state.world.currentYear + 1,
+    householdId: carrier.householdId ?? `house_${carrier.id}`,
+    familyId: carrier.birthFamilyId ?? `family_${carrier.id}`,
+    status: 'expected',
+    sourceChoiceId: route === 'pregnancy' ? 'try_for_child' : 'adopt_child',
+  });
+}
+
+/**
+ * A year spent trying for a child with the player's spouse. Returns whether an
+ * arrival is now expected; the birth itself resolves in `tickFamilyFormation`.
+ */
+export function tryForChild(state: GameState, partnerId: string): boolean {
+  const player = state.world.characters[state.playerCharacterId];
+  const partner = state.world.characters[partnerId];
+  const mother = childbearingPartner(state, partnerId);
+  if (!player || !partner || !mother) return false;
+  if (!chance(conceptionChance(mother))) return false;
+  expectChild(state, 'pregnancy', [player, partner], mother);
+  return true;
+}
+
+/**
+ * Take in a child who has no household of their own. Slower and costlier than a
+ * pregnancy, but open to every couple.
+ */
+export function adoptChild(state: GameState, partnerId: string): void {
+  const player = state.world.characters[state.playerCharacterId];
+  const partner = state.world.characters[partnerId];
+  if (!player || !partner) return;
+  state.gold -= ADOPTION_COST;
+  state.expenses += ADOPTION_COST;
+  expectChild(state, 'adoption', [player, partner], player);
+}
+
 export function tickFamilyFormation(state: GameState): GameState {
   for (const expected of state.world.expectedChildren.filter((item) => item.status === 'expected' && item.dueYear <= state.world.currentYear)) resolveExpectedChild(state, expected);
   state.world.expectedChildren = state.world.expectedChildren.filter((item) => item.status === 'expected' || state.world.currentYear - item.dueYear <= 5).slice(-40);

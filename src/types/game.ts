@@ -294,7 +294,7 @@ export interface RelationshipPerspective {
   attraction: number;
 }
 
-export type RelationshipFlag = 'family' | 'spouse' | 'friend' | 'rival' | 'authority' | 'feud' | 'former_spouse';
+export type RelationshipFlag = 'family' | 'spouse' | 'friend' | 'rival' | 'authority' | 'feud' | 'former_spouse' | 'affair';
 
 export interface Relationship {
   id: string;
@@ -526,6 +526,10 @@ export interface NewKinSpec {
   rel?: number;
   age?: number;
   isHeir?: boolean;
+  /** Forced gender; omit to let the factory roll one. */
+  gender?: GenderIdentity;
+  /** Forced attraction; omit to derive it from gender. */
+  attraction?: AttractionPreference;
 }
 
 // ---------------------------------------------------------------------------
@@ -797,6 +801,18 @@ export interface CareerDef {
 
 export type ShopItemType = 'consumable' | 'perm';
 
+/** The stalls and traders of Swineford, each with its own kind of wares. */
+export type ShopMarket =
+  | 'pedlar'
+  | 'market'
+  | 'apothecary'
+  | 'armourer'
+  | 'draper'
+  | 'beastmarket'
+  | 'reliquary'
+  | 'scrivener'
+  | 'landagent';
+
 export interface ShopItem {
   id: string;
   name: string;
@@ -809,6 +825,14 @@ export interface ShopItem {
   desc: string;
   /** Youngest age the merchant will sell this to (default 0). */
   minAge?: number;
+  /** Which stall carries it. */
+  market: ShopMarket;
+  /** Always in stock; everything else rotates from year to year. */
+  staple?: boolean;
+  /** Chance in 100 that a rotating item is stocked in any given year. */
+  stockChance?: number;
+  /** Station the seller expects before dealing (default 0). */
+  minRankIdx?: number;
 }
 
 export interface GameSettings {
@@ -819,6 +843,8 @@ export interface GameSettings {
   music: boolean;
   soundEffects: boolean;
   reducedMotion?: boolean;
+  /** Collapse the Swineford panel on the Holding page. Carried across lives. */
+  villageCollapsed?: boolean;
 }
 
 export type Tab = 'life' | 'do' | 'kin' | 'hold' | 'shop' | 'me';
@@ -827,11 +853,34 @@ export type Tab = 'life' | 'do' | 'kin' | 'hold' | 'shop' | 'me';
 // The full game state
 // ---------------------------------------------------------------------------
 
+export type DuelKind = 'duel' | 'brawl';
+export type DuelOutcome = 'won' | 'lost' | 'yielded' | 'refused';
+
+/** A fight in progress, resolved exchange by exchange through the duel modal. */
+export interface DuelState {
+  opponentId: string;
+  kind: DuelKind;
+  /** Fight-local composure, 0..100. Not the same as health. */
+  playerVigour: number;
+  opponentVigour: number;
+  round: number;
+  /** The telegraphed attack the player is currently answering. */
+  moveId: string;
+  /** Narration of the exchanges so far, newest last. */
+  log: string[];
+  /** Set once the fight is decided, before the player closes the modal. */
+  outcome?: DuelOutcome;
+  /** Closing narration shown with the outcome. */
+  verdict?: string;
+}
+
 export interface GameState {
   schemaVersion: 4;
   playerCharacterId: string;
   playerRun: PlayerRunState;
   pendingEvent: PendingEvent | null;
+  /** Non-null only while a fight is being played out. */
+  duel: DuelState | null;
   // --- identity ---
   first: string;
   epithet: string;

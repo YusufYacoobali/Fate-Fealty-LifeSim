@@ -40,6 +40,7 @@ export const ACTIVITY_DEFS: ActivityDef[] = [
   { id: 'royal_audience', cat: 'leisure', name: 'AUDIENCE', icon: '⚜️', iconBg: C.charm, desc: 'Shape legitimacy', minAge: 18, roles: ['monarch'] },
   { id: 'plan_heist', cat: 'crime', name: 'PLAN HEIST', icon: '🗝️', iconBg: C.health, desc: 'Prepare a rich theft', minAge: 16, roles: ['outlaw'] },
   { id: 'rally_gang', cat: 'crime', name: 'RALLY GANG', icon: '🗡️', iconBg: C.purple, desc: 'Secure outlaw loyalty', minAge: 16, roles: ['outlaw'] },
+  { id: 'courting', cat: 'leisure', name: 'GO COURTING', icon: '🌹', iconBg: C.health, desc: 'Seek out a match', minAge: 16 },
   { id: 'teach_child', cat: 'leisure', name: 'TEACH CHILD', icon: '📖', iconBg: C.light, desc: 'Shape a young mind', minAge: 18 },
   { id: 'arrange_gathering', cat: 'leisure', name: 'GATHERING', icon: '🕯️', iconBg: C.charm, desc: 'Bring households together', minAge: 16 },
   { id: 'care_relative', cat: 'health', name: 'FAMILY CARE', icon: '🤲', iconBg: C.teal, desc: 'Nurse an ailing relative', minAge: 10 },

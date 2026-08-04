@@ -23,7 +23,7 @@ export function GoalBanner({ goal }: { goal: GoalView }) {
         }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-          <PixelText font="pixel" size={6} color={goal.done ? C.faith : C.purple}>
+          <PixelText font="pixel" size={7} color={goal.done ? C.faith : C.purple}>
             {goal.done ? '✓ AMBITION' : '🎯 AMBITION'}
           </PixelText>
           <PixelText font="body" size={15} color={C.creamBlue}>

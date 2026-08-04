@@ -21,6 +21,7 @@ import { runWithWorldRng } from '@/engine/random';
 import { eventById } from '@/engine/eventPicker';
 import { continueAsHeir } from '@/engine/successionEngine';
 import { DailyRewardBonus } from '@/services/dailyRewards';
+import { concludeDuel, respondToDuel } from '@/engine/duelEngine';
 
 export type GameAction =
   | { type: 'HYDRATE'; state: GameState }
@@ -44,6 +45,8 @@ export type GameAction =
   | { type: 'SET_SETTINGS'; settings: Partial<GameSettings> }
   | { type: 'SET_LIFETIME_UNLOCKED'; unlocked: boolean }
   | { type: 'CLAIM_DAILY_REWARD'; gold: number; streak: number; bonus?: DailyRewardBonus; bonusAmount?: number }
+  | { type: 'DUEL_RESPOND'; responseId: string }
+  | { type: 'DUEL_CLOSE' }
   | { type: 'NEW_LIFE'; options?: NewLifeOptions }
   | { type: 'CONTINUE_AS_HEIR'; heirId?: string };
 
@@ -55,6 +58,12 @@ export interface NewLifeOptions {
   gender?: GenderIdentity;
   pronouns?: PronounSet;
   attraction?: AttractionPreference;
+  /**
+   * Pro access for the life about to begin. Defaults to the outgoing life's
+   * access; the caller overrides it when the free first-life sample starts or
+   * ends at exactly this boundary.
+   */
+  lifetimeUnlocked?: boolean;
 }
 
 function timed(
@@ -200,18 +209,37 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       return finishEngineTransaction(s);
     }
 
+    case 'DUEL_RESPOND': {
+      if (!state.duel || state.duel.outcome) return state;
+      const s = cloneState(state);
+      runWithWorldRng(s.world, () => respondToDuel(s, action.responseId));
+      return finishEngineTransaction(s);
+    }
+
+    case 'DUEL_CLOSE': {
+      if (!state.duel?.outcome) return state;
+      const s = cloneState(state);
+      runWithWorldRng(s.world, () => {
+        concludeDuel(s);
+        checkDeath(s);
+        return s;
+      });
+      return finishEngineTransaction(s);
+    }
+
     case 'NEW_LIFE': {
       const opts = action.options ?? {};
       const settings = opts.difficulty ? { ...state.settings, difficulty: opts.difficulty } : state.settings;
+      const unlocked = opts.lifetimeUnlocked ?? state.lifetimeUnlocked;
       return createLife({
-        settings: proLockedSettings(settings, state.lifetimeUnlocked),
+        settings: proLockedSettings(settings, unlocked),
         lifeNo: state.lifeNo + 1,
         firstName: opts.firstName,
         birthTraitId: opts.birthTraitId,
         gender: opts.gender,
         pronouns: opts.pronouns,
         attraction: opts.attraction,
-        lifetimeUnlocked: state.lifetimeUnlocked,
+        lifetimeUnlocked: unlocked,
       });
     }
 

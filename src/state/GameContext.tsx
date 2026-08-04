@@ -8,12 +8,13 @@ import { useScheduledReminders } from './hooks/useScheduledReminders';
 import { useCharacterCreation } from './hooks/useCharacterCreation';
 import { useMetaProgression, ProgressSnapshot } from './hooks/useMetaProgression';
 import { usePremium } from './hooks/usePremium';
+import { useProTrial } from './hooks/useProTrial';
 import { useShopPromoGate } from './hooks/useShopPromoGate';
 import type { PremiumAccessState } from './hooks/usePremium';
 import { NewLifeOptions } from './gameReducer';
 import { PlanId, PurchaseOutcome } from '@/services/purchases';
 import { useRetentionLoops } from './hooks/useRetentionLoops';
-import type { DailyRewardStatus } from '@/services/dailyRewards';
+import type { DailyRewardProgress, DailyRewardStatus } from '@/services/dailyRewards';
 import type { ReturnRumour } from '@/services/returnRumour';
 
 interface GameContextValue {
@@ -35,11 +36,20 @@ interface GameContextValue {
   onboardingVisible: boolean;
   completeOnboarding: () => void;
   restartOnboarding: () => void;
+  /** Content gate: a paid entitlement OR the free first-life sample. */
   premiumUnlocked: boolean;
+  /** The paid entitlement alone — what the storefront must reflect. */
+  premiumEntitled: boolean;
   premiumAccessState: PremiumAccessState;
   purchasePlan: (plan: PlanId) => Promise<PurchaseOutcome>;
   restorePremium: () => Promise<boolean>;
+  proTrialActive: boolean;
+  proTrialNoticeVisible: boolean;
+  dismissProTrialNotice: () => void;
+  /** Pro access the life being created will have — what the creation screen shows. */
+  premiumForNextLife: boolean;
   dailyRewardStatus: DailyRewardStatus | null;
+  dailyRewardProgress: DailyRewardProgress | null;
   claimDailyReward: () => void;
   dismissDailyReward: () => void;
   returnRumour: ReturnRumour | null;
@@ -61,7 +71,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const review = useReviewGate(game.state, game.loaded, meta);
   const creation = useCharacterCreation(meta, game.loaded, game.dispatch);
   const progression = useMetaProgression(game.state, meta, game.loaded);
-  const premium = usePremium(meta, game.loaded, game.dispatch);
+  const premium = usePremium(meta, game.loaded);
+  const proAccess = useProTrial(game.state, game.loaded, meta, premium.premiumUnlocked, game.dispatch);
   const retention = useRetentionLoops(game.state, game.loaded, meta, game.dispatch);
   const updateMeta = meta.update;
   const [onboardingVisible, setOnboardingVisible] = useState(false);
@@ -73,10 +84,28 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   }, [game.loaded, meta.ready, meta.metaRef, game.state.lifeNo]);
 
   const shopPromo = useShopPromoGate(game.state, game.loaded, meta, {
-    eligible: premium.premiumAccessState === 'inactive',
-    blocked: creation.creating || onboardingVisible || progression.newAchievements.length > 0 || !!retention.dailyRewardStatus || !!retention.returnRumour,
+    // Never sell Pro to someone who currently has it, sample included.
+    eligible: premium.premiumAccessState === 'inactive' && !proAccess.trialActive,
+    blocked:
+      creation.creating
+      || onboardingVisible
+      || progression.newAchievements.length > 0
+      || !!retention.dailyRewardStatus
+      || !!retention.returnRumour
+      || proAccess.trialNoticeVisible,
     reviewVisible: review.reviewVisible,
   });
+
+  // Character creation decides the NEXT life's access, which differs from the
+  // outgoing life's at exactly the moment the free sample starts or is spent.
+  const commitCharacter = creation.createCharacter;
+  const proForNextLife = proAccess.proForNextLife;
+  const createCharacter = useCallback(
+    (options: NewLifeOptions) => {
+      commitCharacter({ ...options, lifetimeUnlocked: proForNextLife });
+    },
+    [commitCharacter, proForNextLife],
+  );
 
   const completeOnboarding = useCallback(() => {
     updateMeta({ tutorialSeen: true });
@@ -101,18 +130,24 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       resolveShopPromo: shopPromo.resolveShopPromo,
       creating: creation.creating,
       requestNewLife: creation.requestNewLife,
-      createCharacter: creation.createCharacter,
+      createCharacter,
       newAchievements: progression.newAchievements,
       dismissAchievement: progression.dismissAchievement,
       getProgress: progression.getProgress,
       onboardingVisible,
       completeOnboarding,
       restartOnboarding,
-      premiumUnlocked: premium.premiumUnlocked,
+      premiumUnlocked: proAccess.premiumUnlocked,
+      premiumEntitled: premium.premiumUnlocked,
       premiumAccessState: premium.premiumAccessState,
       purchasePlan: premium.purchasePlan,
       restorePremium: premium.restorePremium,
+      proTrialActive: proAccess.trialActive,
+      proTrialNoticeVisible: proAccess.trialNoticeVisible,
+      dismissProTrialNotice: proAccess.dismissTrialNotice,
+      premiumForNextLife: proForNextLife,
       dailyRewardStatus: retention.dailyRewardStatus,
+      dailyRewardProgress: retention.dailyRewardProgress,
       claimDailyReward: retention.claimDailyReward,
       dismissDailyReward: retention.dismissDailyReward,
       returnRumour: retention.returnRumour,
@@ -131,18 +166,24 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       shopPromo.resolveShopPromo,
       creation.creating,
       creation.requestNewLife,
-      creation.createCharacter,
+      createCharacter,
       progression.newAchievements,
       progression.dismissAchievement,
       progression.getProgress,
       onboardingVisible,
       completeOnboarding,
       restartOnboarding,
+      proAccess.premiumUnlocked,
       premium.premiumUnlocked,
       premium.premiumAccessState,
       premium.purchasePlan,
       premium.restorePremium,
+      proAccess.trialActive,
+      proAccess.trialNoticeVisible,
+      proAccess.dismissTrialNotice,
+      proForNextLife,
       retention.dailyRewardStatus,
+      retention.dailyRewardProgress,
       retention.claimDailyReward,
       retention.dismissDailyReward,
       retention.returnRumour,

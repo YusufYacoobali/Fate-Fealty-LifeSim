@@ -120,7 +120,7 @@ export function validateContent(): ContentValidationIssue[] {
     if (story.recovery.recoveryBeatId && !story.beats[story.recovery.recoveryBeatId]) error('invalid_recovery', story.id, `Recovery beat ${story.recovery.recoveryBeatId} does not exist.`);
   }
 
-  if (ACTIVITY_DEFS.length !== 48) error('activity_total', 'activities', `Expected 48 activities, found ${ACTIVITY_DEFS.length}.`);
+  if (ACTIVITY_DEFS.length !== 49) error('activity_total', 'activities', `Expected 49 activities, found ${ACTIVITY_DEFS.length}.`);
   if (CAREERS.filter((career) => !career.premium).length !== 30) error('career_total', 'careers', `Expected 30 free careers, found ${CAREERS.filter((career) => !career.premium).length}.`);
   if (CAREERS.filter((career) => career.premium && career.prestige).length !== 7) error('prestige_total', 'careers', `Expected 7 premium prestige careers, found ${CAREERS.filter((career) => career.premium && career.prestige).length}.`);
   if (HEALTH_CONDITIONS.length !== 16) error('health_total', 'health', `Expected 16 structured health conditions, found ${HEALTH_CONDITIONS.length}.`);

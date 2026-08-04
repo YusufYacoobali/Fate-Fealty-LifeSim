@@ -1,8 +1,14 @@
 import {
+  atFirstLifeMilestone,
+  endsOnBadOutcome,
   entriesDelta,
   hasRecentGoodOutcome,
   REVIEW_ENTRY_THRESHOLD,
+  REVIEW_FIRST_LIFE_AGE,
+  REVIEW_MAX_PROMPTS,
   REVIEW_OUTCOME_LOOKBACK,
+  REVIEW_PATIENCE_ENTRIES,
+  REVIEW_REPROMPT_GAP,
   shouldPromptReview,
 } from '@/services/reviewLogic';
 import { DEFAULT_META } from '@/state/appMeta';
@@ -11,6 +17,12 @@ import { makeState } from './helpers';
 function goodMomentState() {
   const s = makeState();
   s.feed = [{ id: 1, age: 5, tag: 'X', text: 'a fine day', tone: 'good' }];
+  return s;
+}
+
+function badMomentState() {
+  const s = goodMomentState();
+  s.feed = [{ id: 1, age: 5, tag: 'X', text: 'a bad day', tone: 'bad', source: 'player' }];
   return s;
 }
 
@@ -25,8 +37,15 @@ describe('reviewLogic.shouldPromptReview', () => {
     expect(shouldPromptReview({ ...DEFAULT_META, totalEntries: 24 }, goodMomentState())).toBe(false);
   });
 
-  it('does not prompt twice', () => {
-    expect(shouldPromptReview({ ...ready, reviewPrompted: true }, goodMomentState())).toBe(false);
+  it('stops once the lifetime ask limit is reached', () => {
+    expect(shouldPromptReview({ ...ready, reviewPromptCount: REVIEW_MAX_PROMPTS }, goodMomentState())).toBe(false);
+  });
+
+  it('migrated one-shot saves still allow the second ask after the gap', () => {
+    const shown = { ...DEFAULT_META, reviewPrompted: true, reviewPromptCount: 1, reviewLastEntry: 30 };
+
+    expect(shouldPromptReview({ ...shown, totalEntries: 30 + REVIEW_REPROMPT_GAP - 1 }, goodMomentState())).toBe(false);
+    expect(shouldPromptReview({ ...shown, totalEntries: 30 + REVIEW_REPROMPT_GAP }, goodMomentState())).toBe(true);
   });
 
   it('never interrupts death, an event, or settings', () => {
@@ -43,10 +62,54 @@ describe('reviewLogic.shouldPromptReview', () => {
     expect(shouldPromptReview(ready, settings)).toBe(false);
   });
 
-  it('does not fire after a negative player outcome', () => {
-    const sad = goodMomentState();
-    sad.feed = [{ id: 1, age: 5, tag: 'X', text: 'a bad day', tone: 'bad' }];
-    expect(shouldPromptReview(ready, sad)).toBe(false);
+  it('waits through a negative player outcome while patience holds', () => {
+    expect(shouldPromptReview(ready, badMomentState())).toBe(false);
+  });
+
+  it('settles for a non-bad moment once patience runs out', () => {
+    const patient = { ...DEFAULT_META, totalEntries: REVIEW_ENTRY_THRESHOLD + REVIEW_PATIENCE_ENTRIES };
+    const neutral = makeState();
+    neutral.feed = [{ id: 1, age: 30, tag: 'HOUSEHOLD', text: 'Costs were paid.', tone: 'plain', source: 'player' }];
+
+    expect(shouldPromptReview({ ...patient, totalEntries: patient.totalEntries - 1 }, neutral)).toBe(false);
+    expect(shouldPromptReview(patient, neutral)).toBe(true);
+    // Patience never overrides a sour moment.
+    expect(shouldPromptReview(patient, badMomentState())).toBe(false);
+  });
+});
+
+describe('reviewLogic first-life milestone', () => {
+  const firstLife = { ...DEFAULT_META, firstLifeNo: 2 };
+
+  function firstLifeState(age: number) {
+    const s = makeState({ lifeNo: 2 });
+    s.age = age;
+    s.feed = [{ id: 1, age, tag: 'HOUSEHOLD', text: 'Costs were paid.', tone: 'plain', source: 'player' }];
+    return s;
+  }
+
+  it('asks ten years in without waiting for the entry cadence', () => {
+    expect(atFirstLifeMilestone(firstLife, firstLifeState(REVIEW_FIRST_LIFE_AGE))).toBe(true);
+    expect(shouldPromptReview(firstLife, firstLifeState(REVIEW_FIRST_LIFE_AGE))).toBe(true);
+  });
+
+  it('does not ask before the milestone age', () => {
+    expect(shouldPromptReview(firstLife, firstLifeState(REVIEW_FIRST_LIFE_AGE - 1))).toBe(false);
+  });
+
+  it('only counts the first life of the install', () => {
+    const later = makeState({ lifeNo: 5 });
+    later.age = 40;
+    expect(atFirstLifeMilestone(firstLife, later)).toBe(false);
+  });
+
+  it('does not fire before the first life has been bound', () => {
+    expect(atFirstLifeMilestone(DEFAULT_META, firstLifeState(40))).toBe(false);
+  });
+
+  it('is a first-ask door only, never the second', () => {
+    const shown = { ...firstLife, reviewPromptCount: 1, reviewLastEntry: 0 };
+    expect(shouldPromptReview(shown, firstLifeState(REVIEW_FIRST_LIFE_AGE))).toBe(false);
   });
 });
 
@@ -76,6 +139,7 @@ describe('reviewLogic.hasRecentGoodOutcome', () => {
     s.feed.push({ id: 2, age: 5, tag: 'CAUGHT', text: 'The guards caught you.', tone: 'bad', source: 'player' });
 
     expect(hasRecentGoodOutcome(s)).toBe(false);
+    expect(endsOnBadOutcome(s)).toBe(true);
   });
 
   it('does not reuse a positive outcome after it leaves the recent window', () => {
@@ -85,6 +149,7 @@ describe('reviewLogic.hasRecentGoodOutcome', () => {
     }
 
     expect(hasRecentGoodOutcome(s)).toBe(false);
+    expect(endsOnBadOutcome(s)).toBe(false);
   });
 
   it('treats source-less entries from old saves as player outcomes', () => {

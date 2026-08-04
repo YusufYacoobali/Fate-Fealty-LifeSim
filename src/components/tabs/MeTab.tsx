@@ -29,6 +29,42 @@ interface RankClimbVM {
   locked: boolean;
 }
 
+interface StandingVM {
+  delta: number;
+  gains: { label: string; delta: number }[];
+  losses: { label: string; delta: number }[];
+}
+
+/** What is raising and lowering the climb toward the next rank, in plain words. */
+function StandingCard({ standing }: { standing: StandingVM }) {
+  const rising = standing.delta > 0;
+  const rows = [...standing.gains, ...standing.losses];
+
+  return (
+    <View style={{ marginTop: 10, backgroundColor: C.parch, borderWidth: 3, borderColor: C.parchBorder, borderTopColor: C.parchSl, borderLeftColor: C.parchSl, borderBottomColor: C.parchSd, borderRightColor: C.parchSd, padding: 10 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <PixelText font="pixel" size={8} color={C.blueDeep}>STANDING THIS YEAR</PixelText>
+        <PixelText font="pixel" size={9} color={rising ? C.good : standing.delta === 0 ? C.textMuted : C.bad}>
+          {standing.delta > 0 ? `+${standing.delta}` : standing.delta}
+        </PixelText>
+      </View>
+      <PixelText font="body" size={14} color={C.textMuted} style={{ marginTop: 5 }}>
+        Deeds and events move the climb too. This is only what each year adds or takes on its own.
+      </PixelText>
+      <View style={{ marginTop: 8, gap: 4 }}>
+        {rows.map((row) => (
+          <View key={row.label} style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 8 }}>
+            <PixelText font="body" size={15} color={C.textDark} style={{ flex: 1 }}>{row.label}</PixelText>
+            <PixelText font="body" size={15} color={row.delta > 0 ? C.good : C.bad}>
+              {row.delta > 0 ? `+${row.delta}` : row.delta}
+            </PixelText>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
+
 function displayLockedRank(name: string) {
   return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
 }
@@ -58,13 +94,14 @@ interface Props {
   stats: StatVM[];
   rankPath: RankVM[];
   rankClimb: RankClimbVM | null;
+  standing: StandingVM;
   traits: TraitVM[];
   goal: GoalVM | null;
   bio: string;
   onLockedRankPress?: () => void;
 }
 
-export function MeTab({ portrait, firstName, epithet, classRank, age, stats, rankPath, rankClimb, traits, goal, bio, onLockedRankPress }: Props) {
+export function MeTab({ portrait, firstName, epithet, classRank, age, stats, rankPath, rankClimb, standing, traits, goal, bio, onLockedRankPress }: Props) {
   const portraitAsset = rankPortraitAsset(classRank);
 
   return (
@@ -79,7 +116,7 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
           )}
         </View>
         <View style={{ flex: 1, minWidth: 0 }}>
-          <PixelText font="pixel" size={9} color={C.charm}>
+          <PixelText font="pixel" size={10} color={C.charm}>
             {firstName}
           </PixelText>
           <PixelText font="body" size={16} color="#dbe9ff" style={{ marginTop: 3 }}>
@@ -94,7 +131,7 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
       </View>
 
       {/* path to nobility */}
-      <PixelText font="pixel" size={7} color={C.blueDeep} style={{ marginTop: 13, marginBottom: 8 }}>
+      <PixelText font="pixel" size={8} color={C.blueDeep} style={{ marginTop: 13, marginBottom: 8 }}>
         PATH TO NOBILITY
       </PixelText>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
@@ -108,11 +145,11 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
             onPress={r.locked ? onLockedRankPress : undefined}
             style={{ flex: 1, alignItems: 'center', backgroundColor: r.bg, borderWidth: 2, borderColor: C.inkSoft, borderBottomColor: r.sd, borderRightColor: r.sd, paddingVertical: 5, paddingHorizontal: 2, opacity: r.locked ? 0.86 : 1 }}
           >
-            <PixelText font="pixel" size={6} color={r.fg}>
+            <PixelText font="pixel" size={7} color={r.fg}>
               {r.locked ? displayLockedRank(r.name) : r.name}
             </PixelText>
             {r.locked && (
-              <PixelText font="pixel" size={6} color={r.fg} style={{ marginTop: 2 }}>
+              <PixelText font="pixel" size={7} color={r.fg} style={{ marginTop: 2 }}>
                 Locked
               </PixelText>
             )}
@@ -137,9 +174,10 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
           />
         </View>
       )}
+      {rankClimb && !rankClimb.locked && <StandingCard standing={standing} />}
 
       {/* attributes */}
-      <PixelText font="pixel" size={7} color={C.blueDeep} style={{ marginTop: 14, marginBottom: 8 }}>
+      <PixelText font="pixel" size={8} color={C.blueDeep} style={{ marginTop: 14, marginBottom: 8 }}>
         ATTRIBUTES
       </PixelText>
       <View style={{ gap: 9 }}>
@@ -150,15 +188,15 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
                 {statIconAsset(s.key) ? (
                   <Image source={statIconAsset(s.key)} resizeMode="contain" style={{ width: 20, height: 20 }} />
                 ) : (
-                  <PixelText font="pixel" size={7} color={s.dark}>
+                  <PixelText font="pixel" size={8} color={s.dark}>
                     {s.icon}
                   </PixelText>
                 )}
-                <PixelText font="pixel" size={7} color={s.dark}>
+                <PixelText font="pixel" size={8} color={s.dark}>
                   {s.label}
                 </PixelText>
               </View>
-              <PixelText font="pixel" size={7} color={C.inkSoft}>
+              <PixelText font="pixel" size={8} color={C.inkSoft}>
                 {s.val}%
               </PixelText>
             </View>
@@ -168,7 +206,7 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
       </View>
 
       {/* life goal */}
-      <PixelText font="pixel" size={7} color={C.blueDeep} style={{ marginTop: 14, marginBottom: 8 }}>
+      <PixelText font="pixel" size={8} color={C.blueDeep} style={{ marginTop: 14, marginBottom: 8 }}>
         THY AMBITION
       </PixelText>
       <View style={PANEL.parchCard}>
@@ -195,7 +233,7 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
       </View>
 
       {/* traits */}
-      <PixelText font="pixel" size={7} color={C.blueDeep} style={{ marginTop: 14, marginBottom: 8 }}>
+      <PixelText font="pixel" size={8} color={C.blueDeep} style={{ marginTop: 14, marginBottom: 8 }}>
         TRAITS & REPUTE
       </PixelText>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 7 }}>

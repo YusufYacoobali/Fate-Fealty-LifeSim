@@ -1,4 +1,12 @@
-import { canPromote, demote, dominantPath, promote, tickProgression } from '@/engine/pathProgression';
+import {
+  canPromote,
+  demote,
+  dominantPath,
+  promote,
+  standingContributions,
+  tickProgression,
+  yearlyStandingDelta,
+} from '@/engine/pathProgression';
 import { makeState } from './helpers';
 
 describe('pathProgression', () => {
@@ -58,5 +66,56 @@ describe('pathProgression', () => {
     s.paths = { martial: 0, court: 0, church: 0, labour: 0, outlaw: 20 };
     tickProgression(s);
     expect(s.rankProgress).toBeLessThan(30);
+  });
+
+  it('never drives progress below zero', () => {
+    const s = makeState({ rankProgress: 1, reputation: -80 });
+    s.paths = { martial: 0, court: 0, church: 0, labour: 0, outlaw: 20 };
+    tickProgression(s);
+    expect(s.rankProgress).toBe(0);
+  });
+});
+
+describe('pathProgression standing', () => {
+  function labelsOf(s: ReturnType<typeof makeState>): string[] {
+    return standingContributions(s).map((item) => item.label);
+  }
+
+  it('climbs without any martial life at all', () => {
+    const churchly = makeState({ reputation: 65, gold: 250, stats: { health: 60, charm: 50, wits: 50, faith: 85 } });
+    churchly.paths = { martial: 0, court: 0, church: 20, labour: 0, outlaw: 0 };
+
+    expect(yearlyStandingDelta(churchly)).toBeGreaterThan(0);
+    expect(labelsOf(churchly)).toEqual(expect.arrayContaining(['a life in the Church', 'conspicuous wealth']));
+  });
+
+  it('charges every year against thee, so standing must be maintained', () => {
+    const idle = makeState();
+    // A drifting labourer with nothing to show earns nothing and loses ground.
+    idle.paths = { martial: 0, court: 0, church: 0, labour: 1, outlaw: 0 };
+    idle.holding = { ...idle.holding, stores: 10, security: 10, loyalty: 10 };
+
+    expect(yearlyStandingDelta(idle)).toBeLessThan(0);
+  });
+
+  it('counts a flourishing holding and powerful friends', () => {
+    const lord = makeState();
+    lord.holding = { ...lord.holding, stores: 80, security: 80, loyalty: 80 };
+    lord.world.factions.crown.playerStanding = 25;
+
+    expect(labelsOf(lord)).toEqual(expect.arrayContaining(['a flourishing holding', 'powerful friends']));
+  });
+
+  it('counts debt, notoriety and imprisonment against thee', () => {
+    const wretch = makeState();
+    wretch.debts = [{ id: 'd1', principal: 80, interestRate: 0.2 }];
+    wretch.tags = [...wretch.tags, 'imprisoned'];
+    const legal = wretch.world.characters[wretch.playerCharacterId].legalState;
+    if (legal) legal.notoriety = 45;
+
+    expect(labelsOf(wretch)).toEqual(
+      expect.arrayContaining(['debts everyone has heard about', 'imprisonment', 'a name known to the law']),
+    );
+    expect(yearlyStandingDelta(wretch)).toBeLessThan(-8);
   });
 });

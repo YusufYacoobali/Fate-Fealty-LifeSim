@@ -4,7 +4,7 @@
  * defaults for everything else, keeping event data terse and consistent.
  */
 
-import { GameState, KinKind, KinMember, NewKinSpec, WorldCharacter } from '@/types/game';
+import { GameState, GenderIdentity, KinKind, KinMember, NewKinSpec, WorldCharacter } from '@/types/game';
 import { CHILD_NAMES, FIRST_NAMES } from '@/data/names';
 import { pick, rnd } from './random';
 import { defaultPronouns } from '@/data/identity';
@@ -93,7 +93,13 @@ const DEFAULTS: Record<KinKind, KindDefaults> = {
 /** Create and append a new kin member, returning it. Mutates `s`. */
 export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
   const d = DEFAULTS[spec.kind];
-  const gender = pick(['woman', 'man'] as const);
+  // A spouse arriving through an event must still be someone the player could
+  // plausibly have married; a random roll produced marriages that contradicted
+  // the character's own stated attraction.
+  const spouseGender: GenderIdentity | undefined = spec.kind === 'spouse' && s.attraction !== 'none'
+    ? (s.attraction === 'women' ? 'woman' : 'man')
+    : undefined;
+  const gender = spec.gender ?? spouseGender ?? pick(['woman', 'man'] as const);
   const member: KinMember = {
     id: `kin_${s.nextId++}`,
     name: spec.name ?? d.name(),
@@ -108,7 +114,7 @@ export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
     isHeir: spec.isHeir,
     gender,
     pronouns: defaultPronouns(gender),
-    attraction: gender === 'woman' ? 'men' : 'women',
+    attraction: spec.attraction ?? (gender === 'woman' ? 'men' : 'women'),
     stats: { health: rnd(45, 90), charm: rnd(25, 75), wits: rnd(25, 75), faith: rnd(15, 75) },
     traits: [spec.trait ?? d.trait],
     gold: rnd(0, 25),
@@ -124,10 +130,17 @@ export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
     ? player.birthFamilyId
     : `family_${member.id}`;
   const spouse = Object.values(s.world.characters).find((character) => character.spouseId === s.playerCharacterId && character.alive);
+  // Genealogy has to match the label. A `sibling` with no parents used to be
+  // family in the kin list and a stranger in the family tree.
+  const parentIds = spec.kind === 'child'
+    ? [s.playerCharacterId, ...(spouse ? [spouse.id] : [])]
+    : spec.kind === 'sibling'
+      ? [...(player?.parentIds ?? [])]
+      : [];
   Object.assign(member, {
     householdId: ['child', 'spouse'].includes(spec.kind) ? playerHousehold : `house_${member.id}`,
     birthFamilyId: familyId,
-    parentIds: spec.kind === 'child' ? [s.playerCharacterId, ...(spouse ? [spouse.id] : [])] : [],
+    parentIds,
     childIds: [],
     personalityTraits: Array.from(new Set([pick(['loyal', 'ambitious', 'devout', 'cunning']), pick(['patient', 'proud', 'brave', 'generous'])])),
     ambition: pick(['protect_family', 'gain_land', 'marry_well', 'gain_status', 'become_wealthy'] as const),
@@ -157,6 +170,20 @@ export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
   if (spec.kind === 'child') {
     player?.childIds?.push(member.id);
     if (spouse) spouse.childIds = Array.from(new Set([...(spouse.childIds ?? []), member.id]));
+  }
+  if (spec.kind === 'spouse' && player && !player.spouseId) {
+    // Without this link the marriage existed only as a label: family planning,
+    // inheritance and the kinship graph all read `spouseId`, not `kind`.
+    player.spouseId = member.id;
+    member.spouseId = player.id;
+    member.attraction = s.gender === 'woman' ? 'women' : 'men';
+    if (!s.tags.includes('married')) s.tags = [...s.tags, 'married'];
+  }
+  if (spec.kind === 'sibling') {
+    for (const parentId of parentIds) {
+      const parent = s.world.characters[parentId];
+      if (parent) parent.childIds = Array.from(new Set([...(parent.childIds ?? []), member.id]));
+    }
   }
   const relationship = makePlayerRelationship(s.playerCharacterId, member, s.age);
   s.world.relationships[relationship.id] = relationship;

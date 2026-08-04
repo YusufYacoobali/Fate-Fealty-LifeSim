@@ -42,7 +42,7 @@ export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
               onPress={() => onCat(c.id)}
               innerStyle={{ paddingHorizontal: 8, paddingVertical: 6 }}
             >
-              <PixelText font="pixel" size={7} color={on ? c.fg : '#3a5d8a'}>
+              <PixelText font="pixel" size={8} color={on ? c.fg : '#3a5d8a'}>
                 {c.label}
               </PixelText>
             </PixelButton>
@@ -88,7 +88,7 @@ export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
                     <PixelText size={17}>{a.icon}</PixelText>
                   )}
                 </View>
-                <PixelText font="pixel" size={7} color="#3a2a08">
+                <PixelText font="pixel" size={8} color="#3a2a08">
                   {a.name}
                 </PixelText>
                 <PixelText font="body" size={13} color={locked ? C.bad : '#6a5a38'} style={{ marginTop: 4 }}>

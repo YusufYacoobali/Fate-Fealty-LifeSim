@@ -39,7 +39,13 @@ export function useReviewGate(state: GameState, loaded: boolean, meta: AppMetaAp
 
   const resolveReview = useCallback(() => {
     setReviewVisible(false);
-    meta.update({ reviewPrompted: true });
+    const current = meta.metaRef.current;
+    meta.update({
+      reviewPrompted: true,
+      reviewPromptCount: current.reviewPromptCount + 1,
+      reviewLastEntry: current.totalEntries,
+    });
+    // meta is a stable api (ref + memoised update); intentionally omitted.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -73,7 +73,7 @@ export function CharacterCreation({ initialDifficulty, premiumUnlocked, onBegin,
         </PixelText>
 
         {/* NAME */}
-        <PixelText font="pixel" size={7} color={C.charm} style={{ marginBottom: 7 }}>
+        <PixelText font="pixel" size={8} color={C.charm} style={{ marginBottom: 7 }}>
           THY NAME
         </PixelText>
         <View style={{ flexDirection: 'row', alignItems: 'stretch', gap: 7, marginBottom: 16 }}>
@@ -94,7 +94,7 @@ export function CharacterCreation({ initialDifficulty, premiumUnlocked, onBegin,
           </PixelButton>
         </View>
 
-        <PixelText font="pixel" size={7} color={C.charm} style={{ marginBottom: 7 }}>
+        <PixelText font="pixel" size={8} color={C.charm} style={{ marginBottom: 7 }}>
           THY IDENTITY
         </PixelText>
         <View style={{ flexDirection: 'row', gap: 6, marginBottom: 8 }}>
@@ -107,12 +107,12 @@ export function CharacterCreation({ initialDifficulty, premiumUnlocked, onBegin,
               style={{ flex: 1 }}
               innerStyle={{ paddingVertical: 8, alignItems: 'center' }}
             >
-              <PixelText font="pixel" size={6} color={C.blueDark}>{option.label}</PixelText>
+              <PixelText font="pixel" size={7} color={C.blueDark}>{option.label}</PixelText>
             </PixelButton>
           ))}
         </View>
         {/* BIRTH TRAIT */}
-        <PixelText font="pixel" size={7} color={C.charm} style={{ marginTop: 8, marginBottom: 7 }}>
+        <PixelText font="pixel" size={8} color={C.charm} style={{ marginTop: 8, marginBottom: 7 }}>
           BORN AS...
         </PixelText>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
@@ -142,7 +142,7 @@ export function CharacterCreation({ initialDifficulty, premiumUnlocked, onBegin,
                 ) : (
                   <PixelText size={14}>{selectedTrait.emoji}</PixelText>
                 )}
-                <PixelText font="pixel" size={7} color={C.charm}>
+                <PixelText font="pixel" size={8} color={C.charm}>
                   {selectedTrait.name}
                 </PixelText>
               </View>
@@ -158,7 +158,7 @@ export function CharacterCreation({ initialDifficulty, premiumUnlocked, onBegin,
         </View>
 
         {/* DIFFICULTY */}
-        <PixelText font="pixel" size={7} color={C.charm} style={{ marginTop: 16, marginBottom: 7 }}>
+        <PixelText font="pixel" size={8} color={C.charm} style={{ marginTop: 16, marginBottom: 7 }}>
           THE WORLD'S MERCY
         </PixelText>
         <View style={{ flexDirection: 'row', gap: 7 }}>
@@ -166,7 +166,7 @@ export function CharacterCreation({ initialDifficulty, premiumUnlocked, onBegin,
             const on = difficulty === d;
             return (
               <PixelButton key={d} bg={on ? C.charm : C.lightFill} shadow={on ? C.charmDark : C.paleEdge} onPress={() => setDifficulty(d)} style={{ flex: 1 }} innerStyle={{ paddingVertical: 9, alignItems: 'center' }}>
-                <PixelText font="pixel" size={7} color={on ? '#3a2a08' : C.blue}>
+                <PixelText font="pixel" size={8} color={on ? '#3a2a08' : C.blue}>
                   {d.toUpperCase()}
                 </PixelText>
               </PixelButton>
@@ -176,7 +176,7 @@ export function CharacterCreation({ initialDifficulty, premiumUnlocked, onBegin,
 
         {/* BEGIN */}
         <PixelButton bg={C.faith} shadow={C.faithDark} light="#d8f5cc" onPress={begin} style={{ marginTop: 22 }} innerStyle={{ paddingVertical: 13, alignItems: 'center' }}>
-          <PixelText font="pixel" size={11} color={C.blueDark}>
+          <PixelText font="pixel" size={12} color={C.blueDark}>
             ✦ BEGIN THY LIFE
           </PixelText>
         </PixelButton>
@@ -204,7 +204,7 @@ function TraitChip({ id, selected, emoji, name, premium = false, locked = false,
       </PixelText>
       {premium && (
         <View style={{ backgroundColor: C.charm, borderWidth: 1, borderColor: C.charmDark, paddingHorizontal: 3, paddingVertical: 2 }}>
-          <PixelText font="pixel" size={5} color="#3a2a08">PRO</PixelText>
+          <PixelText font="pixel" size={6} color="#3a2a08">PRO</PixelText>
         </View>
       )}
     </PixelButton>

@@ -54,7 +54,7 @@ export function DeathScreen({ state, onNewLife, onContinueHeir }: Props) {
 
       {/* legacy ledger */}
       <View style={{ marginTop: 16, paddingTop: 12, borderTopWidth: 2, borderTopColor: '#2b3a52', alignItems: 'center' }}>
-        <PixelText font="pixel" size={7} color={C.charm} style={{ marginBottom: 8 }}>
+        <PixelText font="pixel" size={8} color={C.charm} style={{ marginBottom: 8 }}>
           ~ LEGACY ~
         </PixelText>
         <SummaryRow label="Final rank" value={summary.rank} />
@@ -79,13 +79,13 @@ export function DeathScreen({ state, onNewLife, onContinueHeir }: Props) {
       <View style={{ marginTop: 22, gap: 10, alignItems: 'center' }}>
         {canContinue && heirs.slice(0, 3).map((heir) => (
           <PixelButton key={heir.id} bg={C.faith} shadow={C.faithDark} onPress={() => onContinueHeir(heir.id)} innerStyle={{ paddingVertical: 10, paddingHorizontal: 18, alignItems: 'center' }}>
-            <PixelText font="pixel" size={8} color={C.blueDark}>
+            <PixelText font="pixel" size={9} color={C.blueDark}>
               ♚ CONTINUE AS {heir.name.toUpperCase()} · AGE {heir.age}
             </PixelText>
           </PixelButton>
         ))}
         <PixelButton bg={C.charm} shadow={C.charmDark} light="#fff1b0" onPress={onNewLife} innerStyle={{ paddingVertical: 12, paddingHorizontal: 22, alignItems: 'center' }}>
-          <PixelText font="pixel" size={11} color="#3a2a08">
+          <PixelText font="pixel" size={12} color="#3a2a08">
             ✦ NEW LIFE
           </PixelText>
         </PixelButton>

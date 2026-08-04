@@ -7,13 +7,14 @@
  * promotion, and memories all work uniformly.
  */
 
-import { GameState } from '@/types/game';
+import { AttractionPreference, GameState, KinMember } from '@/types/game';
 import { ACTIVITY_DEFS } from '@/data/activities';
 import { applyEffects } from './consequenceEngine';
 import { countLivingKin, hasTag, pushFeed, removeTag } from './gameState';
 import { checkLifeGoal } from './goalEngine';
 import { spawnKin } from './kinFactory';
-import { chance, pick } from './random';
+import { applyRelationshipShift, isRomanceEligible } from './relationshipEngine';
+import { chance, pick, rnd } from './random';
 import { C } from '@/theme/theme';
 import { isIncapacitated } from './lifecycleEngine';
 import { deriveLifeRole } from '@/content/persistentStories';
@@ -27,6 +28,25 @@ function crimeCharge(s: GameState, offence: string, severity: number, evidence: 
 
 /** Chance a tavern night yields a real drinking companion (adults only). */
 export const TAVERN_FRIEND_CHANCE = 0.12;
+
+const SUITOR_ROLES = [
+  'A weaver of the lower street', 'A reeve\'s child', 'A traveller lately arrived',
+  'A brewer of some local fame', 'A mason\'s apprentice', 'A singer at the fair',
+] as const;
+
+/**
+ * Introduce someone the player could actually court. Romance previously had no
+ * entry point at all: every eligible partner had to already exist in the roster,
+ * so a life could pass without ever meeting a plausible match.
+ */
+function spawnSuitor(s: GameState): KinMember | null {
+  if (s.attraction === 'none') return null;
+  const gender = s.attraction === 'women' ? 'woman' : 'man';
+  // They must be able to want the player back, or the meeting is decorative.
+  const attraction: AttractionPreference = s.gender === 'woman' ? 'women' : 'men';
+  const age = Math.max(16, s.age + rnd(-5, 5));
+  return spawnKin(s, { kind: 'acquaintance', age, gender, attraction, role: pick(SUITOR_ROLES), rel: rnd(45, 60) });
+}
 
 /** Shared cure: clears the ongoing illness state and announces it. */
 function cureIllness(s: GameState): void {
@@ -63,6 +83,7 @@ export interface ActivityAvailability {
 export function activityAvailability(s: GameState, id: string): ActivityAvailability {
   if (s.dead) return { available: false, reason: 'Thy life is ended' };
   if (s.pendingEvent) return { available: false, reason: 'Resolve the current event' };
+  if (s.duel) return { available: false, reason: 'Finish the fight first' };
   if (s.actionClock.used >= s.actionClock.cap) return { available: false, reason: 'No actions remain this year' };
   if (isIncapacitated(s)) return { available: false, reason: 'Imprisoned' };
   const def = ACTIVITY_DEFS.find((activity) => activity.id === id);
@@ -155,7 +176,7 @@ const HANDLERS: Record<string, Handler> = {
     }
   },
   church: (s) => {
-    applyEffects(s, { faith: 8, charm: 1, path: { church: 2 } });
+    applyEffects(s, { faith: 8, charm: 1, rankProgress: 2, path: { church: 2 } });
     pushFeed(s, 'CHAPEL', C.good, one([
       'You prayed earnestly. The stained glass was lovely. You feel cleansed and a bit hungry.',
       'The sermon was long, but so is eternity, which may have been the point.',
@@ -168,7 +189,7 @@ const HANDLERS: Record<string, Handler> = {
     pushFeed(s, 'PILGRIMAGE', C.good, 'You walked to the holy shrine and back. Blisters and blessings, in equal and abundant measure.', 'good');
   },
   train: (s) => {
-    applyEffects(s, { wits: 5, charm: 4, health: -2, path: { martial: 3 }, rankProgress: 9 });
+    applyEffects(s, { wits: 5, charm: 4, health: -2, path: { martial: 3 }, rankProgress: 6 });
     pushFeed(s, 'TRAINING', C.blue, one([
       'You trained hard at the keep: sword, courtesy, and not tripping over your own cloak.',
       'You practiced blade work until the straw dummy looked personally disappointed.',
@@ -282,18 +303,18 @@ const HANDLERS: Record<string, Handler> = {
 };
 
 const ROLE_HANDLERS: Record<string, Handler> = {
-  village_service: (s) => { applyEffects(s, { charm: 3, reputation: 3, worldConditions: { publicOrder: 2 } }); pushFeed(s, 'VILLAGE DUTY', C.good, 'You settle small quarrels and carry larger baskets. Swineford notices.', 'good'); },
+  village_service: (s) => { applyEffects(s, { charm: 3, reputation: 3, rankProgress: 3, path: { labour: 1 }, worldConditions: { publicOrder: 2 } }); pushFeed(s, 'VILLAGE DUTY', C.good, 'You settle small quarrels and carry larger baskets. Swineford notices.', 'good'); },
   gather_fuel: (s) => { applyEffects(s, { health: -2, holding: { stores: 5 }, path: { labour: 1 } }); pushFeed(s, 'HOUSEHOLD', C.amber, 'You gather fuel and winter stores before the weather turns.', 'good'); },
-  manage_workshop: (s) => { applyEffects(s, { gold: 8, wits: 2, worldConditions: { prosperity: 2 } }); pushFeed(s, 'WORKSHOP', C.good, 'Your workshop turns patient skill into coin and reputation.', 'good'); },
-  guild_bargain: (s) => { applyEffects(s, { charm: 4, gold: -2, reputation: 3 }); pushFeed(s, 'GUILD', C.charmDark, 'You bargain for a stronger place among Swineford’s trades.', 'good'); },
-  hear_confession: (s) => { applyEffects(s, { faith: 4, charm: 2, worldConditions: { religiousTension: -2 } }); pushFeed(s, 'CONFESSION', C.faithDark, 'You hear a troubled confession and carry its secret carefully.', 'good'); },
-  copy_manuscript: (s) => { applyEffects(s, { wits: 4, faith: 2 }); pushFeed(s, 'SCRIPTORIUM', C.blue, 'Ink, patience, and cramped fingers preserve another page.', 'good'); },
+  manage_workshop: (s) => { applyEffects(s, { gold: 8, wits: 2, rankProgress: 4, path: { labour: 2 }, worldConditions: { prosperity: 2 } }); pushFeed(s, 'WORKSHOP', C.good, 'Your workshop turns patient skill into coin and reputation.', 'good'); },
+  guild_bargain: (s) => { applyEffects(s, { charm: 4, gold: -2, reputation: 3, rankProgress: 5, path: { labour: 2 } }); pushFeed(s, 'GUILD', C.charmDark, 'You bargain for a stronger place among Swineford’s trades.', 'good'); },
+  hear_confession: (s) => { applyEffects(s, { faith: 4, charm: 2, rankProgress: 4, path: { church: 2 }, worldConditions: { religiousTension: -2 } }); pushFeed(s, 'CONFESSION', C.faithDark, 'You hear a troubled confession and carry its secret carefully.', 'good'); },
+  copy_manuscript: (s) => { applyEffects(s, { wits: 4, faith: 2, rankProgress: 3, path: { church: 1 } }); pushFeed(s, 'SCRIPTORIUM', C.blue, 'Ink, patience, and cramped fingers preserve another page.', 'good'); },
   lead_patrol: (s) => { applyEffects(s, { health: -2, rankProgress: 4, worldConditions: { publicOrder: 3 } }); pushFeed(s, 'PATROL', C.blue, 'Your patrol makes the roads safer and the ditch mud less dignified.', 'good'); },
   drill_levy: (s) => { applyEffects(s, { health: -3, charm: 2, rankProgress: 5, worldConditions: { warThreat: -1 } }); pushFeed(s, 'LEVY', C.healthDark, 'You drill frightened neighbours until they resemble a line of soldiers.', 'good'); },
-  hear_petitions: (s) => { applyEffects(s, { charm: 3, reputation: 4, holding: { loyalty: 4 } }); pushFeed(s, 'PETITIONS', C.purpleDark, 'You judge boundaries, debts, and one legally complicated goat.', 'good'); },
-  host_court: (s) => { applyEffects(s, { gold: -5, charm: 5, familyReputation: { delta: 3 } }); pushFeed(s, 'COURT', C.charmDark, 'A crowded hall turns food and ceremony into influence.', 'good'); },
-  hold_council: (s) => { applyEffects(s, { wits: 3, charm: 3, worldConditions: { publicOrder: 2, warThreat: -1 } }); pushFeed(s, 'ROYAL COUNCIL', C.purpleDark, 'Advice, argument, and decree carry across the realm.', 'good'); },
-  royal_audience: (s) => { applyEffects(s, { charm: 5, faith: 2, reputation: 4 }); pushFeed(s, 'AUDIENCE', C.charmDark, 'You receive petitioners and remind the court who wears the crown.', 'good'); },
+  hear_petitions: (s) => { applyEffects(s, { charm: 3, reputation: 4, rankProgress: 5, path: { court: 2 }, holding: { loyalty: 4 } }); pushFeed(s, 'PETITIONS', C.purpleDark, 'You judge boundaries, debts, and one legally complicated goat.', 'good'); },
+  host_court: (s) => { applyEffects(s, { gold: -5, charm: 5, rankProgress: 6, path: { court: 3 }, familyReputation: { delta: 3 } }); pushFeed(s, 'COURT', C.charmDark, 'A crowded hall turns food and ceremony into influence.', 'good'); },
+  hold_council: (s) => { applyEffects(s, { wits: 3, charm: 3, rankProgress: 6, path: { court: 3 }, worldConditions: { publicOrder: 2, warThreat: -1 } }); pushFeed(s, 'ROYAL COUNCIL', C.purpleDark, 'Advice, argument, and decree carry across the realm.', 'good'); },
+  royal_audience: (s) => { applyEffects(s, { charm: 5, faith: 2, reputation: 4, rankProgress: 6, path: { court: 3 } }); pushFeed(s, 'AUDIENCE', C.charmDark, 'You receive petitioners and remind the court who wears the crown.', 'good'); },
   plan_heist: (s) => { applyEffects(s, { wits: 4, faith: -2, path: { outlaw: 2 } }); pushFeed(s, 'HEIST', C.purpleDark, 'Maps, gossip, and a borrowed key make a dangerous plan.', 'plain'); },
   rally_gang: (s) => { applyEffects(s, { charm: 4, reputation: -3, path: { outlaw: 2 }, worldConditions: { publicOrder: -2 } }); pushFeed(s, 'OUTLAW BAND', C.healthDark, 'You bind dangerous people with promises of danger and profit.', 'plain'); },
   teach_child: (s) => {
@@ -306,7 +327,36 @@ const ROLE_HANDLERS: Record<string, Handler> = {
     applyEffects(s, { kinRel: { id: child.id, delta: 3 }, wits: 1, memory: { tag: 'taught_child', weight: 2, note: child.name } });
     pushFeed(s, 'TEACH CHILD', C.blue, `You teach ${child.name} letters, figures, and when not to correct an elder in public.`, 'good');
   },
-  arrange_gathering: (s) => { applyEffects(s, { gold: -3, charm: 4, familyReputation: { delta: 2 }, householdState: { status: 2 } }); pushFeed(s, 'HOUSEHOLD GATHERING', C.charmDark, 'Bread, ale and careful seating bring several households together without a feud.', 'good'); },
+  arrange_gathering: (s) => { applyEffects(s, { gold: -3, charm: 4, rankProgress: 3, path: { court: 1 }, familyReputation: { delta: 2 }, householdState: { status: 2 } }); pushFeed(s, 'HOUSEHOLD GATHERING', C.charmDark, 'Bread, ale and careful seating bring several households together without a feud.', 'good'); },
+  courting: (s) => {
+    if (s.tags.includes('married')) return blocked(s, 'COURTING', 'Thou art already wed. Whatever this is, it is a different sort of tale.');
+    if (s.attraction === 'none') return blocked(s, 'COURTING', 'Thy heart is set on other things entirely, and the season passes quietly.');
+
+    const prospects = s.kin.filter((kin) => isRomanceEligible(s, kin));
+    // Someone new is worth meeting when nobody suits, and sometimes even when
+    // somebody does — a courting season is how the cast grows.
+    const meetSomeone = !prospects.length || chance(0.3);
+    const match = meetSomeone ? spawnSuitor(s) : pick(prospects);
+    if (!match) return blocked(s, 'COURTING', 'Thou walk the village all season and meet nobody who suits thee.');
+
+    const warmth = chance(0.4 + s.stats.charm / 220 + s.reputation / 500);
+    applyEffects(s, { charm: 1 });
+    applyRelationshipShift(
+      s,
+      match.id,
+      { attraction: warmth ? 10 : 4, affinity: warmth ? 5 : 2 },
+      { attraction: warmth ? 12 : 4, affinity: warmth ? 6 : 2, trust: 2 },
+    );
+    pushFeed(
+      s,
+      meetSomeone ? 'A NEW ACQUAINTANCE' : 'COURTING',
+      warmth ? C.charmDark : C.amber,
+      meetSomeone
+        ? `Thou meet ${match.name} at the well, the fair, or some other honest excuse. ${warmth ? 'The conversation runs long.' : 'The conversation runs short, but politely.'} Court ${match.pronouns.object} from the Relationships tab.`
+        : `Thou spend the season courting ${match.name}. ${warmth ? `${match.pronouns.subject} begins looking for thee in crowds.` : 'It is pleasant, and no more than pleasant, for now.'}`,
+      warmth ? 'good' : 'plain',
+    );
+  },
   care_relative: (s) => {
     const patient = s.kin.find((kin) => kin.alive && ((kin.healthConditions?.length ?? 0) > 0 || kin.stats.health < 55));
     if (!patient) return blocked(s, 'FAMILY CARE', 'No relative presently needs sustained care.');
@@ -320,12 +370,12 @@ const ROLE_HANDLERS: Record<string, Handler> = {
   fence_goods: (s) => { const success = chance(0.48 + s.stats.charm / 300); applyEffects(s, success ? { gold: 12, path: { outlaw: 2 }, legal: { suspicion: 6, notoriety: 2 } } : { gold: -3, legal: { suspicion: 18, notoriety: 4, status: 'accused', charge: crimeCharge(s, 'receiving stolen goods', 30, 58) }, reputation: -4 }); pushFeed(s, 'FENCE GOODS', success ? C.good : C.healthDark, success ? 'A careful buyer turns questionable goods into very spendable coin.' : 'The buyer was an informer with an excellent memory for faces.', success ? 'good' : 'bad'); },
   bribe_official: (s) => { const legal = s.world.characters[s.playerCharacterId]?.legalState; applyEffects(s, { gold: -20, faith: -3, legal: { suspicion: -22, notoriety: chance(0.25) ? 5 : 0 } }); pushFeed(s, 'BRIBERY', C.amber, legal?.suspicion ? 'An official develops a more flexible memory, though not necessarily a loyal one.' : 'The official accepts the coin and invents a problem thy payment has solved.', 'plain'); },
   scout_target: (s) => { applyEffects(s, { wits: 4, path: { outlaw: 1 }, addTags: ['crime_prepared'], legal: { suspicion: 2 } }); pushFeed(s, 'SCOUT TARGET', C.purpleDark, 'You learn the locks, habits, witnesses and exits before deciding whether to become foolish.', 'plain'); },
-  study_trade: (s) => { s.occupation.experience += 8; s.occupation.performance = Math.min(100, s.occupation.performance + 3); applyEffects(s, { wits: 3 }); pushFeed(s, 'STUDY TRADE', C.blue, 'You study accounts, tools and the expensive mistakes of older professionals.', 'good'); },
+  study_trade: (s) => { s.occupation.experience += 8; s.occupation.performance = Math.min(100, s.occupation.performance + 3); applyEffects(s, { wits: 3, rankProgress: 3, path: { labour: 1 } }); pushFeed(s, 'STUDY TRADE', C.blue, 'You study accounts, tools and the expensive mistakes of older professionals.', 'good'); },
   seek_patron: (s) => { const success = chance(0.35 + s.stats.charm / 220 + s.reputation / 400); if (success) { const patrons = s.kin.filter((kin) => kin.alive && (kin.rankIdx >= 2 || kin.kind === 'liege')); s.occupation.patronId = patrons.length ? pick(patrons).id : 'aldric'; } applyEffects(s, success ? { charm: 2, rankProgress: 6, faction: { factionId: 'crown', playerStanding: 3 }, addTags: ['has_patron'] } : { charm: 1, reputation: -1 }); pushFeed(s, 'SEEK PATRON', success ? C.charmDark : C.amber, success ? 'An influential household agrees to speak thy name where advancement is decided.' : 'Thy request receives courtesy, watered ale and no promise.', success ? 'good' : 'plain'); },
-  run_caravan: (s) => { const success = chance(0.45 + s.stats.wits / 350 + s.stats.charm / 400); applyEffects(s, success ? { gold: 20, worldConditions: { prosperity: 2 }, faction: { factionId: 'guilds', playerStanding: 3 } } : { gold: -8, health: -4, worldConditions: { prosperity: -1 } }); pushFeed(s, 'CARAVAN', success ? C.good : C.healthDark, success ? 'The caravan returns with foreign cloth, local gossip and a respectable profit.' : 'Mud, tolls and thieves consume the venture before Swineford sees a profit.', success ? 'good' : 'bad'); },
-  preach_sermon: (s) => { applyEffects(s, { faith: 4, charm: 2, faction: { factionId: 'church', playerStanding: 3 }, worldConditions: { religiousTension: s.stats.faith >= 60 ? -2 : 1 } }); pushFeed(s, 'SERMON', C.faithDark, 'You speak of duty, mercy and sins sufficiently vague to trouble every listener.', 'good'); },
+  run_caravan: (s) => { const success = chance(0.45 + s.stats.wits / 350 + s.stats.charm / 400); applyEffects(s, success ? { gold: 20, rankProgress: 3, path: { labour: 2 }, worldConditions: { prosperity: 2 }, faction: { factionId: 'guilds', playerStanding: 3 } } : { gold: -8, health: -4, worldConditions: { prosperity: -1 } }); pushFeed(s, 'CARAVAN', success ? C.good : C.healthDark, success ? 'The caravan returns with foreign cloth, local gossip and a respectable profit.' : 'Mud, tolls and thieves consume the venture before Swineford sees a profit.', success ? 'good' : 'bad'); },
+  preach_sermon: (s) => { applyEffects(s, { faith: 4, charm: 2, rankProgress: 4, path: { church: 2 }, faction: { factionId: 'church', playerStanding: 3 }, worldConditions: { religiousTension: s.stats.faith >= 60 ? -2 : 1 } }); pushFeed(s, 'SERMON', C.faithDark, 'You speak of duty, mercy and sins sufficiently vague to trouble every listener.', 'good'); },
   gather_intelligence: (s) => { const secretOwner = s.kin.find((kin) => kin.alive && (kin.secrets?.length ?? 0) > 0 && !kin.secretRevealed); if (secretOwner && chance(0.45 + s.stats.wits / 300)) { secretOwner.secretRevealed = true; secretOwner.secrets!.forEach((secret) => { secret.knownByIds = Array.from(new Set([...secret.knownByIds, s.playerCharacterId])); }); } applyEffects(s, { wits: 3, faction: { factionId: 'crown', playerStanding: 1 } }); pushFeed(s, 'INTELLIGENCE', C.purpleDark, secretOwner?.secretRevealed ? `Patient listening reveals something ${secretOwner.name} meant to keep hidden.` : 'You collect rumours, compare contradictions and learn where questions make people nervous.', 'plain'); },
-  negotiate_levy: (s) => { const success = chance(0.4 + s.stats.charm / 250 + s.reputation / 500); applyEffects(s, success ? { charm: 3, worldConditions: { warThreat: -2, publicOrder: 2 }, faction: { factionId: 'commons', playerStanding: 4 } } : { reputation: -2, faction: { factionId: 'crown', playerStanding: -3 } }); pushFeed(s, 'LEVY BARGAIN', success ? C.good : C.healthDark, success ? 'The levy is reduced and the poorest households keep both grain and sons.' : 'The collector rejects thy argument and marks Swineford as reluctant.', success ? 'good' : 'bad'); },
+  negotiate_levy: (s) => { const success = chance(0.4 + s.stats.charm / 250 + s.reputation / 500); applyEffects(s, success ? { charm: 3, rankProgress: 4, path: { court: 1 }, worldConditions: { warThreat: -2, publicOrder: 2 }, faction: { factionId: 'commons', playerStanding: 4 } } : { reputation: -2, faction: { factionId: 'crown', playerStanding: -3 } }); pushFeed(s, 'LEVY BARGAIN', success ? C.good : C.healthDark, success ? 'The levy is reduced and the poorest households keep both grain and sons.' : 'The collector rejects thy argument and marks Swineford as reluctant.', success ? 'good' : 'bad'); },
   repair_household: (s) => { applyEffects(s, { gold: -5, householdState: { quality: 10, capacity: 1 } }); pushFeed(s, 'REPAIR HOME', C.amber, 'Fresh timber, patched thatch and five vanished gold make the household safer.', 'good'); },
   manage_stores: (s) => { applyEffects(s, { wits: 2, householdState: { food: 10 }, worldConditions: { foodSecurity: 1 } }); pushFeed(s, 'MANAGE STORES', C.faithDark, 'You air damp grain, count every sack and discover that rats respect no inventory.', 'good'); },
 };

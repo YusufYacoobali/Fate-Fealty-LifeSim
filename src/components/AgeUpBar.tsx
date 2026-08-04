@@ -22,12 +22,12 @@ export function AgeUpBar({ onAgeUp, disabled, actionsUsed, actionCap }: { onAgeU
 
   return (
     <View style={{ paddingHorizontal: 12, paddingTop: 8, paddingBottom: 6, backgroundColor: C.blueDeep, borderTopWidth: 4, borderTopColor: C.blueDark }}>
-      <PixelText font="pixel" size={7} color={actionsUsed >= actionCap ? C.health : C.creamBlue} style={{ textAlign: 'center', marginBottom: 6 }}>
+      <PixelText font="pixel" size={8} color={actionsUsed >= actionCap ? C.health : C.creamBlue} style={{ textAlign: 'center', marginBottom: 6 }}>
         ACTIONS REMAINING: {Math.max(0, actionCap - actionsUsed)}/{actionCap}
       </PixelText>
       <Animated.View style={{ transform: [{ translateY: bob }] }}>
         <PixelButton bg={C.charm} shadow={C.charmDark} light="#fff1b0" onPress={onAgeUp} disabled={disabled} innerStyle={{ paddingVertical: 10, alignItems: 'center' }}>
-          <PixelText font="pixel" size={11} color="#3a2a08">
+          <PixelText font="pixel" size={12} color="#3a2a08">
             ▲ AGE UP
           </PixelText>
         </PixelButton>

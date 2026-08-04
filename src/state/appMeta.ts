@@ -44,8 +44,12 @@ export const DYNASTY_CAP = 30;
 export interface AppMeta {
   /** Cumulative life-feed entries the player has seen, across all lives. */
   totalEntries: number;
-  /** True once we've shown the "are you enjoying it?" prompt (shown at most once). */
+  /** Legacy one-shot flag; superseded by reviewPromptCount and kept for migration. */
   reviewPrompted: boolean;
+  /** How many times the "are you enjoying it?" prompt has been shown. */
+  reviewPromptCount: number;
+  /** Cumulative entry position where the review prompt was last shown. */
+  reviewLastEntry: number;
   /** Cumulative entry position where the recurring shop promo was last shown. */
   shopPromoLastEntry: number;
   /** Number of shop promos shown, used to rotate the playful message. */
@@ -60,6 +64,12 @@ export interface AppMeta {
   tutorialSeen: boolean;
   /** Mirror of the last RevenueCat entitlement reading; never a source of truth. */
   lifetimeUnlocked: boolean;
+  /** lifeNo of the first life started on this install; null until it begins. */
+  firstLifeNo: number | null;
+  /** True once the free first-life Pro sample has been spent. */
+  proTrialUsed: boolean;
+  /** True once the "thy sample has ended" notice has been shown. */
+  proTrialNoticeSeen: boolean;
   /** Lifetime statistics across all lives. */
   stats: LifetimeStats;
   /** Unlocked achievement ids. */
@@ -76,6 +86,8 @@ export interface AppMeta {
 export const DEFAULT_META: AppMeta = {
   totalEntries: 0,
   reviewPrompted: false,
+  reviewPromptCount: 0,
+  reviewLastEntry: 0,
   shopPromoLastEntry: 0,
   shopPromoCount: 0,
   notificationsScheduled: false,
@@ -83,6 +95,9 @@ export const DEFAULT_META: AppMeta = {
   onboarded: false,
   tutorialSeen: false,
   lifetimeUnlocked: false,
+  firstLifeNo: null,
+  proTrialUsed: false,
+  proTrialNoticeSeen: false,
   stats: DEFAULT_STATS,
   achievements: [],
   dynasty: [],
@@ -93,20 +108,39 @@ export const DEFAULT_META: AppMeta = {
 
 const META_KEY = 'mls:meta:v1';
 
+/**
+ * Fold a persisted record into the current shape. Pure, so the migrations below
+ * can be tested without touching AsyncStorage.
+ */
+export function migrateMeta(parsed: Partial<AppMeta>): AppMeta {
+  // The review ask used to be a single boolean. Carry it over as one shown ask
+  // so upgrading players are not immediately asked again.
+  const reviewPromptCount = parsed.reviewPromptCount ?? (parsed.reviewPrompted ? 1 : 0);
+
+  // The free first-life sample is for FRESH installs. Anyone already playing
+  // when it shipped has had their first life; mark the sample spent.
+  const proTrialUsed = parsed.proTrialUsed ?? Boolean(parsed.onboarded);
+
+  return {
+    ...DEFAULT_META,
+    ...parsed,
+    lifetimeUnlocked: false,
+    reviewPromptCount,
+    reviewLastEntry: parsed.reviewLastEntry ?? (reviewPromptCount > 0 ? parsed.totalEntries ?? 0 : 0),
+    proTrialUsed,
+    proTrialNoticeSeen: parsed.proTrialNoticeSeen ?? proTrialUsed,
+    stats: { ...DEFAULT_STATS, ...(parsed.stats ?? {}) },
+    dailyReward: { ...DEFAULT_DAILY_REWARD, ...(parsed.dailyReward ?? {}) },
+    achievements: parsed.achievements ?? [],
+    dynasty: parsed.dynasty ?? [],
+  };
+}
+
 export async function loadMeta(): Promise<AppMeta> {
   try {
     const raw = await AsyncStorage.getItem(META_KEY);
     if (!raw) return { ...DEFAULT_META };
-    const parsed = JSON.parse(raw) as Partial<AppMeta>;
-    return {
-      ...DEFAULT_META,
-      ...parsed,
-      lifetimeUnlocked: false,
-      stats: { ...DEFAULT_STATS, ...(parsed.stats ?? {}) },
-      dailyReward: { ...DEFAULT_DAILY_REWARD, ...(parsed.dailyReward ?? {}) },
-      achievements: parsed.achievements ?? [],
-      dynasty: parsed.dynasty ?? [],
-    };
+    return migrateMeta(JSON.parse(raw) as Partial<AppMeta>);
   } catch {
     return { ...DEFAULT_META };
   }

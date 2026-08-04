@@ -58,7 +58,7 @@ export function RetentionPromptFrame({
             <PixelText font="pixel" size={compact ? 7 : 8} color={primaryStyle.text} style={{ textAlign: 'center' }}>{primaryLabel}</PixelText>
           </PixelButton>
           <PixelButton bg={C.lightFill} shadow={C.paleEdge} onPress={onSecondary} innerStyle={{ paddingVertical: 9, alignItems: 'center' }}>
-            <PixelText font="pixel" size={7} color={C.blue}>{secondaryLabel}</PixelText>
+            <PixelText font="pixel" size={8} color={C.blue}>{secondaryLabel}</PixelText>
           </PixelButton>
         </View>
       </View>

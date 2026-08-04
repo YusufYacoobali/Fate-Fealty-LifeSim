@@ -46,6 +46,7 @@ export const DEFAULT_SETTINGS: GameSettings = {
   music: true,
   soundEffects: true,
   reducedMotion: false,
+  villageCollapsed: false,
 };
 
 function emptyPaths(): PathProgress {
@@ -330,6 +331,7 @@ function createLifeFromWorldSeed(opts: FreshLifeOptions, worldSeed: number): Gam
     playerCharacterId: playerId,
     playerRun: { startedYear: 1320, generation: opts.lifeNo ?? 1, roleProgress: {} },
     pendingEvent: null,
+    duel: null,
     first,
     epithet,
     gender,
@@ -425,6 +427,7 @@ export function cloneState(s: GameState): GameState {
   const cloned = {
     ...s,
     stats: { ...s.stats },
+    duel: s.duel ? { ...s.duel, log: [...s.duel.log] } : null,
     paths: { ...s.paths },
     tags: [...s.tags],
     traits: [...s.traits],

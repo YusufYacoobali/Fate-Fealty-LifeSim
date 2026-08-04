@@ -12,6 +12,20 @@ import { addMemory, addTag, appendWorldHistory, pushFeed, removeTag } from './ga
 import { chance, clamp, pick, rnd } from './random';
 import { C } from '@/theme/theme';
 import { pickNarrative } from './narrativeEngine';
+import { adoptChild, ADOPTION_COST, familyPlanningRoute, tryForChild } from './familyFormationEngine';
+import { isCloseBlood, isFamilyTie, kinshipTo } from './kinship';
+import { duelAvailability, startDuel } from './duelEngine';
+import {
+  assault,
+  blackmail,
+  carouse,
+  frameThem,
+  knownSecretOf,
+  murder,
+  prank,
+  spreadRumour,
+  stealFrom,
+} from './misdeedEngine';
 
 const neutral = (value = 50): RelationshipPerspective => ({ affinity: value, trust: value, respect: value, attraction: 0 });
 
@@ -92,7 +106,8 @@ export function relationMatchesFilter(state: GameState, kin: KinMember, filter: 
   // create the missing record it is reading.
   const relation = readRelationship(state, kin);
   const flags = relation.flags;
-  if (filter === 'family') return flags.includes('family');
+  // Family comes from the genealogy so the filter and the family tree agree.
+  if (filter === 'family') return isFamilyTie(kinshipTo(state, kin.id)) || flags.includes('family');
   if (filter === 'romance') return flags.includes('spouse') || perspectives(state, relation).other.attraction >= 25;
   if (filter === 'friends') return flags.includes('friend');
   if (filter === 'rivals') return flags.includes('rival') || flags.includes('feud');
@@ -146,34 +161,91 @@ export type SystemicKinAction =
   | 'accept_proposal'
   | 'reject_proposal'
   | 'reconcile'
+  | 'try_for_child'
+  | 'adopt_child'
+  | 'seduce'
+  | 'end_affair'
+  | 'spread_rumour'
+  | 'blackmail'
+  | 'steal_from'
+  | 'frame_them'
+  | 'prank'
+  | 'carouse'
+  | 'name_heir'
+  | 'disinherit'
+  | 'duel'
+  | 'brawl'
+  | 'assault'
+  | 'murder'
   | 'divorce';
+
+/** Whether the player is actually wed to this person, by the link, not a label. */
+export function isPlayerSpouse(state: GameState, kin: KinMember): boolean {
+  const player = state.world.characters[state.playerCharacterId];
+  return Boolean(player?.spouseId && player.spouseId === kin.id && kin.spouseId === player.id);
+}
 
 export function isRomanceEligible(state: GameState, kin: KinMember): boolean {
   if (!kin.alive || state.age < 18 || kin.age < 18) return false;
-  if (['mother', 'father', 'sibling', 'child'].includes(kin.kind)) return false;
+  // Blood is read from the genealogy, not from `kind`: an NPC born to the
+  // player's own parents carries the label 'acquaintance', and courting them
+  // used to be perfectly allowed.
+  if (isCloseBlood(kinshipTo(state, kin.id))) return false;
   const player = state.world.characters[state.playerCharacterId];
   if (kin.spouseId && kin.spouseId !== state.playerCharacterId) return false;
   if (player?.spouseId && player.spouseId !== kin.id) return false;
-  if (state.tags.includes('married') && kin.kind !== 'spouse') return false;
+  if (state.tags.includes('married') && !isPlayerSpouse(state, kin)) return false;
   return attractionAllows(state.attraction, kin.gender) && attractionAllows(kin.attraction, state.gender);
+}
+
+/** Proposing is only meaningful to someone thou art not already wed to. */
+export function canProposeTo(state: GameState, kin: KinMember): boolean {
+  if (!isRomanceEligible(state, kin)) return false;
+  if (isPlayerSpouse(state, kin)) return false;
+  const player = state.world.characters[state.playerCharacterId];
+  return !player?.spouseId && !state.tags.includes('married');
 }
 
 export function contextualActions(state: GameState, kin: KinMember): SystemicKinAction[] {
   if (!kin.alive) return [];
   // Read-only: the kin detail screen calls this during render.
   const relation = readRelationship(state, kin);
+  const tie = kinshipTo(state, kin.id);
+  const isOwnChild = tie === 'daughter' || tie === 'son';
+  const spouse = isPlayerSpouse(state, kin);
   const result: SystemicKinAction[] = ['time', 'praise', 'help', 'gift', 'favour'];
   if (perspectives(state, relation).other.trust >= 35) result.push('confide');
   if (perspectives(state, relation).other.affinity < 45) result.push('apologize', 'forgive');
   if (relation.flags.includes('rival') || relation.flags.includes('feud')) result.push('reconcile', 'plot');
   else result.push('insult');
-  if (kin.kind === 'child' && kin.age < 18) result.push('educate_child');
-  if (kin.kind === 'child' && kin.age >= 14 && !kin.spouseId) result.push('arrange_marriage');
-  if (relation.flags.includes('family') && (kin.stats.health < 70 || Boolean(kin.healthConditions?.length))) result.push('care_for_relative');
+  if (duelAvailability(state, kin.id, 'duel').available) result.push('duel');
+  if (duelAvailability(state, kin.id, 'brawl').available) result.push('brawl');
+  if (isOwnChild && kin.age < 18) result.push('educate_child');
+  if (isOwnChild && kin.age >= 14 && !kin.spouseId) result.push('arrange_marriage');
+  if (isFamilyTie(tie) && (kin.stats.health < 70 || Boolean(kin.healthConditions?.length))) result.push('care_for_relative');
   if (kin.secrets?.some((secret) => !secret.revealed && secret.knownByIds.includes(state.playerCharacterId))) result.push('expose_secret');
-  if (isRomanceEligible(state, kin)) result.push('flirt', 'court', 'propose');
-  if (kin.kind === 'spouse') result.push('divorce');
-  if (state.world.proposalFromId === kin.id) result.unshift('accept_proposal', 'reject_proposal');
+  if (isRomanceEligible(state, kin)) {
+    result.push('flirt', 'court');
+    if (canProposeTo(state, kin)) result.push('propose');
+  }
+  if (isAffairWith(state, kin.id)) result.push('end_affair');
+  else if (canSeduce(state, kin)) result.push('seduce');
+  if (kin.age >= 12) result.push('prank');
+  if (kin.age >= 16 && state.age >= 16) result.push('carouse');
+  if (!isFamilyTie(tie)) result.push('spread_rumour', 'steal_from');
+  if (knownSecretOf(state, kin)) result.push('blackmail');
+  if ((state.world.characters[state.playerCharacterId]?.legalState?.suspicion ?? 0) >= 20) result.push('frame_them');
+  if (state.age >= 14 && !isCloseBlood(tie)) result.push('assault', 'murder');
+  if (isOwnChild) result.push(kin.isHeir ? 'disinherit' : 'name_heir');
+  if (spouse) {
+    const route = familyPlanningRoute(state, kin.id);
+    if (route === 'pregnancy') result.push('try_for_child');
+    else if (route === 'adoption') result.push('adopt_child');
+    result.push('divorce');
+  }
+  if (state.world.proposalFromId === kin.id && !state.tags.includes('married')) {
+    result.unshift('accept_proposal', 'reject_proposal');
+  }
   return result;
 }
 
@@ -346,6 +418,85 @@ export function performSystemicRelationshipAction(state: GameState, kin: KinMemb
       applyRelationshipShift(state, kin.id, {}, { attraction: -15, affinity: -7 });
       pushFeed(state, 'PROPOSAL', C.bad, `You refuse ${kin.name}'s proposal as kindly as the moment allows.`, 'plain');
       break;
+    case 'try_for_child': {
+      const expecting = tryForChild(state, kin.id);
+      applyRelationshipShift(state, kin.id, { affinity: 3, attraction: 4 }, { affinity: 4, attraction: 5, trust: 2 });
+      if (expecting) {
+        addMemory(state, 'expecting_a_child', 3, kin.name);
+        pushFeed(state, 'A CHILD EXPECTED', C.good, `You and ${kin.name} are to have a child. The household begins counting blankets, names, and worries.`, 'good');
+      } else {
+        pushFeed(state, 'TRYING FOR A CHILD', C.charm, `You and ${kin.name} hope for a child this year. None comes of it, but the hoping is not wasted.`, 'plain');
+      }
+      break;
+    }
+    case 'adopt_child': {
+      adoptChild(state, kin.id);
+      applyRelationshipShift(state, kin.id, { affinity: 4, trust: 3 }, { affinity: 6, trust: 6, respect: 4 });
+      addMemory(state, 'sought_a_child_to_raise', 3, kin.name);
+      pushFeed(state, 'A CHILD SOUGHT', C.charm, `You and ${kin.name} put ${ADOPTION_COST} gold to the parish and ask after a child who needs a household. Word will come.`, 'good');
+      break;
+    }
+    case 'duel':
+    case 'brawl':
+      // The fight itself plays out in its own modal; this only opens it.
+      startDuel(state, kin.id, action);
+      break;
+    case 'seduce': {
+      const won = chance(0.3 + state.stats.charm / 200 + views.other.attraction / 300);
+      if (won) {
+        if (!relation.flags.includes('affair')) relation.flags.push('affair');
+        applyRelationshipShift(state, kin.id, { attraction: 14, affinity: 6 }, { attraction: 16, affinity: 8 });
+        addMemory(state, 'began_an_affair', 4, kin.name);
+        pushFeed(state, 'AN AFFAIR BEGINS', C.purpleDark, `Thou and ${kin.name} come to an understanding neither of you will speak of. It cannot stay quiet forever.`, 'plain');
+      } else {
+        applyRelationshipShift(state, kin.id, { attraction: -5 }, { affinity: -12, respect: -10 });
+        pushFeed(state, 'REFUSED', C.bad, `${kin.name} refuses thee, and looks at thee differently afterwards.`, 'bad');
+      }
+      break;
+    }
+    case 'end_affair':
+      relation.flags = relation.flags.filter((flag) => flag !== 'affair');
+      applyRelationshipShift(state, kin.id, { attraction: -10 }, { attraction: -8, affinity: -10 });
+      addMemory(state, 'ended_an_affair', 3, kin.name);
+      pushFeed(state, 'ENDED QUIETLY', C.amber, `Thou ends it with ${kin.name} before anyone else has to. It is the kindest of the bad options.`, 'plain');
+      break;
+    case 'spread_rumour':
+      spreadRumour(state, kin);
+      break;
+    case 'blackmail':
+      blackmail(state, kin);
+      break;
+    case 'steal_from':
+      stealFrom(state, kin);
+      break;
+    case 'frame_them':
+      frameThem(state, kin);
+      break;
+    case 'prank':
+      prank(state, kin);
+      break;
+    case 'carouse':
+      carouse(state, kin);
+      break;
+    case 'assault':
+      assault(state, kin);
+      break;
+    case 'murder':
+      murder(state, kin);
+      break;
+    case 'name_heir': {
+      for (const child of state.kin) if (child.isHeir) child.isHeir = false;
+      kin.isHeir = true;
+      applyRelationshipShift(state, kin.id, { respect: 3 }, { affinity: 12, trust: 10, respect: 8 });
+      pushFeed(state, 'AN HEIR NAMED', C.charmDark, `Thou names ${kin.name} thy heir before witnesses. The rest of the household adjusts its expectations.`, 'good');
+      break;
+    }
+    case 'disinherit':
+      kin.isHeir = false;
+      applyRelationshipShift(state, kin.id, { affinity: -6 }, { affinity: -30, trust: -25, respect: -12 });
+      addMemory(state, 'disinherited_a_child', 4, kin.name);
+      pushFeed(state, 'DISINHERITED', C.bad, `Thou strikes ${kin.name} from the inheritance. ${kin.pronouns.subject} will carry that for the rest of ${kin.pronouns.possessive} life.`, 'bad');
+      break;
     case 'divorce':
       relation.flags = relation.flags.filter((flag) => flag !== 'spouse');
       relation.flags.push('former_spouse');
@@ -385,6 +536,93 @@ function marry(state: GameState, kin: KinMember, relation: Relationship): void {
   const household = state.world.households.find((item) => item.id === (player?.householdId ?? 'house_player')) ?? state.world.households[0];
   household.memberIds = Array.from(new Set([...household.memberIds, kin.id]));
   pushFeed(state, 'WEDDING', C.good, `You marry ${kin.name} by your own choosing. Bells ring, bread vanishes, and two families pretend not to count the gifts.`, 'good');
+}
+
+// ---------------------------------------------------------------------------
+// Affairs
+// ---------------------------------------------------------------------------
+
+/** Whoever the player is currently carrying on with, if anyone. */
+export function affairPartnerId(state: GameState): string | null {
+  for (const relation of Object.values(state.world.relationships)) {
+    if (!relation.flags.includes('affair')) continue;
+    if (relation.aId === state.playerCharacterId) return relation.bId;
+    if (relation.bId === state.playerCharacterId) return relation.aId;
+  }
+  return null;
+}
+
+/**
+ * Seduction is only interesting when somebody stands to be hurt by it: it needs
+ * a marriage on one side or the other, and it produces a secret rather than a
+ * result.
+ */
+export function canSeduce(state: GameState, kin: KinMember): boolean {
+  if (!kin.alive || state.age < 18 || kin.age < 18) return false;
+  if (isCloseBlood(kinshipTo(state, kin.id))) return false;
+  if (isPlayerSpouse(state, kin)) return false;
+  const player = state.world.characters[state.playerCharacterId];
+  const someoneIsMarried = Boolean(player?.spouseId) || Boolean(kin.spouseId);
+  if (!someoneIsMarried) return false;
+  const existing = affairPartnerId(state);
+  if (existing && existing !== kin.id) return false;
+  if (existing === kin.id) return false;
+  return attractionAllows(state.attraction, kin.gender) && attractionAllows(kin.attraction, state.gender);
+}
+
+export function isAffairWith(state: GameState, kinId: string): boolean {
+  return affairPartnerId(state) === kinId;
+}
+
+/**
+ * Each year an affair runs, it may be discovered. The longer it lasts and the
+ * sharper the wronged spouse, the likelier it becomes — so the choice is not
+ * "start an affair", it is "how long dare I keep it".
+ */
+export function tickAffairs(state: GameState): GameState {
+  const partnerId = affairPartnerId(state);
+  if (!partnerId) return state;
+  const player = state.world.characters[state.playerCharacterId];
+  const partner = state.world.characters[partnerId];
+  if (!partner?.alive) return state;
+
+  const relation = relationshipWith(state, partnerId);
+  const yearsRunning = Math.max(1, state.age - relation.lastInteractionAge + 1);
+  const wrongedId = player?.spouseId ?? partner.spouseId;
+  const wronged = wrongedId ? state.world.characters[wrongedId] : undefined;
+  if (!wronged?.alive) return state;
+
+  const risk = Math.min(0.5, 0.1 + yearsRunning * 0.03 + (wronged.stats.wits - 50) / 400);
+  if (!chance(risk)) return state;
+
+  relation.flags = relation.flags.filter((flag) => flag !== 'affair');
+  if (!relation.flags.includes('feud')) relation.flags.push('feud');
+  addTag(state, 'affair_exposed');
+  state.reputation = clamp(state.reputation - rnd(8, 18), -100, 100);
+  applyRelationshipShift(state, wronged.id, { trust: -10 }, { affinity: -40, trust: -50, respect: -20 });
+  applyRelationshipShift(state, partnerId, {}, { affinity: -15, trust: -20 });
+  addMemory(state, 'affair_discovered', 4, partner.name);
+  appendWorldHistory(state, {
+    id: `history_affair_${state.nextId++}`,
+    year: state.world.currentYear,
+    type: 'scandal',
+    participantIds: [state.playerCharacterId, partnerId, wronged.id],
+    familyIds: [wronged.birthFamilyId].filter((id): id is string => Boolean(id)),
+    causes: ['affair'],
+    summary: `${wronged.name} learned of the affair.`,
+    salience: 5,
+  });
+  pushFeed(
+    state,
+    'THE AFFAIR IS OUT',
+    C.bad,
+    `${wronged.name} knows about thee and ${partner.name}. There is no version of this that ends quietly.`,
+    'bad',
+    {},
+    wronged.id,
+    'npc',
+  );
+  return state;
 }
 
 export function maybeCreateNpcProposal(state: GameState): void {

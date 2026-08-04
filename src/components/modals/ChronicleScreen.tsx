@@ -26,11 +26,11 @@ export function ChronicleScreen({ progress, onClose }: Props) {
     <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 65, backgroundColor: C.ink }}>
       {/* header */}
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 14, paddingTop: 24, paddingBottom: 10, backgroundColor: C.blueDeep, borderBottomWidth: 4, borderBottomColor: C.blueDark }}>
-        <PixelText font="pixel" size={11} color={C.charm}>
+        <PixelText font="pixel" size={12} color={C.charm}>
           📜 CHRONICLE
         </PixelText>
         <PixelButton bg={C.health} shadow={C.healthDark} onPress={onClose} innerStyle={{ paddingHorizontal: 10, paddingVertical: 6 }}>
-          <PixelText font="pixel" size={8} color={C.white}>
+          <PixelText font="pixel" size={9} color={C.white}>
             CLOSE
           </PixelText>
         </PixelButton>
@@ -43,7 +43,7 @@ export function ChronicleScreen({ progress, onClose }: Props) {
           const label = sec === 'stats' ? 'STATS' : sec === 'achievements' ? 'DEEDS' : 'LEGENDS';
           return (
             <PixelButton key={sec} bg={on ? C.charm : C.blue} shadow={on ? C.charmDark : C.blueDark} onPress={() => setSection(sec)} style={{ flex: 1 }} innerStyle={{ paddingVertical: 7, alignItems: 'center' }}>
-              <PixelText font="pixel" size={7} color={on ? '#3a2a08' : C.cream}>
+              <PixelText font="pixel" size={8} color={on ? '#3a2a08' : C.cream}>
                 {label}
               </PixelText>
             </PixelButton>
@@ -66,7 +66,7 @@ function StatRow({ label, value }: { label: string; value: string }) {
       <PixelText font="body" size={17} color={C.creamBlue}>
         {label}
       </PixelText>
-      <PixelText font="pixel" size={8} color={C.charm}>
+      <PixelText font="pixel" size={9} color={C.charm}>
         {value}
       </PixelText>
     </View>
@@ -120,16 +120,16 @@ function AchievementsSection({ unlocked, progress }: { unlocked: Set<string>; pr
           >
             <PixelText size={20}>{hidden ? '❔' : a.emoji}</PixelText>
             <View style={{ flex: 1, minWidth: 0 }}>
-              <PixelText font="pixel" size={7} color={has ? C.charm : '#6f8aa8'}>
+              <PixelText font="pixel" size={8} color={has ? C.charm : '#6f8aa8'}>
                 {hidden ? '??? (Secret)' : a.name}
               </PixelText>
               <PixelText font="body" size={14} color={C.creamBlue} style={{ marginTop: 3 }}>
                 {hidden ? 'A deed yet to be discovered.' : a.desc}
               </PixelText>
-              {counter && <PixelText font="pixel" size={6} color={C.blue} style={{ marginTop: 4 }}>{Math.min(counter.current, counter.target)}/{counter.target}</PixelText>}
+              {counter && <PixelText font="pixel" size={7} color={C.blue} style={{ marginTop: 4 }}>{Math.min(counter.current, counter.target)}/{counter.target}</PixelText>}
             </View>
             {has && (
-              <PixelText font="pixel" size={8} color={C.faith}>
+              <PixelText font="pixel" size={9} color={C.faith}>
                 ✓
               </PixelText>
             )}
@@ -153,7 +153,7 @@ function DynastySection({ progress }: { progress: ProgressSnapshot }) {
       {progress.dynasty.map((d, i) => (
         <View key={`${d.lifeNo}-${i}`} style={{ backgroundColor: '#15324f', borderWidth: 2, borderColor: '#23415f', borderLeftWidth: 4, borderLeftColor: C.charm, paddingHorizontal: 11, paddingVertical: 9 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <PixelText font="pixel" size={8} color={C.charm}>
+            <PixelText font="pixel" size={9} color={C.charm}>
               {d.name}
             </PixelText>
             <PixelText font="body" size={14} color={C.creamBlue}>

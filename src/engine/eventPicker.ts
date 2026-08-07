@@ -6,7 +6,7 @@
 
 import { Choice, Condition, ContentDomain, EventActorRole, GameEvent, GameState, KinKind, PathKey, STAT_KEYS } from '@/types/game';
 import { RANKS } from '@/data/ranks';
-import { ALL_EVENTS, EVENTS_BY_ID } from '@/content';
+import { ALL_EVENTS, DOMAIN_EVENT_COUNTS, EVENTS_BY_ID } from '@/content';
 import { countLivingKin, hasLivingKin } from './gameState';
 import { dominantPath } from './pathProgression';
 import { pick, pickWeighted } from './random';
@@ -96,6 +96,8 @@ export function meetsCondition(s: GameState, c?: Condition): boolean {
     if (hasKnown !== c.hasKnownSecret) return false;
   }
   if (c.hasWorldMemoryType?.some((type) => !s.world.history.some((entry) => entry.type === type || entry.causes.includes(type)))) return false;
+  if (c.hasItems?.some((id) => !s.inventory.includes(id))) return false;
+  if (c.missingItems?.some((id) => s.inventory.includes(id))) return false;
   if (c.custom && !c.custom(s)) return false;
   return true;
 }
@@ -134,9 +136,14 @@ export function isChoiceEnabled(s: GameState, ch: Choice): boolean {
 /**
  * Weight an eligible event: base weight, boosted when it matches the dominant
  * path, slightly boosted when its tags resonate with the player's memories.
+ *
+ * Each domain's share of the year is normalised against its pool size first, so
+ * a domain with sixty authored events does not drown one with thirteen. Without
+ * this, adding content to a domain would silently make every other domain
+ * rarer.
  */
 function eventWeight(s: GameState, e: GameEvent): number {
-  let w = e.weight ?? 1;
+  let w = (e.weight ?? 1) / (e.domain ? DOMAIN_EVENT_COUNTS[e.domain] || 1 : 1);
   const path = dominantPath(s);
   if (e.paths && e.paths.includes(path)) w *= 2.2;
   if (e.rarity === 'uncommon') w *= 0.7;

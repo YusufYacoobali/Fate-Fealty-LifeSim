@@ -24,8 +24,8 @@ export const FAITH_EVENTS: GameEvent[] = [
     requires: { statAtLeast: { faith: 55 }, missingTags: ['ordained'] },
     once: true,
     choices: [
-      { label: 'Take holy orders', outcome: { text: 'You took your vows. The world grows quieter, the prayers longer, the soul — they promise — lighter.', effects: { faith: 20, charm: -4, gold: -2, addTags: ['ordained'], path: { church: 6 }, memory: { tag: 'ordained', weight: 4 } }, tone: 'good' } },
-      { label: 'Decline — the world calls louder', outcome: { text: 'You thanked the abbot but kept your feet on the muddy road of the world. He blessed you anyway.', effects: { faith: 4 }, tone: 'good' } },
+      { label: 'Take holy orders', outcome: { text: 'You took your vows. The world grows quieter, the prayers longer, and the soul, they promise, lighter.', effects: { faith: 20, charm: -4, gold: -2, addTags: ['ordained'], path: { church: 6 }, memory: { tag: 'ordained', weight: 4 } }, tone: 'good' } },
+      { label: 'Decline. The world calls louder', outcome: { text: 'You thanked the abbot but kept your feet on the muddy road of the world. He blessed you anyway.', effects: { faith: 4 }, tone: 'good' } },
     ],
   },
   {
@@ -37,7 +37,7 @@ export const FAITH_EVENTS: GameEvent[] = [
     requires: { statAtLeast: { faith: 70 } },
     once: true,
     choices: [
-      { label: 'Accept the role of holy figure', outcome: { text: 'You let them believe. Pilgrims now seek your blessing — and leave coin in gratitude.', effects: { faith: 8, gold: 12, reputation: 14, path: { church: 4 }, memory: { tag: 'living_saint', weight: 5 } }, tone: 'good' } },
+      { label: 'Accept the role of holy figure', outcome: { text: 'You let them believe. Pilgrims now seek your blessing, and leave coin behind them.', effects: { faith: 8, gold: 12, reputation: 14, path: { church: 4 }, memory: { tag: 'living_saint', weight: 5 } }, tone: 'good' } },
       { label: 'Insist it was God’s work, not yours', outcome: { text: 'Your humility only convinces them further of your holiness. There is no escaping sainthood now.', effects: { faith: 14, reputation: 8 }, tone: 'good' } },
     ],
   },

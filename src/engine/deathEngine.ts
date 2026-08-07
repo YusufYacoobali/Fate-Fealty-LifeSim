@@ -70,16 +70,25 @@ export function checkDeath(s: GameState): GameState {
     return finalise(s);
   }
 
-  // 3. Old age — risk ramps after 45, sharply after 60.
+  // 3. Nobody outlives the span. Without a ceiling the old-age roll can be
+  // dodged indefinitely, and a life that never ends has no stakes in it.
+  if (s.age >= MAX_LIFESPAN) {
+    killPlayer(s, 'Died at the full span of years. Nobody in Swineford could remember an older soul.');
+    return finalise(s);
+  }
+
+  // 4. Old age — risk ramps after 45, and climbs steeply through the eighties
+  // so that reaching the ceiling is a rare feat rather than the usual ending.
   if (s.age > 45) {
-    const oldRisk = ((s.age - 45) / 110) * mod;
+    const years = s.age - 45;
+    const oldRisk = ((years / 110) + Math.pow(years / 45, 3) * 0.22) * mod;
     if (chance(oldRisk)) {
       killPlayer(s, s.age > 70 ? 'Died peacefully of being very, very old.' : 'Died of a winter chill and a tired heart.');
       return finalise(s);
     }
   }
 
-  // 4. Path-flavoured hazard.
+  // 5. Path-flavoured hazard.
   const path = dominantPath(s);
   if (path === 'outlaw' && s.reputation < -20 && chance(0.05 * mod)) {
     killPlayer(s, pick(OUTLAW_DEATHS));
@@ -149,9 +158,23 @@ export function buildDeathSummary(s: GameState, rankKey: string): DeathSummary {
   };
 }
 
-/** Random extra flavour for the slow decline of old age, scaled by traits. */
+/** Nobody sees the far side of this, Live Forever aside. */
+export const MAX_LIFESPAN = 110;
+
+/** The age at which the body stops holding its own and starts giving ground. */
+export const DECLINE_AGE = 55;
+
+/**
+ * The slow decline of old age, scaled by traits.
+ *
+ * Past `DECLINE_AGE` this is a floor as well as a roll: a character who is
+ * eating well and resting can no longer hold a flat hundred health into their
+ * eighties, which is what made a long life a matter of patience rather than of
+ * luck. The floor climbs with each decade so the last years are genuinely hard.
+ */
 export function agingDamage(s: GameState): number {
   if (s.age <= 45) return 0;
   const base = rnd(1, Math.floor((s.age - 40) / 4) + 2);
-  return Math.round(base * agingMultiplierFromTraits(s));
+  const decline = s.age >= DECLINE_AGE ? 1 + Math.floor((s.age - DECLINE_AGE) / 8) : 0;
+  return Math.round((base + decline) * agingMultiplierFromTraits(s));
 }

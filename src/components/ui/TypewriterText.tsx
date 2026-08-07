@@ -16,8 +16,8 @@ interface Props {
 }
 
 /** How fast the quill moves, and the ceiling on how long any line may take. */
-export const CHARS_PER_SECOND = 55;
-export const MAX_DURATION_MS = 2600;
+export const CHARS_PER_SECOND = 30;
+export const MAX_DURATION_MS = 5200;
 
 /** Below this the timer stops being reliable and starts costing frames. */
 export const MIN_TICK_MS = 16;
@@ -61,41 +61,46 @@ export function revealPacing(length: number): RevealPacing {
 export function TypewriterText({ text, font = 'body', size = 18, color, style, cursorColor, instant = false, onDone }: Props) {
   const [shown, setShown] = useState(instant ? text.length : 0);
   const doneRef = useRef(false);
+  const onDoneRef = useRef(onDone);
+  onDoneRef.current = onDone;
 
   useEffect(() => {
     doneRef.current = false;
     if (instant || text.length === 0) {
       setShown(text.length);
-      doneRef.current = true;
-      onDone?.();
       return;
     }
 
     setShown(0);
-    const { step, tickMs } = revealPacing(text.length);
+    const { tickMs, durationMs } = revealPacing(text.length);
+    const startedAt = Date.now();
 
+    // Driven by elapsed time rather than by adding `step` letters per tick. A
+    // counter that adds several letters at a time overshoots the end of the
+    // passage and finishes on a ragged half-word; interpolating means the last
+    // tick lands exactly on the final character every time.
     const timer = setInterval(() => {
-      setShown((current) => {
-        const next = current + step;
-        if (next >= text.length) {
-          clearInterval(timer);
-          if (!doneRef.current) {
-            doneRef.current = true;
-            onDone?.();
-          }
-          return text.length;
-        }
-        return next;
-      });
+      const progress = Math.min(1, (Date.now() - startedAt) / durationMs);
+      setShown(Math.round(progress * text.length));
+      if (progress >= 1) clearInterval(timer);
     }, tickMs);
 
     return () => clearInterval(timer);
-    // onDone is a stable callback from the caller; re-running on it would restart
-    // the animation every render.
+    // onDone is read through a ref so a caller that re-creates it cannot restart
+    // the animation midway.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text, instant]);
 
   const writing = shown < text.length;
+
+  // Announced from an effect, not from inside the state updater: a setState
+  // callback may run more than once, and this used to fire the caller's
+  // "reveal finished" handler with it.
+  useEffect(() => {
+    if (writing || doneRef.current) return;
+    doneRef.current = true;
+    onDoneRef.current?.();
+  }, [writing]);
 
   return (
     <View>

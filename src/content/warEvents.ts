@@ -6,7 +6,7 @@ export const WAR_EVENTS: GameEvent[] = [
     id: 'war_levy',
     category: 'war',
     title: 'THE LEVY IS CALLED',
-    text: 'War drums sound. Every able body is pressed into the militia — peasant and pauper alike. A rusty spear is shoved into your hands.',
+    text: 'War drums sound. Every able body is pressed into the militia, peasant and pauper alike. A rusty spear is shoved into your hands.',
     ageMin: 16,
     ranks: ['Peasant', 'Squire'],
     requires: { missingTags: ['at_war'] },

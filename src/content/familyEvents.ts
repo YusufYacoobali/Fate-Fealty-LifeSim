@@ -28,7 +28,7 @@ export const FAMILY_EVENTS: GameEvent[] = [
     requires: { hasTags: ['married'] },
     weight: 2,
     choices: [
-      { label: 'Welcome the child with joy', outcome: { text: 'A healthy babe joins your household — your line continues. You weep, then panic about feeding it.', effects: { health: 2, charm: 2, faith: 4, addTags: ['has_heir'], addKin: { kind: 'child', isHeir: true, role: 'Thine Heir' }, memory: { tag: 'became_parent', weight: 3 } }, tone: 'good' } },
+      { label: 'Welcome the child with joy', outcome: { text: 'A healthy babe joins your household and your line continues. You weep, then panic about feeding it.', effects: { health: 2, charm: 2, faith: 4, addTags: ['has_heir'], addKin: { kind: 'child', isHeir: true, role: 'Thine Heir' }, memory: { tag: 'became_parent', weight: 3 } }, tone: 'good' } },
       { label: 'Welcome the child quietly', outcome: { text: 'You keep the first days close to the household, making promises before making announcements.', effects: { faith: 2, addTags: ['has_heir'], addKin: { kind: 'child', isHeir: true, role: 'Thine Heir' }, memory: { tag: 'private_welcome', weight: 3 } }, tone: 'plain' } },
     ],
   },
@@ -36,7 +36,7 @@ export const FAMILY_EVENTS: GameEvent[] = [
     id: 'family_roderick_truce',
     category: 'family',
     title: 'AN OLD FOE, HUMBLED',
-    text: 'Sir Roderick — diminished, greyer, his lands lost — appears at your door. "I... was wrong about you," he mutters. "About the apple. About all of it."',
+    text: 'Sir Roderick appears at your door, greyer and smaller and short of a manor. "I... was wrong about you," he mutters. "About the apple. About all of it."',
     ageMin: 30,
     requires: { custom: (s) => (s.kin.find((k) => k.id === 'roderick')?.rel ?? 0) >= 30 },
     once: true,

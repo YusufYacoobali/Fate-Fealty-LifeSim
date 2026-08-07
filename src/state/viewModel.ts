@@ -7,7 +7,6 @@ import { GameState, KinMember, STAT_KEYS } from '@/types/game';
 import { RANKS } from '@/data/ranks';
 import { STAT_STYLES, FEED_STYLE, C } from '@/theme/theme';
 import { relationMatchesFilter } from '@/engine/relationshipEngine';
-import { standingContributions } from '@/engine/pathProgression';
 import { careerById } from '@/data/careers';
 
 export function selectStats(s: GameState) {
@@ -96,20 +95,6 @@ export function selectRankClimb(s: GameState) {
 
 export function currentRank(s: GameState) {
   return RANKS[s.rankIdx];
-}
-
-/**
- * The yearly standing account, ready to render. Advancement used to be opaque —
- * players could only guess that swinging a sword was the lever — so the reasons
- * behind each year's movement are now shown outright.
- */
-export function selectStanding(s: GameState) {
-  const contributions = standingContributions(s);
-  return {
-    delta: contributions.reduce((sum, item) => sum + item.delta, 0),
-    gains: contributions.filter((item) => item.delta > 0).sort((a, b) => b.delta - a.delta),
-    losses: contributions.filter((item) => item.delta < 0).sort((a, b) => a.delta - b.delta),
-  };
 }
 
 export function selectBio(s: GameState): string {

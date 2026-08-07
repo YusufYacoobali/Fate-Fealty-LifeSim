@@ -33,17 +33,29 @@ function npcRelationship(state: GameState, a: KinMember, b: KinMember): Relation
   return relationship;
 }
 
-function promoteNpc(state: GameState, npc: KinMember): boolean {
+/**
+ * How many of the village's working lives get narrated in a single year.
+ *
+ * Everyone's career is still simulated; this only limits how much of it reaches
+ * the feed. Thirty-odd NPCs each promoting or taking work produced a wall of
+ * "so-and-so rises from X to Y" that buried the player's own year.
+ */
+export const WORLD_CAREER_REPORTS_PER_YEAR = 2;
+
+function promoteNpc(state: GameState, npc: KinMember, budget: { left: number }): boolean {
   const career = careerById(npc.occupation.careerId);
   if (!career?.promotesTo || npc.occupation.experience < 55 || !chance(0.18)) return false;
   const next = careerById(career.promotesTo)!;
   npc.occupation = { careerId: next.id, experience: 10, performance: 55, workedThisYear: 0 };
   npc.role = next.title;
-  pushFeed(state, 'WORLD · CAREER', C.blue, `${npc.name} rises from ${career.title} to ${next.title}.`, 'good', {}, npc.id, 'npc');
+  if (budget.left > 0) {
+    budget.left -= 1;
+    pushFeed(state, 'WORLD · CAREER', C.blue, `${npc.name} rises from ${career.title} to ${next.title}.`, 'good', {}, npc.id, 'npc');
+  }
   return true;
 }
 
-function simulateNpcCareer(state: GameState, npc: KinMember): void {
+function simulateNpcCareer(state: GameState, npc: KinMember, budget: { left: number }): void {
   let career = careerById(npc.occupation.careerId);
   if (!career && npc.age >= 8) {
     const possible = CAREERS.filter((item) => item.tier === 0 && npc.age >= item.minAge);
@@ -51,7 +63,10 @@ function simulateNpcCareer(state: GameState, npc: KinMember): void {
       career = pick(possible);
       npc.occupation = { careerId: career.id, experience: 0, performance: 50, workedThisYear: 0 };
       npc.role = career.title;
-      pushFeed(state, 'WORLD · WORK', C.blue, `${npc.name} begins work as ${career.title}.`, 'plain', {}, npc.id, 'npc');
+      if (budget.left > 0) {
+        budget.left -= 1;
+        pushFeed(state, 'WORLD · WORK', C.blue, `${npc.name} begins work as ${career.title}.`, 'plain', {}, npc.id, 'npc');
+      }
     }
   }
   if (!career) return;
@@ -69,7 +84,7 @@ function simulateNpcCareer(state: GameState, npc: KinMember): void {
     pushFeed(state, 'WORLD · DEATH', C.bad, `${npc.name} dies after a long decline in health. Their place in Swineford will not be filled quickly.`, 'bad', {}, npc.id, 'npc');
     return;
   }
-  promoteNpc(state, npc);
+  promoteNpc(state, npc, budget);
 }
 
 function simulateNpcSocialLife(state: GameState): void {
@@ -151,10 +166,11 @@ function simulateNpcSocialLife(state: GameState): void {
 }
 
 export function simulateLivingWorld(state: GameState): GameState {
+  const careerReports = { left: WORLD_CAREER_REPORTS_PER_YEAR };
   for (const npc of Object.values(state.world.characters)) {
     if (npc.id === state.playerCharacterId) continue;
     if (!npc.alive || npc.id === 'goose') continue;
-    simulateNpcCareer(state, npc);
+    simulateNpcCareer(state, npc, careerReports);
   }
   simulateNpcSocialLife(state);
   // Keep Swineford populous without despawning anyone. When deaths pull the

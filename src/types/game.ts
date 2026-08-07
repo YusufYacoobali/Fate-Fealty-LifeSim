@@ -425,6 +425,8 @@ export interface PacingState {
   lastMajorYear: number | null;
   lastImportantYear: number | null;
   quietYearsSinceStory: number;
+  /** Consecutive years resolved by a story beat rather than a one-off event. */
+  storyBeatsInARow?: number;
   majorEventsThisLife: number;
   mediumStoriesStarted: number;
   immediateChainDepth: number;
@@ -655,6 +657,10 @@ export interface Condition {
   householdAtLeast?: Partial<{ wealth: number; food: number; quality: number; status: number }>;
   hasKnownSecret?: boolean;
   hasWorldMemoryType?: string[];
+  /** Require every listed shop item to be owned (ids from `data/shop`). */
+  hasItems?: string[];
+  /** Require none of the listed shop items to be owned. */
+  missingItems?: string[];
   /** Escape hatch for one-off logic. */
   custom?: (s: GameState) => boolean;
 }

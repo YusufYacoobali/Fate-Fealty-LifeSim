@@ -237,7 +237,7 @@ function createLifeFromWorldSeed(opts: FreshLifeOptions, worldSeed: number): Gam
       tagColor: C.purpleDark,
       tone: 'good',
       traitId: birth.id,
-      text: `${birth.emoji} From the cradle you are ${birth.name} — ${birth.blurb}`,
+      text: `${birth.emoji} From the cradle you are ${birth.name}. ${birth.blurb}`,
     },
   ];
   feed.push({

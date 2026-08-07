@@ -28,7 +28,7 @@ export const COMPANION_EVENTS: GameEvent[] = [
       custom: (s) => s.kin.some((k) => k.id === 'mother' && k.alive),
     },
     choices: [
-      { label: 'Rejoice — a playmate at last!', outcome: { text: 'A sibling is born! Loud, wrinkled, and immediately beloved. You vow to teach them everything about turnips.', effects: { addKin: { kind: 'sibling', rel: 70 }, kinRel: { id: 'mother', delta: 6 }, faith: 2, memory: { tag: 'sibling_born', weight: 2 } }, tone: 'good' } },
+      { label: 'Rejoice! A playmate at last', outcome: { text: 'A sibling is born! Loud, wrinkled, and immediately beloved. You vow to teach them everything about turnips.', effects: { addKin: { kind: 'sibling', rel: 70 }, kinRel: { id: 'mother', delta: 6 }, faith: 2, memory: { tag: 'sibling_born', weight: 2 } }, tone: 'good' } },
       { label: 'Sulk about sharing the porridge', outcome: { text: 'A sibling is born anyway. You sulk magnificently, but the baby grips your finger and your cold heart thaws a little.', effects: { addKin: { kind: 'sibling', rel: 45 }, charm: -2, memory: { tag: 'sibling_born', weight: 2 } }, tone: 'plain' } },
     ],
   },
@@ -55,7 +55,7 @@ export const COMPANION_EVENTS: GameEvent[] = [
     id: 'peasant_tavern_comrade',
     category: 'peasant',
     title: 'A KINDRED SPIRIT',
-    text: 'A traveller at the Sloshed Squire laughs at your worst joke — genuinely. They wave you over to share a bench and a tale.',
+    text: 'A traveller at the Sloshed Squire laughs at your worst joke, and means it. They wave you over to share a bench and a tale.',
     ageMin: 16,
     requires: { kinCountAtMost: { friend: 2 } },
     choices: [
@@ -69,13 +69,13 @@ export const COMPANION_EVENTS: GameEvent[] = [
     id: 'knight_shield_brother',
     category: 'knight',
     title: 'A DEBT OF STEEL',
-    text: 'In the training yard, a falling practice beam nearly brains another squire — you shove them clear at the last instant.',
+    text: 'In the training yard a falling practice beam nearly brains another squire, and you shove them clear at the last instant.',
     ageMin: 15,
     once: true,
     paths: ['martial'],
     requires: { kinCountAtMost: { friend: 2 } },
     choices: [
-      { label: 'Help them up and make light of it', outcome: { text: '"I owe you my skull," they grin, clasping your arm. You have gained a shield-brother — the kind of friend who stands beside you when it matters.', effects: { addKin: { kind: 'friend', role: 'Shield-Brother', emoji: '🛡️', trait: 'Unshakeable', rel: 78 }, health: -2, path: { martial: 2 }, memory: { tag: 'shield_brother', weight: 3 } }, tone: 'good' } },
+      { label: 'Help them up and make light of it', outcome: { text: '"I owe you my skull," they grin, clasping your arm. You have gained a shield-brother, the kind who stands beside you when it costs him something.', effects: { addKin: { kind: 'friend', role: 'Shield-Brother', emoji: '🛡️', trait: 'Unshakeable', rel: 78 }, health: -2, path: { martial: 2 }, memory: { tag: 'shield_brother', weight: 3 } }, tone: 'good' } },
       { label: 'Demand a favour in return', outcome: { text: 'They pay you a grudging coin and remember the price of your help more than the help itself.', effects: { gold: 6, charm: -3, reputation: -2 }, tone: 'plain' } },
     ],
   },
@@ -109,8 +109,8 @@ export const COMPANION_EVENTS: GameEvent[] = [
     paths: ['court'],
     requires: { kinCountAtMost: { friend: 2 } },
     choices: [
-      { label: 'Become their protégé', outcome: { text: 'You gain a mentor who knows where every body at court is buried — several literally. Invaluable.', effects: { addKin: { kind: 'friend', role: 'Court Mentor', emoji: '🎭', trait: 'Seen everything', rel: 66, age: 58 }, wits: 5, path: { court: 3 }, memory: { tag: 'found_mentor', weight: 3 } }, tone: 'good' } },
-      { label: 'Suspect a trap and decline', outcome: { text: 'At court, kindness is usually bait. You bow out gracefully — and wonder, for years, what they knew.', effects: { wits: 2, faith: 1 }, tone: 'plain' } },
+      { label: 'Become their protégé', outcome: { text: 'You gain a mentor who knows where every body at court is buried, and can point to three of them from the window.', effects: { addKin: { kind: 'friend', role: 'Court Mentor', emoji: '🎭', trait: 'Seen everything', rel: 66, age: 58 }, wits: 5, path: { court: 3 }, memory: { tag: 'found_mentor', weight: 3 } }, tone: 'good' } },
+      { label: 'Suspect a trap and decline', outcome: { text: 'At court, kindness is usually bait. You bow out gracefully, and wonder for years what they knew.', effects: { wits: 2, faith: 1 }, tone: 'plain' } },
     ],
   },
 
@@ -119,14 +119,14 @@ export const COMPANION_EVENTS: GameEvent[] = [
     id: 'knight_liege_oath',
     category: 'knight',
     title: 'A LORD TAKES NOTICE',
-    text: 'Lord Bramwell has watched your rise with approval. He offers you a formal place in his retinue — his protection, in exchange for your oath.',
+    text: 'Lord Bramwell has watched your rise with approval. He offers you a formal place in his retinue: his protection, in exchange for your oath.',
     ageMin: 18,
     once: true,
     ranks: ['Knight', 'Noble'],
     requires: { kinCountAtMost: { liege: 0 } },
     choices: [
-      { label: 'Kneel and swear the oath', outcome: { text: 'You swear fealty before the hall. A liege’s favour opens doors — and his wars will now be your wars.', effects: { addKin: { kind: 'liege', name: 'Lord Bramwell', rel: 55 }, gold: 10, rankProgress: 12, reputation: 5, memory: { tag: 'sworn_liege', weight: 3 } }, tone: 'good' } },
-      { label: 'Keep your independence', outcome: { text: 'You decline with careful courtesy. Bramwell nods slowly — freedom kept, favour lost.', effects: { wits: 2, reputation: -2 }, tone: 'plain' } },
+      { label: 'Kneel and swear the oath', outcome: { text: 'You swear fealty before the hall. A liege’s favour opens doors, and his wars are now your wars.', effects: { addKin: { kind: 'liege', name: 'Lord Bramwell', rel: 55 }, gold: 10, rankProgress: 12, reputation: 5, memory: { tag: 'sworn_liege', weight: 3 } }, tone: 'good' } },
+      { label: 'Keep your independence', outcome: { text: 'You decline with careful courtesy. Bramwell nods slowly. Freedom kept, favour lost.', effects: { wits: 2, reputation: -2 }, tone: 'plain' } },
     ],
   },
 ];

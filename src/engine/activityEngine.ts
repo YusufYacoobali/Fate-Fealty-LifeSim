@@ -279,7 +279,7 @@ const HANDLERS: Record<string, Handler> = {
     const good = chance(0.6);
     applyEffects(s, { gold: -ACTIVITY_COSTS.leech, health: good ? 9 : -5 });
     pushFeed(s, 'DOCTOR', C.bad, good ? one([
-      'The leech-doctor applied eleven leeches. Astonishingly, you feel better.',
+      'The leech-doctor applied eight leeches. Astonishingly, you feel better.',
       'The doctor named each leech and charged by personality. It worked anyway.',
       'The leeches looked confident, which is more than can be said for you.',
     ]) : one([

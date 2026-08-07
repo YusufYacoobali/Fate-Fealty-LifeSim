@@ -12,7 +12,6 @@ import {
   selectGoal,
   selectRankClimb,
   selectRankPath,
-  selectStanding,
   selectStats,
   selectTraits,
 } from '@/state/viewModel';
@@ -47,8 +46,10 @@ import { eventById } from '@/engine/eventPicker';
 import { DailyRewardModal } from '@/components/modals/DailyRewardModal';
 import { ProTrialEndedPrompt } from '@/components/modals/ProTrialEndedPrompt';
 import { PromotionScreen } from '@/components/modals/PromotionScreen';
+import { GoalAchievedScreen } from '@/components/modals/GoalAchievedScreen';
 import { DuelModal } from '@/components/modals/DuelModal';
 import { usePromotionCelebration } from '@/state/hooks/usePromotionCelebration';
+import { useGoalCelebration } from '@/state/hooks/useGoalCelebration';
 import { ReturnRumourModal } from '@/components/modals/ReturnRumourModal';
 
 export function GameScreen() {
@@ -126,6 +127,7 @@ export function GameScreen() {
   // Promotion/death haptics ride on engine transitions.
   useGameFeedback(state);
   const { promotedTo, dismissPromotion } = usePromotionCelebration(state, loaded);
+  const { achievedGoalId, dismissGoal } = useGoalCelebration(state, loaded);
 
   // Attributes for the ME tab need labels too.
   const meStats = stats.map((s) => ({ ...s, label: STAT_STYLES[s.key].label }));
@@ -214,7 +216,6 @@ export function GameScreen() {
               stats={meStats}
               rankPath={selectRankPath(state)}
               rankClimb={selectRankClimb(state)}
-              standing={selectStanding(state)}
               traits={selectTraits(state)}
               goal={goal}
               bio={selectBio(state)}
@@ -339,6 +340,16 @@ export function GameScreen() {
             onDone={() => {
               haptic('success', buzz);
               dismissPromotion();
+            }}
+          />
+        )}
+        {achievedGoalId && promotedTo == null && !state.dead && (
+          <GoalAchievedScreen
+            goalId={achievedGoalId}
+            reducedMotion={!!state.settings.reducedMotion}
+            onDone={() => {
+              haptic('success', buzz);
+              dismissGoal();
             }}
           />
         )}

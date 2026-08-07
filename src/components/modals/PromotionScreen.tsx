@@ -23,27 +23,6 @@ const RANK_MEANING: Record<number, string> = {
   5: 'A monarch rules the realm. There is no one left above thee to blame.',
 };
 
-/** Rays of gold behind the portrait; the one moment the UI is allowed to shout. */
-function Sunburst({ size }: { size: number }) {
-  return (
-    <View style={{ position: 'absolute', width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-      {Array.from({ length: 12 }, (_, index) => (
-        <View
-          key={index}
-          style={{
-            position: 'absolute',
-            width: 5,
-            height: size,
-            backgroundColor: index % 2 === 0 ? C.charm : '#fff1b0',
-            opacity: 0.35,
-            transform: [{ rotate: `${index * 15}deg` }],
-          }}
-        />
-      ))}
-    </View>
-  );
-}
-
 export function PromotionScreen({ rankIdx, reducedMotion, onDone }: Props) {
   const { width, height } = useWindowDimensions();
   const compact = width < 360 || height < 660;
@@ -53,22 +32,15 @@ export function PromotionScreen({ rankIdx, reducedMotion, onDone }: Props) {
   const frame = compact ? 104 : 132;
 
   const rise = useRef(new Animated.Value(reducedMotion ? 1 : 0)).current;
-  const spin = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (reducedMotion) return;
     Animated.sequence([
       Animated.timing(rise, { toValue: 1, duration: 420, easing: Easing.out(Easing.back(2)), useNativeDriver: true }),
     ]).start();
-    const loop = Animated.loop(
-      Animated.timing(spin, { toValue: 1, duration: 14000, easing: Easing.linear, useNativeDriver: true }),
-    );
-    loop.start();
-    return () => loop.stop();
-  }, [reducedMotion, rise, spin]);
+  }, [reducedMotion, rise]);
 
   const scale = rise.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] });
-  const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
 
   return (
     <ModalBackdrop zIndex={82}>
@@ -91,9 +63,6 @@ export function PromotionScreen({ rankIdx, reducedMotion, onDone }: Props) {
         </PixelText>
 
         <View style={{ width: frame, height: frame, alignItems: 'center', justifyContent: 'center', marginVertical: compact ? 12 : 18 }}>
-          <Animated.View style={{ position: 'absolute', transform: [{ rotate }] }}>
-            <Sunburst size={frame} />
-          </Animated.View>
           <Animated.View
             style={{
               transform: [{ scale }],

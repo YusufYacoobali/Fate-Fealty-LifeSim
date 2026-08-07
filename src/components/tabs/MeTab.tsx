@@ -29,42 +29,6 @@ interface RankClimbVM {
   locked: boolean;
 }
 
-interface StandingVM {
-  delta: number;
-  gains: { label: string; delta: number }[];
-  losses: { label: string; delta: number }[];
-}
-
-/** What is raising and lowering the climb toward the next rank, in plain words. */
-function StandingCard({ standing }: { standing: StandingVM }) {
-  const rising = standing.delta > 0;
-  const rows = [...standing.gains, ...standing.losses];
-
-  return (
-    <View style={{ marginTop: 10, backgroundColor: C.parch, borderWidth: 3, borderColor: C.parchBorder, borderTopColor: C.parchSl, borderLeftColor: C.parchSl, borderBottomColor: C.parchSd, borderRightColor: C.parchSd, padding: 10 }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <PixelText font="pixel" size={8} color={C.blueDeep}>STANDING THIS YEAR</PixelText>
-        <PixelText font="pixel" size={9} color={rising ? C.good : standing.delta === 0 ? C.textMuted : C.bad}>
-          {standing.delta > 0 ? `+${standing.delta}` : standing.delta}
-        </PixelText>
-      </View>
-      <PixelText font="body" size={14} color={C.textMuted} style={{ marginTop: 5 }}>
-        Deeds and events move the climb too. This is only what each year adds or takes on its own.
-      </PixelText>
-      <View style={{ marginTop: 8, gap: 4 }}>
-        {rows.map((row) => (
-          <View key={row.label} style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 8 }}>
-            <PixelText font="body" size={15} color={C.textDark} style={{ flex: 1 }}>{row.label}</PixelText>
-            <PixelText font="body" size={15} color={row.delta > 0 ? C.good : C.bad}>
-              {row.delta > 0 ? `+${row.delta}` : row.delta}
-            </PixelText>
-          </View>
-        ))}
-      </View>
-    </View>
-  );
-}
-
 function displayLockedRank(name: string) {
   return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
 }
@@ -94,14 +58,13 @@ interface Props {
   stats: StatVM[];
   rankPath: RankVM[];
   rankClimb: RankClimbVM | null;
-  standing: StandingVM;
   traits: TraitVM[];
   goal: GoalVM | null;
   bio: string;
   onLockedRankPress?: () => void;
 }
 
-export function MeTab({ portrait, firstName, epithet, classRank, age, stats, rankPath, rankClimb, standing, traits, goal, bio, onLockedRankPress }: Props) {
+export function MeTab({ portrait, firstName, epithet, classRank, age, stats, rankPath, rankClimb, traits, goal, bio, onLockedRankPress }: Props) {
   const portraitAsset = rankPortraitAsset(classRank);
 
   return (
@@ -174,7 +137,6 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
           />
         </View>
       )}
-      {rankClimb && !rankClimb.locked && <StandingCard standing={standing} />}
 
       {/* attributes */}
       <PixelText font="pixel" size={8} color={C.blueDeep} style={{ marginTop: 14, marginBottom: 8 }}>

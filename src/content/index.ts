@@ -19,6 +19,7 @@ import { BASE_EXPANSION_EVENTS } from './baseExpansionEvents';
 import { PREMIUM_EVENTS } from './premiumEvents';
 import { PERSISTENT_WORLD_EVENTS } from './persistentWorldEvents';
 import { QUALITY_AMBIENT_EVENTS } from './qualityAmbientEvents';
+import { POSSESSION_EVENTS } from './possessionEvents';
 import { LEGAL_SYSTEM_EVENTS } from '@/engine/legalEngine';
 
 const RAW_EVENTS: GameEvent[] = [
@@ -37,10 +38,21 @@ const RAW_EVENTS: GameEvent[] = [
   ...STORY_ARCS,
   ...PERSISTENT_WORLD_EVENTS,
   ...QUALITY_AMBIENT_EVENTS,
+  ...POSSESSION_EVENTS,
   ...LEGAL_SYSTEM_EVENTS,
 ];
 
-const DOMAIN_QUOTAS: Record<ContentDomain, number> = {
+/**
+ * Minimum authored events per domain. These are FLOORS, not caps.
+ *
+ * They used to be caps, and the registry curated down to exactly 150 by sorting
+ * on `editorialScore`. Because the bulk chain generator hardcoded the top score,
+ * that sort quietly evicted 49 of the 77 hand-written free events — the whole
+ * noble, faith and courtier banks among them — and replaced them with events
+ * that all shared two choices. Nothing hand-authored is dropped now; the picker
+ * balances domains at selection time instead (see `eventWeight`).
+ */
+const DOMAIN_FLOORS: Record<ContentDomain, number> = {
   family: 30, health: 20, crime: 22, career: 25, politics: 28, household: 12, rare: 13,
 };
 
@@ -82,32 +94,20 @@ const NORMALISED_EVENTS = RAW_EVENTS.map(normaliseEvent);
 const selectable = NORMALISED_EVENTS.filter((event) => !event.arcNodeOnly);
 const internal = NORMALISED_EVENTS.filter((event) => event.arcNodeOnly);
 
-// These established entry points are referenced by chronicles, tests and
-// immediate legacy chains. They remain inside the curated 150, never as an
-// invisible compatibility-only pool.
-const COMPATIBILITY_EVENT_IDS = new Set(['knight_oath', 'knight_liege_oath', 'peasant_jealous_rival']);
-
-const curatedAmbient = (Object.keys(DOMAIN_QUOTAS) as ContentDomain[]).flatMap((domain) => {
-  const candidates = selectable
-    .filter((event) => event.domain === domain)
-    .sort((a, b) => Number(b.premium) - Number(a.premium) || (b.editorialScore ?? 0) - (a.editorialScore ?? 0) || a.id.localeCompare(b.id));
-  const required = candidates.filter((event) => COMPATIBILITY_EVENT_IDS.has(event.id));
-  const selected = [...required, ...candidates.filter((event) => !COMPATIBILITY_EVENT_IDS.has(event.id))].slice(0, DOMAIN_QUOTAS[domain]);
-  if (selected.length !== DOMAIN_QUOTAS[domain]) throw new Error(`[content] ${domain} has ${selected.length}/${DOMAIN_QUOTAS[domain]} selectable events`);
-  return selected;
-});
-
-// Existing paid content remains available after curation. Replace the weakest
-// free item in the same domain rather than expanding the 150-event ceiling.
-for (const premium of selectable.filter((event) => event.premium && !curatedAmbient.some((selected) => selected.id === event.id))) {
-  let replaceIndex = curatedAmbient.findLastIndex((event) => event.domain === premium.domain && !event.premium && !event.id.startsWith('quality_') && !COMPATIBILITY_EVENT_IDS.has(event.id));
-  if (replaceIndex < 0) replaceIndex = curatedAmbient.findLastIndex((event) => event.domain === premium.domain && !event.premium && !COMPATIBILITY_EVENT_IDS.has(event.id)
-    && curatedAmbient.filter((candidate) => candidate.domain === event.domain && candidate.repetitionGroup === event.repetitionGroup).length > 1);
-  if (replaceIndex >= 0) curatedAmbient[replaceIndex] = premium;
+for (const [domain, floor] of Object.entries(DOMAIN_FLOORS) as Array<[ContentDomain, number]>) {
+  const count = selectable.filter((event) => event.domain === domain).length;
+  if (count < floor) throw new Error(`[content] ${domain} has ${count}/${floor} selectable events`);
 }
 
-export const AMBIENT_EVENTS: GameEvent[] = curatedAmbient;
-export const ALL_EVENTS: GameEvent[] = [...curatedAmbient, ...internal];
+export const AMBIENT_EVENTS: GameEvent[] = selectable;
+export const ALL_EVENTS: GameEvent[] = [...selectable, ...internal];
+
+/** Pool sizes, so the picker can give each domain a fair share of the year. */
+export const DOMAIN_EVENT_COUNTS: Record<ContentDomain, number> = (Object.keys(DOMAIN_FLOORS) as ContentDomain[])
+  .reduce((acc, domain) => {
+    acc[domain] = selectable.filter((event) => event.domain === domain).length;
+    return acc;
+  }, {} as Record<ContentDomain, number>);
 
 export const EVENTS_BY_ID: Record<string, GameEvent> = ALL_EVENTS.reduce(
   (acc, e) => {

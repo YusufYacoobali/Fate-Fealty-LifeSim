@@ -6,7 +6,7 @@ export const NOBLE_EVENTS: GameEvent[] = [
     id: 'noble_petition',
     category: 'noble',
     title: 'THE PEASANTS’ PETITION',
-    text: 'The villagers of your old home — Swineford — come to you, their newly-noble kin, begging relief from a cruel tax.',
+    text: 'The villagers of Swineford, your old home, come to you as their newly-noble kin, begging relief from a cruel tax.',
     ageMin: 20,
     ranks: ['Noble'],
     choices: [
@@ -27,7 +27,7 @@ export const NOBLE_EVENTS: GameEvent[] = [
     choices: [
       { label: 'Join the conspiracy', successChance: (s) => 0.4 + s.stats.wits / 250 + s.reputation / 400, success: { text: 'The plot succeeded! The baron is deposed and you stand among the victors. Lands and titles follow.', effects: { gold: 50, charm: 8, reputation: 15, path: { court: 6 }, memory: { tag: 'kingmaker', weight: 5 } }, tone: 'good' }, failure: { text: 'The plot was betrayed. Guards drag you to the block at dawn.', effects: { death: 'Beheaded for treason. The crowd, as ever, brought pies.' }, tone: 'bad' } },
       { label: 'Betray the plotters to the baron', outcome: { text: 'You sold them out. The baron rewards your "loyalty" handsomely, though you sleep with one eye open now.', effects: { gold: 40, reputation: -8, faith: -10, memory: { tag: 'betrayer', weight: 4 } }, tone: 'plain' } },
-      { label: 'Refuse and stay clear', outcome: { text: 'You want no part of it. Wise — the plot collapses messily a year later, and you are untouched.', effects: { wits: 4, faith: 3 }, tone: 'good' } },
+      { label: 'Refuse and stay clear', outcome: { text: 'You want no part of it. Wisely: the plot collapses messily a year later and you are nowhere near it.', effects: { wits: 4, faith: 3 }, tone: 'good' } },
     ],
   },
   {

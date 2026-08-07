@@ -119,7 +119,7 @@ export const STORY_PRESENTATION: Record<string, StoryPresentation> = {
       'Service under arms is calling in what it is owed.',
       'An order has been given that sits badly.',
       'Thy men are watching what thou do about it.',
-      'Obey or refuse — both cost something now.',
+      'Obey or refuse. Both cost something now.',
       'The road ends where thy choices led it.',
     ],
   },

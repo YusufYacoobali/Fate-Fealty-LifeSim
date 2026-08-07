@@ -38,6 +38,11 @@ import { tickFactions } from './factionEngine';
 
 const EVENT_CHANCE = 0.34;
 
+/** After this many story beats back to back, the year is offered to the one-off pool. */
+export const STORY_BEATS_BEFORE_A_BREATHER = 2;
+/** How often that breather is actually taken, so pacing stays varied. */
+export const AMBIENT_BREATHER_CHANCE = 0.6;
+
 export function ageUp(s: GameState): GameState {
   if (s.dead || s.pendingEvent) return s; // guard: don't advance mid-popup
 
@@ -105,12 +110,21 @@ export function ageUp(s: GameState): GameState {
   maybeStartSupportingStory(s);
   maybeStartRelationshipStory(s);
   const legalEvent = dueLegalEvent(s);
-  const persistentStory = legalEvent ? null : duePersistentStoryEvent(s);
-  const arcNode = legalEvent || persistentStory ? null : popReadyArc(s);
+  // Story beats used to win every year they were due, and with three kinds of
+  // story running at once one was almost always due — so a life became a queue
+  // of chapters and the one-off events were never seen. A run of story beats
+  // now yields the year to the ambient pool.
+  const storyRunLongEnough = (s.world.pacing.storyBeatsInARow ?? 0) >= STORY_BEATS_BEFORE_A_BREATHER;
+  const ambientFirst = storyRunLongEnough && chance(AMBIENT_BREATHER_CHANCE) ? pickEvent(s) : null;
+  const persistentStory = legalEvent || ambientFirst ? null : duePersistentStoryEvent(s);
+  const arcNode = legalEvent || ambientFirst || persistentStory ? null : popReadyArc(s);
   const selectedEvent = legalEvent
+    ?? ambientFirst
     ?? persistentStory
     ?? arcNode
     ?? ((s.world.pacing.quietYearsSinceStory >= 3 || chance(EVENT_CHANCE)) ? pickEvent(s) : null);
+  const wasStoryBeat = Boolean(persistentStory || arcNode);
+  s.world.pacing.storyBeatsInARow = wasStoryBeat ? (s.world.pacing.storyBeatsInARow ?? 0) + 1 : 0;
   if (selectedEvent) {
     // Only commit the trial's charge once the popup is genuinely being opened.
     if (!s.pendingEvent) {

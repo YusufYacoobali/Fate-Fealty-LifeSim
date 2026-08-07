@@ -108,18 +108,33 @@ describe('cruelty lands on the other person', () => {
 });
 
 describe('violence', () => {
-  it('injures the victim and puts a charge on the player', () => {
+  it('always draws a charge, and always hurts one of the two', () => {
     const s = makeState({ age: 30, stats: { health: 95, charm: 50, wits: 50, faith: 50 } });
     const victim = target(s);
     victim.stats.health = 40;
-    const beforeHealth = victim.stats.health;
+    const beforeVictim = victim.stats.health;
+    const beforePlayer = s.stats.health;
 
     assault(s, victim);
 
     const player = s.world.characters[s.playerCharacterId];
-    expect(victim.stats.health).toBeLessThan(beforeHealth);
+    // The charge lands whether or not the attack did — swinging is the crime.
     expect(player.legalState!.charges.some((charge) => charge.offence.includes('assault'))).toBe(true);
     expect(player.legalState!.suspicion).toBeGreaterThan(0);
+    // Either they came off worse or thou did; violence is never a non-event.
+    expect(victim.stats.health < beforeVictim || s.stats.health < beforePlayer).toBe(true);
+  });
+
+  it('injures the victim outright when badly outmatched', () => {
+    const s = makeState({ age: 30, stats: { health: 100, charm: 50, wits: 50, faith: 50 } });
+    const victim = target(s);
+    // A 100-vs-0 gap puts the success chance at 1, so this branch is certain.
+    victim.stats.health = 0;
+    const beforeInjuries = victim.healthConditions?.length ?? 0;
+
+    assault(s, victim);
+
+    expect(victim.healthConditions!.length).toBeGreaterThan(beforeInjuries);
   });
 
   it('can actually kill, and the law hears about it either way', () => {

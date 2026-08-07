@@ -8,6 +8,7 @@ import { isChoiceAvailable, isChoiceEnabled } from '@/engine/eventPicker';
 import { C, PANEL } from '@/theme/theme';
 import { ModalBackdrop } from './ModalBackdrop';
 import { storyBeatLine, storyPresentation } from '@/content/storyPresentation';
+import { renderBoundText } from '@/content/persistentWorldEvents';
 
 interface Props {
   state: GameState;
@@ -93,7 +94,7 @@ export function EventModal({ state, event, onChoose }: Props) {
                 innerStyle={{ padding: 9 }}
               >
                 <PixelText font="body" size={17} color={C.blueDark}>
-                  {c.label}
+                  {renderBoundText(state, c.label)}
                 </PixelText>
                 {c.hint ? (
                   <PixelText font="body" size={14} color={C.blue} style={{ marginTop: 2 }}>

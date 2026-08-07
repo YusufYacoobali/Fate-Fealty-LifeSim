@@ -4,7 +4,7 @@ import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
 import { GameState, KinMember, RelationFilter } from '@/types/game';
 import { KinAction } from '@/engine/kinEngine';
-import { contextualActions, perspectives, readRelationship } from '@/engine/relationshipEngine';
+import { contextualActions, isPlayerSpouse, perspectives, readRelationship } from '@/engine/relationshipEngine';
 import { isFamilyTie, KinshipTie, kinshipGeneration, kinshipLabel, kinshipMap } from '@/engine/kinship';
 import { careerById } from '@/data/careers';
 import { relColor, relLabel } from '@/state/viewModel';
@@ -124,7 +124,7 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
           </View>
         </View>
 
-        {detail.alive && <ActionBoard state={state} actions={actions} onInteract={(action) => onInteract(detail.id, action)} />}
+        {detail.alive && <ActionBoard state={state} actions={actions} kin={detail} onInteract={(action) => onInteract(detail.id, action)} />}
         <View style={PANEL.parchCard}>
           <PixelText font="pixel" size={7} color={C.amber}>MUTUAL RELATIONSHIP</PixelText>
           <Dimension label="YOUR AFFINITY" value={views.player.affinity} />
@@ -199,9 +199,15 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
  * something available are offered, so the board stays honest about what this
  * particular relationship allows.
  */
-function ActionBoard({ state, actions, onInteract }: { state: GameState; actions: KinAction[]; onInteract: (action: KinAction) => void }) {
+function ActionBoard({ state, actions, kin, onInteract }: { state: GameState; actions: KinAction[]; kin: KinMember; onInteract: (action: KinAction) => void }) {
   const available = ACTION_GROUPS.filter((group) => actions.some((action) => ACTION_META[action].group === group.id));
-  const [group, setGroup] = React.useState<ActionGroup>(available[0]?.id ?? 'warm');
+  // The board used to open on KINDNESS for everybody, which hid TRY FOR A CHILD
+  // behind an unpressed tab on the one screen a player goes looking for it.
+  // Open where this particular relationship's business actually is.
+  const opening: ActionGroup = isPlayerSpouse(state, kin) ? 'romance'
+    : actions.includes('educate_child') || actions.includes('name_heir') ? 'family'
+      : available[0]?.id ?? 'warm';
+  const [group, setGroup] = React.useState<ActionGroup>(available.some((item) => item.id === opening) ? opening : available[0]?.id ?? 'warm');
   // The relationship can change under us — fall back rather than showing nothing.
   const active = available.some((item) => item.id === group) ? group : available[0]?.id;
   if (!active) return null;

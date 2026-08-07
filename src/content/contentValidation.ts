@@ -12,9 +12,23 @@ export interface ContentValidationIssue {
   message: string;
 }
 
-const QUOTAS: Record<ContentDomain, number> = {
+/** Minimum authored events per domain. Floors, not caps — see content/index.ts. */
+const DOMAIN_FLOORS: Record<ContentDomain, number> = {
   family: 30, health: 20, crime: 22, career: 25, politics: 28, household: 12, rare: 13,
 };
+
+const AMBIENT_FLOOR = 150;
+
+/**
+ * How many events may share one choice label or one outcome line before the
+ * content counts as filler. This exists because the previous contract enforced
+ * counts and nothing else, and bulk generation is the cheapest way to satisfy a
+ * count: 97 events once shared the same two choices and the same two outcomes.
+ * Some repetition is legitimate (a story's closing "accept the ending" beat), so
+ * the bar is deliberately loose rather than zero.
+ */
+const MAX_SHARED_CHOICE_LABEL = 6;
+const MAX_SHARED_OUTCOME_TEXT = 6;
 
 const SIMPLE_STATS = new Set(['health', 'charm', 'wits', 'faith', 'gold', 'rankProgress', 'reputation']);
 
@@ -42,10 +56,10 @@ export function validateContent(): ContentValidationIssue[] {
   const error = (code: string, contentId: string, message: string) => issues.push({ level: 'error', code, contentId, message });
   const warn = (code: string, contentId: string, message: string) => issues.push({ level: 'warning', code, contentId, message });
 
-  if (AMBIENT_EVENTS.length !== 150) error('ambient_total', 'ambient', `Expected exactly 150 selectable ambient events, found ${AMBIENT_EVENTS.length}.`);
-  for (const [domain, expected] of Object.entries(QUOTAS)) {
+  if (AMBIENT_EVENTS.length < AMBIENT_FLOOR) error('ambient_total', 'ambient', `Expected at least ${AMBIENT_FLOOR} selectable ambient events, found ${AMBIENT_EVENTS.length}.`);
+  for (const [domain, floor] of Object.entries(DOMAIN_FLOORS)) {
     const actual = AMBIENT_EVENTS.filter((event) => event.domain === domain).length;
-    if (actual !== expected) error('domain_quota', domain, `Expected ${expected}, found ${actual}.`);
+    if (actual < floor) error('domain_quota', domain, `Expected at least ${floor}, found ${actual}.`);
   }
   const freeEvents = AMBIENT_EVENTS.filter((event) => !event.premium).length;
   if (freeEvents < 120) error('free_event_floor', 'ambient', `Only ${freeEvents} ambient events are free.`);
@@ -55,9 +69,30 @@ export function validateContent(): ContentValidationIssue[] {
   if (lasting < 90) error('lasting_effect_floor', 'ambient', `Only ${lasting} events declare a lasting effect.`);
   const callbacks = AMBIENT_EVENTS.filter(callbackEvent).length;
   if (callbacks < 50) error('callback_floor', 'ambient', `Only ${callbacks} events deliberately follow earlier state.`);
-  for (const domain of Object.keys(QUOTAS) as ContentDomain[]) {
+  for (const domain of Object.keys(DOMAIN_FLOORS) as ContentDomain[]) {
     const chainGroups = new Set(AMBIENT_EVENTS.filter((event) => event.domain === domain && (event.requires?.hasWorldMemoryType?.length || event.id.startsWith('quality_'))).map((event) => event.repetitionGroup));
     if (chainGroups.size < 3) error('domain_chain_floor', domain, `Only ${chainGroups.size} interconnected chains are present.`);
+  }
+
+  // Distinctiveness. A count contract alone rewards bulk generation, so the
+  // shape of the writing is checked too: a choice the player is offered in forty
+  // different situations is not a choice, it is a shrug.
+  const choiceLabelUses = new Map<string, string[]>();
+  const outcomeTextUses = new Map<string, string[]>();
+  for (const event of ALL_EVENTS) {
+    for (const choice of event.choices) {
+      choiceLabelUses.set(choice.label, [...(choiceLabelUses.get(choice.label) ?? []), event.id]);
+      for (const outcome of [choice.outcome, choice.success, choice.failure]) {
+        if (!outcome?.text) continue;
+        outcomeTextUses.set(outcome.text, [...(outcomeTextUses.get(outcome.text) ?? []), event.id]);
+      }
+    }
+  }
+  for (const [label, ids] of choiceLabelUses) {
+    if (ids.length > MAX_SHARED_CHOICE_LABEL) error('shared_choice_label', ids[0], `Choice "${label}" is offered by ${ids.length} events (max ${MAX_SHARED_CHOICE_LABEL}).`);
+  }
+  for (const [text, ids] of outcomeTextUses) {
+    if (ids.length > MAX_SHARED_OUTCOME_TEXT) error('shared_outcome_text', ids[0], `Outcome "${text.slice(0, 60)}…" is reused by ${ids.length} events (max ${MAX_SHARED_OUTCOME_TEXT}).`);
   }
 
   const seenEvents = new Set<string>();
@@ -116,6 +151,24 @@ export function validateContent(): ContentValidationIssue[] {
       if (!reachable.has(beat.id)) error('unreachable_beat', story.id, `Beat ${beat.id} is unreachable.`);
       if (beat.nextBeatId && !story.beats[beat.nextBeatId]) error('missing_next_beat', story.id, `Beat ${beat.id} points to ${beat.nextBeatId}.`);
       for (const transition of beat.transitions ?? []) if (!story.beats[transition.beatId]) error('missing_transition_beat', story.id, `Beat ${beat.id} points to ${transition.beatId}.`);
+
+      // A branch is only structurally reachable. It is actually reachable only
+      // if some choice on this beat sets the variable the transition reads —
+      // otherwise the beat always falls through to its default and half the
+      // story is written, shipped, and never seen by anybody.
+      const branchEvent = EVENTS_BY_ID[beat.eventId];
+      if (!branchEvent) continue;
+      for (const transition of beat.transitions ?? []) {
+        const produced = branchEvent.choices.some((choice) => [choice.outcome, choice.success, choice.failure]
+          .some((outcome) => {
+            const value = outcome?.effects?.storyVariables?.[transition.when.variable];
+            if (transition.when.truthy) return Boolean(value);
+            return value === transition.when.equals;
+          }));
+        if (!produced) {
+          error('unreachable_branch', story.id, `Beat ${beat.id} branches to ${transition.beatId} on ${transition.when.variable}=${String(transition.when.equals ?? 'truthy')}, but no choice in ${beat.eventId} sets it.`);
+        }
+      }
     }
     if (story.recovery.recoveryBeatId && !story.beats[story.recovery.recoveryBeatId]) error('invalid_recovery', story.id, `Recovery beat ${story.recovery.recoveryBeatId} does not exist.`);
   }

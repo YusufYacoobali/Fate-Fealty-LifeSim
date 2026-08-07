@@ -237,7 +237,9 @@ function RoyalOfferPanel({
               disabled={unavailable}
               onPress={() => setSelected(id)}
               style={{
-                minHeight: isAnnual ? (compact ? 69 : 76) : compact ? 57 : 61,
+                // Yearly is the recommendation and stands tallest; monthly is the
+                // option of last resort and is given the least room accordingly.
+                minHeight: isAnnual ? (compact ? 69 : 76) : isLifetime ? (compact ? 57 : 61) : compact ? 46 : 50,
                 marginTop: index === 0 ? 0 : compact ? 6 : 8,
                 paddingHorizontal: compact ? 6 : 9,
                 paddingVertical: compact ? 4 : 6,
@@ -262,8 +264,8 @@ function RoyalOfferPanel({
                 source={isAnnual ? PAYWALL_ART.crown : isLifetime ? PAYWALL_ART.holding : PAYWALL_ART.monthly}
                 resizeMode="contain"
                 style={{
-                  width: isAnnual ? (compact ? 40 : 46) : compact ? 35 : 40,
-                  height: isAnnual ? (compact ? 40 : 46) : compact ? 35 : 40,
+                  width: isAnnual ? (compact ? 40 : 46) : isLifetime ? (compact ? 35 : 40) : compact ? 28 : 32,
+                  height: isAnnual ? (compact ? 40 : 46) : isLifetime ? (compact ? 35 : 40) : compact ? 28 : 32,
                 }}
               />
               <View style={{ flex: 1 }}>

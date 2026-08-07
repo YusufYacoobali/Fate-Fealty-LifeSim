@@ -231,6 +231,9 @@ export function normalizeGameState(parsed: GameState): GameState {
       pacing: parsed.world?.pacing ?? stateDefaults.pacing,
       recoveryNotice: parsed.world?.recoveryNotice ?? false,
       contentLedger: parsed.world?.contentLedger ?? stateDefaults.contentLedger,
+      // Open narrative threads. Omitted here, a reload silently dropped every
+      // in-flight chain and the player lost stories mid-telling.
+      threads: parsed.world?.threads ?? [],
       repetitionLedger: parsed.world?.repetitionLedger ?? stateDefaults.repetitionLedger,
       recentDomains: parsed.world?.recentDomains ?? stateDefaults.recentDomains,
       expectedChildren: parsed.world?.expectedChildren ?? stateDefaults.expectedChildren,

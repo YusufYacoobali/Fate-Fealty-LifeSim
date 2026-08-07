@@ -3,10 +3,14 @@
  * whether — and how — the life ends.
  *
  * Checks, in order:
+ *   0. The full span of years, which not even Live Forever gets past.
  *   1. Already dead (event-driven death set the flag) -> just finalise.
  *   2. Health <= 0.
  *   3. Old-age risk that ramps with age.
  *   4. Path-flavoured hazards (outlaws hang, knights fall in war, etc.).
+ *
+ * Steps 3 and 4 roll once a year. `ageUp` calls this after nearly every
+ * sub-step, so an ungated hazard is really eight or nine rolls a year.
  */
 
 import { GameState } from '@/types/game';
@@ -51,6 +55,14 @@ function difficultyDeathMod(s: GameState): number {
 }
 
 export function checkDeath(s: GameState): GameState {
+  // The span is the one thing Live Forever does not buy. It used to return here
+  // before any age check ran, so the setting meant literally never dying, and a
+  // life with no end has nothing at stake in it.
+  if (s.age >= MAX_LIFESPAN) {
+    killPlayer(s, 'Died at the full span of years. Nobody in Swineford could remember an older soul.');
+    return finalise(s);
+  }
+
   if (s.settings.liveForever) {
     // Live Forever floors health at 1 so the player can keep aging.
     if (s.stats.health <= 0) s.stats.health = 1;
@@ -70,18 +82,20 @@ export function checkDeath(s: GameState): GameState {
     return finalise(s);
   }
 
-  // 3. Nobody outlives the span. Without a ceiling the old-age roll can be
-  // dodged indefinitely, and a life that never ends has no stakes in it.
-  if (s.age >= MAX_LIFESPAN) {
-    killPlayer(s, 'Died at the full span of years. Nobody in Swineford could remember an older soul.');
-    return finalise(s);
-  }
+  // `ageUp` calls this after almost every sub-step so that a fatal event is
+  // finalised immediately. That is right for health collapse, which is a
+  // reaction to something that just happened, and wrong for the yearly hazard
+  // rolls below: they were being rolled eight or nine times a year, which made
+  // the real chance of dying several times the stated one and meant nobody saw
+  // sixty. These roll once per year and then stand down.
+  if (s.world.pacing.hazardsRolledYear === s.world.currentYear) return s;
+  s.world.pacing.hazardsRolledYear = s.world.currentYear;
 
   // 4. Old age — risk ramps after 45, and climbs steeply through the eighties
   // so that reaching the ceiling is a rare feat rather than the usual ending.
   if (s.age > 45) {
     const years = s.age - 45;
-    const oldRisk = ((years / 110) + Math.pow(years / 45, 3) * 0.22) * mod;
+    const oldRisk = ((years / 200) + Math.pow(years / 58, 3) * 0.17) * mod;
     if (chance(oldRisk)) {
       killPlayer(s, s.age > 70 ? 'Died peacefully of being very, very old.' : 'Died of a winter chill and a tired heart.');
       return finalise(s);
@@ -175,6 +189,6 @@ export const DECLINE_AGE = 55;
 export function agingDamage(s: GameState): number {
   if (s.age <= 45) return 0;
   const base = rnd(1, Math.floor((s.age - 40) / 4) + 2);
-  const decline = s.age >= DECLINE_AGE ? 1 + Math.floor((s.age - DECLINE_AGE) / 8) : 0;
+  const decline = s.age >= DECLINE_AGE ? 2 + Math.floor((s.age - DECLINE_AGE) / 5) : 0;
   return Math.round((base + decline) * agingMultiplierFromTraits(s));
 }

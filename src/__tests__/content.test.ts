@@ -73,7 +73,8 @@ describe('content integrity', () => {
   it('keeps onboarding subscriptions separate from the complete Royal Shop', () => {
     expect(PAYWALL_PLAN_IDS).toEqual(['annual', 'monthly']);
     expect(PAYWALL_PLAN_IDS).not.toContain('lifetime');
-    expect(SHOP_PLAN_IDS).toEqual(['annual', 'monthly', 'lifetime']);
+    // Lifetime sits in the middle and monthly last: see SHOP_PLAN_IDS.
+    expect(SHOP_PLAN_IDS).toEqual(['annual', 'lifetime', 'monthly']);
   });
 
   it('includes a generous free/base content pool', () => {

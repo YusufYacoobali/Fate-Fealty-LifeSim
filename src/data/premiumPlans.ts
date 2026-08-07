@@ -49,8 +49,12 @@ export const PREMIUM_PLANS: Record<PlanId, PremiumPlan> = {
 /** End-of-onboarding paywall: subscriptions only, yearly preselected. */
 export const PAYWALL_PLAN_IDS: PlanId[] = ['annual', 'monthly'];
 
-/** The premium shop: everything, yearly first, lifetime as the anchor. */
-export const SHOP_PLAN_IDS: PlanId[] = ['annual', 'monthly', 'lifetime'];
+/**
+ * The premium shop: yearly first as the recommendation, lifetime in the middle
+ * where the eye rests, monthly last and smallest. Monthly is the option we are
+ * least trying to sell, so it does not get equal billing with the other two.
+ */
+export const SHOP_PLAN_IDS: PlanId[] = ['annual', 'lifetime', 'monthly'];
 
 export const PREMIUM_BENEFIT_DETAILS = [
   {

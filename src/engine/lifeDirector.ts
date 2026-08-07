@@ -5,7 +5,7 @@
  *   1. Increments age, ages kin.
  *   2. Emits 1-2 annual flavour beats (with effects).
  *   3. Applies the slow attrition of old age.
- *   4. Continues any in-flight story arc, OR rolls for a new main event.
+ *   4. Asks the director what shape this year takes and fills it (see ./director).
  *   5. Ticks rank/path progression (may auto-promote).
  *   6. Runs the death engine.
  *
@@ -22,26 +22,17 @@ import { tickProgression } from './pathProgression';
 import { grantAcquiredTraits } from './traitEngine';
 import { assignLifeGoalIfDue, checkLifeGoal } from './goalEngine';
 import { tickAilments, tickImprisonment, tickKinMortality } from './lifecycleEngine';
-import { bindEventActors, pickEvent } from './eventPicker';
-import { popReadyArc } from './storyGraph';
 import { chance } from './random';
 import { tickHoldingYear } from './holdingEngine';
 import { tickCareerAndEconomy } from './careerEngine';
 import { simulateLivingWorld } from './worldEngine';
 import { tickAffairs, tickRelationshipDecay } from './relationshipEngine';
 import { resolveScheduledConsequences, tickPersistentSociety, tickWorldConditions } from './worldSimulation';
-import { duePersistentStoryEvent, maybeStartMajorStory, maybeStartRelationshipStory, maybeStartSupportingStory } from './persistentStoryEngine';
 import { tickFamilyFormation } from './familyFormationEngine';
 import { tickStructuredHealth } from './healthEngine';
-import { beginLegalTrial, dueLegalEvent, tickLegalSystem } from './legalEngine';
+import { beginLegalTrial, tickLegalSystem } from './legalEngine';
+import { bindDirectedEvent, directYear } from './director';
 import { tickFactions } from './factionEngine';
-
-const EVENT_CHANCE = 0.34;
-
-/** After this many story beats back to back, the year is offered to the one-off pool. */
-export const STORY_BEATS_BEFORE_A_BREATHER = 2;
-/** How often that breather is actually taken, so pacing stays varied. */
-export const AMBIENT_BREATHER_CHANCE = 0.6;
 
 export function ageUp(s: GameState): GameState {
   if (s.dead || s.pendingEvent) return s; // guard: don't advance mid-popup
@@ -105,31 +96,13 @@ export function ageUp(s: GameState): GameState {
     if (s.dead) return s;
   }
 
-  // --- 4. story arc continuation OR new main event ---
-  maybeStartMajorStory(s);
-  maybeStartSupportingStory(s);
-  maybeStartRelationshipStory(s);
-  const legalEvent = dueLegalEvent(s);
-  // Story beats used to win every year they were due, and with three kinds of
-  // story running at once one was almost always due — so a life became a queue
-  // of chapters and the one-off events were never seen. A run of story beats
-  // now yields the year to the ambient pool.
-  const storyRunLongEnough = (s.world.pacing.storyBeatsInARow ?? 0) >= STORY_BEATS_BEFORE_A_BREATHER;
-  const ambientFirst = storyRunLongEnough && chance(AMBIENT_BREATHER_CHANCE) ? pickEvent(s) : null;
-  const persistentStory = legalEvent || ambientFirst ? null : duePersistentStoryEvent(s);
-  const arcNode = legalEvent || ambientFirst || persistentStory ? null : popReadyArc(s);
-  const selectedEvent = legalEvent
-    ?? ambientFirst
-    ?? persistentStory
-    ?? arcNode
-    ?? ((s.world.pacing.quietYearsSinceStory >= 3 || chance(EVENT_CHANCE)) ? pickEvent(s) : null);
-  const wasStoryBeat = Boolean(persistentStory || arcNode);
-  s.world.pacing.storyBeatsInARow = wasStoryBeat ? (s.world.pacing.storyBeatsInARow ?? 0) + 1 : 0;
-  if (selectedEvent) {
+  // --- 4. the year's beat, chosen by the director ---
+  const directed = directYear(s);
+  if (directed.event) {
     // Only commit the trial's charge once the popup is genuinely being opened.
     if (!s.pendingEvent) {
-      if (legalEvent) beginLegalTrial(s);
-      s.pendingEvent = { eventId: selectedEvent.id, bindings: bindEventActors(s, selectedEvent) };
+      if (directed.isLegal) beginLegalTrial(s);
+      s.pendingEvent = { eventId: directed.event.id, bindings: bindDirectedEvent(s, directed) };
     }
     s.world.pacing.quietYearsSinceStory = 0;
   } else {

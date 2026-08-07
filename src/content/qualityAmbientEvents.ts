@@ -106,6 +106,7 @@ function eventFor(spec: ChainSpec, beat: Beat, stage: number, previous?: Beat): 
     // Chain beats are no longer scored above hand-written one-shot events. The
     // registry does not curate on this any more; it survives as a hint only.
     editorialScore: 4,
+    chain: { id: spec.id, index: stage, total: spec.beats.length },
     choices: beat.choices.map(choiceFor),
   });
 }

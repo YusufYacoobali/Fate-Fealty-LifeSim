@@ -1,3 +1,5 @@
+import type { Thread } from '@/engine/director/threads';
+
 /**
  * Core type system for the Fate & Fealty engine.
  *
@@ -427,6 +429,14 @@ export interface PacingState {
   quietYearsSinceStory: number;
   /** Consecutive years resolved by a story beat rather than a one-off event. */
   storyBeatsInARow?: number;
+  /** Year the once-yearly death hazards were last rolled. */
+  hazardsRolledYear?: number;
+  /** Consecutive years in which nothing at all happened. */
+  quietRun?: number;
+  /** Years since the last deliberate good year. */
+  yearsSinceReward?: number;
+  /** Gap, rolled fresh each time, before the next one is owed. */
+  nextRewardAt?: number;
   majorEventsThisLife: number;
   mediumStoriesStarted: number;
   immediateChainDepth: number;
@@ -500,6 +510,8 @@ export interface WorldState {
   pacing: PacingState;
   recoveryNotice: boolean;
   contentLedger: Record<string, ContentLedgerEntry>;
+  /** Ambient chains the player has opened and not yet finished. */
+  threads?: Thread[];
   repetitionLedger: Record<string, number>;
   recentDomains: ContentDomain[];
   expectedChildren: ExpectedChild[];
@@ -727,6 +739,15 @@ export interface EventActorRole {
   missingActor: 'clear_event' | 'substitute';
 }
 
+export interface EventChainRef {
+  /** Chain this beat belongs to, e.g. "stolen_chalice". */
+  id: string;
+  /** 0-based position of this beat in the chain. */
+  index: number;
+  /** Total beats in the chain. */
+  total: number;
+}
+
 export interface GameEvent {
   id: string;
   category: EventCategory;
@@ -757,6 +778,8 @@ export interface GameEvent {
   repetitionGroup?: string;
   actorRoles?: Record<string, EventActorRole>;
   editorialScore?: 1 | 2 | 3 | 4 | 5;
+  /** Set on ambient chain beats so the director can schedule continuations. */
+  chain?: EventChainRef;
 }
 
 /** A story arc that is mid-flight, waiting to continue on a later age-up. */

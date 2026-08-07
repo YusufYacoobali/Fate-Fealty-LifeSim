@@ -20,7 +20,7 @@ export const POSSESSION_EVENTS: GameEvent[] = [
     requires: { hasItems: ['falcon'] },
     cooldownYears: 20,
     choices: [
-      { id: 'gift', label: 'Give him the falcon', outcome: { text: 'He is delighted and slightly embarrassed, which is the most useful thing a bishop can be. Your name reaches the diocese before you do.', effects: { charm: 5, reputation: 6, faction: { factionId: 'church', playerStanding: 6 }, removeTags: [], memory: { tag: 'gave_the_bishop_a_falcon', weight: 4 } }, tone: 'good' } },
+      { id: 'gift', label: 'Give him the falcon', outcome: { text: 'He is delighted and slightly embarrassed, and a bishop in that condition is worth a great deal. Your name reaches the diocese before you do.', effects: { charm: 5, reputation: 6, faction: { factionId: 'church', playerStanding: 6 }, removeTags: [], memory: { tag: 'gave_the_bishop_a_falcon', weight: 4 } }, tone: 'good' } },
       { id: 'fly_it', label: 'Fly her for him instead', outcome: { text: 'She takes a heron in front of the whole procession. The bishop talks about it for years and never once offers to buy her.', effects: { charm: 7, reputation: 5, faction: { factionId: 'church', playerStanding: 3 }, memory: { tag: 'flew_the_falcon_for_a_bishop', weight: 4 } }, tone: 'good' } },
       { id: 'price', label: 'Name a price', outcome: { text: 'He pays it without blinking, which tells you the price was too low. You have coin and he has a story about a grasping fellow from Swineford.', effects: { gold: 26, reputation: -4, faction: { factionId: 'church', playerStanding: -3 }, memory: { tag: 'sold_the_bishop_a_falcon', weight: 4 } }, tone: 'plain' } },
     ],
@@ -80,7 +80,7 @@ export const POSSESSION_EVENTS: GameEvent[] = [
     cooldownYears: 12,
     choices: [
       { id: 'free', label: 'Grind for them, and take no toll', outcome: { text: 'You grind for nine households and take nothing. The miller hears about it within the day and is not amused.', effects: { faith: 5, householdState: { food: -2 }, faction: { factionId: 'commons', playerStanding: 6 }, worldConditions: { foodSecurity: 2 }, memory: { tag: 'ground_for_the_lane_free', weight: 4 } }, tone: 'good' } },
-      { id: 'toll', label: 'Take a toll, honestly measured', outcome: { text: 'A twentieth, measured in front of them, which is half what the mill takes. You are paid and nobody feels robbed.', effects: { gold: 9, householdState: { food: 4 }, faction: { factionId: 'commons', playerStanding: 3 }, memory: { tag: 'took_an_honest_toll', weight: 4 } }, tone: 'good' } },
+      { id: 'toll', label: 'Take a toll, honestly measured', outcome: { text: 'A twentieth, measured in front of them. The mill takes a tenth and everybody knows it, so you are paid and nobody feels robbed.', effects: { gold: 9, householdState: { food: 4 }, faction: { factionId: 'commons', playerStanding: 3 }, memory: { tag: 'took_an_honest_toll', weight: 4 } }, tone: 'good' } },
       { id: 'refuse', label: 'It is your stone', outcome: { text: 'You shut the door on them. It is entirely your stone and they go back to the mill, past your house, every week, for years.', effects: { householdState: { food: 3 }, faction: { factionId: 'commons', playerStanding: -5 }, memory: { tag: 'kept_the_stone_to_yourself', weight: 4 } }, tone: 'plain' } },
     ],
   },
@@ -109,7 +109,7 @@ export const POSSESSION_EVENTS: GameEvent[] = [
     requires: { hasItems: ['sword'] },
     cooldownYears: 10,
     choices: [
-      { id: 'draw', label: 'Draw it', outcome: { text: 'They go. Nobody is cut and everybody saw the steel come out, which is a thing you cannot take back and will be asked about at the tourn.', effects: { charm: 5, reputation: 6, legal: { suspicion: 4 }, path: { martial: 2 }, faction: { factionId: 'commons', playerStanding: 5 }, memory: { tag: 'drew_in_the_market', weight: 5 } }, tone: 'plain' } },
+      { id: 'draw', label: 'Draw it', outcome: { text: 'They go. Nobody is cut and everybody saw the steel come out, and you will be answering for that at the tourn.', effects: { charm: 5, reputation: 6, legal: { suspicion: 4 }, path: { martial: 2 }, faction: { factionId: 'commons', playerStanding: 5 }, memory: { tag: 'drew_in_the_market', weight: 5 } }, tone: 'plain' } },
       { id: 'hilt', label: 'Put a hand on the hilt and say nothing', outcome: { text: 'They look at the hand, then at your face, and decide the debt can wait. Not one word is spoken and it works completely.', effects: { charm: 7, wits: 4, reputation: 4, faction: { factionId: 'commons', playerStanding: 4 }, memory: { tag: 'the_hand_on_the_hilt', weight: 4 } }, tone: 'good' } },
       { id: 'walk', label: 'Walk on', outcome: { text: 'You walk on wearing a sword past a man being beaten. The market watches you do it and draws the obvious conclusion.', effects: { reputation: -7, faith: -3, faction: { factionId: 'commons', playerStanding: -5 }, memory: { tag: 'walked_on_wearing_a_sword', weight: 5 } }, tone: 'bad' } },
     ],

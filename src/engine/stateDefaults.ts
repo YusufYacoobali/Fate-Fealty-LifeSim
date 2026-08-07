@@ -1,3 +1,4 @@
+import type { Thread } from './director/threads';
 import { ContentDomain, ContentLedgerEntry, ExpectedChild, FactionKey, FactionState, PacingState, PersistedRngState, WorldConditions } from '@/types/game';
 import { CURRENT_CONTENT_VERSION } from '@/content/contentVersion';
 import { initialRngState } from './random';
@@ -9,6 +10,7 @@ export interface StateDefaults {
   conditions: WorldConditions;
   pacing: PacingState;
   contentLedger: Record<string, ContentLedgerEntry>;
+  threads: Thread[];
   repetitionLedger: Record<string, number>;
   recentDomains: ContentDomain[];
   expectedChildren: ExpectedChild[];
@@ -24,6 +26,7 @@ export function createStateDefaults(worldSeed: number, currentYear = 1320): Stat
     conditions: { foodSecurity: 50, prosperity: 50, publicOrder: 50, warThreat: 35, diseasePressure: 25, religiousTension: 30 },
     pacing: { lastMajorYear: null, lastImportantYear: null, quietYearsSinceStory: 0, majorEventsThisLife: 0, mediumStoriesStarted: 0, immediateChainDepth: 0 },
     contentLedger: {},
+    threads: [],
     repetitionLedger: {},
     recentDomains: [],
     expectedChildren: [],

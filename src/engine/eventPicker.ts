@@ -11,6 +11,7 @@ import { countLivingKin, hasLivingKin } from './gameState';
 import { dominantPath } from './pathProgression';
 import { pick, pickWeighted } from './random';
 import { deriveLifeRole } from '@/content/persistentStories';
+import { MAX_OPEN_THREADS, noteChainBeatResolved, openThreads } from './director/threads';
 
 export function meetsCondition(s: GameState, c?: Condition): boolean {
   if (!c) return true;
@@ -102,8 +103,26 @@ export function meetsCondition(s: GameState, c?: Condition): boolean {
   return true;
 }
 
-export function isEventEligible(s: GameState, e: GameEvent): boolean {
-  if (e.arcNodeOnly) return false; // only reachable via story graph
+/** Years before the same thread may be drawn again. */
+const REPETITION_GAP_YEARS = 5;
+
+/**
+ * Content the director serves on a schedule and the lottery must never offer.
+ *
+ * A chain continuation is a promise already made to the player. Leaving it in
+ * the draw meant a one-off year could serve a mid-chain beat, so the two
+ * systems fought over the same calendar and the ambient pool was crowded out.
+ */
+function isDirected(e: GameEvent): boolean {
+  return e.arcNodeOnly || (e.chain ? e.chain.index > 0 : false);
+}
+
+/**
+ * Whether this event could legally be shown right now, ignoring who is asking.
+ * The director uses this to check a scheduled beat; the lottery layers its own
+ * exclusions on top (see isEventEligible).
+ */
+export function isEventPlayable(s: GameState, e: GameEvent): boolean {
   if (e.premium && !s.lifetimeUnlocked) return false;
   if (e.once && s.firedOnce.includes(e.id)) return false;
   if (e.ageMin != null && s.age < e.ageMin) return false;
@@ -113,12 +132,26 @@ export function isEventEligible(s: GameState, e: GameEvent): boolean {
   if (!meetsCondition(s, e.requires)) return false;
   const last = s.world.contentLedger[e.id]?.lastYear;
   if (last != null && s.world.currentYear - last < (e.cooldownYears ?? 15)) return false;
-  const groupLast = e.repetitionGroup ? s.world.repetitionLedger[e.repetitionGroup] : undefined;
-  if (groupLast != null && s.world.currentYear - groupLast < 5) return false;
+  // A scheduled continuation answers to the director's own spacing, not to the
+  // gate that stops one thread hogging consecutive years.
+  if (!isDirected(e)) {
+    const groupLast = e.repetitionGroup ? s.world.repetitionLedger[e.repetitionGroup] : undefined;
+    if (groupLast != null && s.world.currentYear - groupLast < REPETITION_GAP_YEARS) return false;
+  }
   if (s.world.recentNarrativeIds.slice(-12).includes(e.id)) return false;
   if (e.actorRoles && Object.values(e.actorRoles).some((role) => actorCandidates(s, role).length === 0)) return false;
   // Must have at least one selectable choice.
   return e.choices.some((ch) => isChoiceAvailable(s, ch));
+}
+
+export function isEventEligible(s: GameState, e: GameEvent): boolean {
+  if (isDirected(e)) return false;
+  // Opening a chain is a promise to finish it, so the lottery may not open one
+  // while the board is full. Without this the cap only governed persistent
+  // stories, chains piled up eleven deep, and each was served too rarely to
+  // ever reach its ending.
+  if (e.chain && e.chain.index === 0 && openThreads(s).length >= MAX_OPEN_THREADS) return false;
+  return isEventPlayable(s, e);
 }
 
 export function isChoiceAvailable(s: GameState, ch: Choice): boolean {
@@ -145,7 +178,10 @@ export function isChoiceEnabled(s: GameState, ch: Choice): boolean {
 function eventWeight(s: GameState, e: GameEvent): number {
   let w = (e.weight ?? 1) / (e.domain ? DOMAIN_EVENT_COUNTS[e.domain] || 1 : 1);
   const path = dominantPath(s);
+
+
   if (e.paths && e.paths.includes(path)) w *= 2.2;
+  // Rarity thins out cold starts, not payoffs the player has already unlocked.
   if (e.rarity === 'uncommon') w *= 0.7;
   if (e.rarity === 'rare') w *= 0.35;
   if (e.domain && s.world.recentDomains.slice(-2).every((domain) => domain === e.domain)) w *= 0.08;
@@ -194,6 +230,7 @@ export function bindEventActors(s: GameState, event: GameEvent): Record<string, 
 
 export function recordEventResolution(s: GameState, event: GameEvent, choiceId: string): void {
   if (event.arcNodeOnly) return;
+  noteChainBeatResolved(s, event);
   const previous = s.world.contentLedger[event.id];
   s.world.contentLedger[event.id] = { lastYear: s.world.currentYear, timesResolved: (previous?.timesResolved ?? 0) + 1, lastChoiceId: choiceId };
   if (event.repetitionGroup) s.world.repetitionLedger[event.repetitionGroup] = s.world.currentYear;

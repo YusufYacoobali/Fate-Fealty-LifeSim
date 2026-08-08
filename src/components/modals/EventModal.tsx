@@ -34,9 +34,12 @@ export function EventModal({ state, event, onChoose }: Props) {
 
   const instant = Boolean(state.settings.reducedMotion) || skipped;
   const onWritten = useCallback(() => setWritten(true), []);
+  const skipWriting = useCallback(() => {
+    if (!written) setSkipped(true);
+  }, [written]);
 
   return (
-    <ModalBackdrop zIndex={50}>
+    <ModalBackdrop zIndex={50} onTouchStart={skipWriting}>
       <View style={PANEL.parchModal}>
         <View style={{ backgroundColor: C.health, borderWidth: 3, borderColor: C.inkSoft, borderBottomColor: C.healthDark, borderRightColor: C.healthDark, paddingHorizontal: 8, paddingVertical: 6 }}>
           <PixelText font="pixel" size={10} color={C.white} style={{ textAlign: 'center' }}>

@@ -82,11 +82,7 @@ export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
                     marginBottom: 5,
                   }}
                 >
-                  {ACTIVITY_ICONS[a.id] ? (
-                    <Image source={ACTIVITY_ICONS[a.id]} resizeMode="contain" style={{ width: 36, height: 36 }} />
-                  ) : (
-                    <PixelText size={17}>{a.icon}</PixelText>
-                  )}
+                  <Image source={ACTIVITY_ICONS[a.id]} resizeMode="contain" style={{ width: 36, height: 36 }} />
                 </View>
                 <PixelText font="pixel" size={8} color="#3a2a08">
                   {a.name}

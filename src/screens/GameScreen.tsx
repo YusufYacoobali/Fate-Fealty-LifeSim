@@ -84,7 +84,6 @@ export function GameScreen() {
     dailyRewardStatus,
     dailyRewardProgress,
     claimDailyReward,
-    dismissDailyReward,
     returnRumour,
     followReturnRumour,
     dismissReturnRumour,
@@ -318,7 +317,7 @@ export function GameScreen() {
           />
         )}
         {passivePrompt === 'daily' && dailyRewardStatus && (
-          <DailyRewardModal status={dailyRewardStatus} progress={dailyRewardProgress} onClaim={claimDailyReward} onLater={dismissDailyReward} />
+          <DailyRewardModal status={dailyRewardStatus} progress={dailyRewardProgress} onClaim={claimDailyReward} />
         )}
         {passivePrompt === 'rumour' && returnRumour && (
           <ReturnRumourModal rumour={returnRumour} onFollow={followReturnRumour} onDismiss={dismissReturnRumour} />

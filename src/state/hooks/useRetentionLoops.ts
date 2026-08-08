@@ -80,6 +80,7 @@ export function useRetentionLoops(
       streak: status.nextStreak,
       bonus: status.reward.bonus,
       bonusAmount: status.reward.bonusAmount,
+      itemId: status.reward.itemId,
     });
   }, [dispatch, metaRef, updateMeta]);
 

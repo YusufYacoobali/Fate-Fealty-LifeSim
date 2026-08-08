@@ -62,8 +62,9 @@ describe('appMeta.migrateMeta', () => {
     expect(migrateMeta({ totalEntries: 90 })).toMatchObject({ reviewPromptCount: 0, reviewLastEntry: 0 });
   });
 
-  it('never trusts a persisted entitlement', () => {
-    expect(migrateMeta({ lifetimeUnlocked: true }).lifetimeUnlocked).toBe(false);
+  it('keeps the last confirmed entitlement for an unavailable-store fallback', () => {
+    expect(migrateMeta({ lifetimeUnlocked: true }).lifetimeUnlocked).toBe(true);
+    expect(migrateMeta({ lifetimeUnlocked: false }).lifetimeUnlocked).toBe(false);
   });
 
   it('fills every missing field from the defaults', () => {

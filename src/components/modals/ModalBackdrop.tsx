@@ -4,12 +4,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MIN_ANDROID_BOTTOM_NAV_GUARD } from '../systemLayout';
 
 /** Dim full-screen backdrop that centres its modal child, matching the mockup. */
-export function ModalBackdrop({ children, zIndex = 50 }: { children: React.ReactNode; zIndex?: number }) {
+export function ModalBackdrop({ children, zIndex = 50, onTouchStart }: { children: React.ReactNode; zIndex?: number; onTouchStart?: () => void }) {
   const insets = useSafeAreaInsets();
   const bottomInset = Math.max(insets.bottom, MIN_ANDROID_BOTTOM_NAV_GUARD);
 
   return (
     <View
+      onTouchStart={onTouchStart}
       style={{
         position: 'absolute',
         top: 0,

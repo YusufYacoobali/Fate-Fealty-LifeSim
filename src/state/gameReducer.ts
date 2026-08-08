@@ -22,6 +22,9 @@ import { eventById } from '@/engine/eventPicker';
 import { continueAsHeir } from '@/engine/successionEngine';
 import { DailyRewardBonus } from '@/services/dailyRewards';
 import { concludeDuel, respondToDuel } from '@/engine/duelEngine';
+import { shopItemById } from '@/data/shop';
+import { applyEffects } from '@/engine/consequenceEngine';
+import { checkLifeGoal } from '@/engine/goalEngine';
 
 export type GameAction =
   | { type: 'HYDRATE'; state: GameState }
@@ -44,7 +47,7 @@ export type GameAction =
   | { type: 'TOGGLE_AUTOSCROLL' }
   | { type: 'SET_SETTINGS'; settings: Partial<GameSettings> }
   | { type: 'SET_LIFETIME_UNLOCKED'; unlocked: boolean }
-  | { type: 'CLAIM_DAILY_REWARD'; gold: number; streak: number; bonus?: DailyRewardBonus; bonusAmount?: number }
+  | { type: 'CLAIM_DAILY_REWARD'; gold: number; streak: number; bonus?: DailyRewardBonus; bonusAmount?: number; itemId?: string }
   | { type: 'DUEL_RESPOND'; responseId: string }
   | { type: 'DUEL_CLOSE' }
   | { type: 'NEW_LIFE'; options?: NewLifeOptions }
@@ -202,10 +205,18 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (action.bonus === 'health') s.stats.health = Math.min(100, s.stats.health + amount);
       if (action.bonus === 'stores') s.holding.stores = Math.min(100, s.holding.stores + amount);
       if (action.bonus === 'reputation') s.reputation = Math.min(100, s.reputation + amount);
+      const item = action.itemId ? shopItemById(action.itemId) : undefined;
+      const receivedItem = Boolean(item && !s.inventory.includes(item.id));
+      if (item && receivedItem) {
+        applyEffects(s, item.eff);
+        s.inventory = [...s.inventory, item.id];
+        checkLifeGoal(s);
+      }
       const extra = action.bonus === 'health' ? ' and restorative herbs'
         : action.bonus === 'stores' ? ' and grain for the household'
           : action.bonus === 'reputation' ? ' and the goodwill of the village' : '';
-      pushFeed(s, `DAILY GIFT · DAY ${action.streak}`, '#a36a1f', `The steward grants thee ${action.gold} gold${extra}.`, 'good');
+      const keepsake = receivedItem && item ? ` Within the chest lies ${item.name.toLowerCase()}, a possession that is thine forever.` : '';
+      pushFeed(s, `DAILY GIFT · DAY ${action.streak}`, '#a36a1f', `The steward grants thee ${action.gold} gold${extra}.${keepsake}`, 'good');
       return finishEngineTransaction(s);
     }
 

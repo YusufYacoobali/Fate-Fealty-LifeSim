@@ -62,7 +62,7 @@ export interface AppMeta {
   onboarded: boolean;
   /** True once the first-play guide has been dismissed. */
   tutorialSeen: boolean;
-  /** Mirror of the last RevenueCat entitlement reading; never a source of truth. */
+  /** Last confirmed RevenueCat entitlement, used only while the store is unavailable. */
   lifetimeUnlocked: boolean;
   /** lifeNo of the first life started on this install; null until it begins. */
   firstLifeNo: number | null;
@@ -124,7 +124,7 @@ export function migrateMeta(parsed: Partial<AppMeta>): AppMeta {
   return {
     ...DEFAULT_META,
     ...parsed,
-    lifetimeUnlocked: false,
+    lifetimeUnlocked: parsed.lifetimeUnlocked ?? false,
     reviewPromptCount,
     reviewLastEntry: parsed.reviewLastEntry ?? (reviewPromptCount > 0 ? parsed.totalEntries ?? 0 : 0),
     proTrialUsed,

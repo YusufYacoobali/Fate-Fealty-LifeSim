@@ -30,9 +30,12 @@ export function usePremium(meta: AppMetaApi, loaded: boolean) {
   const applyEntitlement = useCallback(
     (fresh: boolean | null) => {
       const merged = mergeEntitlement(metaRef.current.lifetimeUnlocked, fresh);
-      if (merged === null) {
+      if (fresh === null) {
         setAccessState('unavailable');
-        setPremiumUnlocked((prev) => (prev ? false : prev));
+        // A transport/store failure is not evidence that a subscription ended.
+        // Keep the last confirmed result, including across a relaunch; a real
+        // RevenueCat `false` reading below still revokes expired access.
+        setPremiumUnlocked(merged);
         return false;
       }
       setAccessState(merged ? 'active' : 'inactive');

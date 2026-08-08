@@ -5,7 +5,7 @@
 
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
-import { entitlementActive, isProductionRevenueCatKey, PLAN_IDS, pickPackage, PlanId, PurchaseOutcome } from './purchasesLogic';
+import { confirmPurchasedEntitlement, entitlementActive, isProductionRevenueCatKey, PLAN_IDS, pickPackage, PlanId, PurchaseOutcome } from './purchasesLogic';
 
 export { ENTITLEMENT_ID, PLAN_IDS, isProductionRevenueCatKey, mergeEntitlement } from './purchasesLogic';
 export type { PlanId, PurchaseOutcome } from './purchasesLogic';
@@ -101,7 +101,10 @@ export async function purchasePremium(plan: PlanId): Promise<PurchaseResult> {
     const pack = pickPackage(offerings.current, plan);
     if (!pack) return { outcome: 'unavailable', unlocked: false };
     const { customerInfo } = await Purchases.purchasePackage(pack as Parameters<typeof Purchases.purchasePackage>[0]);
-    return { outcome: 'purchased', unlocked: entitlementActive(customerInfo) };
+    const unlocked = await confirmPurchasedEntitlement(customerInfo, () => Purchases.getCustomerInfo());
+    return unlocked
+      ? { outcome: 'purchased', unlocked: true }
+      : { outcome: 'activation_error', unlocked: false };
   } catch (e) {
     const cancelled = !!(e as { userCancelled?: boolean })?.userCancelled;
     return { outcome: cancelled ? 'cancelled' : 'error', unlocked: false };

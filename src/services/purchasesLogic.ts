@@ -28,7 +28,25 @@ export function entitlementActive(info: CustomerInfoLike | null | undefined): bo
   return !!info?.entitlements?.active?.[ENTITLEMENT_ID];
 }
 
-export type PurchaseOutcome = 'purchased' | 'cancelled' | 'unavailable' | 'error';
+/**
+ * A store transaction is not an unlock until RevenueCat confirms the `pro`
+ * entitlement. CustomerInfo returned directly from the purchase normally has
+ * it; one refresh covers delayed entitlement propagation without ever telling
+ * the player that an unconfirmed purchase unlocked Premium.
+ */
+export async function confirmPurchasedEntitlement(
+  purchasedInfo: CustomerInfoLike | null | undefined,
+  refresh: () => Promise<CustomerInfoLike | null | undefined>,
+): Promise<boolean> {
+  if (entitlementActive(purchasedInfo)) return true;
+  try {
+    return entitlementActive(await refresh());
+  } catch {
+    return false;
+  }
+}
+
+export type PurchaseOutcome = 'purchased' | 'cancelled' | 'unavailable' | 'activation_error' | 'error';
 
 export interface AnnualSubscriptionValue {
   perMonth: number;
@@ -52,10 +70,10 @@ export function annualSubscriptionValue(annualPrice: number, monthlyPrice: numbe
  *  - `true`  -> unlock (a lifetime purchase or an active subscription).
  *  - `false` -> revoke (matters only for future lapsed subscriptions; a
  *               lifetime purchase always reads back `true`).
- *  - `null`  -> store unavailable: lock until RevenueCat can confirm access.
+ *  - `null`  -> store unavailable: retain the last confirmed access state.
  */
-export function mergeEntitlement(_cached: boolean, fresh: boolean | null): boolean | null {
-  return fresh;
+export function mergeEntitlement(cached: boolean, fresh: boolean | null): boolean {
+  return fresh ?? cached;
 }
 
 /** Minimal shape of a RevenueCat offering that we rely on. */

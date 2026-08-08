@@ -20,6 +20,7 @@ import { PREMIUM_EVENTS } from './premiumEvents';
 import { PERSISTENT_WORLD_EVENTS } from './persistentWorldEvents';
 import { QUALITY_AMBIENT_EVENTS } from './qualityAmbientEvents';
 import { POSSESSION_EVENTS } from './possessionEvents';
+import { ACTIVITY_CONSEQUENCE_EVENTS } from './activityConsequenceEvents';
 import { LEGAL_SYSTEM_EVENTS } from '@/engine/legalEngine';
 
 const RAW_EVENTS: GameEvent[] = [
@@ -39,6 +40,7 @@ const RAW_EVENTS: GameEvent[] = [
   ...PERSISTENT_WORLD_EVENTS,
   ...QUALITY_AMBIENT_EVENTS,
   ...POSSESSION_EVENTS,
+  ...ACTIVITY_CONSEQUENCE_EVENTS,
   ...LEGAL_SYSTEM_EVENTS,
 ];
 

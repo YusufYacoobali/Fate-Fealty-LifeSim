@@ -15,6 +15,13 @@ export const UI_ICONS = {
   settings: require('../../assets/generated/ui-settings.png'),
 } as const satisfies Record<string, ImageSourcePropType>;
 
+export const DAILY_REWARD_ART = {
+  purse: require('../../assets/generated/daily-reward-purse.png'),
+  chest: require('../../assets/generated/ui-shop.png'),
+  crown: require('../../assets/generated/paywall-crown.png'),
+  candle: require('../../assets/generated/shop-candle.png'),
+} as const satisfies Record<string, ImageSourcePropType>;
+
 export const FEATURE_ART = {
   work: require('../../assets/generated/work-occupations-banner.png'),
   holding: require('../../assets/generated/holding-overview-banner.png'),
@@ -99,6 +106,37 @@ export const ACTIVITY_ICONS: Record<string, ImageSourcePropType> = {
   leech: require('../../assets/generated/activity-leech.png'),
   bathhouse: require('../../assets/generated/activity-bathhouse.png'),
   herbalist: require('../../assets/generated/activity-herbalist.png'),
+  village_service: require('../../assets/generated/activity-village-service.png'),
+  gather_fuel: require('../../assets/generated/activity-gather-fuel.png'),
+  manage_workshop: require('../../assets/generated/activity-manage-workshop.png'),
+  guild_bargain: require('../../assets/generated/activity-guild-bargain.png'),
+  hear_confession: require('../../assets/generated/activity-hear-confession.png'),
+  copy_manuscript: require('../../assets/generated/activity-copy-manuscript.png'),
+  lead_patrol: require('../../assets/generated/activity-lead-patrol.png'),
+  drill_levy: require('../../assets/generated/activity-drill-levy.png'),
+  hear_petitions: require('../../assets/generated/activity-hear-petitions.png'),
+  host_court: require('../../assets/generated/activity-host-court.png'),
+  hold_council: require('../../assets/generated/activity-hold-council.png'),
+  royal_audience: require('../../assets/generated/activity-royal-audience.png'),
+  plan_heist: require('../../assets/generated/activity-plan-heist.png'),
+  rally_gang: require('../../assets/generated/activity-rally-gang.png'),
+  courting: require('../../assets/generated/activity-courting.png'),
+  teach_child: require('../../assets/generated/activity-teach-child.png'),
+  arrange_gathering: require('../../assets/generated/activity-arrange-gathering.png'),
+  care_relative: require('../../assets/generated/activity-care-relative.png'),
+  rest: require('../../assets/generated/activity-rest.png'),
+  treat_patient: require('../../assets/generated/activity-treat-patient.png'),
+  fence_goods: require('../../assets/generated/activity-fence-goods.png'),
+  bribe_official: require('../../assets/generated/activity-bribe-official.png'),
+  scout_target: require('../../assets/generated/activity-scout-target.png'),
+  study_trade: require('../../assets/generated/activity-study-trade.png'),
+  seek_patron: require('../../assets/generated/activity-seek-patron.png'),
+  run_caravan: require('../../assets/generated/activity-run-caravan.png'),
+  preach_sermon: require('../../assets/generated/activity-preach-sermon.png'),
+  gather_intelligence: require('../../assets/generated/activity-gather-intelligence.png'),
+  negotiate_levy: require('../../assets/generated/activity-negotiate-levy.png'),
+  repair_household: require('../../assets/generated/activity-repair-household.png'),
+  manage_stores: require('../../assets/generated/activity-manage-stores.png'),
 };
 
 export const STAT_ICONS: Record<StatKey, ImageSourcePropType> = {
@@ -126,6 +164,8 @@ export const KIN_ID_ICONS: Record<string, ImageSourcePropType> = {
 };
 
 export const SHOP_ITEM_ICONS: Record<string, ImageSourcePropType> = {
+  stewards_signet: require('../../assets/generated/shop-silver-brooch.png'),
+  kings_charter: require('../../assets/generated/paywall-crown.png'),
   bread: require('../../assets/generated/shop-bread.png'),
   herbs: require('../../assets/generated/shop-herbs.png'),
   ale: require('../../assets/generated/shop-ale.png'),
@@ -136,6 +176,56 @@ export const SHOP_ITEM_ICONS: Record<string, ImageSourcePropType> = {
   steed: require('../../assets/generated/shop-steed.png'),
   relic: require('../../assets/generated/shop-relic.png'),
   cottage: require('../../assets/generated/shop-cottage.png'),
+  pottage: require('../../assets/generated/shop-pottage.png'),
+  honeycomb: require('../../assets/generated/shop-honeycomb.png'),
+  salt_pouch: require('../../assets/generated/shop-salt-pouch.png'),
+  ribbon: require('../../assets/generated/shop-ribbon.png'),
+  tin_whistle: require('../../assets/generated/shop-tin-whistle.png'),
+  lucky_pebble: require('../../assets/generated/shop-lucky-pebble.png'),
+  salted_fish: require('../../assets/generated/shop-salted-fish.png'),
+  cheese_wheel: require('../../assets/generated/shop-cheese-wheel.png'),
+  grain_sack: require('../../assets/generated/shop-grain-sack.png'),
+  iron_pot: require('../../assets/generated/shop-iron-pot.png'),
+  hand_cart: require('../../assets/generated/shop-hand-cart.png'),
+  beeskep: require('../../assets/generated/shop-beeskep.png'),
+  millstone: require('../../assets/generated/shop-millstone.png'),
+  willow_bark: require('../../assets/generated/shop-willow-bark.png'),
+  theriac: require('../../assets/generated/shop-theriac.png'),
+  leech_jar: require('../../assets/generated/shop-leech-jar.png'),
+  plague_mask: require('../../assets/generated/shop-plague-mask.png'),
+  physic_garden: require('../../assets/generated/shop-physic-garden.png'),
+  whetstone: require('../../assets/generated/shop-whetstone.png'),
+  shield: require('../../assets/generated/shop-shield.png'),
+  gambeson: require('../../assets/generated/shop-gambeson.png'),
+  helm: require('../../assets/generated/shop-helm.png'),
+  lance: require('../../assets/generated/shop-lance.png'),
+  mail_shirt: require('../../assets/generated/shop-mail-shirt.png'),
+  leather_boots: require('../../assets/generated/shop-leather-boots.png'),
+  wool_cloak: require('../../assets/generated/shop-wool-cloak.png'),
+  silk_hose: require('../../assets/generated/shop-silk-hose.png'),
+  silver_brooch: require('../../assets/generated/shop-silver-brooch.png'),
+  dyed_gown: require('../../assets/generated/shop-dyed-gown.png'),
+  fur_mantle: require('../../assets/generated/shop-fur-mantle.png'),
+  laying_hens: require('../../assets/generated/shop-laying-hens.png'),
+  milk_goat: require('../../assets/generated/shop-milk-goat.png'),
+  hunting_hound: require('../../assets/generated/shop-hunting-hound.png'),
+  swine_herd: require('../../assets/generated/shop-swine-herd.png'),
+  oxen_pair: require('../../assets/generated/shop-oxen-pair.png'),
+  falcon: require('../../assets/generated/shop-falcon.png'),
+  warhorse: require('../../assets/generated/shop-warhorse.png'),
+  pilgrim_badge: require('../../assets/generated/shop-pilgrim-badge.png'),
+  rosary: require('../../assets/generated/shop-rosary.png'),
+  altar_cloth: require('../../assets/generated/shop-altar-cloth.png'),
+  reliquary_box: require('../../assets/generated/shop-reliquary-box.png'),
+  parchment: require('../../assets/generated/shop-parchment.png'),
+  ledger: require('../../assets/generated/shop-ledger.png'),
+  herbal_book: require('../../assets/generated/shop-herbal-book.png'),
+  map_of_realm: require('../../assets/generated/shop-map-of-realm.png'),
+  writing_desk: require('../../assets/generated/shop-writing-desk.png'),
+  croft_strip: require('../../assets/generated/shop-croft-strip.png'),
+  town_house: require('../../assets/generated/shop-town-house.png'),
+  mill_share: require('../../assets/generated/shop-mill-share.png'),
+  manor_lease: require('../../assets/generated/shop-manor-lease.png'),
 };
 
 export const TRAIT_ICONS: Record<string, ImageSourcePropType> = {
@@ -170,8 +260,10 @@ export function kinIconAsset(id: string, kind: KinKind): ImageSourcePropType | u
   return KIN_ID_ICONS[id] ?? KIN_KIND_ICONS[kind];
 }
 
-export function shopItemIconAsset(id: string): ImageSourcePropType | undefined {
-  return SHOP_ITEM_ICONS[id];
+export function shopItemIconAsset(id: string): ImageSourcePropType {
+  const asset = SHOP_ITEM_ICONS[id];
+  if (!asset) throw new Error(`Missing generated shop icon for ${id}`);
+  return asset;
 }
 
 export function traitIconAsset(id: string): ImageSourcePropType | undefined {

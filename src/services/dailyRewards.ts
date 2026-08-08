@@ -5,6 +5,8 @@ export interface DailyRewardDefinition {
   gold: number;
   bonus?: DailyRewardBonus;
   bonusAmount?: number;
+  /** A unique, permanent possession awarded by a milestone chest. */
+  itemId?: string;
   label: string;
 }
 
@@ -13,7 +15,7 @@ export interface DailyRewardProgress {
   streak: number;
   longestStreak: number;
   totalClaims: number;
-  /** One missed calendar day can be protected; restored after day seven. */
+  /** One missed calendar day can be protected; restored after a full cycle. */
   graceAvailable: boolean;
 }
 
@@ -27,12 +29,19 @@ export const DEFAULT_DAILY_REWARD: DailyRewardProgress = {
 
 export const DAILY_REWARDS: DailyRewardDefinition[] = [
   { day: 1, gold: 5, label: 'A purse of pennies' },
-  { day: 2, gold: 7, label: 'Market coin' },
-  { day: 3, gold: 8, bonus: 'health', bonusAmount: 3, label: 'Bread and restorative herbs' },
-  { day: 4, gold: 10, label: 'The steward\'s share' },
-  { day: 5, gold: 12, bonus: 'stores', bonusAmount: 5, label: 'Coin and household grain' },
-  { day: 6, gold: 14, label: 'A well-filled purse' },
-  { day: 7, gold: 20, bonus: 'reputation', bonusAmount: 3, label: 'The village bounty' },
+  { day: 2, gold: 10, label: 'Market coin' },
+  { day: 3, gold: 20, bonus: 'health', bonusAmount: 5, label: 'Bread and restorative herbs' },
+  { day: 4, gold: 35, label: 'The steward\'s share' },
+  { day: 5, gold: 50, bonus: 'stores', bonusAmount: 10, label: 'Coin and household grain' },
+  { day: 6, gold: 75, label: 'A well-filled purse' },
+  { day: 7, gold: 125, bonus: 'reputation', bonusAmount: 10, itemId: 'stewards_signet', label: 'The village bounty chest' },
+  { day: 8, gold: 150, label: 'A weighty purse' },
+  { day: 9, gold: 200, label: 'Market-day takings' },
+  { day: 10, gold: 275, bonus: 'health', bonusAmount: 20, label: 'A healing allowance' },
+  { day: 11, gold: 350, label: 'The reeve\'s reward' },
+  { day: 12, gold: 425, bonus: 'stores', bonusAmount: 50, label: 'A prosperous household' },
+  { day: 13, gold: 500, label: 'The steward\'s strongbox' },
+  { day: 14, gold: 1000, bonus: 'reputation', bonusAmount: 25, itemId: 'kings_charter', label: 'The royal bounty chest' },
 ];
 
 export interface DailyRewardStatus {

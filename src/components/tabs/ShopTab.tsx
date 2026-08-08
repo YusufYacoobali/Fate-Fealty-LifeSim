@@ -105,7 +105,7 @@ export function ShopTab({ state, gold, income, expenses, inventory, onBuy }: Pro
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
               {owned.map((o) => (
                 <View key={o.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: C.faith, borderWidth: 2, borderColor: C.inkSoft, borderBottomColor: C.faithDark, borderRightColor: C.faithDark, paddingHorizontal: 7, paddingVertical: 4 }}>
-                  <ShopIcon item={o} size={20} fallbackSize={14} />
+                  <ShopIcon item={o} size={20} />
                   <PixelText font="body" size={14} color="#1a3a0a">
                     {o.short}
                   </PixelText>
@@ -149,7 +149,7 @@ function ItemGrid({ state, items, inventory, onBuy }: { state: GameState; items:
           >
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
               <View style={{ width: 28, height: 28, backgroundColor: it.iconBg, borderWidth: 2, borderColor: C.inkSoft, alignItems: 'center', justifyContent: 'center' }}>
-                <ShopIcon item={it} size={25} fallbackSize={16} />
+                <ShopIcon item={it} size={25} />
               </View>
               <View style={{ backgroundColor: isOwned ? C.faithDark : availability.available ? C.charm : C.paleEdge, borderWidth: 2, borderColor: C.inkSoft, paddingHorizontal: 5, paddingVertical: 3 }}>
                 <PixelText font="pixel" size={8} color={isOwned ? C.white : availability.available ? '#3a2a08' : C.blueDark}>
@@ -175,12 +175,7 @@ function ItemGrid({ state, items, inventory, onBuy }: { state: GameState; items:
   );
 }
 
-function ShopIcon({ item, size, fallbackSize }: { item: ShopItem; size: number; fallbackSize: number }) {
+function ShopIcon({ item, size }: { item: ShopItem; size: number }) {
   const asset = shopItemIconAsset(item.id);
-
-  if (!asset) {
-    return <PixelText size={fallbackSize}>{item.icon}</PixelText>;
-  }
-
   return <Image source={asset} resizeMode="contain" style={{ width: size, height: size }} />;
 }

@@ -32,6 +32,12 @@ export const MARKETS: MarketDef[] = [
 export const MARKET_BY_ID = Object.fromEntries(MARKETS.map((market) => [market.id, market])) as Record<ShopMarket, MarketDef>;
 
 export const SHOP_ITEMS: ShopItem[] = [
+  // --- Daily-ledger keepsakes ---------------------------------------------
+  // Never stocked by a trader. These permanent items come only from the two
+  // milestone chests and still appear in Thy Possessions once earned.
+  { id: 'stewards_signet', market: 'reliquary', stockChance: 0, name: "STEWARD'S SIGNET", short: 'Signet', icon: '◆', iconBg: C.charm, price: 0, type: 'perm', eff: { charm: 8, wits: 5 }, desc: 'The steward marked thee as dependable. +8 charm, +5 wits' },
+  { id: 'kings_charter', market: 'scrivener', stockChance: 0, name: "THE KING'S CHARTER", short: "King's Charter", icon: '♛', iconBg: C.gold, price: 0, type: 'perm', eff: { charm: 15, wits: 10, faith: 5, holding: { loyalty: 10 } }, desc: 'Royal ink opens doors. +15 charm, +10 wits, +5 faith, +10 Loyalty' },
+
   // --- The pedlar's pack ---------------------------------------------------
   { id: 'bread', market: 'pedlar', staple: true, name: 'BREAD', short: 'Bread', icon: '🍞', iconBg: '#cda35f', price: 2, type: 'consumable', eff: { health: 4 }, desc: 'A humble meal. +4 health' },
   { id: 'ale', market: 'pedlar', staple: true, name: 'ALE BARREL', short: 'Ale', icon: '🍺', iconBg: C.charm, price: 3, minAge: 14, type: 'consumable', eff: { charm: 5, health: -2 }, desc: 'Liquid courage. +5 charm' },

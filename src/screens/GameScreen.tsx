@@ -97,6 +97,8 @@ export function GameScreen() {
   const insets = useSafeAreaInsets();
   const bottomNavInset = Math.max(insets.bottom, MIN_ANDROID_BOTTOM_NAV_GUARD);
   const currentEvent = state.pendingEvent ? eventById(state.pendingEvent.eventId) : undefined;
+  const { promotedTo, dismissPromotion } = usePromotionCelebration(state, loaded);
+  const { achievedGoalId, dismissGoal } = useGoalCelebration(state, loaded);
   const passivePromptsAllowed =
     !state.dead &&
     !state.pendingEvent &&
@@ -106,6 +108,8 @@ export function GameScreen() {
     !onboardingVisible &&
     !chronicleOpen &&
     !cartOpen &&
+    promotedTo == null &&
+    achievedGoalId == null &&
     newAchievements.length === 0;
   // Exactly one low-priority prompt may be visible. This prevents circular
   // "hide when the other is open" checks from leaving every prompt hidden.
@@ -125,8 +129,6 @@ export function GameScreen() {
 
   // Promotion/death haptics ride on engine transitions.
   useGameFeedback(state);
-  const { promotedTo, dismissPromotion } = usePromotionCelebration(state, loaded);
-  const { achievedGoalId, dismissGoal } = useGoalCelebration(state, loaded);
 
   // Attributes for the ME tab need labels too.
   const meStats = stats.map((s) => ({ ...s, label: STAT_STYLES[s.key].label }));

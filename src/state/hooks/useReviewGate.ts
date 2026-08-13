@@ -1,36 +1,45 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { GameState } from '@/types/game';
-import { entriesDelta, shouldPromptReview } from '@/services/reviewLogic';
+import { ageUpsDelta, reviewCadenceDue } from '@/services/reviewLogic';
 import { AppMetaApi } from './useAppMeta';
 
 /**
- * Tracks cumulative life entries and decides when the review prompt should
+ * Tracks cumulative age-ups and decides when the review prompt should
  * appear. Single responsibility: the review-prompt gate. The actual native
  * review presentation lives in the ReviewPrompt component / review service.
  */
 export function useReviewGate(state: GameState, loaded: boolean, meta: AppMetaApi) {
-  const prevFeedLen = useRef(state.feed.length);
+  const prevAge = useRef(state.age);
+  const prevLifeNo = useRef(state.lifeNo);
   const trackingStarted = useRef(false);
+  const reviewQueued = useRef(false);
   const [reviewVisible, setReviewVisible] = useState(false);
 
   useEffect(() => {
     if (!loaded || !meta.ready) return;
 
-    // Hydration restores entries already represented by persisted totalEntries.
+    // Hydration restores age-ups already represented by persisted totalAgeUps.
     // Establish the baseline first so relaunching cannot count them twice.
     if (!trackingStarted.current) {
-      prevFeedLen.current = state.feed.length;
+      prevAge.current = state.age;
+      prevLifeNo.current = state.lifeNo;
       trackingStarted.current = true;
       return;
     }
 
-    const delta = entriesDelta(prevFeedLen.current, state.feed.length);
-    prevFeedLen.current = state.feed.length;
-    if (delta > 0) {
-      meta.update({ totalEntries: meta.metaRef.current.totalEntries + delta });
+    const ageUpDelta = ageUpsDelta(prevLifeNo.current, prevAge.current, state.lifeNo, state.age);
+    prevAge.current = state.age;
+    prevLifeNo.current = state.lifeNo;
+    if (ageUpDelta > 0) {
+      meta.update({ totalAgeUps: meta.metaRef.current.totalAgeUps + ageUpDelta });
+      if (reviewCadenceDue(meta.metaRef.current, state)) reviewQueued.current = true;
     }
 
-    if (!reviewVisible && shouldPromptReview(meta.metaRef.current, state)) {
+    // Once earned by an age-up, keep the prompt queued behind story/settings
+    // overlays. Ordinary actions may clear an overlay but cannot earn a prompt.
+    const screenIsClear = !state.dead && !state.pendingEvent && !state.settingsOpen;
+    if (reviewQueued.current && !reviewVisible && screenIsClear) {
+      reviewQueued.current = false;
       setReviewVisible(true);
     }
     // meta is a stable api (ref + memoised update); intentionally omitted.
@@ -44,6 +53,7 @@ export function useReviewGate(state: GameState, loaded: boolean, meta: AppMetaAp
       reviewPrompted: true,
       reviewPromptCount: current.reviewPromptCount + 1,
       reviewLastEntry: current.totalEntries,
+      reviewLastAgeUp: current.totalAgeUps,
     });
     // meta is a stable api (ref + memoised update); intentionally omitted.
     // eslint-disable-next-line react-hooks/exhaustive-deps

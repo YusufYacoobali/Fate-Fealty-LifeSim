@@ -164,7 +164,7 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
           <PixelText font="body" size={14} color={C.textMuted}>Secret: {detail.secretRevealed ? detail.secret?.replaceAll('_', ' ') : 'Unknown'}</PixelText>
           {!!detail.parentIds?.length && <PixelText font="body" size={14} color={C.textMuted}>Parents: {detail.parentIds.map((id) => state.world.characters[id]?.name).filter(Boolean).join(', ')}</PixelText>}
           {!!detail.childIds?.length && <PixelText font="body" size={14} color={C.textMuted}>Children: {detail.childIds.map((id) => state.world.characters[id]?.name).filter(Boolean).join(', ')}</PixelText>}
-          {!!detail.worldMemories?.length && <PixelText font="body" size={14} color={C.textMuted} style={{ marginTop: 5 }}>Remembers: {detail.worldMemories.slice(-2).map((memory) => memory.summary).join(' · ')}</PixelText>}
+          {!!detail.worldMemories?.length && <PixelText font="body" size={14} color={C.textMuted} style={{ marginTop: 5 }}>Remembers: {Array.from(new Set(detail.worldMemories.map((memory) => memory.summary))).slice(-2).join(' · ')}</PixelText>}
           {!!relation.sharedMemories.length && <PixelText font="body" size={14} color={C.textMuted} style={{ marginTop: 5 }}>Shared: {relation.sharedMemories.join(', ')}</PixelText>}
         </View>
       </ScrollView>

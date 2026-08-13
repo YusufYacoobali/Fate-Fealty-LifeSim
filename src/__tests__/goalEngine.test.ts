@@ -95,6 +95,21 @@ describe('goalView', () => {
     expect(v.progress).toBeCloseTo(0.5); // 75 / 150
     expect(v.done).toBe(false);
   });
+
+  it('shows gradual, actionable progress for kind rule and completes without a rare epilogue', () => {
+    const s = makeState({ age: 35, lifetimeUnlocked: true });
+    s.goalId = 'kind_rule';
+    s.rankIdx = 3;
+    s.holding.loyalty = 40;
+    const early = goalView(s)!;
+    expect(early.desc).toMatch(/Monarch.*merciful.*Loyalty to 80/i);
+    expect(early.progress).toBeGreaterThan(0);
+
+    s.rankIdx = 5;
+    s.holding.loyalty = 80;
+    s.tags.push('kind_ruler');
+    expect(goalById('kind_rule')!.done(s)).toBe(true);
+  });
 });
 
 describe('goal data integrity', () => {

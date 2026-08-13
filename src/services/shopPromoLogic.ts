@@ -2,11 +2,11 @@ import type { AppMeta } from '@/state/appMeta';
 import type { GameState } from '@/types/game';
 import { hasRecentGoodOutcome } from './reviewLogic';
 
-/** A good gameplay beat may open the promo once this many entries have passed. */
-export const SHOP_PROMO_ENTRY_FREQUENCY = 20;
+/** A good age-up may open the promo once this many age-ups have passed. */
+export const SHOP_PROMO_AGE_UP_FREQUENCY = 20;
 
-/** Stop waiting for good luck after this many additional entries. */
-export const SHOP_PROMO_PATIENCE_ENTRIES = 10;
+/** Stop waiting for good luck after this many additional age-ups. */
+export const SHOP_PROMO_PATIENCE_AGE_UPS = 10;
 
 export interface ShopPromoMessage {
   heading: string;
@@ -59,11 +59,16 @@ export function shopPromoMessageIndex(shownCount: number): number {
   return safeCount % SHOP_PROMO_MESSAGES.length;
 }
 
-export function shouldPromptShopPromo(meta: AppMeta, state: GameState, premiumUnlocked: boolean): boolean {
+/** Whether this age-up earns/forces a promo; independent of temporary overlays. */
+export function shopPromoCadenceDue(meta: AppMeta, state: GameState, premiumUnlocked: boolean): boolean {
   if (premiumUnlocked) return false;
-  const entriesSincePromo = meta.totalEntries - meta.shopPromoLastEntry;
-  if (entriesSincePromo < SHOP_PROMO_ENTRY_FREQUENCY) return false;
-  if (state.dead || state.pendingEvent || state.settingsOpen) return false;
+  const ageUpsSincePromo = meta.totalAgeUps - meta.shopPromoLastAgeUp;
+  if (ageUpsSincePromo < SHOP_PROMO_AGE_UP_FREQUENCY) return false;
   return hasRecentGoodOutcome(state)
-    || entriesSincePromo >= SHOP_PROMO_ENTRY_FREQUENCY + SHOP_PROMO_PATIENCE_ENTRIES;
+    || ageUpsSincePromo >= SHOP_PROMO_AGE_UP_FREQUENCY + SHOP_PROMO_PATIENCE_AGE_UPS;
+}
+
+export function shouldPromptShopPromo(meta: AppMeta, state: GameState, premiumUnlocked: boolean): boolean {
+  if (state.dead || state.pendingEvent || state.settingsOpen) return false;
+  return shopPromoCadenceDue(meta, state, premiumUnlocked);
 }

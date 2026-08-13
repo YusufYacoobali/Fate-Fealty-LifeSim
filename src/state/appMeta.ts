@@ -44,14 +44,20 @@ export const DYNASTY_CAP = 30;
 export interface AppMeta {
   /** Cumulative life-feed entries the player has seen, across all lives. */
   totalEntries: number;
+  /** Cumulative AGE UP presses across all lives; actions never increment this. */
+  totalAgeUps: number;
   /** Legacy one-shot flag; superseded by reviewPromptCount and kept for migration. */
   reviewPrompted: boolean;
   /** How many times the "are you enjoying it?" prompt has been shown. */
   reviewPromptCount: number;
   /** Cumulative entry position where the review prompt was last shown. */
   reviewLastEntry: number;
+  /** Cumulative age-up position where the review prompt was last shown. */
+  reviewLastAgeUp: number;
   /** Cumulative entry position where the recurring shop promo was last shown. */
   shopPromoLastEntry: number;
+  /** Cumulative age-up position where the recurring shop promo was last shown. */
+  shopPromoLastAgeUp: number;
   /** Number of shop promos shown, used to rotate the playful message. */
   shopPromoCount: number;
   /** True once we've successfully scheduled the rolling reminder rotation. */
@@ -85,10 +91,13 @@ export interface AppMeta {
 
 export const DEFAULT_META: AppMeta = {
   totalEntries: 0,
+  totalAgeUps: 0,
   reviewPrompted: false,
   reviewPromptCount: 0,
   reviewLastEntry: 0,
+  reviewLastAgeUp: 0,
   shopPromoLastEntry: 0,
+  shopPromoLastAgeUp: 0,
   shopPromoCount: 0,
   notificationsScheduled: false,
   notificationsDenied: false,
@@ -127,6 +136,11 @@ export function migrateMeta(parsed: Partial<AppMeta>): AppMeta {
     lifetimeUnlocked: parsed.lifetimeUnlocked ?? false,
     reviewPromptCount,
     reviewLastEntry: parsed.reviewLastEntry ?? (reviewPromptCount > 0 ? parsed.totalEntries ?? 0 : 0),
+    // Old builds counted feed rows. Start their new age-up cadence from zero
+    // instead of converting noisy action history into artificial age-ups.
+    totalAgeUps: parsed.totalAgeUps ?? 0,
+    reviewLastAgeUp: parsed.reviewLastAgeUp ?? 0,
+    shopPromoLastAgeUp: parsed.shopPromoLastAgeUp ?? 0,
     proTrialUsed,
     proTrialNoticeSeen: parsed.proTrialNoticeSeen ?? proTrialUsed,
     stats: { ...DEFAULT_STATS, ...(parsed.stats ?? {}) },

@@ -17,7 +17,9 @@ interface Props {
 }
 
 export function EventModal({ state, event, onChoose }: Props) {
-  const text = typeof event.text === 'function' ? event.text(state) : event.text;
+  const rawText = typeof event.text === 'function' ? event.text(state) : event.text;
+  const text = renderBoundText(state, rawText);
+  const title = renderBoundText(state, event.title);
   const choices = event.choices.filter((c) => isChoiceAvailable(state, c));
   const story = state.pendingEvent?.storyInstanceId
     ? state.world.activeStories.find((item) => item.id === state.pendingEvent!.storyInstanceId)
@@ -43,7 +45,7 @@ export function EventModal({ state, event, onChoose }: Props) {
       <View style={PANEL.parchModal}>
         <View style={{ backgroundColor: C.health, borderWidth: 3, borderColor: C.inkSoft, borderBottomColor: C.healthDark, borderRightColor: C.healthDark, paddingHorizontal: 8, paddingVertical: 6 }}>
           <PixelText font="pixel" size={10} color={C.white} style={{ textAlign: 'center' }}>
-            {event.title}
+            {title}
           </PixelText>
         </View>
 

@@ -29,7 +29,7 @@ export const ACTIVITY_DEFS: ActivityDef[] = [
   { id: 'poppy_draught', cat: 'vice', name: 'ABUSE POPPY DRAUGHT', icon: '🌺', iconBg: C.purple, desc: 'HIGH RISK · stupor and lasting sickness', minAge: 14, danger: 'high' },
   { id: 'reckless_brawl', cat: 'vice', name: 'FIGHT THE WHOLE TAVERN', icon: '👊', iconBg: C.health, desc: 'EXTREME · catastrophic injury likely', minAge: 11, danger: 'extreme' },
   { id: 'winter_exposure', cat: 'vice', name: 'SLEEP IN THE WINTER ROAD', icon: '❄️', iconBg: C.blue, desc: 'EXTREME · exposure can kill quickly', minAge: 11, danger: 'extreme' },
-  { id: 'monkshood_vial', cat: 'vice', name: 'QUAFF THE BLACK VIAL', icon: '☠️', iconBg: '#7a1f2a', desc: 'FATAL · testing shortcut', minAge: 11, danger: 'extreme' },
+  { id: 'monkshood_vial', cat: 'vice', name: 'QUAFF THE BLACK VIAL', icon: '☠️', iconBg: '#7a1f2a', desc: 'FATAL · death is certain', minAge: 11, danger: 'extreme' },
   { id: 'leech', cat: 'health', name: 'DOCTOR', icon: '🩸', iconBg: '#f3a0a0', desc: 'Leeches cure all' },
   { id: 'bathhouse', cat: 'health', name: 'BATHHOUSE', icon: '🛁', iconBg: C.teal, desc: 'A rare hot bath' },
   { id: 'herbalist', cat: 'health', name: 'HERBALIST', icon: '🌿', iconBg: C.faith, desc: 'A potent tonic' },

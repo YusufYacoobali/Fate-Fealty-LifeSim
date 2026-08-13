@@ -1,14 +1,14 @@
 import {
   atFirstLifeMilestone,
+  ageUpsDelta,
   endsOnBadOutcome,
   entriesDelta,
   hasRecentGoodOutcome,
-  REVIEW_ENTRY_THRESHOLD,
+  REVIEW_AGE_UP_THRESHOLD,
   REVIEW_FIRST_LIFE_AGE,
-  REVIEW_MAX_PROMPTS,
   REVIEW_OUTCOME_LOOKBACK,
-  REVIEW_PATIENCE_ENTRIES,
-  REVIEW_REPROMPT_GAP,
+  REVIEW_PATIENCE_AGE_UPS,
+  REVIEW_REPROMPT_AGE_UP_GAP,
   shouldPromptReview,
 } from '@/services/reviewLogic';
 import { DEFAULT_META } from '@/state/appMeta';
@@ -27,25 +27,26 @@ function badMomentState() {
 }
 
 describe('reviewLogic.shouldPromptReview', () => {
-  const ready = { ...DEFAULT_META, totalEntries: REVIEW_ENTRY_THRESHOLD };
+  const ready = { ...DEFAULT_META, totalAgeUps: REVIEW_AGE_UP_THRESHOLD };
 
-  it('prompts at a good moment once the entry threshold is met', () => {
+  it('prompts at a good moment once the age-up threshold is met', () => {
     expect(shouldPromptReview(ready, goodMomentState())).toBe(true);
   });
 
-  it('does not prompt below the entry threshold', () => {
-    expect(shouldPromptReview({ ...DEFAULT_META, totalEntries: REVIEW_ENTRY_THRESHOLD - 1 }, goodMomentState())).toBe(false);
+  it('does not prompt below the age-up threshold', () => {
+    expect(shouldPromptReview({ ...DEFAULT_META, totalAgeUps: REVIEW_AGE_UP_THRESHOLD - 1 }, goodMomentState())).toBe(false);
   });
 
-  it('stops once the lifetime ask limit is reached', () => {
-    expect(shouldPromptReview({ ...ready, reviewPromptCount: REVIEW_MAX_PROMPTS }, goodMomentState())).toBe(false);
+  it('continues recurring regardless of how many earlier prompts were shown', () => {
+    const recurring = { ...ready, reviewPromptCount: 50, reviewLastAgeUp: 100, totalAgeUps: 100 + REVIEW_REPROMPT_AGE_UP_GAP };
+    expect(shouldPromptReview(recurring, goodMomentState())).toBe(true);
   });
 
   it('migrated one-shot saves still allow the second ask after the gap', () => {
-    const shown = { ...DEFAULT_META, reviewPrompted: true, reviewPromptCount: 1, reviewLastEntry: 30 };
+    const shown = { ...DEFAULT_META, reviewPrompted: true, reviewPromptCount: 1, reviewLastAgeUp: 30 };
 
-    expect(shouldPromptReview({ ...shown, totalEntries: 30 + REVIEW_REPROMPT_GAP - 1 }, goodMomentState())).toBe(false);
-    expect(shouldPromptReview({ ...shown, totalEntries: 30 + REVIEW_REPROMPT_GAP }, goodMomentState())).toBe(true);
+    expect(shouldPromptReview({ ...shown, totalAgeUps: 30 + REVIEW_REPROMPT_AGE_UP_GAP - 1 }, goodMomentState())).toBe(false);
+    expect(shouldPromptReview({ ...shown, totalAgeUps: 30 + REVIEW_REPROMPT_AGE_UP_GAP }, goodMomentState())).toBe(true);
   });
 
   it('never interrupts death, an event, or settings', () => {
@@ -67,18 +68,18 @@ describe('reviewLogic.shouldPromptReview', () => {
   });
 
   it('guarantees the prompt once patience runs out, even after a bad beat', () => {
-    const patient = { ...DEFAULT_META, totalEntries: REVIEW_ENTRY_THRESHOLD + REVIEW_PATIENCE_ENTRIES };
+    const patient = { ...DEFAULT_META, totalAgeUps: REVIEW_AGE_UP_THRESHOLD + REVIEW_PATIENCE_AGE_UPS };
     const neutral = makeState();
     neutral.feed = [{ id: 1, age: 30, tag: 'HOUSEHOLD', text: 'Costs were paid.', tone: 'plain', source: 'player' }];
 
-    expect(shouldPromptReview({ ...patient, totalEntries: patient.totalEntries - 1 }, neutral)).toBe(false);
+    expect(shouldPromptReview({ ...patient, totalAgeUps: patient.totalAgeUps - 1 }, neutral)).toBe(false);
     expect(shouldPromptReview(patient, neutral)).toBe(true);
     expect(shouldPromptReview(patient, badMomentState())).toBe(true);
   });
 });
 
 describe('reviewLogic first-life milestone', () => {
-  const firstLife = { ...DEFAULT_META, firstLifeNo: 2 };
+  const firstLife = { ...DEFAULT_META, firstLifeNo: 2, totalAgeUps: REVIEW_FIRST_LIFE_AGE };
 
   function firstLifeState(age: number) {
     const s = makeState({ lifeNo: 2 });
@@ -87,13 +88,13 @@ describe('reviewLogic first-life milestone', () => {
     return s;
   }
 
-  it('asks ten years in without waiting for the entry cadence', () => {
+  it('asks five years in without waiting for the entry cadence', () => {
     expect(atFirstLifeMilestone(firstLife, firstLifeState(REVIEW_FIRST_LIFE_AGE))).toBe(true);
     expect(shouldPromptReview(firstLife, firstLifeState(REVIEW_FIRST_LIFE_AGE))).toBe(true);
   });
 
   it('does not ask before the milestone age', () => {
-    expect(shouldPromptReview(firstLife, firstLifeState(REVIEW_FIRST_LIFE_AGE - 1))).toBe(false);
+    expect(shouldPromptReview({ ...firstLife, totalAgeUps: REVIEW_FIRST_LIFE_AGE - 1 }, firstLifeState(REVIEW_FIRST_LIFE_AGE - 1))).toBe(false);
   });
 
   it('only counts the first life of the install', () => {
@@ -107,8 +108,19 @@ describe('reviewLogic first-life milestone', () => {
   });
 
   it('is a first-ask door only, never the second', () => {
-    const shown = { ...firstLife, reviewPromptCount: 1, reviewLastEntry: 0 };
+    const shown = { ...firstLife, reviewPromptCount: 1, reviewLastAgeUp: 0 };
     expect(shouldPromptReview(shown, firstLifeState(REVIEW_FIRST_LIFE_AGE))).toBe(false);
+  });
+});
+
+describe('reviewLogic.ageUpsDelta', () => {
+  it('counts an age-up but ignores work and character actions at the same age', () => {
+    expect(ageUpsDelta(2, 10, 2, 11)).toBe(1);
+    expect(ageUpsDelta(2, 10, 2, 10)).toBe(0);
+  });
+
+  it('does not count starting a new life as aging up', () => {
+    expect(ageUpsDelta(2, 70, 3, 0)).toBe(0);
   });
 });
 
@@ -158,6 +170,7 @@ describe('reviewLogic.hasRecentGoodOutcome', () => {
 
 describe('reviewLogic.entriesDelta', () => {
   it('counts growth', () => expect(entriesDelta(3, 7)).toBe(4));
+  it('keeps counting after the feed reaches its fixed-size cap', () => expect(entriesDelta(500, 500, 900, 904)).toBe(4));
   it('counts a life reset as the new opening entries', () => expect(entriesDelta(40, 1)).toBe(1));
   it('counts no change as zero', () => expect(entriesDelta(5, 5)).toBe(0));
 });

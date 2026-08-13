@@ -10,7 +10,12 @@ export function appendWorldHistory(state: GameState, entry: WorldHistoryEntry): 
 }
 
 export function appendCharacterMemory(character: WorldCharacter, memory: CharacterMemory): void {
-  character.worldMemories = [...(character.worldMemories ?? []), memory].slice(-CHARACTER_MEMORY_LIMIT);
+  // Repeated autonomous behaviour should refresh a recollection, not fill a
+  // character card with the same sentence several times.
+  const distinct = (character.worldMemories ?? []).filter((item) =>
+    item.id !== memory.id && item.summary.trim() !== memory.summary.trim(),
+  );
+  character.worldMemories = [...distinct, memory].slice(-CHARACTER_MEMORY_LIMIT);
 }
 
 export function appendFamilyMemory(memories: FamilyMemory[], memory: FamilyMemory): FamilyMemory[] {

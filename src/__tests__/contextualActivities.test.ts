@@ -8,6 +8,7 @@ import { createLife } from '@/engine/gameState';
 import { CONTEXTUAL_ACTIVITY_IDS, handleContextualActivity } from '@/engine/contextualActivityEngine';
 import { relationshipWith } from '@/engine/relationshipEngine';
 import { resetRandomSource, setRandomSource } from '@/engine/random';
+import { renderBoundText } from '@/content/persistentWorldEvents';
 
 describe('contextual activities', () => {
   afterEach(resetRandomSource);
@@ -45,8 +46,22 @@ describe('contextual activities', () => {
     expect(state.pendingEvent?.eventId).toBe('activity_gathering_quarrel');
     expect(state.pendingEvent?.bindings?.other).toBeTruthy();
     const event = EVENTS_BY_ID[state.pendingEvent!.eventId];
+    expect(renderBoundText(state, typeof event.text === 'string' ? event.text : event.text(state))).not.toContain('{{');
+    expect(event.choices.map((choice) => renderBoundText(state, choice.label)).join(' ')).not.toContain('{{');
     applyChoice(state, event, event.choices[0]);
     expect(state.memories.some((memory) => memory.tag === 'activity_gathering_quarrel_resolved')).toBe(true);
+  });
+
+  it('resolves every authored actor token used by activity complications', () => {
+    const state = createLife({ worldSeed: 413 });
+    const other = state.kin.find((kin) => kin.alive && kin.id !== 'goose')!;
+    for (const event of ALL_EVENTS.filter((item) => item.id.startsWith('activity_'))) {
+      state.pendingEvent = { eventId: event.id, bindings: { other: other.id } };
+      const text = typeof event.text === 'function' ? event.text(state) : event.text;
+      expect(renderBoundText(state, event.title)).not.toContain('{{');
+      expect(renderBoundText(state, text)).not.toContain('{{');
+      for (const choice of event.choices) expect(renderBoundText(state, choice.label)).not.toContain('{{');
+    }
   });
 
   it('keeps activity complications out of the ambient event lottery', () => {

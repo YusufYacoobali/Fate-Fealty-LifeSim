@@ -38,6 +38,9 @@ export function GoalBanner({ goal }: { goal: GoalView }) {
             {goal.title}
           </PixelText>
         </View>
+        <PixelText font="body" size={13} color={C.creamBlue} numberOfLines={2} style={{ marginBottom: 5 }}>
+          {goal.desc}
+        </PixelText>
         <StatBar
           value={pct}
           color={goal.done ? C.faith : C.purple}

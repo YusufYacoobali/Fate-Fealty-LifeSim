@@ -10,8 +10,7 @@ import type { AppMetaApi } from './useAppMeta';
 interface Options {
   /** Only promote when entitlement lookup confirms this is a free player. */
   eligible: boolean;
-  /** Creation, onboarding, achievements, and the review prompt take priority. */
-  blocked: boolean;
+  /** The review prompt wins when both cadences land together. */
   reviewVisible: boolean;
 }
 
@@ -41,7 +40,7 @@ export function useShopPromoGate(state: GameState, loaded: boolean, meta: AppMet
 
     // Require a fresh gameplay beat. This prevents the promo from following a
     // dismissed review prompt immediately on the exact same positive moment.
-    if (delta <= 0 || shopPromoVisible || options.blocked || options.reviewVisible) return;
+    if (delta <= 0 || shopPromoVisible || options.reviewVisible) return;
 
     const currentMeta = meta.metaRef.current;
     // The review request wins when both cadences land together.
@@ -56,7 +55,7 @@ export function useShopPromoGate(state: GameState, loaded: boolean, meta: AppMet
     setShopPromoVisible(true);
     // meta is a stable api (ref + memoised update); intentionally omitted.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state, loaded, meta.ready, options.eligible, options.blocked, options.reviewVisible, shopPromoVisible]);
+  }, [state, loaded, meta.ready, options.eligible, options.reviewVisible, shopPromoVisible]);
 
   const resolveShopPromo = useCallback(() => setShopPromoVisible(false), []);
 

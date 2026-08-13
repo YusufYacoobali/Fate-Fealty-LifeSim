@@ -1,4 +1,5 @@
-import { ACTIVITY_ICONS, SHOP_ITEM_ICONS } from '@/assets/generatedAssets';
+import { ACTIVITY_ICONS, GOAL_ICONS, SHOP_ITEM_ICONS, kinIconAsset } from '@/assets/generatedAssets';
+import { LIFE_GOALS } from '@/data/goals';
 import { ACTIVITY_DEFS } from '@/data/activities';
 import { SHOP_ITEMS } from '@/data/shop';
 import { ALL_EVENTS, EVENTS_BY_ID } from '@/content';
@@ -62,5 +63,15 @@ describe('generated icon coverage', () => {
 
   it('has finished art for every shop item without an emoji fallback', () => {
     expect(SHOP_ITEMS.filter((item) => !SHOP_ITEM_ICONS[item.id]).map((item) => item.id)).toEqual([]);
+  });
+
+  it('has finished icon art for every life goal', () => {
+    expect(LIFE_GOALS.filter((goal) => !GOAL_ICONS[goal.id as keyof typeof GOAL_ICONS]).map((goal) => goal.id)).toEqual([]);
+  });
+
+  it('assigns stable portrait variety across ordinary villagers', () => {
+    const portraits = Array.from({ length: 24 }, (_, index) => kinIconAsset(`villager_${index}`, 'acquaintance', index % 2 ? 'woman' : 'man', 25));
+    expect(new Set(portraits).size).toBeGreaterThanOrEqual(8);
+    expect(kinIconAsset('villager_7', 'acquaintance', 'woman', 25)).toBe(kinIconAsset('villager_7', 'acquaintance', 'woman', 25));
   });
 });

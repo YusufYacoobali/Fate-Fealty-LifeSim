@@ -32,6 +32,17 @@ describe('illness state', () => {
   });
 });
 
+describe('vice aftermath', () => {
+  it('lets destructive habits keep damaging the player in later years', () => {
+    const s = makeState({ stats: { health: 100, charm: 50, wits: 50, faith: 50 } });
+    addTag(s, 'ale_ravaged');
+    addTag(s, 'poppy_dependent');
+    const start = s.stats.health;
+    tickAilments(s);
+    expect(s.stats.health).toBeLessThan(start);
+  });
+});
+
 describe('imprisonment state', () => {
   it('blocks free activities while imprisoned', () => {
     const s = makeState({ gold: 10, stats: { health: 50, charm: 50, wits: 50, faith: 50 } });

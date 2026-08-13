@@ -68,7 +68,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: 'great_dynasty', name: 'Great Dynasty', emoji: '🏛️', desc: 'Secure a royal legacy.', premium: true, check: (c) => c.state.tags.includes('great_dynasty') || c.state.tags.includes('dynasty_secured') },
 
   // --- ambition ---
-  { id: 'ambition', name: 'Life’s Ambition', emoji: '🎯', desc: 'Fulfil the life goal set at your coming of age.', check: (c) => c.state.goalDone },
+  { id: 'ambition', name: 'Life’s Ambition', emoji: '🎯', desc: 'Fulfil the life goal set at your coming of age.', check: (c) => c.state.tags.includes('goal_done') },
 
   // --- meta / dynasty ---
   { id: 'reincarnated', name: 'Again, From the Mud', emoji: '♻️', desc: 'Begin a fifth life.', check: (c) => c.stats.livesLived >= 4 },

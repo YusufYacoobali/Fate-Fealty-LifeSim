@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
 import { GameState } from '@/types/game';
@@ -34,7 +34,11 @@ export function DeathScreen({ state, onNewLife, onContinueHeir }: Props) {
   const canContinue = heirs.length > 0;
 
   return (
-    <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 60, backgroundColor: C.ink, alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+    <ScrollView
+      style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 60, backgroundColor: C.ink }}
+      contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 32 }}
+      showsVerticalScrollIndicator={false}
+    >
       <PixelText size={50} style={{ marginBottom: 6 }}>
         🪦
       </PixelText>
@@ -90,6 +94,6 @@ export function DeathScreen({ state, onNewLife, onContinueHeir }: Props) {
           </PixelText>
         </PixelButton>
       </View>
-    </View>
+    </ScrollView>
   );
 }

@@ -5,15 +5,15 @@
  */
 
 import { GameState, GenderIdentity, KinKind, KinMember, NewKinSpec, WorldCharacter } from '@/types/game';
-import { CHILD_NAMES, FIRST_NAMES } from '@/data/names';
+import { namesForGender } from '@/data/names';
 import { pick, rnd } from './random';
 import { defaultPronouns } from '@/data/identity';
 import { ENTRY_CAREERS } from '@/data/careers';
-import { makePlayerRelationship } from './relationshipEngine';
+import { makePlayerRelationship } from './relationshipState';
 import { unlinkSpouse } from './characterState';
 
 interface KindDefaults {
-  name: () => string;
+  name: (gender: GenderIdentity) => string;
   role: string;
   emoji: string;
   trait: string;
@@ -24,7 +24,7 @@ interface KindDefaults {
 
 const DEFAULTS: Record<KinKind, KindDefaults> = {
   spouse: {
-    name: () => pick(FIRST_NAMES),
+    name: (gender) => pick(namesForGender(gender)),
     role: 'Thy Spouse',
     emoji: '🧑',
     trait: 'Steadfast',
@@ -33,7 +33,7 @@ const DEFAULTS: Record<KinKind, KindDefaults> = {
     age: () => rnd(18, 30),
   },
   child: {
-    name: () => pick(CHILD_NAMES),
+    name: (gender) => pick(namesForGender(gender, true)),
     role: 'Thy Child',
     emoji: '🧒',
     trait: 'Small and loud',
@@ -42,7 +42,7 @@ const DEFAULTS: Record<KinKind, KindDefaults> = {
     age: () => 0,
   },
   sibling: {
-    name: () => pick(FIRST_NAMES),
+    name: (gender) => pick(namesForGender(gender)),
     role: 'Thy Sibling',
     emoji: '🧑‍🌾',
     trait: 'Competitive',
@@ -51,7 +51,7 @@ const DEFAULTS: Record<KinKind, KindDefaults> = {
     age: () => rnd(1, 12),
   },
   friend: {
-    name: () => pick(FIRST_NAMES),
+    name: (gender) => pick(namesForGender(gender)),
     role: 'Thy Friend',
     emoji: '🧑',
     trait: 'Loyal',
@@ -60,7 +60,7 @@ const DEFAULTS: Record<KinKind, KindDefaults> = {
     age: () => rnd(16, 40),
   },
   foe: {
-    name: () => pick(FIRST_NAMES),
+    name: (gender) => pick(namesForGender(gender)),
     role: 'Thy Rival',
     emoji: '⚔️',
     trait: 'Spiteful',
@@ -69,7 +69,7 @@ const DEFAULTS: Record<KinKind, KindDefaults> = {
     age: () => rnd(20, 45),
   },
   liege: {
-    name: () => `Lord ${pick(FIRST_NAMES)}`,
+    name: (gender) => `${gender === 'woman' ? 'Lady' : 'Lord'} ${pick(namesForGender(gender))}`,
     role: 'Thy Liege',
     emoji: '👑',
     trait: 'Demanding',
@@ -78,7 +78,7 @@ const DEFAULTS: Record<KinKind, KindDefaults> = {
     age: () => rnd(35, 60),
   },
   acquaintance: {
-    name: () => pick(FIRST_NAMES),
+    name: (gender) => pick(namesForGender(gender)),
     role: 'Acquaintance',
     emoji: '🧑',
     trait: 'Unfamiliar',
@@ -86,8 +86,8 @@ const DEFAULTS: Record<KinKind, KindDefaults> = {
     rel: 50,
     age: () => rnd(16, 45),
   },
-  mother: { name: () => pick(FIRST_NAMES), role: 'Thy Mother', emoji: '👩‍🌾', trait: 'Loving', bio: 'Thy mother.', rel: 75, age: () => rnd(40, 55) },
-  father: { name: () => pick(FIRST_NAMES), role: 'Thy Father', emoji: '👨‍🌾', trait: 'Weary', bio: 'Thy father.', rel: 60, age: () => rnd(40, 60) },
+  mother: { name: () => pick(namesForGender('woman')), role: 'Thy Mother', emoji: '👩‍🌾', trait: 'Loving', bio: 'Thy mother.', rel: 75, age: () => rnd(40, 55) },
+  father: { name: () => pick(namesForGender('man')), role: 'Thy Father', emoji: '👨‍🌾', trait: 'Weary', bio: 'Thy father.', rel: 60, age: () => rnd(40, 60) },
 };
 
 /** Create and append a new kin member, returning it. Mutates `s`. */
@@ -102,7 +102,7 @@ export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
   const gender = spec.gender ?? spouseGender ?? pick(['woman', 'man'] as const);
   const member: KinMember = {
     id: `kin_${s.nextId++}`,
-    name: spec.name ?? d.name(),
+    name: spec.name ?? d.name(gender),
     role: spec.role ?? d.role,
     emoji: spec.emoji ?? d.emoji,
     trait: spec.trait ?? d.trait,

@@ -64,7 +64,7 @@ export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
                 bg={C.parch}
                 shadow={C.parchSd}
                 light={C.parchSl}
-                outline={C.parchBorder}
+                outline={a.danger === 'extreme' ? C.health : a.danger === 'high' ? C.amber : C.parchBorder}
                 onPress={() => onActivity(a.id)}
                 disabled={locked}
                 style={{ width: '48.5%', marginBottom: 8 }}

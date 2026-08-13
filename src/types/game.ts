@@ -235,7 +235,7 @@ export interface CharacterSecretState {
   createdYear: number;
 }
 
-export type LineageStatus = 'marital' | 'acknowledged' | 'disputed' | 'adopted' | 'ward';
+export type LineageStatus = 'marital' | 'illegitimate' | 'acknowledged' | 'disputed' | 'adopted' | 'ward';
 export interface ChildDevelopmentState {
   completedMilestones: number[];
   education: 'none' | 'household' | 'craft' | 'church' | 'martial' | 'court';
@@ -450,7 +450,7 @@ export interface ContentLedgerEntry {
   lastChoiceId?: string;
 }
 
-export type ExpectedChildRoute = 'pregnancy' | 'adoption' | 'wardship';
+export type ExpectedChildRoute = 'pregnancy' | 'illegitimate' | 'adoption' | 'wardship';
 export interface ExpectedChild {
   id: string;
   parentIds: string[];
@@ -793,7 +793,7 @@ export interface ActiveArc {
 // Activities, shop, settings
 // ---------------------------------------------------------------------------
 
-export type ActivityCategory = 'leisure' | 'work' | 'faith' | 'martial' | 'crime' | 'health';
+export type ActivityCategory = 'leisure' | 'work' | 'faith' | 'martial' | 'crime' | 'vice' | 'health';
 
 export interface ActivityDef {
   id: string;
@@ -804,6 +804,8 @@ export interface ActivityDef {
   desc: string;
   /** Youngest age that may attempt this (default 0). Shown as a lock in the UI. */
   minAge?: number;
+  /** Explicit warning shown for actions designed to cause serious harm. */
+  danger?: 'high' | 'extreme';
   roles?: LifeRole[];
   premium?: boolean;
 }

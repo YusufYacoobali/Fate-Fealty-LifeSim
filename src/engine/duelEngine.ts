@@ -11,7 +11,7 @@ import { DuelKind, DuelState, GameState, WorldCharacter } from '@/types/game';
 import { DUEL_MOVE_BY_ID, DuelResponse, movesForKind } from '@/content/duelMoves';
 import { applyEffects } from './consequenceEngine';
 import { addMemory, pushFeed } from './gameState';
-import { applyRelationshipShift } from './relationshipEngine';
+import { applyRelationshipShift } from './relationshipState';
 import { isCloseBlood, kinshipTo } from './kinship';
 import { chance, clamp, pick, rnd } from './random';
 import { C } from '@/theme/theme';

@@ -160,10 +160,21 @@ export function performCareerAction(state: GameState, action: CareerAction, care
       performRankDuty(state);
       break;
     case 'odd_job': {
-      const pay = rnd(3, 7);
-      addMoney(state, pay);
-      applyEffects(state, { health: -1, path: { labour: 1 } });
-      pushFeed(state, 'ODD WORK', C.amber, `You carry sacks, mend a gate, and locate a missing hen. The village pays ${pay} gold for this improbable expertise.`, 'good');
+      // Casual labour is available without an occupation, but it is not a
+      // risk-free coin button. Some days the work falls through after costs.
+      if (chance(0.62)) {
+        const pay = rnd(2, 6);
+        addMoney(state, pay);
+        applyEffects(state, { health: -1, path: { labour: 1 } });
+        pushFeed(state, 'ODD WORK', C.amber, `You carry sacks, mend a gate, and locate a missing hen. The village pays ${pay} gold for this improbable expertise.`, 'good');
+      } else {
+        const loss = Math.min(state.gold, rnd(1, 4));
+        addMoney(state, -loss);
+        applyEffects(state, { health: -rnd(1, 3), reputation: -1, path: { labour: 1 } });
+        pushFeed(state, 'ODD WORK · GONE WRONG', C.bad, loss > 0
+          ? `A cart axle breaks while it is in thy care. The owner takes ${loss} gold for repairs, and the day's labour earns nothing.`
+          : `A cart axle breaks while it is in thy care. Thou earns nothing and goes home bruised besides.`, 'bad');
+      }
       break;
     }
     case 'craft': {

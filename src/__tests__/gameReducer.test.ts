@@ -113,6 +113,19 @@ describe('gameReducer', () => {
     expect(s.rankIdx).toBe(2);
   });
 
+  it('continues as a legacy child whose family relationship survived missing genealogy ids', () => {
+    const original = makeState({ age: 50, gold: 80 });
+    const child = spawnKin(original, { kind: 'child', age: 12, isHeir: true });
+    child.parentIds = [];
+    original.world.characters[original.playerCharacterId].childIds = [];
+
+    const continued = gameReducer(original, { type: 'CONTINUE_AS_HEIR', heirId: child.id });
+
+    expect(continued.playerCharacterId).toBe(child.id);
+    expect(continued.dead).toBe(false);
+    expect(continued.heirContinued).toBe(true);
+  });
+
   it('does not manufacture an heir when no living child exists', () => {
     const original = makeState({ age: 50, gold: 80 });
     const s = gameReducer(original, { type: 'CONTINUE_AS_HEIR' });

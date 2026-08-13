@@ -22,6 +22,22 @@ export const DAILY_REWARD_ART = {
   candle: require('../../assets/generated/shop-candle.png'),
 } as const satisfies Record<string, ImageSourcePropType>;
 
+export const GOAL_ICONS = {
+  fortune: require('../../assets/generated/daily-reward-purse.png'),
+  family: require('../../assets/generated/kin-child.png'),
+  scholar: require('../../assets/generated/stat-wits.png'),
+  beloved: require('../../assets/generated/stat-charm.png'),
+  devout: require('../../assets/generated/stat-faith.png'),
+  knighthood: require('../../assets/generated/portrait-knight.png'),
+  elder: require('../../assets/generated/kin-father.png'),
+  wedded: require('../../assets/generated/kin-spouse.png'),
+  barony: require('../../assets/generated/portrait-baron.png'),
+  crown: require('../../assets/generated/portrait-monarch.png'),
+  dynasty: require('../../assets/generated/paywall-holding.png'),
+  kind_rule: require('../../assets/generated/holding-resource-loyalty.png'),
+  hard_rule: require('../../assets/generated/trait-notorious_outlaw.png'),
+} as const satisfies Record<string, ImageSourcePropType>;
+
 export const FEATURE_ART = {
   work: require('../../assets/generated/work-occupations-banner.png'),
   holding: require('../../assets/generated/holding-overview-banner.png'),
@@ -44,6 +60,9 @@ export const CAREER_FAMILY_ART = {
   martial: require('../../assets/generated/activity-train.png'),
   court: require('../../assets/generated/shop-quill.png'),
   outlaw: require('../../assets/generated/activity-poach.png'),
+  medicine: require('../../assets/generated/activity-herbalist.png'),
+  entertainment: require('../../assets/generated/shop-tin-whistle.png'),
+  law: require('../../assets/generated/activity-copy-manuscript.png'),
 } as const satisfies Record<string, ImageSourcePropType>;
 
 export const CAREER_ACTION_ART = {
@@ -103,6 +122,13 @@ export const ACTIVITY_ICONS: Record<string, ImageSourcePropType> = {
   poach: require('../../assets/generated/activity-poach.png'),
   pickpocket: require('../../assets/generated/activity-pickpocket.png'),
   banditry: require('../../assets/generated/activity-banditry.png'),
+  torch_holding: require('../../assets/generated/activity-blacksmith.png'),
+  bloody_raid: require('../../assets/generated/activity-banditry.png'),
+  ale_binge: require('../../assets/generated/activity-tavern.png'),
+  poppy_draught: require('../../assets/generated/activity-herbalist.png'),
+  reckless_brawl: require('../../assets/generated/activity-banditry.png'),
+  winter_exposure: require('../../assets/generated/activity-pilgrimage.png'),
+  monkshood_vial: require('../../assets/generated/activity-leech.png'),
   leech: require('../../assets/generated/activity-leech.png'),
   bathhouse: require('../../assets/generated/activity-bathhouse.png'),
   herbalist: require('../../assets/generated/activity-herbalist.png'),
@@ -198,7 +224,7 @@ export const SHOP_ITEM_ICONS: Record<string, ImageSourcePropType> = {
   shield: require('../../assets/generated/shop-shield.png'),
   gambeson: require('../../assets/generated/shop-gambeson.png'),
   helm: require('../../assets/generated/shop-helm.png'),
-  lance: require('../../assets/generated/shop-lance.png'),
+  lance: require('../../assets/generated/activity-tournament.png'),
   mail_shirt: require('../../assets/generated/shop-mail-shirt.png'),
   leather_boots: require('../../assets/generated/shop-leather-boots.png'),
   wool_cloak: require('../../assets/generated/shop-wool-cloak.png'),
@@ -212,7 +238,8 @@ export const SHOP_ITEM_ICONS: Record<string, ImageSourcePropType> = {
   swine_herd: require('../../assets/generated/shop-swine-herd.png'),
   oxen_pair: require('../../assets/generated/shop-oxen-pair.png'),
   falcon: require('../../assets/generated/shop-falcon.png'),
-  warhorse: require('../../assets/generated/shop-warhorse.png'),
+  // Reuse the complete horse cutout instead of the clipped warhorse source.
+  warhorse: require('../../assets/generated/shop-steed.png'),
   pilgrim_badge: require('../../assets/generated/shop-pilgrim-badge.png'),
   rosary: require('../../assets/generated/shop-rosary.png'),
   altar_cloth: require('../../assets/generated/shop-altar-cloth.png'),
@@ -224,9 +251,41 @@ export const SHOP_ITEM_ICONS: Record<string, ImageSourcePropType> = {
   writing_desk: require('../../assets/generated/shop-writing-desk.png'),
   croft_strip: require('../../assets/generated/shop-croft-strip.png'),
   town_house: require('../../assets/generated/shop-town-house.png'),
-  mill_share: require('../../assets/generated/shop-mill-share.png'),
+  // The generated mill-share tile was empty; the millstone communicates the
+  // same estate concept and stays readable at shop-icon size.
+  mill_share: require('../../assets/generated/shop-millstone.png'),
   manor_lease: require('../../assets/generated/shop-manor-lease.png'),
 };
+
+const WORLD_WOMAN_PORTRAITS: ImageSourcePropType[] = [
+  require('../../assets/generated/world-woman-1.png'),
+  require('../../assets/generated/world-woman-2.png'),
+  require('../../assets/generated/world-woman-3.png'),
+  require('../../assets/generated/world-woman-4.png'),
+  require('../../assets/generated/world-woman-5.png'),
+  require('../../assets/generated/world-woman-6.png'),
+];
+
+const WORLD_MAN_PORTRAITS: ImageSourcePropType[] = [
+  require('../../assets/generated/world-man-1.png'),
+  require('../../assets/generated/world-man-2.png'),
+  require('../../assets/generated/world-man-3.png'),
+  require('../../assets/generated/world-man-4.png'),
+  require('../../assets/generated/world-man-5.png'),
+  require('../../assets/generated/world-man-6.png'),
+];
+
+const WORLD_CHILD_PORTRAITS: ImageSourcePropType[] = [
+  require('../../assets/generated/world-child-1.png'),
+  require('../../assets/generated/world-child-2.png'),
+  require('../../assets/generated/world-child-3.png'),
+];
+
+function stableAssetIndex(id: string, length: number): number {
+  let hash = 2166136261;
+  for (let index = 0; index < id.length; index += 1) hash = Math.imul(hash ^ id.charCodeAt(index), 16777619);
+  return (hash >>> 0) % length;
+}
 
 export const TRAIT_ICONS: Record<string, ImageSourcePropType> = {
   sickly: require('../../assets/generated/trait-sickly.png'),
@@ -256,8 +315,16 @@ export function statIconAsset(stat: string): ImageSourcePropType | undefined {
   return STAT_ICONS[stat as StatKey];
 }
 
-export function kinIconAsset(id: string, kind: KinKind): ImageSourcePropType | undefined {
-  return KIN_ID_ICONS[id] ?? KIN_KIND_ICONS[kind];
+export function kinIconAsset(id: string, kind: KinKind, gender?: 'woman' | 'man', age?: number): ImageSourcePropType | undefined {
+  const fixed = KIN_ID_ICONS[id];
+  if (fixed) return fixed;
+  if (kind === 'acquaintance' || kind === 'friend' || kind === 'sibling' || kind === 'spouse') {
+    const portraits = (age ?? 18) < 14
+      ? WORLD_CHILD_PORTRAITS
+      : gender === 'woman' ? WORLD_WOMAN_PORTRAITS : WORLD_MAN_PORTRAITS;
+    return portraits[stableAssetIndex(id, portraits.length)];
+  }
+  return KIN_KIND_ICONS[kind];
 }
 
 export function shopItemIconAsset(id: string): ImageSourcePropType {
@@ -268,4 +335,8 @@ export function shopItemIconAsset(id: string): ImageSourcePropType {
 
 export function traitIconAsset(id: string): ImageSourcePropType | undefined {
   return TRAIT_ICONS[id];
+}
+
+export function goalIconAsset(id: string): ImageSourcePropType | undefined {
+  return GOAL_ICONS[id as keyof typeof GOAL_ICONS];
 }

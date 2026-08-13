@@ -56,5 +56,8 @@ export function goalById(id: string): LifeGoalDef | undefined {
 
 /** Goals worth assigning: those not already satisfied at coming-of-age. */
 export function assignableGoals(s: GameState): LifeGoalDef[] {
-  return LIFE_GOALS.filter((g) => !g.done(s) && (!g.premium || s.lifetimeUnlocked));
+  return LIFE_GOALS.filter((g) =>
+    !g.done(s)
+    && !s.tags.includes(`goal_done_${g.id}`)
+    && (!g.premium || s.lifetimeUnlocked));
 }

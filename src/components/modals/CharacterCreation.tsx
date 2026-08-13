@@ -6,7 +6,7 @@ import { PixelButton } from '../ui/PixelButton';
 import { Difficulty, GenderIdentity } from '@/types/game';
 import { NewLifeOptions } from '@/state/gameReducer';
 import { birthTraits } from '@/data/traits';
-import { FIRST_NAMES } from '@/data/names';
+import { FIRST_NAMES, namesForGender } from '@/data/names';
 import { pick } from '@/engine/random';
 import { C, FONT } from '@/theme/theme';
 import { traitIconAsset } from '@/assets/generatedAssets';
@@ -39,7 +39,7 @@ export function characterCreationBottomPadding(safeBottom: number, minimumGuard 
 export function CharacterCreation({ initialDifficulty, premiumUnlocked, onBegin, onLockedTraitPress }: Props) {
   const insets = useSafeAreaInsets();
   const bottomPadding = characterCreationBottomPadding(insets.bottom);
-  const [name, setName] = useState(() => pick(FIRST_NAMES));
+  const [name, setName] = useState(() => pick(namesForGender(DEFAULT_CHARACTER_GENDER)));
   const [traitId, setTraitId] = useState<string>(SURPRISE);
   const [difficulty, setDifficulty] = useState<Difficulty>(initialDifficulty);
   const [gender, setGender] = useState<GenderIdentity>(DEFAULT_CHARACTER_GENDER);
@@ -87,7 +87,7 @@ export function CharacterCreation({ initialDifficulty, premiumUnlocked, onBegin,
               maxLength={16}
             />
           </View>
-          <PixelButton bg={C.light} shadow={C.blue} onPress={() => setName(pick(FIRST_NAMES))} style={{ alignSelf: 'stretch' }} innerStyle={{ width: 50, minHeight: 48, alignItems: 'center', justifyContent: 'center' }}>
+          <PixelButton bg={C.light} shadow={C.blue} onPress={() => setName(pick(namesForGender(gender)))} style={{ alignSelf: 'stretch' }} innerStyle={{ width: 50, minHeight: 48, alignItems: 'center', justifyContent: 'center' }}>
             <PixelText size={20} style={{ includeFontPadding: true, lineHeight: 28 }}>
               🎲
             </PixelText>
@@ -103,7 +103,10 @@ export function CharacterCreation({ initialDifficulty, premiumUnlocked, onBegin,
               key={option.id}
               bg={gender === option.id ? C.charm : C.lightFill}
               shadow={gender === option.id ? C.charmDark : C.paleEdge}
-              onPress={() => setGender(option.id)}
+              onPress={() => {
+                setGender(option.id);
+                if (FIRST_NAMES.includes(name)) setName(pick(namesForGender(option.id)));
+              }}
               style={{ flex: 1 }}
               innerStyle={{ paddingVertical: 8, alignItems: 'center' }}
             >

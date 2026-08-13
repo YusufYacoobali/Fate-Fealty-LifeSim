@@ -26,13 +26,13 @@ import {
   WorldCharacter,
   ConsequenceDescriptor,
 } from '@/types/game';
-import { EPITHETS, FIRST_NAMES } from '@/data/names';
+import { EPITHETS, FIRST_NAMES, namesForGender } from '@/data/names';
 import { availableBirthTraits, traitById } from '@/data/traits';
 import { clamp, initialRngState, pick, rnd, runWithPersistedRng } from './random';
 import { C } from '@/theme/theme';
 import { freshHolding, holdingTitle } from '@/data/holding';
 import { RANKS } from '@/data/ranks';
-import { actionLimitForAccess } from './actionClock';
+import { actionLimitForAccess } from './actionPolicy';
 import { defaultPronouns } from '@/data/identity';
 import { CURRENT_CONTENT_VERSION } from '@/content/contentVersion';
 export { appendWorldHistory } from './worldJournal';
@@ -98,16 +98,17 @@ function startingKin(): KinMember[] {
   const careers = ['farmhand', 'apprentice', 'hawker', 'acolyte', 'levy', 'clerk', 'poacher_job'];
   while (cast.length < 30) {
     const index = cast.length;
+    const gender = pick(['woman', 'man'] as const);
     cast.push(person(
       `villager_${index}`,
-      pick(FIRST_NAMES),
+      pick(namesForGender(gender)),
       'acquaintance',
       'A Swineford Villager',
       rnd(8, 55),
       rnd(35, 62),
       pick(['Patient', 'Ambitious', 'Devout', 'Cunning', 'Loyal', 'Proud']),
       careers[index % careers.length],
-      pick(['woman', 'man'] as const),
+      gender,
     ));
   }
   return cast;

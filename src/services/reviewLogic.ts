@@ -9,9 +9,10 @@ import type { GameState } from '@/types/game';
  *  1. Ten years into the very first life — the player has seen enough of the
  *     game to have an opinion, and this is the warmest moment we ever get.
  *  2. A good moment once enough cumulative entries have been seen, with a
- *     patience limit so a run of bleak luck cannot suppress the ask forever.
+ *     hard deadline so a run of bleak luck cannot suppress the ask forever.
  */
-export const REVIEW_ENTRY_THRESHOLD = 25;
+/** Earliest cadence point: a positive beat can open the prompt from here. */
+export const REVIEW_ENTRY_THRESHOLD = 20;
 
 /**
  * Outcomes often arrive in a small batch: a success can be followed by a
@@ -21,11 +22,11 @@ export const REVIEW_ENTRY_THRESHOLD = 25;
 export const REVIEW_OUTCOME_LOOKBACK = 20;
 
 /**
- * How far past a cadence point we keep waiting for a positive beat before
- * settling for any moment that is merely not bad. Without this the gate could
- * sit closed for hundreds of entries on an unlucky run.
+ * How far past a cadence point we keep waiting for a positive beat before the
+ * hard deadline opens the gate. Without this the ask could sit closed forever.
  */
-export const REVIEW_PATIENCE_ENTRIES = 40;
+/** Hard deadline: the prompt is guaranteed within ten further entries. */
+export const REVIEW_PATIENCE_ENTRIES = 10;
 
 /** Age reached in the first life that earns the early ask. */
 export const REVIEW_FIRST_LIFE_AGE = 10;
@@ -34,7 +35,7 @@ export const REVIEW_FIRST_LIFE_AGE = 10;
 export const REVIEW_MAX_PROMPTS = 2;
 
 /** Cumulative entries that must pass between the first ask and the second. */
-export const REVIEW_REPROMPT_GAP = 60;
+export const REVIEW_REPROMPT_GAP = 20;
 
 /** The most recent entry the player can read as "something I did". */
 function latestPlayerOutcome(state: GameState) {
@@ -98,8 +99,9 @@ export function shouldPromptReview(meta: AppMeta, state: GameState): boolean {
 
   if (hasRecentGoodOutcome(state)) return true;
 
-  // Patience expired: any moment that is not actively bad will do.
-  return meta.totalEntries >= patienceLimit(meta) && !endsOnBadOutcome(state);
+  // Patience expired: the clear-screen check is the only remaining gate. A
+  // bleak run must not postpone the prompt forever.
+  return meta.totalEntries >= patienceLimit(meta);
 }
 
 /**

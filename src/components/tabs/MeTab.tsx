@@ -3,7 +3,7 @@ import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { StatBar } from '../ui/StatBar';
 import { C, PANEL } from '@/theme/theme';
-import { rankPortraitAsset, statIconAsset, traitIconAsset } from '@/assets/generatedAssets';
+import { goalIconAsset, rankPortraitAsset, statIconAsset, traitIconAsset } from '@/assets/generatedAssets';
 
 interface StatVM {
   key: string;
@@ -42,7 +42,7 @@ interface TraitVM {
 }
 
 interface GoalVM {
-  emoji: string;
+  id: string;
   title: string;
   desc: string;
   progress: number;
@@ -175,11 +175,14 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
         {goal ? (
           <>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-              <PixelText font="body" size={17} color={C.textDark}>
-                {goal.emoji} {goal.title}
-              </PixelText>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, flex: 1 }}>
+                <Image source={goalIconAsset(goal.id)!} resizeMode="contain" style={{ width: 28, height: 28 }} />
+                <PixelText font="body" size={17} color={C.textDark} style={{ flex: 1 }}>
+                  {goal.title}
+                </PixelText>
+              </View>
               <PixelText font="body" size={15} color={goal.done ? C.faithDark : C.amber}>
-                {goal.done ? 'DONE ✓' : `${Math.round(goal.progress * 100)}%`}
+                {goal.done ? 'DONE' : `${Math.round(goal.progress * 100)}%`}
               </PixelText>
             </View>
             <StatBar value={Math.round(goal.progress * 100)} color={goal.done ? C.faith : C.purple} dark={goal.done ? C.faithDark : C.purpleDark} height={11} trackBg={C.lightFill} trackBorder={C.inkSoft} />

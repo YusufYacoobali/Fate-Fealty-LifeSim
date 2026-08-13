@@ -47,9 +47,11 @@ export function ageUp(s: GameState): GameState {
 
   // --- 2. annual flavour (1-2 beats) ---
   const beats = chance(0.5) ? 2 : 1;
+  const annualMessageIds: string[] = [];
   for (let i = 0; i < beats; i++) {
-    const msg = pickAnnualMessage(s);
+    const msg = pickAnnualMessage(s, annualMessageIds);
     if (!msg) continue;
+    annualMessageIds.push(msg.id);
     applyEffects(s, msg.effects);
     pushFeed(s, `AGE ${s.age} · ${msg.tag}`, msg.tagColor, msg.text, msg.tone);
     checkDeath(s);

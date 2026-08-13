@@ -1,6 +1,6 @@
 import { GameState, ExpectedChild, WorldCharacter } from '@/types/game';
 import { spawnKin } from './kinFactory';
-import { CHILD_NAMES } from '@/data/names';
+import { namesForGender } from '@/data/names';
 import { chance, clamp, pick } from './random';
 import { appendWorldHistory } from './worldJournal';
 import { pushFeed } from './gameState';
@@ -31,12 +31,14 @@ function resolveExpectedChild(state: GameState, expected: ExpectedChild): void {
   // Everyone else's children are ordinary villagers, or the player would be
   // charged upkeep for — and offered parental actions on — half of Swineford.
   const playerRaisesChild = expected.parentIds.includes(state.playerCharacterId);
+  const childGender = pick(['woman', 'man'] as const);
   const child = playerRaisesChild
-    ? spawnKin(state, { kind: 'child', age: 0, isHeir: true })
+    ? spawnKin(state, { kind: 'child', age: 0, isHeir: true, gender: childGender })
     : spawnKin(state, {
         kind: 'acquaintance',
         age: 0,
-        name: pick(CHILD_NAMES),
+        gender: childGender,
+        name: pick(namesForGender(childGender, true)),
         role: `Child of ${parents.map((parent) => parent.name).join(' and ')}`,
         emoji: '🧒',
         rel: 50,
@@ -46,7 +48,15 @@ function resolveExpectedChild(state: GameState, expected: ExpectedChild): void {
   const generatedParentIds = [...(child.parentIds ?? [])];
   child.parentIds = expected.route === 'wardship' ? [] : parents.map((parent) => parent.id);
   child.guardianIds = expected.route === 'wardship' ? parents.map((parent) => parent.id) : [];
-  child.lineageStatus = expected.route === 'pregnancy' ? 'marital' : expected.route === 'adoption' ? 'adopted' : 'ward';
+  child.lineageStatus = expected.route === 'pregnancy' ? 'marital'
+    : expected.route === 'illegitimate' ? 'illegitimate'
+      : expected.route === 'adoption' ? 'adopted' : 'ward';
+  if (expected.route === 'illegitimate') {
+    child.role = 'Thy Illegitimate Child';
+    child.trait = 'Born of scandal';
+    child.bio = `Born to ${parents.map((parent) => parent.name).join(' and ')} outside marriage. The truth belongs to the child, whatever the village calls it.`;
+    child.isHeir = false;
+  }
   child.birthFamilyId = expected.route === 'wardship' ? generatedFamilyId : expected.familyId;
   child.householdId = expected.householdId;
   child.childDevelopment = { completedMilestones: [], education: 'none', investment: 0, favour: 0 };
@@ -63,7 +73,7 @@ function resolveExpectedChild(state: GameState, expected: ExpectedChild): void {
   if (household) household.memberIds = Array.from(new Set([...household.memberIds, child.id]));
   removeFromGeneratedHome(state, child, expected.route === 'wardship' ? undefined : generatedFamilyId, generatedHouseholdId);
 
-  if (expected.route === 'pregnancy') {
+  if (expected.route === 'pregnancy' || expected.route === 'illegitimate') {
     const mother = parents.find((parent) => parent.gender === 'woman');
     const food = household?.storedFood ?? household?.foodSecurity ?? 50;
     const risk = clamp(8 + state.world.conditions.diseasePressure / 5 + Math.max(0, 35 - food) / 3 + (mother && mother.age > 36 ? 8 : 0), 4, 45) / 100;
@@ -80,7 +90,9 @@ function resolveExpectedChild(state: GameState, expected: ExpectedChild): void {
     }
   }
   expected.status = 'resolved';
-  const routeText = expected.route === 'pregnancy' ? 'is born' : expected.route === 'adoption' ? 'is adopted into the household' : 'enters the household as a ward';
+  const routeText = expected.route === 'pregnancy' ? 'is born'
+    : expected.route === 'illegitimate' ? 'is born outside marriage'
+      : expected.route === 'adoption' ? 'is adopted into the household' : 'enters the household as a ward';
   pushFeed(state, 'WORLD · FAMILY', C.good, `${child.name} ${routeText}. The household changes around a new young life.`, 'good', {}, child.id, 'world');
   appendWorldHistory(state, { id: `history_child_${state.nextId++}`, year: state.world.currentYear, type: expected.route, participantIds: [child.id, ...parents.map((parent) => parent.id)], familyIds: Array.from(new Set([expected.familyId, child.birthFamilyId].filter((id): id is string => Boolean(id)))), causes: [expected.sourceChoiceId ?? 'family formation'], summary: `${child.name} ${routeText}.`, salience: 4 });
 }
@@ -168,6 +180,20 @@ function expectChild(state: GameState, route: ExpectedChild['route'], parents: W
     status: 'expected',
     sourceChoiceId: route === 'pregnancy' ? 'try_for_child' : 'adopt_child',
   });
+}
+
+/** A secret lover may conceive, with the child retaining both true parents. */
+export function tryForAffairChild(state: GameState, partnerId: string): boolean {
+  const player = state.world.characters[state.playerCharacterId];
+  const partner = state.world.characters[partnerId];
+  const mother = childbearingPartner(state, partnerId);
+  if (!player || !partner || !mother) return false;
+  if (hasPendingArrival(state, [state.playerCharacterId, partnerId])) return false;
+  // A single night is less deliberate than a year spent trying, but the risk
+  // is substantial enough to make the choice matter.
+  if (!chance(conceptionChance(mother) * 0.55)) return false;
+  expectChild(state, 'illegitimate', [player, partner], mother);
+  return true;
 }
 
 /**

@@ -4,7 +4,7 @@ import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
 import { GameState, KinMember, RelationFilter } from '@/types/game';
 import { KinAction } from '@/engine/kinEngine';
-import { contextualActions, isPlayerSpouse, perspectives, readRelationship } from '@/engine/relationshipEngine';
+import { contextualActions, isAffairWith, isPlayerSpouse, perspectives, readRelationship } from '@/engine/relationshipEngine';
 import { isFamilyTie, KinshipTie, kinshipGeneration, kinshipLabel, kinshipMap } from '@/engine/kinship';
 import { careerById } from '@/data/careers';
 import { relColor, relLabel } from '@/state/viewModel';
@@ -68,6 +68,10 @@ const ACTION_META: Record<KinAction, ActionMeta> = {
   court: { group: 'romance', label: 'COURT', hint: 'build mutual love', bg: C.charm, sd: C.charmDark },
   propose: { group: 'romance', label: 'PROPOSE', hint: 'trust + attraction', bg: C.purple, sd: C.purpleDark },
   seduce: { group: 'romance', label: 'SEDUCE', hint: 'an affair · someone gets hurt', bg: C.purple, sd: C.purpleDark },
+  secret_meeting: { group: 'romance', label: 'MEET IN SECRET', hint: 'love + discovery risk', bg: C.purple, sd: C.purpleDark },
+  spend_night: { group: 'romance', label: 'SPEND THE NIGHT', hint: 'passion · discovery risk', bg: C.health, sd: C.healthDark },
+  promise_future: { group: 'romance', label: 'PROMISE A FUTURE', hint: 'deepen love · or break trust', bg: C.charm, sd: C.charmDark },
+  elope: { group: 'romance', label: 'RUN AWAY TOGETHER', hint: 'leave spouses · marry · scandal', bg: C.health, sd: C.healthDark },
   end_affair: { group: 'romance', label: 'END THE AFFAIR', hint: 'before it is found out', bg: C.light, sd: C.blue },
   accept_proposal: { group: 'romance', label: 'ACCEPT PROPOSAL', hint: 'marry by choice', bg: C.faith, sd: C.faithDark },
   reject_proposal: { group: 'romance', label: 'REFUSE PROPOSAL', hint: 'remain unmarried', bg: C.health, sd: C.healthDark },
@@ -104,6 +108,9 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
     const career = careerById(detail.occupation.careerId);
     const actions = contextualActions(state, detail);
     const tie = ties[detail.id] ?? 'acquaintance';
+    const spouse = detail.spouseId ? state.world.characters[detail.spouseId] : undefined;
+    const affair = relation.flags.includes('affair');
+    const affairExposed = relation.sharedMemories.includes('affair_exposed');
     return (
       <ScrollView style={{ flex: 1, backgroundColor: C.sky }} contentContainerStyle={{ padding: 11, paddingBottom: 16, gap: 9 }}>
         <PixelButton bg={C.blue} shadow={C.blueDeep} onPress={onBack} style={{ alignSelf: 'flex-start' }} innerStyle={{ paddingHorizontal: 8, paddingVertical: 6 }}>
@@ -120,6 +127,18 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
             </View>
             <PixelText font="body" size={15} color="#dbe9ff" style={{ marginTop: 4 }}>{detail.role} · {detail.age} winters</PixelText>
             <PixelText font="body" size={14} color="#a9c2df">{detail.pronouns.subject}/{detail.pronouns.object} · {career?.title ?? 'No occupation'} · {detail.gold}g</PixelText>
+            {spouse?.alive ? (
+              <PixelText font="pixel" size={7} color={C.charm} style={{ marginTop: 3 }}>
+                MARRIED TO {spouse.id === state.playerCharacterId ? 'YOU' : spouse.name.toUpperCase()}
+              </PixelText>
+            ) : (
+              <PixelText font="pixel" size={7} color="#9fc4e8" style={{ marginTop: 3 }}>UNMARRIED</PixelText>
+            )}
+            {affair && (
+              <PixelText font="pixel" size={7} color={affairExposed ? C.health : C.purple} style={{ marginTop: 3 }}>
+                {affairExposed ? 'YOUR AFFAIR IS EXPOSED' : 'YOUR SECRET LOVER'}
+              </PixelText>
+            )}
             {!detail.alive && <PixelText font="pixel" size={8} color={C.health}>DECEASED</PixelText>}
           </View>
         </View>
@@ -171,6 +190,8 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
         {!treeOpen && kin.map((person) => {
           const tie = ties[person.id] ?? 'acquaintance';
           const family = isFamilyTie(tie);
+          const spouse = person.spouseId ? state.world.characters[person.spouseId] : undefined;
+          const affair = isAffairWith(state, person.id);
           return <PixelButton key={person.id} bg={C.parch} shadow={C.parchSd} light={C.parchSl} outline={C.parchBorder} onPress={() => onOpen(person.id)} innerStyle={{ paddingHorizontal: 9, paddingVertical: 8 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 9 }}>
               <KinIcon kin={person} size={32} fallbackSize={19} />
@@ -184,6 +205,11 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
                 <PixelText font="body" size={13} color={C.textMuted} style={{ marginTop: 2 }}>
                   {person.alive ? `${person.role} · ${person.age} winters` : `${person.role} · deceased`}
                 </PixelText>
+                {person.alive && (affair || spouse?.alive) && (
+                  <PixelText font="body" size={12} color={affair ? C.purpleDark : C.textMuted}>
+                    {affair ? 'Your secret lover' : `Married to ${spouse!.id === state.playerCharacterId ? 'you' : spouse!.name}`}
+                  </PixelText>
+                )}
               </View>
               <View style={{ alignItems: 'flex-end' }}><PixelText font="pixel" size={8} color={relColor(person.rel)}>{person.rel}%</PixelText><PixelText font="body" size={12} color={C.textMuted}>{relLabel(person.rel)}</PixelText></View>
             </View>
@@ -204,7 +230,7 @@ function ActionBoard({ state, actions, kin, onInteract }: { state: GameState; ac
   // The board used to open on KINDNESS for everybody, which hid TRY FOR A CHILD
   // behind an unpressed tab on the one screen a player goes looking for it.
   // Open where this particular relationship's business actually is.
-  const opening: ActionGroup = isPlayerSpouse(state, kin) ? 'romance'
+  const opening: ActionGroup = isPlayerSpouse(state, kin) || isAffairWith(state, kin.id) ? 'romance'
     : actions.includes('educate_child') || actions.includes('name_heir') ? 'family'
       : available[0]?.id ?? 'warm';
   const [group, setGroup] = React.useState<ActionGroup>(available.some((item) => item.id === opening) ? opening : available[0]?.id ?? 'warm');
@@ -316,6 +342,6 @@ function Dimension({ label, value }: { label: string; value: number }) {
 }
 
 function KinIcon({ kin, size, fallbackSize }: { kin: KinMember; size: number; fallbackSize: number }) {
-  const asset = kinIconAsset(kin.id, kin.kind);
+  const asset = kinIconAsset(kin.id, kin.kind, kin.gender, kin.age);
   return asset ? <Image source={asset} resizeMode="contain" style={{ width: size, height: size }} /> : <PixelText size={fallbackSize}>{kin.emoji}</PixelText>;
 }

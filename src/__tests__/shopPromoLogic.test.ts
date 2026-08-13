@@ -1,6 +1,7 @@
 import {
   SHOP_PROMO_ENTRY_FREQUENCY,
   SHOP_PROMO_MESSAGES,
+  SHOP_PROMO_PATIENCE_ENTRIES,
   shopPromoMessageIndex,
   shouldPromptShopPromo,
 } from '@/services/shopPromoLogic';
@@ -14,7 +15,7 @@ function goodMomentState() {
 }
 
 describe('shopPromoLogic.shouldPromptShopPromo', () => {
-  it('waits for 30 entries since the previous shop promo', () => {
+  it('opens on a good moment from the minimum cadence', () => {
     const due = { ...DEFAULT_META, totalEntries: SHOP_PROMO_ENTRY_FREQUENCY };
 
     expect(shouldPromptShopPromo({ ...due, totalEntries: due.totalEntries - 1 }, goodMomentState(), false)).toBe(false);
@@ -22,18 +23,18 @@ describe('shopPromoLogic.shouldPromptShopPromo', () => {
   });
 
   it('uses its own recurring cadence after a promo is shown', () => {
-    const meta = { ...DEFAULT_META, totalEntries: 74, shopPromoLastEntry: 45, shopPromoCount: 2 };
+    const meta = { ...DEFAULT_META, totalEntries: 64, shopPromoLastEntry: 45, shopPromoCount: 2 };
     expect(shouldPromptShopPromo(meta, goodMomentState(), false)).toBe(false);
-    expect(shouldPromptShopPromo({ ...meta, totalEntries: 75 }, goodMomentState(), false)).toBe(true);
+    expect(shouldPromptShopPromo({ ...meta, totalEntries: 65 }, goodMomentState(), false)).toBe(true);
   });
 
   it('is independent of whether the one-time review prompt was shown', () => {
-    const meta = { ...DEFAULT_META, totalEntries: 30, reviewPrompted: true };
+    const meta = { ...DEFAULT_META, totalEntries: SHOP_PROMO_ENTRY_FREQUENCY, reviewPrompted: true };
     expect(shouldPromptShopPromo(meta, goodMomentState(), false)).toBe(true);
   });
 
   it('requires a good player moment and a clear screen', () => {
-    const meta = { ...DEFAULT_META, totalEntries: 30 };
+    const meta = { ...DEFAULT_META, totalEntries: SHOP_PROMO_ENTRY_FREQUENCY };
     const bad = goodMomentState();
     bad.feed[0].tone = 'bad';
     expect(shouldPromptShopPromo(meta, bad, false)).toBe(false);
@@ -49,6 +50,15 @@ describe('shopPromoLogic.shouldPromptShopPromo', () => {
     const dead = goodMomentState();
     dead.dead = true;
     expect(shouldPromptShopPromo(meta, dead, false)).toBe(false);
+  });
+
+  it('guarantees a promo by the hard deadline even without a good outcome', () => {
+    const bad = goodMomentState();
+    bad.feed[0].tone = 'bad';
+    const deadline = SHOP_PROMO_ENTRY_FREQUENCY + SHOP_PROMO_PATIENCE_ENTRIES;
+
+    expect(shouldPromptShopPromo({ ...DEFAULT_META, totalEntries: deadline - 1 }, bad, false)).toBe(false);
+    expect(shouldPromptShopPromo({ ...DEFAULT_META, totalEntries: deadline }, bad, false)).toBe(true);
   });
 
   it('never promotes the shop to an existing premium player', () => {

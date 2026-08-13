@@ -10,7 +10,7 @@
 
 import { GameState, WorldCharacter } from '@/types/game';
 import { addMemory, appendWorldHistory, pushFeed } from './gameState';
-import { applyRelationshipShift, relationshipWith } from './relationshipEngine';
+import { applyRelationshipShift, relationshipWith } from './relationshipState';
 import { killKin } from './kinFactory';
 import { chance, clamp, pick, rnd } from './random';
 import { C } from '@/theme/theme';

@@ -12,7 +12,7 @@ import { addMemory, addMoney, addTag, pushFeed, removeTag } from './gameState';
 import { clamp } from './random';
 import { promote, demote } from './pathProgression';
 import { killKin as killKinMember, spawnKin } from './kinFactory';
-import { applyRelationshipShift } from './relationshipEngine';
+import { applyRelationshipShift } from './relationshipState';
 
 // Normal deeds earn rank slowly; explicit promotion-claim scenes keep full value.
 const RANK_PROGRESS_GAIN_MULTIPLIER = 0.65;

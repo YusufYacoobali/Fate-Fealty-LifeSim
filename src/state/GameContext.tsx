@@ -83,18 +83,11 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     }
   }, [game.loaded, meta.ready, meta.metaRef, game.state.lifeNo]);
 
-  const shopPromo = useShopPromoGate(game.state, game.loaded, meta, {
-    // Never sell Pro to someone who currently has it, sample included.
-    eligible: premium.premiumAccessState === 'inactive' && !proAccess.trialActive,
-    blocked:
-      creation.creating
-      || onboardingVisible
-      || progression.newAchievements.length > 0
-      || !!retention.dailyRewardStatus
-      || !!retention.returnRumour
-      || proAccess.trialNoticeVisible,
-    reviewVisible: review.reviewVisible,
-  });
+    const shopPromo = useShopPromoGate(game.state, game.loaded, meta, {
+      // Never sell Pro to someone who currently has it, sample included.
+      eligible: premium.premiumAccessState === 'inactive' && !proAccess.trialActive,
+      reviewVisible: review.reviewVisible,
+    });
 
   // Character creation decides the NEXT life's access, which differs from the
   // outgoing life's at exactly the moment the free sample starts or is spent.

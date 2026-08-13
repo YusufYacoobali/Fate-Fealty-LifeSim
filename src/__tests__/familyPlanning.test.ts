@@ -40,6 +40,9 @@ describe('family planning routes', () => {
     state.world.characters.agnes.age = 60;
     expect(childbearingPartner(state, 'agnes')).toBeNull();
     expect(familyPlanningRoute(state, 'agnes')).toBe('adoption');
+    expect(contextualActions(state, state.kin.find((kin) => kin.id === 'agnes')!)).toEqual(
+      expect.arrayContaining(['try_for_child', 'adopt_child']),
+    );
   });
 
   it('offers nothing to someone who is not the player\'s spouse', () => {

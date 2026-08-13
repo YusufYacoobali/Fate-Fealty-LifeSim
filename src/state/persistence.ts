@@ -7,6 +7,7 @@ import { recoverSavedContent } from '@/engine/contentRecovery';
 import { CURRENT_CONTENT_VERSION } from '@/content/contentVersion';
 import { syncPlayerFromWorld } from '@/engine/gameState';
 import { createStateDefaults } from '@/engine/stateDefaults';
+import { correctedNpcName } from '@/data/names';
 
 const SAVE_KEY = 'mls:world:v4';
 const LEGACY_SAVE_KEY = 'mls:world:v3';
@@ -180,6 +181,9 @@ export function normalizeGameState(parsed: GameState): GameState {
     character.lineageStatus ??= 'marital';
     character.childDevelopment ??= { completedMilestones: [], education: 'none', investment: 0, favour: 0 };
     character.factionInfluence ??= 0;
+    if (character.id !== playerCharacterId) {
+      character.name = correctedNpcName(character.name, character.gender, character.id, character.age < 14);
+    }
   }
   const canonicalKin = Object.values(characters).filter((character) => character.id !== playerCharacterId);
 

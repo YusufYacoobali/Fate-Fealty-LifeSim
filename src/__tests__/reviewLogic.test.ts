@@ -34,7 +34,7 @@ describe('reviewLogic.shouldPromptReview', () => {
   });
 
   it('does not prompt below the entry threshold', () => {
-    expect(shouldPromptReview({ ...DEFAULT_META, totalEntries: 24 }, goodMomentState())).toBe(false);
+    expect(shouldPromptReview({ ...DEFAULT_META, totalEntries: REVIEW_ENTRY_THRESHOLD - 1 }, goodMomentState())).toBe(false);
   });
 
   it('stops once the lifetime ask limit is reached', () => {
@@ -66,15 +66,14 @@ describe('reviewLogic.shouldPromptReview', () => {
     expect(shouldPromptReview(ready, badMomentState())).toBe(false);
   });
 
-  it('settles for a non-bad moment once patience runs out', () => {
+  it('guarantees the prompt once patience runs out, even after a bad beat', () => {
     const patient = { ...DEFAULT_META, totalEntries: REVIEW_ENTRY_THRESHOLD + REVIEW_PATIENCE_ENTRIES };
     const neutral = makeState();
     neutral.feed = [{ id: 1, age: 30, tag: 'HOUSEHOLD', text: 'Costs were paid.', tone: 'plain', source: 'player' }];
 
     expect(shouldPromptReview({ ...patient, totalEntries: patient.totalEntries - 1 }, neutral)).toBe(false);
     expect(shouldPromptReview(patient, neutral)).toBe(true);
-    // Patience never overrides a sour moment.
-    expect(shouldPromptReview(patient, badMomentState())).toBe(false);
+    expect(shouldPromptReview(patient, badMomentState())).toBe(true);
   });
 });
 

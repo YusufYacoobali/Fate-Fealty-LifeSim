@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { GameState } from '@/types/game';
 
+const completedGoalIds = (tags: string[]) =>
+  new Set(tags.filter((tag) => tag.startsWith('goal_done_')).map((tag) => tag.slice('goal_done_'.length)));
+
 /**
  * Watches for a life's ambition being fulfilled.
  *
@@ -13,21 +16,26 @@ import { GameState } from '@/types/game';
  * celebrating it, so the popup only ever fires on the year it was earned.
  */
 export function useGoalCelebration(state: GameState, loaded: boolean) {
-  const previousDone = useRef(state.goalDone);
+  const previousCompleted = useRef(completedGoalIds(state.tags));
   const previousLife = useRef(state.lifeNo);
   const previousPlayer = useRef(state.playerCharacterId);
   const [achievedGoalId, setAchievedGoalId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!loaded) return;
-    const sameCharacter = state.lifeNo === previousLife.current && state.playerCharacterId === previousPlayer.current;
-    if (sameCharacter && state.goalDone && !previousDone.current && !state.dead && state.goalId) {
-      setAchievedGoalId(state.goalId);
+    const completed = completedGoalIds(state.tags);
+    if (!loaded) {
+      previousCompleted.current = completed;
+      return;
     }
-    previousDone.current = state.goalDone;
+    const sameCharacter = state.lifeNo === previousLife.current && state.playerCharacterId === previousPlayer.current;
+    if (sameCharacter && !state.dead) {
+      const newlyCompleted = [...completed].find((id) => !previousCompleted.current.has(id));
+      if (newlyCompleted) setAchievedGoalId(newlyCompleted);
+    }
+    previousCompleted.current = completed;
     previousLife.current = state.lifeNo;
     previousPlayer.current = state.playerCharacterId;
-  }, [state.goalDone, state.goalId, state.lifeNo, state.playerCharacterId, state.dead, loaded]);
+  }, [state.tags, state.lifeNo, state.playerCharacterId, state.dead, loaded]);
 
   const dismissGoal = useCallback(() => setAchievedGoalId(null), []);
 

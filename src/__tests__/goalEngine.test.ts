@@ -48,13 +48,16 @@ describe('life-goal assignment', () => {
 });
 
 describe('life-goal completion', () => {
-  it('marks the goal done and rewards it once when satisfied', () => {
+  it('marks the goal completed, rewards it once, and immediately assigns another', () => {
     const s = makeState({ age: 20, gold: 200 });
     s.goalId = 'fortune';
     const repBefore = s.reputation;
     checkLifeGoal(s);
-    expect(s.goalDone).toBe(true);
+    expect(s.goalDone).toBe(false);
     expect(s.tags).toContain('goal_done');
+    expect(s.tags).toContain('goal_done_fortune');
+    expect(s.goalId).not.toBeNull();
+    expect(s.goalId).not.toBe('fortune');
     expect(s.reputation).toBe(Math.min(100, repBefore + 10));
 
     // Idempotent: a second check doesn't reward again.
@@ -68,6 +71,15 @@ describe('life-goal completion', () => {
     s.goalId = 'fortune';
     checkLifeGoal(s);
     expect(s.goalDone).toBe(false);
+  });
+
+  it('does not depend on dismissing the celebration to advance', () => {
+    const s = makeState({ age: 20, gold: 200 });
+    s.goalId = 'fortune';
+    checkLifeGoal(s);
+    expect(s.goalDone).toBe(false);
+    expect(s.goalId).not.toBeNull();
+    expect(s.goalId).not.toBe('fortune');
   });
 });
 

@@ -1,9 +1,10 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Image, View } from 'react-native';
 import { PixelText } from './ui/PixelText';
 import { StatBar } from './ui/StatBar';
 import { GoalView } from '@/engine/goalEngine';
 import { C } from '@/theme/theme';
+import { goalIconAsset } from '@/assets/generatedAssets';
 
 /**
  * A slim always-visible banner showing the player's current life ambition and
@@ -11,6 +12,7 @@ import { C } from '@/theme/theme';
  */
 export function GoalBanner({ goal }: { goal: GoalView }) {
   const pct = Math.round(goal.progress * 100);
+  const icon = goalIconAsset(goal.id);
   return (
     <View style={{ paddingHorizontal: 12, paddingTop: 6, backgroundColor: C.blueDeep }}>
       <View
@@ -24,15 +26,18 @@ export function GoalBanner({ goal }: { goal: GoalView }) {
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
           <PixelText font="pixel" size={7} color={goal.done ? C.faith : C.purple}>
-            {goal.done ? '✓ AMBITION' : '🎯 AMBITION'}
+            AMBITION
           </PixelText>
           <PixelText font="body" size={15} color={C.creamBlue}>
             {goal.done ? 'FULFILLED' : `${pct}%`}
           </PixelText>
         </View>
-        <PixelText font="body" size={15} color={C.cream} numberOfLines={1} style={{ marginBottom: 5 }}>
-          {goal.emoji} {goal.title}
-        </PixelText>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 5 }}>
+          {icon && <Image source={icon} resizeMode="contain" style={{ width: 23, height: 23 }} />}
+          <PixelText font="body" size={15} color={C.cream} numberOfLines={1} style={{ flex: 1 }}>
+            {goal.title}
+          </PixelText>
+        </View>
         <StatBar
           value={pct}
           color={goal.done ? C.faith : C.purple}

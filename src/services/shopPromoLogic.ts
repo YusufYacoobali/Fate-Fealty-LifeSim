@@ -2,7 +2,11 @@ import type { AppMeta } from '@/state/appMeta';
 import type { GameState } from '@/types/game';
 import { hasRecentGoodOutcome } from './reviewLogic';
 
-export const SHOP_PROMO_ENTRY_FREQUENCY = 30;
+/** A good gameplay beat may open the promo once this many entries have passed. */
+export const SHOP_PROMO_ENTRY_FREQUENCY = 20;
+
+/** Stop waiting for good luck after this many additional entries. */
+export const SHOP_PROMO_PATIENCE_ENTRIES = 10;
 
 export interface ShopPromoMessage {
   heading: string;
@@ -57,7 +61,9 @@ export function shopPromoMessageIndex(shownCount: number): number {
 
 export function shouldPromptShopPromo(meta: AppMeta, state: GameState, premiumUnlocked: boolean): boolean {
   if (premiumUnlocked) return false;
-  if (meta.totalEntries - meta.shopPromoLastEntry < SHOP_PROMO_ENTRY_FREQUENCY) return false;
+  const entriesSincePromo = meta.totalEntries - meta.shopPromoLastEntry;
+  if (entriesSincePromo < SHOP_PROMO_ENTRY_FREQUENCY) return false;
   if (state.dead || state.pendingEvent || state.settingsOpen) return false;
-  return hasRecentGoodOutcome(state);
+  return hasRecentGoodOutcome(state)
+    || entriesSincePromo >= SHOP_PROMO_ENTRY_FREQUENCY + SHOP_PROMO_PATIENCE_ENTRIES;
 }

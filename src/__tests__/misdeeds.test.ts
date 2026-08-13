@@ -3,11 +3,15 @@ import {
   affairPartnerId,
   canSeduce,
   contextualActions,
+  isRomanceEligible,
+  relationMatchesFilter,
   tickAffairs,
 } from '@/engine/relationshipEngine';
 import { assault, blackmail, frameThem, knownSecretOf, murder, spreadRumour, stealFrom } from '@/engine/misdeedEngine';
 import { gameReducer } from '@/state/gameReducer';
 import { spawnKin } from '@/engine/kinFactory';
+import { killKin } from '@/engine/kinFactory';
+import { tickFamilyFormation, tryForAffairChild } from '@/engine/familyFormationEngine';
 import { makeState } from './helpers';
 
 function target(state: GameState, id = 'merek'): WorldCharacter {
@@ -154,11 +158,11 @@ describe('violence', () => {
     }
   });
 
-  it('will never offer violence against close blood', () => {
+  it('allows killing close blood while keeping ordinary violence restricted', () => {
     const s = makeState({ age: 30 });
     const actions = contextualActions(s, s.kin.find((kin) => kin.id === 'mother')!);
     expect(actions).not.toContain('assault');
-    expect(actions).not.toContain('murder');
+    expect(actions).toContain('murder');
     expect(actions).not.toContain('duel');
   });
 
@@ -166,6 +170,16 @@ describe('violence', () => {
     const s = makeState({ age: 30 });
     const actions = contextualActions(s, s.kin.find((kin) => kin.id === 'merek')!);
     expect(actions).toEqual(expect.arrayContaining(['assault', 'murder']));
+  });
+
+  it('unlocks killing at age eleven, not before', () => {
+    const child = makeState({ age: 10 });
+    const targetAtTen = child.kin.find((kin) => kin.id === 'merek')!;
+    expect(contextualActions(child, targetAtTen)).not.toContain('murder');
+
+    child.age = 11;
+    child.world.characters[child.playerCharacterId].age = 11;
+    expect(contextualActions(child, targetAtTen)).toContain('murder');
   });
 });
 
@@ -201,6 +215,46 @@ describe('affairs', () => {
     const actions = contextualActions(s, other);
     expect(actions).toContain('end_affair');
     expect(actions).not.toContain('seduce');
+    expect(actions).toEqual(expect.arrayContaining(['flirt', 'court', 'secret_meeting', 'spend_night', 'promise_future']));
+    expect(relationMatchesFilter(s, other, 'romance')).toBe(true);
+  });
+
+  it('uses a real world spouse and makes the lover single when that spouse dies', () => {
+    const s = makeState({ age: 26, attraction: 'women' });
+    const lover = s.kin.find((kin) => kin.id === 'joan')!;
+    lover.age = 26;
+    lover.gender = 'woman';
+    lover.attraction = 'men';
+    const husband = spawnKin(s, { kind: 'acquaintance', age: 29, gender: 'man', name: 'Hugh' });
+    lover.spouseId = husband.id;
+    husband.spouseId = lover.id;
+
+    expect(canSeduce(s, lover)).toBe(true);
+    expect(s.world.characters[lover.spouseId!]).toBe(husband);
+    killKin(s, husband.id);
+    expect(lover.spouseId).toBeUndefined();
+    expect(isRomanceEligible(s, lover)).toBe(true);
+  });
+
+  it('can produce a genealogically real illegitimate child with a lover', () => {
+    const s = makeState({ age: 26, attraction: 'women' });
+    const lover = s.kin.find((kin) => kin.id === 'joan')!;
+    lover.age = 26;
+    lover.gender = 'woman';
+    lover.attraction = 'men';
+    const relation = Object.values(s.world.relationships).find(
+      (item) => (item.aId === s.playerCharacterId && item.bId === lover.id) || (item.bId === s.playerCharacterId && item.aId === lover.id),
+    )!;
+    relation.flags.push('affair');
+
+    for (let attempt = 0; attempt < 100 && !s.world.expectedChildren.length; attempt += 1) tryForAffairChild(s, lover.id);
+    expect(s.world.expectedChildren[0]?.route).toBe('illegitimate');
+    s.world.currentYear = s.world.expectedChildren[0].dueYear;
+    tickFamilyFormation(s);
+    const child = Object.values(s.world.characters).find((person) => person.lineageStatus === 'illegitimate');
+    expect(child?.parentIds).toEqual(expect.arrayContaining([s.playerCharacterId, lover.id]));
+    expect(child?.role).toBe('Thy Illegitimate Child');
+    expect(child?.isHeir).toBe(false);
   });
 
   it('is eventually discovered, and the spouse reacts', () => {
@@ -213,15 +267,17 @@ describe('affairs', () => {
     const beforeReputation = s.reputation;
 
     // Discovery is a yearly roll; over many years it must land.
-    for (let year = 0; year < 60 && affairPartnerId(s); year += 1) {
+    for (let year = 0; year < 60 && !relation!.sharedMemories.includes('affair_exposed'); year += 1) {
       s.age += 1;
+      s.world.currentYear += 1;
       tickAffairs(s);
     }
 
-    expect(affairPartnerId(s)).toBeNull();
+    expect(affairPartnerId(s)).toBe(other.id);
+    expect(relation!.sharedMemories).toContain('affair_exposed');
     expect(s.tags).toContain('affair_exposed');
     expect(s.reputation).toBeLessThan(beforeReputation);
-    expect(relation!.flags).toContain('feud');
+    expect(contextualActions(s, other)).toContain('end_affair');
   });
 
   it('leaves an unexposed affair alone when there is no spouse to wound', () => {

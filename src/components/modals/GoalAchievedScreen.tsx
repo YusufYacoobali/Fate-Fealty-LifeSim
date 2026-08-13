@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Easing, View, useWindowDimensions } from 'react-native';
+import { Animated, Easing, Image, View, useWindowDimensions } from 'react-native';
 import { goalById } from '@/data/goals';
 import { C } from '@/theme/theme';
 import { ModalBackdrop } from './ModalBackdrop';
 import { PixelButton } from '../ui/PixelButton';
 import { PixelText } from '../ui/PixelText';
+import { goalIconAsset } from '@/assets/generatedAssets';
 
 interface Props {
   goalId: string;
@@ -30,6 +31,7 @@ export function GoalAchievedScreen({ goalId, reducedMotion, onDone }: Props) {
   }, [reducedMotion, rise]);
 
   if (!goal) return null;
+  const icon = goalIconAsset(goal.id);
   const scale = rise.interpolate({ inputRange: [0, 1], outputRange: [0.7, 1] });
 
   return (
@@ -49,11 +51,11 @@ export function GoalAchievedScreen({ goalId, reducedMotion, onDone }: Props) {
         }}
       >
         <PixelText font="pixel" size={compact ? 8 : 9} color={C.good} style={{ textAlign: 'center' }}>
-          ✦ AMBITION FULFILLED ✦
+          AMBITION FULFILLED
         </PixelText>
 
         <Animated.View style={{ transform: [{ scale }], marginVertical: compact ? 12 : 18 }}>
-          <PixelText size={compact ? 46 : 58}>{goal.emoji}</PixelText>
+          {icon && <Image source={icon} resizeMode="contain" style={{ width: compact ? 68 : 82, height: compact ? 68 : 82 }} />}
         </Animated.View>
 
         <PixelText font="pixel" size={compact ? 11 : 14} color={C.good} style={{ textAlign: 'center' }}>

@@ -4,9 +4,19 @@ import { C } from '@/theme/theme';
 
 export function eligibleHeirs(state: GameState): WorldCharacter[] {
   const player = state.world.characters[state.playerCharacterId];
+  // Explicit genealogy is canonical. The relationship fallback recovers early
+  // v3 children whose family tie survived but whose reciprocal ids did not.
+  const legacyFamilyChildren = Object.values(state.world.characters).filter((character) => {
+    if (!character.alive || character.kind !== 'child') return false;
+    return Object.values(state.world.relationships).some((relationship) =>
+      ((relationship.aId === state.playerCharacterId && relationship.bId === character.id)
+        || (relationship.bId === state.playerCharacterId && relationship.aId === character.id))
+      && relationship.flags.includes('family'));
+  });
   const ids = new Set([
     ...(player?.childIds ?? []),
     ...Object.values(state.world.characters).filter((kin) => kin.parentIds?.includes(state.playerCharacterId)).map((kin) => kin.id),
+    ...legacyFamilyChildren.map((kin) => kin.id),
   ]);
   return [...ids]
     .map((id) => state.world.characters[id])

@@ -70,6 +70,7 @@ const ACTIVITY_COSTS = {
   leech: 3, bathhouse: 2, herbalist: 4,
   arrange_gathering: 3, bribe_official: 20, run_caravan: 8, repair_household: 5,
   guild_bargain: 2, host_court: 5,
+  ale_binge: 4, poppy_draught: 6, monkshood_vial: 8,
 } as const satisfies Record<string, number>;
 
 /** Gold an activity requires up front; 0 for activities that cost nothing. */
@@ -106,6 +107,94 @@ function one(lines: readonly string[]): string {
 }
 
 const HANDLERS: Record<string, Handler> = {
+  ale_binge: (s) => {
+    const damage = rnd(14, 32);
+    applyEffects(s, {
+      gold: -ACTIVITY_COSTS.ale_binge,
+      health: -damage,
+      charm: -rnd(2, 8),
+      faith: -2,
+      reputation: -rnd(2, 7),
+      addTags: ['ale_ravaged'],
+      healthCondition: { conditionId: 'gut_sickness', severity: rnd(28, 48) },
+      memory: { tag: 'drank_to_oblivion', weight: 3 },
+    });
+    pushFeed(s, 'DRINK TO OBLIVION', C.bad, `You drink past song, past sense, and well into ruin. Morning takes ${damage} health and leaves the room moving without thee.`, 'bad');
+  },
+  poppy_draught: (s) => {
+    const damage = rnd(22, 46);
+    applyEffects(s, {
+      gold: -ACTIVITY_COSTS.poppy_draught,
+      health: -damage,
+      wits: -rnd(5, 12),
+      charm: -3,
+      addTags: ['poppy_dependent'],
+      healthCondition: { conditionId: 'lung_fever', severity: rnd(34, 58) },
+      memory: { tag: 'lost_to_poppy_draught', weight: 4 },
+    });
+    pushFeed(s, 'POPPY STUPOR', C.purpleDark, `The draught delivers oblivion, then collects ${damage} health in payment. Thy hands shake when the haze lifts.`, 'bad');
+  },
+  reckless_brawl: (s) => {
+    const damage = rnd(38, 68);
+    applyEffects(s, {
+      health: -damage,
+      charm: -rnd(3, 10),
+      reputation: -rnd(6, 14),
+      path: { outlaw: 4 },
+      healthCondition: { conditionId: chance(0.5) ? 'head_injury' : 'broken_bone', severity: rnd(48, 78), diagnosed: true },
+      legal: { suspicion: 24, notoriety: 8, status: 'accused', charge: crimeCharge(s, 'a savage tavern brawl', 48, 85) },
+      memory: { tag: 'fought_the_whole_tavern', weight: 4 },
+    });
+    pushFeed(s, 'THE WHOLE TAVERN', C.bad, `You challenge the room and the room accepts. Boots, stools and flagons take ${damage} health before you reach the floor.`, 'bad');
+  },
+  winter_exposure: (s) => {
+    const damage = rnd(42, 72);
+    applyEffects(s, {
+      health: -damage,
+      healthCondition: { conditionId: 'lung_fever', severity: rnd(55, 82) },
+      addTags: ['exposure_scarred'],
+      memory: { tag: 'slept_in_winter_road', weight: 4 },
+    });
+    pushFeed(s, 'THE WINTER ROAD', C.bad, `You refuse shelter and let the winter road have its way. Dawn costs ${damage} health; breathing itself becomes labour.`, 'bad');
+  },
+  monkshood_vial: (s) => {
+    applyEffects(s, {
+      gold: -ACTIVITY_COSTS.monkshood_vial,
+      health: -100,
+      memory: { tag: 'drank_the_black_vial', weight: 5 },
+    });
+    pushFeed(s, 'THE BLACK VIAL', C.bad, 'You drain the apothecary’s forbidden vial. The world narrows to a cold point and then disappears.', 'bad');
+  },
+  torch_holding: (s) => {
+    const escaped = chance(0.42 + s.stats.wits / 350);
+    const damage = escaped ? rnd(8, 20) : rnd(28, 52);
+    applyEffects(s, escaped ? {
+      gold: rnd(12, 28), health: -damage, reputation: -12, path: { outlaw: 5 },
+      legal: { suspicion: 24, notoriety: 12 }, worldConditions: { prosperity: -4, publicOrder: -5 },
+      memory: { tag: 'burned_a_holding', weight: 5 },
+    } : {
+      gold: -rnd(4, 12), health: -damage, reputation: -22, path: { outlaw: 5 },
+      healthCondition: { conditionId: 'burns', severity: rnd(45, 75), diagnosed: true },
+      legal: { suspicion: 45, notoriety: 20, status: 'awaiting_trial', charge: crimeCharge(s, 'arson against an occupied holding', 82, 92) },
+      worldConditions: { prosperity: -5, publicOrder: -7 }, memory: { tag: 'burned_a_holding', weight: 5 },
+    });
+    pushFeed(s, 'ARSON', C.bad, escaped ? `The holding burns and you flee with stolen plate, losing ${damage} health to smoke and flame.` : `The roof falls while you are still inside. You crawl out burned, recognised, and ${damage} health poorer.`, 'bad');
+  },
+  bloody_raid: (s) => {
+    const success = chance(0.3 + s.stats.health / 300 + s.paths.outlaw / 500);
+    const damage = success ? rnd(18, 38) : rnd(45, 78);
+    applyEffects(s, success ? {
+      gold: rnd(30, 60), health: -damage, reputation: -20, path: { outlaw: 7 },
+      legal: { suspicion: 38, notoriety: 22, status: 'accused', charge: crimeCharge(s, 'leading a murderous raid', 88, 72) },
+      worldConditions: { prosperity: -6, publicOrder: -8 }, memory: { tag: 'led_a_bloody_raid', weight: 5 },
+    } : {
+      gold: -rnd(8, 20), health: -damage, reputation: -28, path: { outlaw: 6 },
+      healthCondition: { conditionId: 'deep_cut', severity: rnd(55, 88), diagnosed: true },
+      legal: { suspicion: 60, notoriety: 30, status: 'awaiting_trial', charge: crimeCharge(s, 'leading a murderous raid', 95, 96) },
+      worldConditions: { prosperity: -4, publicOrder: -5 }, memory: { tag: 'raid_turned_massacre', weight: 5 },
+    });
+    pushFeed(s, 'BLOODY RAID', C.bad, success ? `The raid returns heavy with coin and blood. Victory still costs ${damage} health and whatever remained of thy good name.` : `The raid becomes a rout. You return hunted, cut open, and ${damage} health nearer the grave.`, 'bad');
+  },
   tavern: (s) => {
     if (s.gold < ACTIVITY_COSTS.tavern) return blocked(s, 'TAVERN', 'You had no coin for ale, so you watched others drink. Bleak.');
     applyEffects(s, { gold: -ACTIVITY_COSTS.tavern, charm: 5, health: -2, faith: -1, path: { court: 1 } });

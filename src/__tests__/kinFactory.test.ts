@@ -2,6 +2,7 @@ import { applyEffects } from '@/engine/consequenceEngine';
 import { killKin, spawnKin } from '@/engine/kinFactory';
 import { buildDeathSummary } from '@/engine/deathEngine';
 import { makeState } from './helpers';
+import { BOY_NAMES, GIRL_NAMES, correctedNpcName } from '@/data/names';
 
 describe('kinFactory', () => {
   it('spawnKin appends a member with a unique id and filled defaults', () => {
@@ -22,6 +23,19 @@ describe('kinFactory', () => {
     expect(spouse.name).toBe('Aderyn');
     expect(spouse.role).toBe('Noble Spouse');
     expect(spouse.rel).toBe(42);
+  });
+
+  it('gives generated children names matching their gender', () => {
+    const s = makeState();
+    const daughter = spawnKin(s, { kind: 'child', gender: 'woman' });
+    const son = spawnKin(s, { kind: 'child', gender: 'man' });
+    expect(GIRL_NAMES).toContain(daughter.name);
+    expect(BOY_NAMES).toContain(son.name);
+  });
+
+  it('repairs an opposite-gender legacy child name deterministically', () => {
+    expect(correctedNpcName('Gilbert', 'woman', 'kin_42', true)).toBe(correctedNpcName('Gilbert', 'woman', 'kin_42', true));
+    expect(GIRL_NAMES).toContain(correctedNpcName('Gilbert', 'woman', 'kin_42', true));
   });
 
   it('killKin by id marks the member deceased', () => {

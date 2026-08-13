@@ -61,8 +61,15 @@ export const ANNUAL_MESSAGES: AnnualMessage[] = [
   { id: 'father_weather_knee', tag: 'WEATHER', tagColor: C.good, tone: 'plain', text: "Old Cedric's knee predicted rain. It also predicted stew, but only one came true.", effects: { wits: 2, kinRel: { id: 'father', delta: 2 } }, requires: { minAge: 6 } },
 ];
 
-export function pickAnnualMessage(s: GameState): AnnualMessage | null {
-  const eligible = ANNUAL_MESSAGES.filter((m) => meetsCondition(s, m.requires));
+const RECENT_ANNUAL_REPEAT_WINDOW = 8;
+
+export function pickAnnualMessage(s: GameState, excludedIds: readonly string[] = []): AnnualMessage | null {
+  const excluded = new Set(excludedIds);
+  const recentText = new Set(s.feed.slice(-RECENT_ANNUAL_REPEAT_WINDOW).map((entry) => entry.text));
+  const eligible = ANNUAL_MESSAGES.filter((m) =>
+    !excluded.has(m.id)
+    && !recentText.has(m.text)
+    && meetsCondition(s, m.requires));
   if (eligible.length === 0) return null;
   return pickWeighted(eligible, (m) => m.weight ?? 1);
 }

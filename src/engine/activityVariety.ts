@@ -9,6 +9,8 @@ import { C } from '@/theme/theme';
  * are intentionally excluded: their own outcomes already provide the trade-off.
  */
 const ROUTINE_ACTIVITIES = new Set([
+  'tavern',
+  'feast',
   'fair',
   'fields',
   'blacksmith',
@@ -16,6 +18,9 @@ const ROUTINE_ACTIVITIES = new Set([
   'church',
   'pilgrimage',
   'train',
+  'leech',
+  'bathhouse',
+  'herbalist',
   'village_service',
   'gather_fuel',
   'manage_workshop',

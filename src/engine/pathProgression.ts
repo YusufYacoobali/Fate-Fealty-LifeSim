@@ -10,6 +10,7 @@
 
 import { GameState, PathKey } from '@/types/game';
 import { RANKS } from '@/data/ranks';
+import { HOLDING_UNLOCK_AGE } from '@/data/holding';
 import { addMemory, pushFeed } from './gameState';
 import { C } from '@/theme/theme';
 
@@ -180,12 +181,14 @@ export function standingContributions(s: GameState): StandingContribution[] {
   if (s.stats.wits >= 70) add('letters and learning', 1);
   if (s.stats.faith >= 70) add('a reputation for piety', 1);
 
-  // A thriving estate is visible proof of competence; a failing one, of the
-  // opposite. This is the Holding's route into the class ladder.
-  const holdingFloor = Math.min(s.holding.stores, s.holding.security, s.holding.loyalty);
-  if (holdingFloor >= 75) add('a flourishing holding', 3);
-  else if (holdingFloor >= 50) add('a well-kept holding', 1);
-  else if (holdingFloor < 20) add('a holding falling apart', -3);
+  // Regents hold the land until the sixth winter. Before then the estate must
+  // not quietly earn social standing for a child who cannot yet manage it.
+  if (s.age >= HOLDING_UNLOCK_AGE) {
+    const holdingFloor = Math.min(s.holding.stores, s.holding.security, s.holding.loyalty);
+    if (holdingFloor >= 75) add('a flourishing holding', 3);
+    else if (holdingFloor >= 50) add('a well-kept holding', 1);
+    else if (holdingFloor < 20) add('a holding falling apart', -3);
+  }
 
   const standings = Object.values(s.world.factions).map((faction) => faction.playerStanding);
   const bestFaction = Math.max(0, ...standings);
@@ -227,8 +230,8 @@ function holdingStandingLine(items: StandingContribution[]): string {
 }
 
 function explainStanding(s: GameState, items: StandingContribution[], delta: number): void {
-  const hasHoldingSignal = items.some((item) => item.label.includes('holding'));
-  if (Math.abs(delta) < 2 && !hasHoldingSignal) return;
+  const strongHoldingSignal = items.some((item) => item.label.includes('holding') && Math.abs(item.delta) >= 3);
+  if (Math.abs(delta) < 2 && !strongHoldingSignal) return;
 
   const reasons = humanReasons(items, delta >= 0);
   const reasonText = reasons.length === 0
@@ -254,7 +257,7 @@ function explainStanding(s: GameState, items: StandingContribution[], delta: num
       `The realm's opinion of thee has developed concerns.${reasonText}${holdingText}`,
       'bad',
     );
-  } else if (holdingText) {
+  } else if (holdingText && strongHoldingSignal) {
     pushFeed(
       s,
       'STANDING ↔',

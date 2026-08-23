@@ -1,5 +1,6 @@
 import { GameState, PathKey, StatKey } from '@/types/game';
 import { pushFeed } from './gameState';
+import { goalById } from '@/data/goals';
 import { C } from '@/theme/theme';
 
 /**
@@ -43,6 +44,7 @@ export interface ActivityRewardSnapshot {
   paths: Record<PathKey, number>;
   holding: { stores: number; security: number; loyalty: number };
   income: number;
+  goalId: string | null;
 }
 
 export function captureActivityRewards(s: GameState): ActivityRewardSnapshot {
@@ -58,6 +60,7 @@ export function captureActivityRewards(s: GameState): ActivityRewardSnapshot {
       loyalty: s.holding.loyalty,
     },
     income: s.income,
+    goalId: s.goalId,
   };
 }
 
@@ -102,6 +105,12 @@ export function applyActivityDiminishingReturns(
   s.world.repetitionLedger[key] = use;
   const multiplier = rewardMultiplier(use);
   if (multiplier >= 1) return s;
+
+  // doActivity checks ambitions before returning. If this exact action has just
+  // fulfilled the ambition that was active when it began, honour the moment in
+  // full rather than trimming the state underneath an already-earned reward.
+  const activeGoal = before.goalId ? goalById(before.goalId) : undefined;
+  if (activeGoal?.done(s)) return s;
 
   const originalGold = s.gold;
   s.gold = trimPositiveGain(before.gold, s.gold, multiplier);

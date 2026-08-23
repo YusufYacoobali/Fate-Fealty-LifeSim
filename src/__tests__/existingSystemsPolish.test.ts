@@ -77,6 +77,17 @@ describe('existing-system polish', () => {
     expect(routineActivityAvailable(s, 'village_service')).toBe(false);
   });
 
+  it('removes a mastery announcement if diminishing returns leave progress below mastery', () => {
+    const s = makeState({ age: 20 });
+    s.playerRun.roleProgress.commoner = 48;
+    s.world.repetitionLedger['activity-year:20:village_service'] = 4; // fifth use keeps only 25%
+
+    const after = gameReducer(s, { type: 'DO_ACTIVITY', id: 'village_service' });
+
+    expect(after.playerRun.roleProgress.commoner).toBe(49);
+    expect(after.feed.some((entry) => entry.tag === 'COMMONER MASTERY')).toBe(false);
+  });
+
   it('checks ambitions after diminished rewards, not before', () => {
     const s = makeState({ age: 20 });
     s.goalId = 'scholar';
@@ -108,7 +119,7 @@ describe('existing-system polish', () => {
     s.world.repetitionLedger['activity-year:22:rank_duty'] = 3;
 
     const after = gameReducer(s, { type: 'CAREER_ACTION', action: 'rank_duty' });
-    expect(after.rankProgress).toBe(12);
+    expect(after.rankProgress).toBe(13); // +5 becomes +3 at 50%
     expect(after.stats.charm).toBe(51);
 
     after.world.repetitionLedger['activity-year:22:rank_duty'] = MAX_ROUTINE_ACTIVITY_USES;
@@ -168,6 +179,20 @@ describe('existing-system polish', () => {
     expect(strong.occupation.performance).toBeGreaterThan(weak.occupation.performance);
   });
 
+  it('keeps the visible work wage equal to the contextual payout', () => {
+    const s = makeState({ age: 28, gold: 20 });
+    s.occupation = { careerId: 'trader', experience: 40, performance: 60, workedThisYear: 0, guildStanding: 80 };
+    s.world.conditions.prosperity = 80;
+    s.world.factions.guilds.playerStanding = 40;
+    const beforeGold = s.gold;
+
+    const after = gameReducer(s, { type: 'CAREER_ACTION', action: 'work' });
+    const workLine = [...after.feed].reverse().find((entry) => entry.tag === 'WORK');
+    const shown = Number(workLine?.text.match(/wages: (\d+)g\.$/)?.[1]);
+
+    expect(shown).toBe(after.gold - beforeGold);
+  });
+
   it('makes career training reinforce the profession instead of only generic wits', () => {
     const s = makeState({ age: 22 });
     s.occupation = { careerId: 'guard', experience: 20, performance: 55, workedThisYear: 0 };
@@ -200,6 +225,17 @@ describe('existing-system polish', () => {
     const standing = [...s.feed].reverse().find((entry) => entry.tag.startsWith('STANDING'));
     expect(standing?.text).toContain('flourishing holding');
     expect(standing?.text).toContain('lifting thy station');
+  });
+
+  it('names security when security is the holding weakness hurting station', () => {
+    const s = makeState({ age: 25, rankProgress: 20 });
+    s.paths = { martial: 0, court: 0, church: 0, labour: 10, outlaw: 0 };
+    s.holding = { ...s.holding, stores: 80, security: 10, loyalty: 80 };
+
+    tickProgression(s);
+
+    expect(s.feed.at(-1)?.text).toContain('neglected security');
+    expect(s.feed.at(-1)?.text).toContain('higher station');
   });
 
   it('still explains a strong holding when its effect is cancelled by other pressures', () => {

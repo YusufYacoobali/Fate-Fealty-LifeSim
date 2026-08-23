@@ -221,12 +221,17 @@ function humanReasons(items: StandingContribution[], positive: boolean): string[
     .map((item) => item.label);
 }
 
-function holdingStandingLine(items: StandingContribution[]): string {
+function holdingStandingLine(s: GameState, items: StandingContribution[]): string {
   const holding = items.find((item) => item.label.includes('holding'));
   if (!holding) return '';
   if (holding.label === 'a flourishing holding') return ' Thy flourishing holding is doing more than feeding people; it is lifting thy station.';
   if (holding.label === 'a well-kept holding') return ' The holding is tidy enough that important people have begun pretending they noticed first.';
-  return ' Thy holding is falling apart, and unfortunately so is thy argument for higher station.';
+
+  const weakest = (['stores', 'security', 'loyalty'] as const)
+    .reduce((lowest, key) => s.holding[key] < s.holding[lowest] ? key : lowest, 'stores');
+  if (weakest === 'stores') return ' Thy emptying stores make the estate look poorly governed; higher station is becoming harder to argue for.';
+  if (weakest === 'security') return ' Thy neglected security makes the estate look weak; higher station is becoming harder to argue for.';
+  return ' Thy people are openly losing faith in thee; higher station is becoming harder to argue for.';
 }
 
 function explainStanding(s: GameState, items: StandingContribution[], delta: number): void {
@@ -239,7 +244,7 @@ function explainStanding(s: GameState, items: StandingContribution[], delta: num
     : reasons.length === 1
       ? ` The chief reason is ${reasons[0]}.`
       : ` The loudest arguments are ${reasons[0]} and ${reasons[1]}.`;
-  const holdingText = holdingStandingLine(items);
+  const holdingText = holdingStandingLine(s, items);
 
   if (delta > 0) {
     pushFeed(

@@ -64,7 +64,8 @@ const PROMOTION_REASON: Record<string, string> = {
   'respected work': 'respected work',
 };
 
-function promotionReason(s: GameState): string {
+/** A short, player-facing account of what actually earned an ordinary promotion. */
+export function promotionRationale(s: GameState): string {
   const reasons = standingContributions(s)
     .filter((item) => item.delta > 0)
     .sort((a, b) => b.delta - a.delta)
@@ -83,10 +84,12 @@ export function promote(s: GameState, force = false): boolean {
   const next = RANKS[s.rankIdx + 1];
   if (!next) return false;
   if (!force && !canPromote(s)) return false;
-  const reason = promotionReason(s);
+  const reason = force
+    ? 'Fortune, favour, or somebody important has moved the ladder beneath thy feet.'
+    : promotionRationale(s);
   s.rankIdx += 1;
   s.rankProgress = 0;
-  addMemory(s, `promoted_${next.key.toLowerCase()}`, 3);
+  addMemory(s, `promoted_${next.key.toLowerCase()}`, 3, reason);
   pushFeed(
     s,
     `PROMOTED → ${next.short}`,
@@ -250,6 +253,14 @@ function explainStanding(s: GameState, items: StandingContribution[], delta: num
       C.bad,
       `The realm's opinion of thee has developed concerns.${reasonText}${holdingText}`,
       'bad',
+    );
+  } else if (holdingText) {
+    pushFeed(
+      s,
+      'STANDING ↔',
+      C.amber,
+      `Thy standing holds where it is; the good arguments and the bad have cancelled one another.${holdingText}`,
+      'plain',
     );
   }
 }

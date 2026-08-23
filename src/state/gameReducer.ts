@@ -10,12 +10,14 @@ import { addMoney, cloneState, createLife, pushFeed, syncKinToWorld, syncPlayerF
 import { ageUp } from '@/engine/lifeDirector';
 import { applyChoice } from '@/engine/storyGraph';
 import { activityAvailability, doActivity } from '@/engine/activityEngine';
+import { applyActivityDiminishingReturns, captureActivityRewards } from '@/engine/activityVariety';
 import { buyItem, shopAvailability } from '@/engine/shopEngine';
 import { interactKin, KinAction, kinActionAvailability } from '@/engine/kinEngine';
 import { Choice } from '@/types/game';
 import { buyHoldingUpgrade, holdingActionAvailability, holdingUpgradeAvailability, manageHolding } from '@/engine/holdingEngine';
 import { resetActionClock, spendAction, syncActionLimit, timedActionAvailability } from '@/engine/actionClock';
 import { CareerAction, careerActionAvailability, performCareerAction } from '@/engine/careerEngine';
+import { reinforceCareerIdentity } from '@/engine/careerIdentity';
 import { checkDeath } from '@/engine/deathEngine';
 import { runWithWorldRng } from '@/engine/random';
 import { eventById } from '@/engine/eventPicker';
@@ -123,7 +125,16 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'DO_ACTIVITY': {
-      return timed(state, (s) => activityAvailability(s, action.id).available, (s) => doActivity(s, action.id));
+      return timed(
+        state,
+        (s) => activityAvailability(s, action.id).available,
+        (s) => {
+          const before = captureActivityRewards(s);
+          doActivity(s, action.id);
+          applyActivityDiminishingReturns(s, action.id, before);
+          return s;
+        },
+      );
     }
 
     case 'BUY': {
@@ -146,7 +157,11 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       return timed(
         state,
         (s) => careerActionAvailability(s, action.action, action.careerId).available,
-        (s) => performCareerAction(s, action.action, action.careerId),
+        (s) => {
+          performCareerAction(s, action.action, action.careerId);
+          reinforceCareerIdentity(s, action.action);
+          return s;
+        },
       );
     }
 

@@ -68,7 +68,7 @@ export function AchievementToast({ id, onDone }: Props) {
       >
         <PixelText size={22}>{a.emoji}</PixelText>
         <View style={{ flex: 1, minWidth: 0 }}>
-          <PixelText font="pixel" size={6} color={C.charm}>
+          <PixelText font="pixel" size={7} color={C.charm}>
             ACHIEVEMENT UNLOCKED
           </PixelText>
           <PixelText font="body" size={17} color={C.cream} style={{ marginTop: 3 }}>

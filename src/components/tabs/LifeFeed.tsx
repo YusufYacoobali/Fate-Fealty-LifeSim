@@ -42,13 +42,13 @@ export function LifeFeed({ feed, autoScroll, filter, onFilter }: { feed: FeedVM[
           gap: 7,
         }}
       >
-        <PixelText font="pixel" size={7} color={C.blue} style={{ textAlign: 'center' }}>
+        <PixelText font="pixel" size={8} color={C.blue} style={{ textAlign: 'center' }}>
           ~ THY LIFE SO FAR ~
         </PixelText>
         <View style={{ flexDirection: 'row', gap: 5 }}>
           {([['all', 'ALL'], ['player', 'MY LIFE'], ['world', 'WORLD']] as [FeedFilter, string][]).map(([id, label]) => (
             <PixelButton key={id} bg={filter === id ? C.blue : C.lightFill} shadow={filter === id ? C.blueDark : C.paleEdge} onPress={() => onFilter(id)} style={{ flex: 1 }} innerStyle={{ paddingVertical: 6, alignItems: 'center' }}>
-              <PixelText font="pixel" size={6} color={filter === id ? C.white : C.blueDark}>{label}</PixelText>
+              <PixelText font="pixel" size={7} color={filter === id ? C.white : C.blueDark}>{label}</PixelText>
             </PixelButton>
           ))}
         </View>
@@ -78,7 +78,7 @@ export function LifeFeed({ feed, autoScroll, filter, onFilter }: { feed: FeedVM[
                 paddingVertical: 7,
               }}
             >
-              <PixelText font="pixel" size={6} color={e.tagColor}>
+              <PixelText font="pixel" size={7} color={e.tagColor}>
                 {e.tag}
               </PixelText>
               <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: traitIcon ? 7 : 0, marginTop: 3 }}>

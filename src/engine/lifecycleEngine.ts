@@ -40,13 +40,32 @@ export function tickKinMortality(s: GameState): GameState {
 
 /** The `ill` state drains health each year, with a chance to recover. */
 export function tickAilments(s: GameState): GameState {
-  if (!hasTag(s, 'ill')) return s;
-  applyEffects(s, { health: -rnd(3, 7) });
-  if (chance(0.28)) {
-    removeTag(s, 'ill');
-    pushFeed(s, 'RECOVERED', C.good, 'The lingering sickness finally breaks. You feel like a person again.', 'good');
-  } else {
-    pushFeed(s, 'SICKNESS', C.bad, 'The sickness lingers in your bones. You waste another year away.', 'bad');
+  if (hasTag(s, 'ill')) {
+    applyEffects(s, { health: -rnd(3, 7) });
+    if (chance(0.28)) {
+      removeTag(s, 'ill');
+      pushFeed(s, 'RECOVERED', C.good, 'The lingering sickness finally breaks. You feel like a person again.', 'good');
+    } else {
+      pushFeed(s, 'SICKNESS', C.bad, 'The sickness lingers in your bones. You waste another year away.', 'bad');
+    }
+  }
+  if (hasTag(s, 'ale_ravaged')) {
+    applyEffects(s, { health: -rnd(2, 6), charm: -1 });
+    if (chance(0.2)) {
+      removeTag(s, 'ale_ravaged');
+      pushFeed(s, 'THE SHAKES PASS', C.good, 'A hard sober season steadies thy hands and stomach.', 'good');
+    } else {
+      pushFeed(s, 'THE SHAKES', C.bad, 'Old drinking takes another yearly payment from thy body.', 'bad');
+    }
+  }
+  if (hasTag(s, 'poppy_dependent')) {
+    applyEffects(s, { health: -rnd(4, 9), wits: -1 });
+    if (chance(0.14)) {
+      removeTag(s, 'poppy_dependent');
+      pushFeed(s, 'THE HAZE LIFTS', C.good, 'The craving loosens at last, leaving thee thinner but awake.', 'good');
+    } else {
+      pushFeed(s, 'POPPY HUNGER', C.bad, 'The old draught calls to thee, and refusal hurts nearly as much as surrender.', 'bad');
+    }
   }
   return s;
 }
@@ -54,6 +73,12 @@ export function tickAilments(s: GameState): GameState {
 /** While `imprisoned`, years pass in a cell until a chance of release. */
 export function tickImprisonment(s: GameState): GameState {
   if (!hasTag(s, 'imprisoned')) return s;
+  const legal = s.world.characters[s.playerCharacterId]?.legalState;
+  if (legal?.status === 'imprisoned' && legal.sentenceYearsRemaining > 0) {
+    applyEffects(s, { health: -rnd(1, 3) });
+    pushFeed(s, 'IMPRISONED', C.bad, `${legal.sentenceYearsRemaining} year${legal.sentenceYearsRemaining === 1 ? '' : 's'} remain in thy sentence.`, 'bad');
+    return s;
+  }
   if (chance(0.4)) {
     removeTag(s, 'imprisoned');
     addTag(s, 'ex_convict');

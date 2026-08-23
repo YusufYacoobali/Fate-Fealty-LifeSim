@@ -35,7 +35,7 @@ export function StatStrip({ stats }: { stats: StatVM[] }) {
             {statIconAsset(s.key) ? (
               <Image source={statIconAsset(s.key)} resizeMode="contain" style={{ width: 20, height: 20 }} />
             ) : (
-              <PixelText font="pixel" size={8} color={s.color}>
+              <PixelText font="pixel" size={9} color={s.color}>
                 {s.icon}
               </PixelText>
             )}

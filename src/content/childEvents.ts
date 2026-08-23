@@ -25,7 +25,7 @@ export const CHILD_EVENTS: GameEvent[] = [
     ageMin: 6,
     ageMax: 12,
     choices: [
-      { label: 'Work hard to please Father', outcome: { text: 'You toiled until dusk. Cedric grunted approvingly — the highest praise he gives.', effects: { health: -3, path: { labour: 2 }, kinRel: { id: 'father', delta: 8 } }, tone: 'good' } },
+      { label: 'Work hard to please Father', outcome: { text: 'You toiled until dusk. Cedric grunted approvingly, which is the highest praise he owns.', effects: { health: -3, path: { labour: 2 }, kinRel: { id: 'father', delta: 8 } }, tone: 'good' } },
       { label: 'Do half, then nap in the hay', outcome: { text: 'You did just enough and napped magnificently. Refreshed, if unproductive.', effects: { health: 4, kinRel: { id: 'father', delta: -4 } }, tone: 'plain' } },
     ],
   },
@@ -33,7 +33,7 @@ export const CHILD_EVENTS: GameEvent[] = [
     id: 'child_bully',
     category: 'child',
     title: 'THE MILLER’S BIG SON',
-    text: 'The miller’s enormous son blocks the lane and demands your lunch — a single, beloved turnip.',
+    text: 'The miller’s enormous son blocks the lane and demands your lunch, which is one turnip you had plans for.',
     ageMin: 6,
     ageMax: 12,
     choices: [

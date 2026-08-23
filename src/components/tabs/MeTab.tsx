@@ -3,7 +3,7 @@ import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { StatBar } from '../ui/StatBar';
 import { C, PANEL } from '@/theme/theme';
-import { rankPortraitAsset, statIconAsset, traitIconAsset } from '@/assets/generatedAssets';
+import { goalIconAsset, rankPortraitAsset, statIconAsset, traitIconAsset } from '@/assets/generatedAssets';
 
 interface StatVM {
   key: string;
@@ -42,7 +42,7 @@ interface TraitVM {
 }
 
 interface GoalVM {
-  emoji: string;
+  id: string;
   title: string;
   desc: string;
   progress: number;
@@ -79,7 +79,7 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
           )}
         </View>
         <View style={{ flex: 1, minWidth: 0 }}>
-          <PixelText font="pixel" size={9} color={C.charm}>
+          <PixelText font="pixel" size={10} color={C.charm}>
             {firstName}
           </PixelText>
           <PixelText font="body" size={16} color="#dbe9ff" style={{ marginTop: 3 }}>
@@ -94,7 +94,7 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
       </View>
 
       {/* path to nobility */}
-      <PixelText font="pixel" size={7} color={C.blueDeep} style={{ marginTop: 13, marginBottom: 8 }}>
+      <PixelText font="pixel" size={8} color={C.blueDeep} style={{ marginTop: 13, marginBottom: 8 }}>
         PATH TO NOBILITY
       </PixelText>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
@@ -108,11 +108,11 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
             onPress={r.locked ? onLockedRankPress : undefined}
             style={{ flex: 1, alignItems: 'center', backgroundColor: r.bg, borderWidth: 2, borderColor: C.inkSoft, borderBottomColor: r.sd, borderRightColor: r.sd, paddingVertical: 5, paddingHorizontal: 2, opacity: r.locked ? 0.86 : 1 }}
           >
-            <PixelText font="pixel" size={6} color={r.fg}>
+            <PixelText font="pixel" size={7} color={r.fg}>
               {r.locked ? displayLockedRank(r.name) : r.name}
             </PixelText>
             {r.locked && (
-              <PixelText font="pixel" size={6} color={r.fg} style={{ marginTop: 2 }}>
+              <PixelText font="pixel" size={7} color={r.fg} style={{ marginTop: 2 }}>
                 Locked
               </PixelText>
             )}
@@ -139,7 +139,7 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
       )}
 
       {/* attributes */}
-      <PixelText font="pixel" size={7} color={C.blueDeep} style={{ marginTop: 14, marginBottom: 8 }}>
+      <PixelText font="pixel" size={8} color={C.blueDeep} style={{ marginTop: 14, marginBottom: 8 }}>
         ATTRIBUTES
       </PixelText>
       <View style={{ gap: 9 }}>
@@ -150,15 +150,15 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
                 {statIconAsset(s.key) ? (
                   <Image source={statIconAsset(s.key)} resizeMode="contain" style={{ width: 20, height: 20 }} />
                 ) : (
-                  <PixelText font="pixel" size={7} color={s.dark}>
+                  <PixelText font="pixel" size={8} color={s.dark}>
                     {s.icon}
                   </PixelText>
                 )}
-                <PixelText font="pixel" size={7} color={s.dark}>
+                <PixelText font="pixel" size={8} color={s.dark}>
                   {s.label}
                 </PixelText>
               </View>
-              <PixelText font="pixel" size={7} color={C.inkSoft}>
+              <PixelText font="pixel" size={8} color={C.inkSoft}>
                 {s.val}%
               </PixelText>
             </View>
@@ -168,18 +168,21 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
       </View>
 
       {/* life goal */}
-      <PixelText font="pixel" size={7} color={C.blueDeep} style={{ marginTop: 14, marginBottom: 8 }}>
+      <PixelText font="pixel" size={8} color={C.blueDeep} style={{ marginTop: 14, marginBottom: 8 }}>
         THY AMBITION
       </PixelText>
       <View style={PANEL.parchCard}>
         {goal ? (
           <>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-              <PixelText font="body" size={17} color={C.textDark}>
-                {goal.emoji} {goal.title}
-              </PixelText>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, flex: 1 }}>
+                <Image source={goalIconAsset(goal.id)!} resizeMode="contain" style={{ width: 28, height: 28 }} />
+                <PixelText font="body" size={17} color={C.textDark} style={{ flex: 1 }}>
+                  {goal.title}
+                </PixelText>
+              </View>
               <PixelText font="body" size={15} color={goal.done ? C.faithDark : C.amber}>
-                {goal.done ? 'DONE ✓' : `${Math.round(goal.progress * 100)}%`}
+                {goal.done ? 'DONE' : `${Math.round(goal.progress * 100)}%`}
               </PixelText>
             </View>
             <StatBar value={Math.round(goal.progress * 100)} color={goal.done ? C.faith : C.purple} dark={goal.done ? C.faithDark : C.purpleDark} height={11} trackBg={C.lightFill} trackBorder={C.inkSoft} />
@@ -195,7 +198,7 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
       </View>
 
       {/* traits */}
-      <PixelText font="pixel" size={7} color={C.blueDeep} style={{ marginTop: 14, marginBottom: 8 }}>
+      <PixelText font="pixel" size={8} color={C.blueDeep} style={{ marginTop: 14, marginBottom: 8 }}>
         TRAITS & REPUTE
       </PixelText>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 7 }}>

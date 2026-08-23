@@ -22,15 +22,21 @@ import {
   GenderIdentity,
   PronounSet,
   Relationship,
+  FamilyState,
+  WorldCharacter,
+  ConsequenceDescriptor,
 } from '@/types/game';
-import { EPITHETS, FIRST_NAMES } from '@/data/names';
+import { EPITHETS, FIRST_NAMES, namesForGender } from '@/data/names';
 import { availableBirthTraits, traitById } from '@/data/traits';
-import { clamp, pick, rnd } from './random';
+import { clamp, initialRngState, pick, rnd, runWithPersistedRng } from './random';
 import { C } from '@/theme/theme';
 import { freshHolding, holdingTitle } from '@/data/holding';
 import { RANKS } from '@/data/ranks';
-import { actionLimitForAccess } from './actionClock';
+import { actionLimitForAccess } from './actionPolicy';
 import { defaultPronouns } from '@/data/identity';
+import { CURRENT_CONTENT_VERSION } from '@/content/contentVersion';
+export { appendWorldHistory } from './worldJournal';
+import { cloneWorldCharacter, kinCharacters as canonicalKinCharacters, rebuildKinProjection, syncControlledCharacterFromWorld, syncControlledCharacterToWorld } from './characterState';
 
 export const DEFAULT_SETTINGS: GameSettings = {
   autoScroll: true,
@@ -39,6 +45,8 @@ export const DEFAULT_SETTINGS: GameSettings = {
   haptics: true,
   music: true,
   soundEffects: true,
+  reducedMotion: false,
+  villageCollapsed: false,
 };
 
 function emptyPaths(): PathProgress {
@@ -54,13 +62,13 @@ function person(
   rel: number,
   trait: string,
   careerId: string | null,
-  gender: GenderIdentity = 'unspecified',
+  gender: GenderIdentity = 'man',
   emoji = '🧑',
 ): KinMember {
   return {
     id, name, kind, role, age, rel, trait, emoji, alive: true,
     bio: `${name} is ${trait.toLowerCase()}, with a life and ambitions beyond your own.`,
-    gender, pronouns: defaultPronouns(gender), attraction: 'any',
+    gender, pronouns: defaultPronouns(gender), attraction: gender === 'woman' ? 'men' : 'women',
     stats: { health: rnd(48, 92), charm: rnd(25, 78), wits: rnd(25, 78), faith: rnd(15, 75) },
     traits: [trait], gold: rnd(2, 35), rankIdx: kind === 'liege' ? 3 : kind === 'foe' ? 2 : 0,
     occupation: { careerId, experience: rnd(0, 55), performance: rnd(40, 78), workedThisYear: 0 },
@@ -69,10 +77,10 @@ function person(
 }
 
 function startingKin(): KinMember[] {
-  return [
+  const cast: KinMember[] = [
     { ...person('mother', 'Maud', 'mother', 'Thy Mother', 44, 72, 'Stern but loving', 'tenant_farmer', 'woman', '👩‍🌾'), bio: 'Raised you on turnips and tough love. Bakes a rye loaf that could fell an ox.' },
     { ...person('father', 'Old Cedric', 'father', 'Thy Father', 51, 55, 'Perpetually weary', 'farmhand', 'man', '👨‍🌾'), bio: 'A turnip farmer of forty years. Speaks mostly in grunts and weather complaints.' },
-    { ...person('goose', 'Sir Quackbeard', 'friend', 'Goose & Best Friend', 3, 95, 'Fiercely loyal', null, 'unspecified', '🪿'), attraction: 'none', bio: 'A goose of uncommon dignity. Has bitten three tax collectors and a bishop.' },
+    { ...person('goose', 'Sir Quackbeard', 'friend', 'Goose & Best Friend', 3, 95, 'Fiercely loyal', null, 'man', '🪿'), attraction: 'none', bio: 'A goose of uncommon dignity. Has bitten three tax collectors and a bishop.' },
     { ...person('roderick', 'Sir Roderick', 'foe', 'The Apple Thief', 29, 8, 'Insufferably smug', 'guard', 'man', '⚔️'), bio: 'A knight who once called you peasant scum and stole your apple. You have not forgotten.' },
     person('elswyth', 'Elswyth', 'acquaintance', 'A Distant Cousin', 12, 63, 'Competitive', 'apprentice', 'woman', '🧑‍🌾'),
     person('tomas', 'Tomas', 'acquaintance', 'Miller’s Child', 10, 58, 'Quick to laugh', 'farmhand', 'man'),
@@ -81,20 +89,37 @@ function startingKin(): KinMember[] {
     person('edwin', 'Edwin', 'acquaintance', 'Smith’s Apprentice', 19, 48, 'Earnest', 'apprentice', 'man', '🔨'),
     person('merek', 'Merek', 'acquaintance', 'Market Hawker', 24, 45, 'Silver-tongued', 'hawker', 'man', '🧺'),
     person('joan', 'Joan', 'acquaintance', 'Village Guard', 27, 52, 'Resolute', 'guard', 'woman', '🛡️'),
-    person('rowan', 'Rowan', 'acquaintance', 'Travelling Clerk', 22, 50, 'Bookish', 'clerk', 'nonbinary', '🪶'),
+    person('rowan', 'Rowan', 'acquaintance', 'Travelling Clerk', 22, 50, 'Bookish', 'clerk', 'man', '🪶'),
     person('beatrice', 'Beatrice', 'acquaintance', 'Guild Trader', 31, 46, 'Shrewd', 'trader', 'woman', '⚖️'),
     person('oswin', 'Brother Oswin', 'acquaintance', 'Parish Cleric', 38, 57, 'Pious', 'cleric', 'man', '⛪'),
     person('leofric', 'Leofric', 'acquaintance', 'Tenant Farmer', 34, 44, 'Patient', 'tenant_farmer', 'man', '🌾'),
-    person('mab', 'Mab', 'acquaintance', 'Mysterious Poacher', 26, 39, 'Cagey', 'poacher_job', 'nonbinary', '🦌'),
+    person('mab', 'Mab', 'acquaintance', 'Mysterious Poacher', 26, 39, 'Cagey', 'poacher_job', 'woman', '🦌'),
   ];
+  const careers = ['farmhand', 'apprentice', 'hawker', 'acolyte', 'levy', 'clerk', 'poacher_job'];
+  while (cast.length < 30) {
+    const index = cast.length;
+    const gender = pick(['woman', 'man'] as const);
+    cast.push(person(
+      `villager_${index}`,
+      pick(namesForGender(gender)),
+      'acquaintance',
+      'A Swineford Villager',
+      rnd(8, 55),
+      rnd(35, 62),
+      pick(['Patient', 'Ambitious', 'Devout', 'Cunning', 'Loyal', 'Proud']),
+      careers[index % careers.length],
+      gender,
+    ));
+  }
+  return cast;
 }
 
-function initialRelationship(kin: KinMember): Relationship {
+function initialRelationship(playerId: string, kin: KinMember): Relationship {
   const flags = ['mother', 'father', 'sibling', 'child'].includes(kin.kind)
     ? ['family'] as const
     : kin.kind === 'friend' ? ['friend'] as const : kin.kind === 'foe' ? ['rival'] as const : kin.kind === 'liege' ? ['authority'] as const : [];
   const view = { affinity: kin.rel, trust: kin.rel, respect: kin.kind === 'liege' ? 65 : kin.rel, attraction: 0 };
-  return { id: `rel_player_${kin.id}`, aId: 'player', bId: kin.id, aToB: { ...view }, bToA: { ...view }, flags: [...flags], lastInteractionAge: 0, interactionsThisYear: 0, sharedMemories: [] };
+  return { id: `rel_${playerId}_${kin.id}`, aId: playerId, bId: kin.id, aToB: { ...view }, bToA: { ...view }, flags: [...flags], lastInteractionAge: 0, interactionsThisYear: 0, sharedMemories: [] };
 }
 
 export interface FreshLifeOptions {
@@ -117,14 +142,53 @@ export interface FreshLifeOptions {
   };
   /** Whether this save can access premium ranks and content. */
   lifetimeUnlocked?: boolean;
+  /** Explicit seed for tests/headless simulations. Production generates one. */
+  worldSeed?: number;
 }
 
 export function createLife(opts: FreshLifeOptions = {}): GameState {
+  const worldSeed = (opts.worldSeed ?? rnd(0, 0xffffffff)) >>> 0;
+  const created = runWithPersistedRng(initialRngState(worldSeed), () => createLifeFromWorldSeed(opts, worldSeed));
+  created.value.world.rngState = created.rngState;
+  return created.value;
+}
+
+const PERSONALITIES = ['ambitious', 'loyal', 'cruel', 'devout', 'generous', 'envious', 'patient', 'cunning', 'proud', 'brave', 'merciful', 'bookish'];
+const AMBITIONS = ['protect_family', 'gain_land', 'marry_well', 'join_clergy', 'gain_status', 'become_wealthy', 'avenge_family', 'master_craft', 'win_glory', 'seek_freedom'] as const;
+const SECRETS = ['none', 'hidden_debt', 'forbidden_faith', 'illegitimate_child', 'cowardice_in_battle', 'stolen_property', 'secret_lover', 'false_lineage', 'criminal_contact', 'betrayed_friend'] as const;
+const VULNERABILITIES = ['pride', 'poverty', 'sick_relative', 'disputed_birth', 'loneliness', 'greed', 'fear', 'envy'] as const;
+const FAMILY_NAMES = ['of Swineford', 'Ashcombe', 'Fenwick', 'Thorne', 'Mere', 'Godwin', 'Wren', 'Blackbriar', 'Underhill', 'Vale'];
+
+function enrichCharacter(character: WorldCharacter, index: number, familyId: string): WorldCharacter {
+  const secret = pick(SECRETS);
+  return {
+    ...character,
+    birthFamilyId: familyId,
+    parentIds: [...(character.parentIds ?? [])],
+    childIds: [...(character.childIds ?? [])],
+    personalityTraits: Array.from(new Set([pick(PERSONALITIES), pick(PERSONALITIES), pick(PERSONALITIES)])).slice(0, 3),
+    ambition: pick(AMBITIONS),
+    secret,
+    secretRevealed: false,
+    vulnerability: pick(VULNERABILITIES),
+    importance: index < 16 ? 'core' : 'background',
+    worldMemories: [],
+    healthConditions: [],
+    legalState: { status: 'free', suspicion: 0, notoriety: 0, charges: [], sentenceYearsRemaining: 0 },
+    secrets: secret === 'none' ? [] : [{ id: `secret_${character.id}`, type: secret, knownByIds: [], revealed: false, severity: 35, createdYear: 1320 }],
+    guardianIds: [],
+    lineageStatus: 'marital',
+    childDevelopment: { completedMilestones: [], education: 'none', investment: 0, favour: 0 },
+    factionInfluence: 0,
+  };
+}
+
+function createLifeFromWorldSeed(opts: FreshLifeOptions, worldSeed: number): GameState {
   const first = opts.firstName?.trim() || pick(FIRST_NAMES);
   const epithet = pick(EPITHETS);
   const settings = opts.settings ?? DEFAULT_SETTINGS;
   const inherit = opts.inherit ?? {};
-  const gender = opts.gender ?? 'unspecified';
+  const gender = opts.gender ?? 'man';
   const pronouns = opts.pronouns ?? defaultPronouns(gender);
   const inheritedRankIdx = Math.max(0, Math.min(RANKS.length - 1, inherit.rankIdx ?? 0));
   const holding: HoldingState = inherit.holding
@@ -174,12 +238,22 @@ export function createLife(opts: FreshLifeOptions = {}): GameState {
       tagColor: C.purpleDark,
       tone: 'good',
       traitId: birth.id,
-      text: `${birth.emoji} From the cradle you are ${birth.name} — ${birth.blurb}`,
+      text: `${birth.emoji} From the cradle you are ${birth.name}. ${birth.blurb}`,
     },
   ];
+  feed.push({
+    id: 3,
+    age: 0,
+    tag: 'WORLD · A NEW SWINEFORD',
+    tagColor: C.blue,
+    tone: 'plain',
+    actorId: 'world',
+    source: 'world',
+    text: 'A persistent Swineford begins. Its families, rivalries, wars, and unfinished tales will outlive any single character.',
+  });
   if (inheritedRankIdx > 0 || holding.upgrades.length > 0) {
     feed.push({
-      id: 3,
+      id: 4,
       age: 0,
       tag: 'YEAR 0 · SUCCESSION',
       tagColor: C.charmDark,
@@ -189,12 +263,81 @@ export function createLife(opts: FreshLifeOptions = {}): GameState {
   }
 
   const kin = startingKin();
+  const playerId = `player_${opts.lifeNo ?? 1}`;
+  const familyIds = FAMILY_NAMES.map((_, index) => `family_${index}`);
+  for (let i = 0; i < kin.length; i++) {
+    const familyId = i < 2 ? familyIds[0] : familyIds[1 + (i % (familyIds.length - 1))];
+    kin[i] = enrichCharacter(kin[i], i, familyId);
+  }
+  kin.find((member) => member.id === 'mother')!.childIds = [playerId];
+  kin.find((member) => member.id === 'father')!.childIds = [playerId];
+
+  const playerCharacter = enrichCharacter({
+    id: playerId,
+    name: first,
+    kind: 'acquaintance',
+    role: 'Thyself',
+    age: 0,
+    rel: 100,
+    trait: birth.name,
+    emoji: '🧑',
+    alive: true,
+    bio: `Born in Swineford, ${first}'s story has only begun.`,
+    gender,
+    pronouns,
+    attraction: opts.attraction ?? (gender === 'woman' ? 'men' : 'women'),
+    stats: { ...stats },
+    traits: [birth.id],
+    gold: 8 + (inherit.gold ?? 0),
+    rankIdx: inheritedRankIdx,
+    occupation: { careerId: null, experience: 0, performance: 50, workedThisYear: 0 },
+    debts: [],
+    healthTags: [],
+    memories: [],
+    householdId: 'house_player',
+    parentIds: ['mother', 'father'],
+  }, 0, familyIds[0]);
+
+  const characters: Record<string, WorldCharacter> = Object.fromEntries([
+    [playerId, playerCharacter],
+    ...kin.map((member) => [member.id, member] as const),
+  ]);
+  const families: Record<string, FamilyState> = Object.fromEntries(familyIds.map((id, index) => [id, {
+    id,
+    name: FAMILY_NAMES[index],
+    memberIds: Object.values(characters).filter((character) => character.birthFamilyId === id).map((character) => character.id),
+    reputation: 0,
+    wealthTier: index === 0 ? 1 : rnd(0, 3),
+    allyFamilyIds: [],
+    enemyFamilyIds: [],
+    inheritedMemories: [],
+  }]));
+  const households = familyIds.map((familyId, index) => {
+    const memberIds = families[familyId].memberIds;
+    return {
+      id: index === 0 ? 'house_player' : `house_${index}`,
+      headId: memberIds[0],
+      memberIds,
+      wealth: index === 0 ? 8 : rnd(3, 35),
+      foodSecurity: rnd(40, 75),
+      status: rnd(20, 65),
+      residenceQuality: rnd(30, 65),
+      capacity: Math.max(4, memberIds.length + 2),
+      storedFood: rnd(30, 70),
+    };
+  });
+  for (const household of households) for (const id of household.memberIds) characters[id].householdId = household.id;
   return {
+    schemaVersion: 4,
+    playerCharacterId: playerId,
+    playerRun: { startedYear: 1320, generation: opts.lifeNo ?? 1, roleProgress: {} },
+    pendingEvent: null,
+    duel: null,
     first,
     epithet,
     gender,
     pronouns,
-    attraction: opts.attraction ?? 'any',
+    attraction: opts.attraction ?? (gender === 'woman' ? 'men' : 'women'),
     age: 0,
     gold: 8 + (inherit.gold ?? 0),
     income: 0,
@@ -211,12 +354,39 @@ export function createLife(opts: FreshLifeOptions = {}): GameState {
     firedOnce: [],
     kin,
     world: {
-      relationships: kin.map(initialRelationship),
-      households: [{ id: 'house_player', memberIds: ['player', 'mother', 'father'], wealth: 8 }],
+      relationships: Object.fromEntries(kin.map((member) => {
+        const relationship = initialRelationship(playerId, member);
+        return [relationship.id, relationship];
+      })),
+      households,
       relationFilter: 'all',
       feedFilter: 'all',
       proposalFromId: null,
       recentNarrativeIds: [],
+      currentYear: 1320,
+      worldSeed,
+      rngState: initialRngState(worldSeed),
+      contentVersion: CURRENT_CONTENT_VERSION,
+      characters,
+      families,
+      conditions: { foodSecurity: 58, prosperity: 48, publicOrder: 55, warThreat: 25, diseasePressure: 20, religiousTension: 30 },
+      conditionModifiers: [],
+      activeStories: [],
+      scheduledConsequences: [],
+      history: [],
+      pacing: { lastMajorYear: null, lastImportantYear: null, quietYearsSinceStory: 0, majorEventsThisLife: 0, mediumStoriesStarted: 0, immediateChainDepth: 0 },
+      recoveryNotice: false,
+      contentLedger: {},
+      repetitionLedger: {},
+      recentDomains: [],
+      expectedChildren: [],
+      factions: {
+        crown: { id: 'crown', name: 'The Crown', influence: 62, playerStanding: 0, leaderId: 'aldric', lastActionYear: 1319 },
+        church: { id: 'church', name: 'The Church', influence: 58, playerStanding: 0, leaderId: 'oswin', lastActionYear: 1319 },
+        guilds: { id: 'guilds', name: 'The Guilds', influence: 48, playerStanding: 0, leaderId: 'beatrice', lastActionYear: 1319 },
+        commons: { id: 'commons', name: 'The Commons', influence: 54, playerStanding: 0, leaderId: 'leofric', lastActionYear: 1319 },
+        outlaws: { id: 'outlaws', name: 'The Outlaws', influence: 22, playerStanding: 0, leaderId: 'mab', lastActionYear: 1319 },
+      },
     },
     actionClock: { used: 0, cap: actionLimitForAccess(Boolean(opts.lifetimeUnlocked)), lifetimeUsed: 0, fullYears: 0 },
     occupation: { careerId: null, experience: 0, performance: 50, workedThisYear: 0 },
@@ -227,7 +397,6 @@ export function createLife(opts: FreshLifeOptions = {}): GameState {
     tab: 'life',
     selectedKinId: null,
     settingsOpen: false,
-    event: null,
     goalId: null,
     goalDone: false,
     dead: false,
@@ -238,28 +407,67 @@ export function createLife(opts: FreshLifeOptions = {}): GameState {
     doCat: 'all',
     settings,
     nextId: feed.length + 1,
-    bornYear: 1320 + rnd(0, 40),
+    bornYear: 1320,
     lifeNo: opts.lifeNo ?? 1,
   };
 }
 
-/** Deep-enough clone for safe mutation by engine functions. */
+/**
+ * Deep-enough clone for safe mutation by engine functions, and the only clone
+ * path the reducer uses.
+ *
+ * An earlier structural-sharing variant existed for "player-only" actions, but
+ * it shared `world.relationships` and every non-player character — both of which
+ * activity handlers legitimately mutate (nursing a relative, teaching a child,
+ * gaining a tavern friend), so those actions wrote through to the previous
+ * state. Keeping one honest clone is worth more than the microseconds saved.
+ */
 export function cloneState(s: GameState): GameState {
-  return {
+  const cloneCharacter = cloneWorldCharacter;
+  const characters = Object.fromEntries(Object.entries(s.world.characters).map(([id, character]) => [id, cloneCharacter(character)]));
+  const cloned = {
     ...s,
     stats: { ...s.stats },
+    duel: s.duel ? { ...s.duel, log: [...s.duel.log] } : null,
     paths: { ...s.paths },
     tags: [...s.tags],
     traits: [...s.traits],
     memories: s.memories.map((m) => ({ ...m })),
     activeArcs: s.activeArcs.map((a) => ({ ...a })),
     firedOnce: [...s.firedOnce],
-    kin: s.kin.map((k) => ({ ...k })),
+    // Compatibility projection: these entries are the same objects held by
+    // world.characters, never independently writable character copies.
+    kin: Object.values(characters).filter((character) => character.id !== s.playerCharacterId),
     world: {
       ...s.world,
-      relationships: s.world.relationships.map((r) => ({ ...r, aToB: { ...r.aToB }, bToA: { ...r.bToA }, flags: [...r.flags], sharedMemories: [...r.sharedMemories] })),
+      rngState: { ...s.world.rngState },
+      conditions: { ...s.world.conditions },
+      relationships: Object.fromEntries(Object.entries(s.world.relationships).map(([id, r]) => [id, ({ ...r, aToB: { ...r.aToB }, bToA: { ...r.bToA }, flags: [...r.flags], sharedMemories: [...r.sharedMemories] })])),
       households: s.world.households.map((h) => ({ ...h, memberIds: [...h.memberIds] })),
+      characters,
+      families: Object.fromEntries(Object.entries(s.world.families).map(([id, family]) => [id, {
+        ...family,
+        memberIds: [...family.memberIds],
+        allyFamilyIds: [...family.allyFamilyIds],
+        enemyFamilyIds: [...family.enemyFamilyIds],
+        inheritedMemories: family.inheritedMemories.map((memory) => ({ ...memory })),
+      }])),
+      conditionModifiers: s.world.conditionModifiers.map((modifier) => ({ ...modifier })),
+      activeStories: s.world.activeStories.map((story) => ({ ...story, bindings: { ...story.bindings }, variables: { ...story.variables } })),
+      scheduledConsequences: s.world.scheduledConsequences.map((item) => ({
+        ...item,
+        targetIds: [...item.targetIds],
+        condition: item.condition ? { ...item.condition } : undefined,
+        resolution: cloneConsequence(item.resolution),
+      })),
+      history: s.world.history.map((entry) => ({ ...entry, participantIds: [...entry.participantIds], familyIds: [...entry.familyIds], causes: [...entry.causes] })),
+      pacing: { ...s.world.pacing },
       recentNarrativeIds: [...s.world.recentNarrativeIds],
+      contentLedger: Object.fromEntries(Object.entries(s.world.contentLedger).map(([id, entry]) => [id, { ...entry }])),
+      repetitionLedger: { ...s.world.repetitionLedger },
+      recentDomains: [...s.world.recentDomains],
+      expectedChildren: s.world.expectedChildren.map((child) => ({ ...child, parentIds: [...child.parentIds] })),
+      factions: Object.fromEntries(Object.entries(s.world.factions).map(([id, faction]) => [id, { ...faction }])) as typeof s.world.factions,
     },
     actionClock: { ...s.actionClock },
     occupation: { ...s.occupation },
@@ -268,7 +476,39 @@ export function cloneState(s: GameState): GameState {
     holding: { ...s.holding, upgrades: [...s.holding.upgrades] },
     feed: s.feed.map((f) => ({ ...f })),
     settings: { ...s.settings },
+    playerRun: { ...s.playerRun, roleProgress: { ...s.playerRun.roleProgress } },
+    pendingEvent: s.pendingEvent ? { ...s.pendingEvent, bindings: s.pendingEvent.bindings ? { ...s.pendingEvent.bindings } : undefined } : null,
   };
+  return cloned;
+}
+
+function cloneConsequence(resolution: ConsequenceDescriptor): ConsequenceDescriptor {
+  switch (resolution.type) {
+    case 'effects': return { ...resolution, effects: { ...resolution.effects } };
+    case 'relationship': return { ...resolution };
+    case 'condition': return { ...resolution };
+    case 'memory': return { ...resolution };
+    case 'history': return { ...resolution };
+  }
+}
+
+/** Keep the registry's controlled-character snapshot aligned with legacy UI fields. */
+export function syncPlayerToWorld(s: GameState): GameState {
+  return syncControlledCharacterToWorld(s);
+}
+
+/** Project the canonical controlled character into legacy player-facing fields. */
+export function syncPlayerFromWorld(s: GameState): GameState {
+  return syncControlledCharacterFromWorld(s);
+}
+
+/** Rebuild the compatibility roster with canonical registry object references. */
+export function syncKinToWorld(s: GameState): GameState {
+  return rebuildKinProjection(s);
+}
+
+export function kinCharacters(s: GameState): WorldCharacter[] {
+  return canonicalKinCharacters(s);
 }
 
 // ---------------------------------------------------------------------------
@@ -286,7 +526,7 @@ export function pushFeed(
   source: FeedEntry['source'] = 'player',
 ): GameState {
   if (s.dead && source === 'player' && !tag.includes('THE END')) return s;
-  s.feed = [...s.feed, { id: s.nextId++, age: s.age, tag, tagColor, text, tone, actorId, source, ...meta }];
+  s.feed = [...s.feed, { id: s.nextId++, age: s.age, tag, tagColor, text, tone, actorId, source, ...meta }].slice(-500);
   return s;
 }
 
@@ -301,7 +541,7 @@ export function addMoney(s: GameState, delta: number): GameState {
 
 export function addMemory(s: GameState, tag: string, weight = 1, note?: string): GameState {
   const mem: Memory = { id: s.nextId++, age: s.age, tag, weight, note };
-  s.memories = [...s.memories, mem];
+  s.memories = [...s.memories, mem].slice(-200);
   return s;
 }
 
@@ -324,9 +564,9 @@ export function countMemories(s: GameState, tag: string): number {
 }
 
 export function countLivingKin(s: GameState, kind: KinKind): number {
-  return s.kin.filter((k) => k.alive && k.kind === kind).length;
+  return Object.values(s.world.characters).filter((k) => k.id !== s.playerCharacterId && k.alive && k.kind === kind).length;
 }
 
 export function hasLivingKin(s: GameState, kind: KinKind): boolean {
-  return s.kin.some((k) => k.alive && k.kind === kind);
+  return Object.values(s.world.characters).some((k) => k.id !== s.playerCharacterId && k.alive && k.kind === kind);
 }

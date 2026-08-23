@@ -13,12 +13,15 @@
 import { Choice, GameEvent, GameState, Outcome } from '@/types/game';
 import { applyEffects } from './consequenceEngine';
 import { pushFeed } from './gameState';
-import { eventById } from './eventPicker';
+import { eventById, recordEventResolution } from './eventPicker';
 import { chance } from './random';
 import { rollBonusFromTraits, grantAcquiredTraits } from './traitEngine';
 import { checkLifeGoal } from './goalEngine';
 import { C } from '@/theme/theme';
 import { checkDeath } from './deathEngine';
+import { onPersistentStoryChoiceResolved } from './persistentStoryEngine';
+import { appendCharacterMemory, appendWorldHistory } from './worldJournal';
+import { renderBoundText } from '@/content/persistentWorldEvents';
 
 function rollChance(s: GameState, ch: Choice): boolean {
   if (ch.successChance == null) return true;
@@ -31,11 +34,12 @@ function rollChance(s: GameState, ch: Choice): boolean {
 }
 
 function resolveOutcome(ch: Choice, s: GameState): Outcome | undefined {
-  if (ch.outcome) return ch.outcome;
-  if (ch.success || ch.failure) {
-    return rollChance(s, ch) ? ch.success : ch.failure;
-  }
-  return undefined;
+  const chosen = ch.outcome ?? (ch.success || ch.failure ? (rollChance(s, ch) ? ch.success : ch.failure) : undefined);
+  // Outcome text is the permanent record of what happened, so it names the
+  // people it happened to. `Outcome.text` is a plain string, so the actor
+  // tokens are substituted here rather than at authoring time.
+  if (!chosen?.text.includes('{{')) return chosen;
+  return { ...chosen, text: renderBoundText(s, chosen.text) };
 }
 
 export interface ChoiceResult {
@@ -54,13 +58,14 @@ export function applyChoice(s: GameState, event: GameEvent, ch: Choice): ChoiceR
   }
 
   const outcome = resolveOutcome(ch, s);
+  recordEventResolution(s, event, ch.id ?? ch.label);
   let openNow: GameEvent | null = null;
 
   if (outcome) {
     applyEffects(s, outcome.effects);
     if (s.dead || s.stats.health <= 0) {
       checkDeath(s);
-      s.event = null;
+      s.pendingEvent = null;
       return { openNow: null };
     }
     pushFeed(
@@ -70,6 +75,35 @@ export function applyChoice(s: GameState, event: GameEvent, ch: Choice): ChoiceR
       outcome.text,
       outcome.tone ?? 'plain',
     );
+    const participantIds = [s.playerCharacterId, ...Object.values(s.pendingEvent?.bindings ?? {})];
+    appendWorldHistory(s, {
+      id: `history_choice_${s.nextId++}`,
+      year: s.world.currentYear,
+      type: outcome.tone === 'bad' ? 'failure' : 'choice',
+      participantIds,
+      familyIds: [s.world.characters[s.playerCharacterId]?.birthFamilyId ?? ''].filter(Boolean),
+      storyInstanceId: s.pendingEvent?.storyInstanceId,
+      choiceId: `${event.id}:${ch.label}`,
+      causes: [event.title],
+      summary: outcome.text,
+      salience: s.pendingEvent?.storyInstanceId ? 4 : 2,
+    });
+    for (const actorId of Object.values(s.pendingEvent?.bindings ?? {})) {
+      const actor = s.world.characters[actorId];
+      const persistentStory = s.world.activeStories.find((item) => item.id === s.pendingEvent?.storyInstanceId);
+      if (actor) appendCharacterMemory(actor, {
+        id: `memory_choice_${s.nextId++}`,
+        year: s.world.currentYear,
+        type: `choice_${event.id}`,
+        actorIds: [s.playerCharacterId],
+        storyInstanceId: s.pendingEvent?.storyInstanceId,
+        choiceId: ch.label,
+        sentiment: outcome.tone === 'bad' ? -30 : outcome.tone === 'good' ? 25 : 0,
+        salience: s.pendingEvent?.storyInstanceId ? 4 : 2,
+        inherited: persistentStory?.scale === 'major',
+        summary: outcome.text,
+      });
+    }
 
     if (outcome.next) {
       const nextNode = eventById(outcome.next);
@@ -90,9 +124,11 @@ export function applyChoice(s: GameState, event: GameEvent, ch: Choice): ChoiceR
   // completed the player's life goal (gold/children/stats/etc.).
   grantAcquiredTraits(s);
   checkLifeGoal(s);
+  onPersistentStoryChoiceResolved(s, ch.id ?? ch.label);
 
-  // The just-resolved event closes; the follow-up (if any) becomes the event.
-  s.event = openNow;
+  // Definitions remain static content; only the follow-up id enters state.
+  if (openNow) s.pendingEvent = { eventId: openNow.id };
+  else s.pendingEvent = null;
   return { openNow };
 }
 

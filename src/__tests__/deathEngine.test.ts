@@ -1,5 +1,6 @@
 import { agingDamage, buildDeathSummary, checkDeath } from '@/engine/deathEngine';
 import { makeState } from './helpers';
+import { spawnKin } from '@/engine/kinFactory';
 
 describe('deathEngine', () => {
   it('kills the player when health hits 0 and Live Forever is off', () => {
@@ -33,7 +34,7 @@ describe('deathEngine', () => {
 
   it('buildDeathSummary reports rank, gold and heirs', () => {
     const s = makeState({ gold: 42, deathCause: 'old age', epitaph: 'here lies a turnip' });
-    s.kin.push({ ...s.kin[0], id: 'child1', name: 'Wat', role: 'Heir', emoji: '🧒', rel: 80, age: 4, trait: 'small', bio: '', kind: 'child', alive: true });
+    spawnKin(s, { kind: 'child', name: 'Wat', age: 4, isHeir: true });
     const sum = buildDeathSummary(s, 'Knight');
     expect(sum.rank).toBe('Knight');
     expect(sum.gold).toBe(42);

@@ -35,7 +35,7 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     ageMin: 10,
     choices: [
       { label: 'Buy a bottle (5g)', costGold: 5, outcome: { text: 'You drink it and feel warmth in the soul, or possibly leek. The friar calls both miracles.', effects: { gold: -5, faith: 7, health: -2 }, tone: 'plain' } },
-      { label: 'Expose the soup', successChance: (s) => 0.45 + s.stats.wits / 250, success: { text: 'You find a turnip floating in the relic jar. The crowd turns on him with ladles.', effects: { wits: 5, reputation: 5, charm: 3 }, tone: 'good' }, failure: { text: 'The friar declares the turnip a sign. You are booed by people holding soup.', effects: { charm: -4, faith: -2 }, tone: 'bad' } },
+      { label: 'Expose the soup', successChance: (s) => 0.45 + s.stats.wits / 250, success: { text: 'You find a turnip floating in the relic jar. The crowd turns on him with ladles.', effects: { wits: 5, reputation: 5, charm: 3, memory: { tag: 'exposed_holy_soup', weight: 2 } }, tone: 'good' }, failure: { text: 'The friar declares the turnip a sign. You are booed by people holding soup.', effects: { charm: -4, faith: -2, memory: { tag: 'mocked_by_soup_pilgrims', weight: 2 } }, tone: 'bad' } },
       { label: 'Ask for bread too', outcome: { text: 'The friar, impressed by your theology of lunch, gives you a heel of bread.', effects: { health: 3, wits: 1 }, tone: 'good' } },
     ],
   },
@@ -60,7 +60,7 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     choices: [
       { label: 'Buy the toe (7g)', costGold: 7, outcome: { text: 'The toe is wax. Your faith wobbles, but your candle supply improves.', effects: { gold: -7, faith: 4, wits: -2 }, tone: 'plain' } },
       { label: 'Ask it to bless you', outcome: { text: 'Nothing happens. The seller says the toe is shy before crowds.', effects: { charm: 2, faith: -2 }, tone: 'plain' } },
-      { label: 'Report him to the priest', outcome: { text: 'The priest confiscates the toe, then quietly asks if there were any fingers.', effects: { reputation: 4, faith: 3 }, tone: 'good' } },
+      { label: 'Report him to the priest', outcome: { text: 'The priest confiscates the toe, then quietly asks if there were any fingers.', effects: { reputation: 4, faith: 3, memory: { tag: 'reported_false_relic', weight: 2 } }, tone: 'good' } },
     ],
   },
   {
@@ -166,8 +166,8 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     ageMin: 15,
     paths: ['court'],
     choices: [
-      { label: 'Agree piously', outcome: { text: 'The bishop eats like a saint with two stomachs. He blesses you between bites.', effects: { faith: 5, charm: 2 }, tone: 'plain' } },
-      { label: 'Argue theology', successChance: (s) => 0.35 + s.stats.wits / 220, success: { text: 'You prove the smallest fish is humblest and therefore holiest. The bishop loses appetite and argument.', effects: { wits: 6, faith: 4, reputation: 4 }, tone: 'good' }, failure: { text: 'You confuse a psalm with a recipe. The bishop keeps the fish.', effects: { charm: -3, faith: -2 }, tone: 'bad' } },
+      { label: 'Agree piously', outcome: { text: 'The bishop takes the fish and a second helping of the argument that got it for him. He blesses you between mouthfuls and has forgotten your name by the fruit.', effects: { faith: 5, charm: 2, path: { church: 1 }, memory: { tag: 'yielded_to_bishop', weight: 2 } }, tone: 'plain' } },
+      { label: 'Argue theology', successChance: (s) => 0.35 + s.stats.wits / 220, success: { text: 'You prove the smallest fish is humblest and therefore holiest. The bishop loses appetite and argument, in that order.', effects: { wits: 6, faith: 4, reputation: 4, faction: { factionId: 'church', playerStanding: -2 }, memory: { tag: 'out_argued_bishop', weight: 3 } }, tone: 'good' }, failure: { text: 'You confuse a psalm with a recipe. The bishop keeps the fish and the moral high ground.', effects: { charm: -3, faith: -2, memory: { tag: 'lost_fish_argument', weight: 2 } }, tone: 'bad' } },
     ],
   },
   {
@@ -178,8 +178,8 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     ageMin: 18,
     paths: ['court'],
     choices: [
-      { label: 'Join the rhyme', successChance: (s) => 0.4 + s.stats.charm / 250, success: { text: 'Your couplet wins the room and, somehow, the argument.', effects: { charm: 7, wits: 3, reputation: 4 }, tone: 'good' }, failure: { text: 'You rhyme "acre" with "baker." The judge ages visibly.', effects: { charm: -4 }, tone: 'bad' } },
-      { label: 'Demand plain speech', outcome: { text: 'Everyone thanks you except the lawyer, who was halfway to rhyming "ditch."', effects: { wits: 4, reputation: 3 }, tone: 'good' } },
+      { label: 'Join the rhyme', successChance: (s) => 0.4 + s.stats.charm / 250, success: { text: 'Your couplet wins the room and, somehow, the argument. The clerk copies it into the roll, where it will embarrass someone for a century.', effects: { charm: 7, wits: 3, reputation: 4, path: { court: 2 }, memory: { tag: 'rhymed_at_the_assize', weight: 3 } }, tone: 'good' }, failure: { text: 'You rhyme "acre" with "baker." The judge ages visibly and rules against everyone present.', effects: { charm: -4, memory: { tag: 'rhymed_badly_in_court', weight: 2 } }, tone: 'bad' } },
+      { label: 'Demand plain speech', outcome: { text: 'Everyone thanks you except the lawyer, who was halfway to rhyming "ditch." The case is decided in an hour instead of a season.', effects: { wits: 4, reputation: 3, faction: { factionId: 'crown', playerStanding: 2 }, memory: { tag: 'plain_speech_advocate', weight: 2 } }, tone: 'good' } },
     ],
   },
   {
@@ -190,8 +190,8 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     ageMin: 18,
     paths: ['court'],
     choices: [
-      { label: 'Praise the honesty', outcome: { text: 'The court admires your humility. The painter admits he painted the cabbage from memory.', effects: { charm: 5, faith: 2 }, tone: 'good' } },
-      { label: 'Demand beauty (10g)', costGold: 10, outcome: { text: 'The new version has heroic cheekbones and no known relation to you.', effects: { gold: -10, charm: 8, wits: -1 }, tone: 'plain' } },
+      { label: 'Praise the honesty', outcome: { text: 'The court admires your humility. The painter admits he painted the cabbage from memory. It hangs in the great hall for the rest of your life.', effects: { charm: 5, faith: 2, memory: { tag: 'cabbage_portrait_hangs', weight: 3, note: 'A famously unflattering portrait hangs where everyone can see it.' } }, tone: 'good' } },
+      { label: 'Demand beauty (10g)', costGold: 10, outcome: { text: 'The new version has heroic cheekbones and no known relation to you. The first one is not destroyed, merely moved somewhere with worse light.', effects: { gold: -10, charm: 8, wits: -1, path: { court: 1 }, memory: { tag: 'vain_portrait', weight: 2 } }, tone: 'plain' } },
     ],
   },
   {
@@ -226,8 +226,8 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     ageMin: 16,
     ranks: ['Squire', 'Knight'],
     choices: [
-      { label: 'Fight for the spur', successChance: (s) => 0.4 + s.paths.martial / 200, success: { text: 'You win the spur and only a modest limp. Chivalry smiles.', effects: { charm: 9, health: -8, rankProgress: 18, reputation: 6 }, tone: 'good' }, failure: { text: 'You lose the bout and land face-first in the prize pudding.', effects: { health: -8, charm: 2 }, tone: 'bad' } },
-      { label: 'Fight for the pudding', outcome: { text: 'You win the pudding by terrifying everyone with sincerity.', effects: { health: 6, charm: 4, faith: -1 }, tone: 'good' } },
+      { label: 'Fight for the spur', successChance: (s) => 0.4 + s.paths.martial / 200, success: { text: 'You win the spur and only a modest limp. Chivalry smiles.', effects: { charm: 9, health: -8, rankProgress: 18, reputation: 6, path: { martial: 3 }, memory: { tag: 'won_the_silver_spur', weight: 3 } }, tone: 'good' }, failure: { text: 'You lose the bout and land face-first in the prize pudding. The heralds will describe this for years, always at feasts.', effects: { health: -8, charm: 2, memory: { tag: 'the_pudding_landing', weight: 3, note: 'Unhorsed into a pudding before the whole tourney field.' } }, tone: 'bad' } },
+      { label: 'Fight for the pudding', outcome: { text: 'You win the pudding by terrifying everyone with sincerity, then eat a third of it standing up.', effects: { health: 6, charm: 4, faith: -1, householdState: { food: 3 }, memory: { tag: 'pudding_champion', weight: 2 } }, tone: 'good' } },
     ],
   },
   {
@@ -238,8 +238,8 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     ageMin: 16,
     ranks: ['Squire', 'Knight', 'Noble'],
     choices: [
-      { label: 'Pray beside it', outcome: { text: 'The horse sneezes on you at the amen. The chaplain calls it a sign.', effects: { faith: 6, health: -1 }, tone: 'good' } },
-      { label: 'Question its piety', outcome: { text: 'It steps on your boot. The debate is settled.', effects: { wits: 2, health: -3, charm: 2 }, tone: 'plain' } },
+      { label: 'Pray beside it', outcome: { text: 'The horse sneezes on you at the amen. The chaplain calls it a sign, and the stable hands start calling you Blessed of the Bay Mare.', effects: { faith: 6, health: -1, path: { church: 1 }, memory: { tag: 'blessed_by_a_horse', weight: 2 } }, tone: 'good' } },
+      { label: 'Question its piety', outcome: { text: 'It steps on your boot. The debate is settled, and the chaplain writes down that you doubted publicly.', effects: { wits: 2, health: -3, charm: 2, faction: { factionId: 'church', playerStanding: -1 }, memory: { tag: 'doubted_the_blessing', weight: 2 } }, tone: 'plain' } },
     ],
   },
   {
@@ -250,8 +250,8 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     ageMin: 18,
     ranks: ['Knight', 'Noble'],
     choices: [
-      { label: 'Accept the ransom', outcome: { text: 'The ducks arrive furious. The promise not to sing proves priceless.', effects: { gold: 12, charm: 3, reputation: 3 }, tone: 'good' } },
-      { label: 'Demand proper coin', successChance: (s) => 0.45 + s.stats.charm / 300, success: { text: 'His family pays in coin and apologizes for the ducks.', effects: { gold: 24, reputation: 4 }, tone: 'good' }, failure: { text: 'His family sends more ducks. You have negotiated poorly.', effects: { charm: -2, health: -1 }, tone: 'plain' } },
+      { label: 'Accept the ransom', outcome: { text: 'The ducks arrive furious. The promise not to sing proves priceless, and the knight leaves owing you a courtesy he will one day be asked to repay.', effects: { gold: 12, charm: 3, reputation: 3, householdState: { food: 4 }, memory: { tag: 'ransom_paid_in_ducks', weight: 3, note: 'A knight ransomed himself in poultry and still owes a favour.' } }, tone: 'good' } },
+      { label: 'Demand proper coin', successChance: (s) => 0.45 + s.stats.charm / 300, success: { text: 'His family pays in coin and apologizes for the ducks. They do not forget being made to apologize.', effects: { gold: 24, reputation: 4, memory: { tag: 'squeezed_a_ransom', weight: 3 } }, tone: 'good' }, failure: { text: 'His family sends more ducks. You have negotiated poorly and now keep five ducks.', effects: { charm: -2, health: -1, householdState: { food: 5 }, memory: { tag: 'the_duck_surplus', weight: 2 } }, tone: 'plain' } },
     ],
   },
   {
@@ -274,8 +274,8 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     ageMin: 18,
     ranks: ['Knight', 'Noble'],
     choices: [
-      { label: 'Dunk both equally', outcome: { text: 'Justice splashes. Everyone leaves wet, offended, and weirdly satisfied.', effects: { reputation: 5, charm: 4 }, tone: 'good' } },
-      { label: 'Hear the case properly', outcome: { text: 'You listen for an hour and discover the true villain is a missing cheese.', effects: { wits: 6, faith: 2 }, tone: 'good' } },
+      { label: 'Dunk both equally', outcome: { text: 'Justice splashes. Everyone leaves wet, offended, and weirdly satisfied. The village adds your name to the custom.', effects: { reputation: 5, charm: 4, worldConditions: { publicOrder: 1 }, memory: { tag: 'judged_by_pond', weight: 2 } }, tone: 'good' } },
+      { label: 'Hear the case properly', outcome: { text: 'You listen for an hour and discover the true villain is a missing cheese. Word spreads that you will actually hear a case, which is going to cost you every future afternoon.', effects: { wits: 6, faith: 2, worldConditions: { publicOrder: 2 }, faction: { factionId: 'commons', playerStanding: 3 }, memory: { tag: 'hears_cases_properly', weight: 3 } }, tone: 'good' } },
     ],
   },
   {
@@ -286,8 +286,8 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     ageMin: 20,
     ranks: ['Noble'],
     choices: [
-      { label: 'Own the title', outcome: { text: 'You bow as Defender of Turnips. The hall roars, and the insult becomes a badge.', effects: { charm: 8, reputation: 5 }, tone: 'good' } },
-      { label: 'Correct him sharply', outcome: { text: 'He corrects himself to "Defender of Slightly Better Turnips." This is not progress.', effects: { charm: -3, wits: 2 }, tone: 'plain' } },
+      { label: 'Own the title', outcome: { text: 'You bow as Defender of Turnips. The hall roars, the insult becomes a badge, and within a year it is on your seal.', effects: { charm: 8, reputation: 5, addTags: ['defender_of_turnips'], memory: { tag: 'defender_of_turnips', weight: 3, note: 'A herald’s joke became a title you chose to keep.' } }, tone: 'good' } },
+      { label: 'Correct him sharply', outcome: { text: 'He corrects himself to "Defender of Slightly Better Turnips." This is not progress, and the hall now watches for your temper.', effects: { charm: -3, wits: 2, familyReputation: { delta: -1 }, memory: { tag: 'snapped_at_the_herald', weight: 2 } }, tone: 'plain' } },
     ],
   },
   {
@@ -322,8 +322,8 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     ageMin: 22,
     ranks: ['Noble'],
     choices: [
-      { label: 'Let him boast', outcome: { text: 'He invents an ancestor who conquered a ditch. The room chooses to believe it.', effects: { charm: 4, reputation: 3 }, tone: 'plain' } },
-      { label: 'Mention the mud', outcome: { text: 'You speak warmly of Swineford mud. Half the court laughs; the other half checks its boots.', effects: { faith: 3, charm: 5 }, tone: 'good' } },
+      { label: 'Let him boast', outcome: { text: 'He invents an ancestor who conquered a ditch. The room chooses to believe it, which means someone will eventually check.', effects: { charm: 4, reputation: 3, createSecret: { type: 'false_lineage', severity: 30, knownByIds: [] }, memory: { tag: 'let_the_lineage_lie_stand', weight: 3 } }, tone: 'plain' } },
+      { label: 'Mention the mud', outcome: { text: 'You speak warmly of Swineford mud. Half the court laughs; the other half checks its boots. Your cousin does not speak to you until Candlemas.', effects: { faith: 3, charm: 5, familyReputation: { delta: 2 }, memory: { tag: 'owned_the_swineford_mud', weight: 3 } }, tone: 'good' } },
     ],
   },
   {
@@ -334,8 +334,8 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     ageMin: 22,
     ranks: ['Noble'],
     choices: [
-      { label: 'Reject the foolish tax', outcome: { text: 'The villagers cheer. The reeve sadly scratches "cloud rent" from his next proposal.', effects: { reputation: 10, faith: 4, gold: -4 }, tone: 'good' } },
-      { label: 'Allow a tiny tax', outcome: { text: 'The treasury gains coin. Every chimney now smokes accusingly.', effects: { gold: 18, reputation: -8, faith: -3 }, tone: 'plain' } },
+      { label: 'Reject the foolish tax', outcome: { text: 'The villagers cheer. The reeve sadly scratches "cloud rent" from his next proposal. The whole village now knows what sort of lord it has, which is worth more than the four shillings.', effects: { reputation: 10, faith: 4, gold: -4, holding: { loyalty: 8 }, faction: { factionId: 'commons', playerStanding: 4 }, memory: { tag: 'refused_the_smoke_tax', weight: 3 } }, tone: 'good' } },
+      { label: 'Allow a tiny tax', outcome: { text: 'The treasury gains coin. Every chimney now smokes accusingly, and the reeve begins drafting cloud rent in earnest.', effects: { gold: 18, reputation: -8, faith: -3, holding: { loyalty: -10 }, faction: { factionId: 'commons', playerStanding: -4 }, memory: { tag: 'taxed_the_smoke', weight: 3, note: 'You put a tax on chimney smoke and the village has not forgotten.' } }, tone: 'plain' } },
     ],
   },
   {
@@ -345,8 +345,8 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     text: 'A friar preaches against gluttony while hiding a pudding under his robe. The pudding is losing patience.',
     ageMin: 12,
     choices: [
-      { label: 'Expose the pudding', outcome: { text: 'The pudding drops at the word "temptation." The sermon ends early and sticky.', effects: { wits: 5, charm: 5, faith: 2 }, tone: 'good' } },
-      { label: 'Protect his dignity', outcome: { text: 'You cough loudly while he rescues dessert. He blesses you with grateful crumbs.', effects: { faith: 5, health: 2 }, tone: 'plain' } },
+      { label: 'Expose the pudding', outcome: { text: 'The pudding drops at the word "temptation." The sermon ends early and sticky, and the friar remembers precisely who was pointing.', effects: { wits: 5, charm: 5, faith: 2, faction: { factionId: 'church', playerStanding: -3 }, memory: { tag: 'exposed_the_friars_pudding', weight: 3 } }, tone: 'good' } },
+      { label: 'Protect his dignity', outcome: { text: 'You cough loudly while he rescues dessert. He blesses you with grateful crumbs and, more usefully, owes you a silence of your own one day.', effects: { faith: 5, health: 2, faction: { factionId: 'church', playerStanding: 3 }, memory: { tag: 'covered_for_the_friar', weight: 3, note: 'A friar owes you a kindness for a pudding nobody mentioned.' } }, tone: 'plain' } },
     ],
   },
   {
@@ -357,8 +357,8 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     ageMin: 14,
     requires: { custom: (s) => s.bornYear + s.age >= 1347 },
     choices: [
-      { label: 'Set it right', outcome: { text: 'You fix the flag. The argument moves to whether you used the blessed ladder.', effects: { faith: 4, reputation: 3 }, tone: 'plain' } },
-      { label: 'Declare both sides wrong', outcome: { text: 'You declare the flag cannot read itself. This is called wisdom by three people and heresy by one.', effects: { wits: 6, charm: 3 }, tone: 'good' } },
+      { label: 'Set it right', outcome: { text: 'You fix the flag. The argument moves to whether you used the blessed ladder, and will still be running at Lammas.', effects: { faith: 4, reputation: 3, worldConditions: { religiousTension: -2 }, memory: { tag: 'righted_the_plague_flag', weight: 2 } }, tone: 'plain' } },
+      { label: 'Declare both sides wrong', outcome: { text: 'You declare the flag cannot read itself. This is called wisdom by three people and heresy by one, and it is the one who writes letters.', effects: { wits: 6, charm: 3, worldConditions: { religiousTension: 3 }, memory: { tag: 'named_a_heretic_over_a_flag', weight: 3 } }, tone: 'good' } },
     ],
   },
   {
@@ -368,8 +368,8 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     text: 'A pardoner sells forgiveness, two combs, and a nail he claims once frightened the Devil.',
     ageMin: 13,
     choices: [
-      { label: 'Buy forgiveness (6g)', costGold: 6, outcome: { text: 'He forgives you for sins you had not planned yet. Efficient, if troubling.', effects: { gold: -6, faith: 6, wits: -1 }, tone: 'plain' } },
-      { label: 'Ask for a receipt', outcome: { text: 'He flees at the word "receipt." The crowd learns a valuable theology of paperwork.', effects: { wits: 5, reputation: 4 }, tone: 'good' } },
+      { label: 'Buy forgiveness (6g)', costGold: 6, outcome: { text: 'He forgives you for sins you had not planned yet. Efficient, if troubling. You keep the paper, which is the part that will matter.', effects: { gold: -6, faith: 6, wits: -1, path: { church: 1 }, memory: { tag: 'bought_a_pardon', weight: 3, note: 'You hold a pardoner’s letter for sins not yet committed.' } }, tone: 'plain' } },
+      { label: 'Ask for a receipt', outcome: { text: 'He flees at the word "receipt." The crowd learns a valuable theology of paperwork, and repeats the story at every fair for a decade.', effects: { wits: 5, reputation: 4, faction: { factionId: 'commons', playerStanding: 2 }, memory: { tag: 'routed_a_pardoner', weight: 3 } }, tone: 'good' } },
     ],
   },
   {
@@ -404,7 +404,7 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     ageMin: 18,
     requires: { hasTags: ['married'] },
     choices: [
-      { label: 'Wake them gently', outcome: { text: 'They wake, nod gravely, and pretend the snore was theological agreement.', effects: { faith: 3, charm: 3 }, tone: 'good' } },
+      { label: 'Wake them gently', outcome: { text: 'They wake, nod gravely, and pretend the snore was theological agreement.', effects: { faith: 3, charm: 3, memory: { tag: 'spouse_sermon_kindness', weight: 2 } }, tone: 'good' } },
       { label: 'Let it happen', outcome: { text: 'The priest takes it personally. The pew takes it loudly.', effects: { charm: -2, faith: -2, health: 2 }, tone: 'plain' } },
     ],
   },
@@ -428,8 +428,8 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     ageMin: 14,
     requires: { custom: (s) => s.bornYear + s.age >= 1347 },
     choices: [
-      { label: 'Choose hopeful', outcome: { text: 'The bells ring bright over a frightened village. For a moment, people breathe easier.', effects: { faith: 5, reputation: 4 }, tone: 'good' } },
-      { label: 'Choose frightening', outcome: { text: 'The bells terrify everyone except the sickness, which has poor manners.', effects: { charm: -2, faith: 2 }, tone: 'plain' } },
+      { label: 'Choose hopeful', outcome: { text: 'The bells ring bright over a frightened village. For a moment people breathe easier, and afterwards they remember who chose the sound of that year.', effects: { faith: 5, reputation: 4, worldConditions: { publicOrder: 2 }, memory: { tag: 'chose_the_hopeful_bells', weight: 3 } }, tone: 'good' } },
+      { label: 'Choose frightening', outcome: { text: 'The bells terrify everyone except the sickness, which has poor manners. Three households leave Swineford rather than hear them again.', effects: { charm: -2, faith: 2, worldConditions: { publicOrder: -2, diseasePressure: -1 }, memory: { tag: 'chose_the_frightening_bells', weight: 3 } }, tone: 'plain' } },
     ],
   },
   {

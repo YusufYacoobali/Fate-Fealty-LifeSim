@@ -52,6 +52,8 @@ const LESSONS = [
 
 interface Props {
   premiumUnlocked: boolean;
+  /** True while the free first-life Pro sample is running. */
+  trialActive?: boolean;
   accessState: PremiumAccessState;
   onPurchase: (plan: PlanId) => Promise<PurchaseOutcome>;
   onRestore: () => Promise<boolean>;
@@ -296,7 +298,7 @@ function DestinyPage({ compact }: { compact: boolean }) {
               </PixelText>
               {premium && (
                 <View style={{ backgroundColor: C.charm, borderWidth: 2, borderColor: C.charmDark, paddingHorizontal: 5, paddingVertical: 3 }}>
-                  <PixelText font="pixel" size={6} color="#3a2a08">
+                  <PixelText font="pixel" size={7} color="#3a2a08">
                     PREMIUM
                   </PixelText>
                 </View>
@@ -309,7 +311,35 @@ function DestinyPage({ compact }: { compact: boolean }) {
   );
 }
 
-export function OnboardingScreen({ premiumUnlocked, accessState, onPurchase, onRestore, onDone }: Props) {
+/**
+ * The free sample is only persuasive if the player knows they have it. This
+ * says so plainly before they ever meet the price.
+ */
+function TrialBanner({ compact }: { compact: boolean }) {
+  return (
+    <View
+      style={{
+        backgroundColor: C.charm,
+        borderWidth: 3,
+        borderColor: C.inkSoft,
+        borderBottomColor: C.charmDark,
+        borderRightColor: C.charmDark,
+        paddingHorizontal: 9,
+        paddingVertical: compact ? 6 : 8,
+        marginBottom: compact ? 6 : 9,
+      }}
+    >
+      <PixelText font="pixel" size={compact ? 6 : 7} color="#3a2a08" style={{ textAlign: 'center' }}>
+        A ROYAL FAVOUR, FREELY GIVEN
+      </PixelText>
+      <PixelText font="body" size={compact ? 14 : 16} color="#3a2a08" style={{ textAlign: 'center', marginTop: 4 }}>
+        Thy first life carries every premium tale, station, and deed at no cost. It is thine for one lifetime.
+      </PixelText>
+    </View>
+  );
+}
+
+export function OnboardingScreen({ premiumUnlocked, trialActive, accessState, onPurchase, onRestore, onDone }: Props) {
   const { width, height } = useWindowDimensions();
   const layout = onboardingLayout(width, height);
   const pages = onboardingPages();
@@ -352,7 +382,7 @@ export function OnboardingScreen({ premiumUnlocked, accessState, onPurchase, onR
         onPress={() => (isLast ? onDone() : setIndex(index + 1))}
         innerStyle={{ paddingVertical: layout.compact ? 10 : 13, alignItems: 'center' }}
       >
-        <PixelText font="pixel" size={9} color={C.blueDark}>
+        <PixelText font="pixel" size={10} color={C.blueDark}>
           {isLast ? 'BEGIN THE TALE' : 'CONTINUE'}
         </PixelText>
       </PixelButton>
@@ -375,6 +405,7 @@ export function OnboardingScreen({ premiumUnlocked, accessState, onPurchase, onR
       {page === 'hook' && <HookPage layout={layout} />}
       {page === 'lessons' && <LessonsPage compact={layout.compact} />}
       {page === 'destiny' && <DestinyPage compact={layout.compact} />}
+      {page === 'paywall' && trialActive && <TrialBanner compact={paywallCompact} />}
       {page === 'paywall' && (
         <OnboardingPaywallPanel
           compact={paywallCompact}

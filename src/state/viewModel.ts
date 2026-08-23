@@ -5,7 +5,7 @@
 
 import { GameState, KinMember, STAT_KEYS } from '@/types/game';
 import { RANKS } from '@/data/ranks';
-import { STAT_STYLES, TONE_STYLE, C } from '@/theme/theme';
+import { STAT_STYLES, FEED_STYLE, C } from '@/theme/theme';
 import { relationMatchesFilter } from '@/engine/relationshipEngine';
 import { careerById } from '@/data/careers';
 
@@ -19,15 +19,19 @@ export function selectFeed(s: GameState) {
     if (s.world.feedFilter === 'world') return entry.source === 'npc' || entry.source === 'world';
     return true;
   }).map((e) => {
-    const ts = TONE_STYLE[e.tone] ?? TONE_STYLE.plain;
+    const source = e.source ?? 'player';
+    const palette = source === 'player' ? FEED_STYLE.player : FEED_STYLE.world;
+    const ts = palette[e.tone] ?? palette.plain;
+    // Alternate on the entry id, not the row index: the feed is capped and
+    // filtered, so an index-based stripe would reshuffle as entries age out.
     return {
       id: e.id,
       tag: e.tag,
       tagColor: e.tagColor ?? ts.tagColor,
       text: e.traitId ? e.text.replace(/^.*?(From the cradle|You are now)/, '$1') : e.text,
       traitId: e.traitId,
-      source: e.source ?? 'player',
-      bg: ts.bg,
+      source,
+      bg: e.id % 2 === 0 ? ts.bg : ts.bgAlt,
       border: ts.border,
       sd: ts.sd,
       sl: ts.sl,

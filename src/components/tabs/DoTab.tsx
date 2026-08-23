@@ -8,6 +8,7 @@ import { C } from '@/theme/theme';
 import { ACTIVITY_ICONS } from '@/assets/generatedAssets';
 import { CareerPanel } from './career-panel';
 import { CareerAction } from '@/engine/careerEngine';
+import { deriveLifeRole } from '@/content/persistentStories';
 
 interface Props {
   cat: ActivityCategory | 'all';
@@ -19,7 +20,8 @@ interface Props {
 }
 
 export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
-  const activities = ACTIVITY_DEFS.filter((a) => cat === 'all' || a.cat === cat);
+  const role = deriveLifeRole(state);
+  const activities = ACTIVITY_DEFS.filter((a) => (!a.roles || a.roles.includes(role)) && (cat === 'all' || a.cat === cat));
 
   return (
     <View style={{ flex: 1 }}>
@@ -40,7 +42,7 @@ export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
               onPress={() => onCat(c.id)}
               innerStyle={{ paddingHorizontal: 8, paddingVertical: 6 }}
             >
-              <PixelText font="pixel" size={7} color={on ? c.fg : '#3a5d8a'}>
+              <PixelText font="pixel" size={8} color={on ? c.fg : '#3a5d8a'}>
                 {c.label}
               </PixelText>
             </PixelButton>
@@ -62,7 +64,7 @@ export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
                 bg={C.parch}
                 shadow={C.parchSd}
                 light={C.parchSl}
-                outline={C.parchBorder}
+                outline={a.danger === 'extreme' ? C.health : a.danger === 'high' ? C.amber : C.parchBorder}
                 onPress={() => onActivity(a.id)}
                 disabled={locked}
                 style={{ width: '48.5%', marginBottom: 8 }}
@@ -80,13 +82,9 @@ export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
                     marginBottom: 5,
                   }}
                 >
-                  {ACTIVITY_ICONS[a.id] ? (
-                    <Image source={ACTIVITY_ICONS[a.id]} resizeMode="contain" style={{ width: 36, height: 36 }} />
-                  ) : (
-                    <PixelText size={17}>{a.icon}</PixelText>
-                  )}
+                  <Image source={ACTIVITY_ICONS[a.id]} resizeMode="contain" style={{ width: 36, height: 36 }} />
                 </View>
-                <PixelText font="pixel" size={7} color="#3a2a08">
+                <PixelText font="pixel" size={8} color="#3a2a08">
                   {a.name}
                 </PixelText>
                 <PixelText font="body" size={13} color={locked ? C.bad : '#6a5a38'} style={{ marginTop: 4 }}>

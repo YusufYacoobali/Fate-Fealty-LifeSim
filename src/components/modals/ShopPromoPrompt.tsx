@@ -97,7 +97,7 @@ export function ShopPromoPrompt({ messageIndex, onExplore, onDismiss }: Props) {
             onPress={onDismiss}
             innerStyle={{ paddingVertical: compact ? 8 : 9, alignItems: 'center' }}
           >
-            <PixelText font="pixel" size={7} color={C.blue}>
+            <PixelText font="pixel" size={8} color={C.blue}>
               NOT THIS YEAR
             </PixelText>
           </PixelButton>

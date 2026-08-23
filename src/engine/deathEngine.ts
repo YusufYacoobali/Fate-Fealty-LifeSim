@@ -3,10 +3,14 @@
  * whether — and how — the life ends.
  *
  * Checks, in order:
+ *   0. The full span of years, which not even Live Forever gets past.
  *   1. Already dead (event-driven death set the flag) -> just finalise.
  *   2. Health <= 0.
  *   3. Old-age risk that ramps with age.
  *   4. Path-flavoured hazards (outlaws hang, knights fall in war, etc.).
+ *
+ * Steps 3 and 4 roll once a year. `ageUp` calls this after nearly every
+ * sub-step, so an ungated hazard is really eight or nine rolls a year.
  */
 
 import { GameState } from '@/types/game';
@@ -17,6 +21,7 @@ import { killPlayer, legacyScore } from './consequenceEngine';
 import { addMemory, countLivingKin, hasTag, pushFeed } from './gameState';
 import { chance, pick, rnd } from './random';
 import { C } from '@/theme/theme';
+import { appendWorldHistory } from './worldJournal';
 
 const HEALTH_DEATHS = [
   'Succumbed to a mild cough that turned out not to be mild.',
@@ -50,6 +55,14 @@ function difficultyDeathMod(s: GameState): number {
 }
 
 export function checkDeath(s: GameState): GameState {
+  // The span is the one thing Live Forever does not buy. It used to return here
+  // before any age check ran, so the setting meant literally never dying, and a
+  // life with no end has nothing at stake in it.
+  if (s.age >= MAX_LIFESPAN) {
+    killPlayer(s, 'Died at the full span of years. Nobody in Swineford could remember an older soul.');
+    return finalise(s);
+  }
+
   if (s.settings.liveForever) {
     // Live Forever floors health at 1 so the player can keep aging.
     if (s.stats.health <= 0) s.stats.health = 1;
@@ -69,16 +82,27 @@ export function checkDeath(s: GameState): GameState {
     return finalise(s);
   }
 
-  // 3. Old age — risk ramps after 45, sharply after 60.
+  // `ageUp` calls this after almost every sub-step so that a fatal event is
+  // finalised immediately. That is right for health collapse, which is a
+  // reaction to something that just happened, and wrong for the yearly hazard
+  // rolls below: they were being rolled eight or nine times a year, which made
+  // the real chance of dying several times the stated one and meant nobody saw
+  // sixty. These roll once per year and then stand down.
+  if (s.world.pacing.hazardsRolledYear === s.world.currentYear) return s;
+  s.world.pacing.hazardsRolledYear = s.world.currentYear;
+
+  // 4. Old age — risk ramps after 45, and climbs steeply through the eighties
+  // so that reaching the ceiling is a rare feat rather than the usual ending.
   if (s.age > 45) {
-    const oldRisk = ((s.age - 45) / 110) * mod;
+    const years = s.age - 45;
+    const oldRisk = ((years / 200) + Math.pow(years / 58, 3) * 0.17) * mod;
     if (chance(oldRisk)) {
       killPlayer(s, s.age > 70 ? 'Died peacefully of being very, very old.' : 'Died of a winter chill and a tired heart.');
       return finalise(s);
     }
   }
 
-  // 4. Path-flavoured hazard.
+  // 5. Path-flavoured hazard.
   const path = dominantPath(s);
   if (path === 'outlaw' && s.reputation < -20 && chance(0.05 * mod)) {
     killPlayer(s, pick(OUTLAW_DEATHS));
@@ -94,6 +118,9 @@ export function checkDeath(s: GameState): GameState {
 
 function finalise(s: GameState): GameState {
   if (!s.epitaph) s.epitaph = pick(EPITAPHS);
+  if (!s.world.history.some((entry) => entry.type === 'death' && entry.participantIds.includes(s.playerCharacterId))) {
+    appendWorldHistory(s, { id: `history_death_${s.nextId++}`, year: s.world.currentYear, type: 'death', participantIds: [s.playerCharacterId], familyIds: [s.world.characters[s.playerCharacterId]?.birthFamilyId ?? ''].filter(Boolean), causes: [s.deathCause], summary: `${s.first} died at ${s.age}. ${s.deathCause}`, salience: 5 });
+  }
   addMemory(s, 'died', 5, s.deathCause);
   pushFeed(s, `AGE ${s.age} · THE END`, C.bad, `You died at ${s.age}. ${s.deathCause}`, 'bad');
   return s;
@@ -108,6 +135,26 @@ export interface DeathSummary {
   cause: string;
   epitaph: string;
   legacy: number;
+  chronicle: string[];
+}
+
+export function buildLifeChronicle(s: GameState): string[] {
+  const relevant = s.world.history
+    .filter((entry) => entry.participantIds.includes(s.playerCharacterId) || entry.year >= s.playerRun.startedYear)
+    .sort((a, b) => b.salience - a.salience || a.year - b.year)
+    .slice(0, 5)
+    .sort((a, b) => a.year - b.year)
+    .map((entry) => `${entry.year}: ${entry.summary}`);
+  const closest = Object.values(s.world.relationships)
+    .filter((relationship) => relationship.aId === s.playerCharacterId || relationship.bId === s.playerCharacterId)
+    .sort((a, b) => (b.aToB.affinity + b.bToA.affinity) - (a.aToB.affinity + a.bToA.affinity))[0];
+  if (closest) {
+    const otherId = closest.aId === s.playerCharacterId ? closest.bId : closest.aId;
+    const other = s.world.characters[otherId];
+    if (other) relevant.push(`${other.name} remained one of the strongest threads in this life.`);
+  }
+  if (!relevant.length) relevant.push(`${s.first} lived through ${s.age} changing years in Swineford.`);
+  return relevant.slice(0, 6);
 }
 
 export function buildDeathSummary(s: GameState, rankKey: string): DeathSummary {
@@ -121,12 +168,27 @@ export function buildDeathSummary(s: GameState, rankKey: string): DeathSummary {
     cause: s.deathCause,
     epitaph: s.epitaph,
     legacy: legacyScore(s),
+    chronicle: buildLifeChronicle(s),
   };
 }
 
-/** Random extra flavour for the slow decline of old age, scaled by traits. */
+/** Nobody sees the far side of this, Live Forever aside. */
+export const MAX_LIFESPAN = 110;
+
+/** The age at which the body stops holding its own and starts giving ground. */
+export const DECLINE_AGE = 55;
+
+/**
+ * The slow decline of old age, scaled by traits.
+ *
+ * Past `DECLINE_AGE` this is a floor as well as a roll: a character who is
+ * eating well and resting can no longer hold a flat hundred health into their
+ * eighties, which is what made a long life a matter of patience rather than of
+ * luck. The floor climbs with each decade so the last years are genuinely hard.
+ */
 export function agingDamage(s: GameState): number {
   if (s.age <= 45) return 0;
   const base = rnd(1, Math.floor((s.age - 40) / 4) + 2);
-  return Math.round(base * agingMultiplierFromTraits(s));
+  const decline = s.age >= DECLINE_AGE ? 2 + Math.floor((s.age - DECLINE_AGE) / 5) : 0;
+  return Math.round((base + decline) * agingMultiplierFromTraits(s));
 }

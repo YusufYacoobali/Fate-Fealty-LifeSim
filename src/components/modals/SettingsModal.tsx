@@ -29,7 +29,7 @@ function Row({ children }: { children: React.ReactNode }) {
 function Pill({ label, color, bg, onPress }: { label: string; color: string; bg: string; onPress?: () => void }) {
   const inner = (
     <View style={{ backgroundColor: bg, borderWidth: 2, borderColor: C.inkSoft, paddingHorizontal: 6, paddingVertical: 4 }}>
-      <PixelText font="pixel" size={7} color={color}>
+      <PixelText font="pixel" size={8} color={color}>
         {label}
       </PixelText>
     </View>
@@ -37,7 +37,7 @@ function Pill({ label, color, bg, onPress }: { label: string; color: string; bg:
   if (onPress) {
     return (
       <PixelButton bg={bg} shadow={C.inkSoft} onPress={onPress} innerStyle={{ paddingHorizontal: 6, paddingVertical: 4 }}>
-        <PixelText font="pixel" size={7} color={color}>
+        <PixelText font="pixel" size={8} color={color}>
           {label}
         </PixelText>
       </PixelButton>
@@ -62,7 +62,7 @@ export function SettingsModal({ settings, premiumUnlocked, onSetSettings, onLock
     <ModalBackdrop zIndex={55}>
       <ScrollView style={{ maxHeight: '100%' }} contentContainerStyle={PANEL.parchModal}>
         <View style={{ backgroundColor: C.light, borderWidth: 3, borderColor: C.inkSoft, borderBottomColor: C.blue, borderRightColor: C.blue, paddingHorizontal: 8, paddingVertical: 6 }}>
-          <PixelText font="pixel" size={9} color={C.white} style={{ textAlign: 'center' }}>
+          <PixelText font="pixel" size={10} color={C.white} style={{ textAlign: 'center' }}>
             ⚙️ SETTINGS
           </PixelText>
         </View>
@@ -109,39 +109,45 @@ export function SettingsModal({ settings, premiumUnlocked, onSetSettings, onLock
             </PixelText>
             <Pill label={settings.soundEffects ? 'ON' : 'OFF'} color={C.white} bg={settings.soundEffects ? C.faithDark : C.bad} onPress={() => onSetSettings({ soundEffects: !settings.soundEffects })} />
           </Row>
+          <Row>
+            <PixelText font="body" size={17} color={C.textDark}>
+              Reduced motion
+            </PixelText>
+            <Pill label={settings.reducedMotion ? 'ON' : 'OFF'} color={C.white} bg={settings.reducedMotion ? C.faithDark : C.bad} onPress={() => onSetSettings({ reducedMotion: !settings.reducedMotion })} />
+          </Row>
           <PixelText font="body" size={13} color={C.textMuted} style={{ borderTopWidth: 2, borderTopColor: '#c9b483', paddingTop: 8 }}>
             Tap a setting to change it. Live Forever prevents death and lets thy current life keep aging.
           </PixelText>
         </View>
 
         <PixelButton bg={C.purple} shadow={C.purpleDark} onPress={onOpenChronicle} style={{ marginBottom: 7 }} innerStyle={{ paddingVertical: 9, alignItems: 'center' }}>
-          <PixelText font="pixel" size={8} color="#2a0d4a">
+          <PixelText font="pixel" size={9} color="#2a0d4a">
             📜 CHRONICLE
           </PixelText>
         </PixelButton>
         <PixelButton bg={C.charm} shadow={C.charmDark} light="#fff1b0" onPress={onOpenShop} style={{ marginBottom: 7 }} innerStyle={{ paddingVertical: 9, alignItems: 'center' }}>
-          <PixelText font="pixel" size={8} color="#3a2a08">
+          <PixelText font="pixel" size={9} color="#3a2a08">
             SHOP
           </PixelText>
         </PixelButton>
         <PixelButton bg={C.light} shadow={C.blue} light={C.sky} onPress={onRestartOnboarding} style={{ marginBottom: 7 }} innerStyle={{ paddingVertical: 9, alignItems: 'center' }}>
-          <PixelText font="pixel" size={8} color={C.blueDark}>
+          <PixelText font="pixel" size={9} color={C.blueDark}>
             TUTORIAL
           </PixelText>
         </PixelButton>
         <PixelButton bg={C.lightFill} shadow={C.blue} onPress={openPrivacyPolicy} style={{ marginBottom: 7 }} innerStyle={{ paddingVertical: 9, alignItems: 'center' }}>
-          <PixelText font="pixel" size={8} color={C.blueDark}>
+          <PixelText font="pixel" size={9} color={C.blueDark}>
             PRIVACY POLICY
           </PixelText>
         </PixelButton>
         <View style={{ flexDirection: 'row', gap: 7 }}>
           <PixelButton bg={C.health} shadow={C.healthDark} onPress={onRestart} style={{ flex: 1 }} innerStyle={{ paddingVertical: 9, alignItems: 'center' }}>
-            <PixelText font="pixel" size={8} color={C.white}>
+            <PixelText font="pixel" size={9} color={C.white}>
               RESTART
             </PixelText>
           </PixelButton>
           <PixelButton bg={C.faith} shadow={C.faithDark} onPress={onClose} style={{ flex: 1 }} innerStyle={{ paddingVertical: 9, alignItems: 'center' }}>
-            <PixelText font="pixel" size={8} color={C.blueDark}>
+            <PixelText font="pixel" size={9} color={C.blueDark}>
               CLOSE
             </PixelText>
           </PixelButton>

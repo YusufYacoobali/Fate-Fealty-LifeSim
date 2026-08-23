@@ -8,6 +8,8 @@
  * without changing a single call site.
  */
 
+import { PersistedRngState, WorldState } from '@/types/game';
+
 export interface RandomSource {
   /** Returns a float in [0, 1). */
   next(): number;
@@ -37,6 +39,74 @@ export function seededSource(seed: number): RandomSource {
       return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     },
   };
+}
+
+export const RNG_ALGORITHM = 'mulberry32-v1' as const;
+
+export function initialRngState(seed: number): PersistedRngState {
+  return { algorithm: RNG_ALGORITHM, state: seed >>> 0, draws: 0 };
+}
+
+export interface StatefulRandomSource extends RandomSource {
+  snapshot(): PersistedRngState;
+}
+
+export function runWithPersistedRng<T>(saved: PersistedRngState, operation: () => T): { value: T; rngState: PersistedRngState } {
+  const previous = source;
+  const scoped = persistedSource(saved);
+  source = scoped;
+  try {
+    return { value: operation(), rngState: scoped.snapshot() };
+  } finally {
+    source = previous;
+  }
+}
+
+/** Stateful mulberry32 whose exact continuation can be persisted in a save. */
+export function persistedSource(saved: PersistedRngState): StatefulRandomSource {
+  let state = saved.state >>> 0;
+  let draws = Math.max(0, Math.floor(saved.draws));
+  return {
+    next() {
+      state = (state + 0x6d2b79f5) >>> 0;
+      let t = state;
+      t = Math.imul(t ^ (t >>> 15), 1 | t);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      draws += 1;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    },
+    snapshot() {
+      return { algorithm: RNG_ALGORITHM, state, draws };
+    },
+  };
+}
+
+/**
+ * Bind all existing random helpers to a world's persisted stream for one
+ * synchronous engine transaction, then write the continuation back.
+ */
+export function runWithWorldRng<T>(world: WorldState, operation: () => T): T {
+  const previous = source;
+  const scoped = persistedSource(world.rngState);
+  source = scoped;
+  try {
+    return operation();
+  } finally {
+    world.rngState = scoped.snapshot();
+    source = previous;
+  }
+}
+
+/** Stable, non-stream-consuming hash used only for update recovery/substitution. */
+export function stableHash(seed: number, ...parts: string[]): number {
+  let hash = (2166136261 ^ (seed >>> 0)) >>> 0;
+  for (const part of parts) {
+    for (let i = 0; i < part.length; i++) {
+      hash ^= part.charCodeAt(i);
+      hash = Math.imul(hash, 16777619) >>> 0;
+    }
+  }
+  return hash >>> 0;
 }
 
 export function rnd(a: number, b: number): number {

@@ -48,13 +48,16 @@ describe('life-goal assignment', () => {
 });
 
 describe('life-goal completion', () => {
-  it('marks the goal done and rewards it once when satisfied', () => {
+  it('marks the goal completed, rewards it once, and immediately assigns another', () => {
     const s = makeState({ age: 20, gold: 200 });
     s.goalId = 'fortune';
     const repBefore = s.reputation;
     checkLifeGoal(s);
-    expect(s.goalDone).toBe(true);
+    expect(s.goalDone).toBe(false);
     expect(s.tags).toContain('goal_done');
+    expect(s.tags).toContain('goal_done_fortune');
+    expect(s.goalId).not.toBeNull();
+    expect(s.goalId).not.toBe('fortune');
     expect(s.reputation).toBe(Math.min(100, repBefore + 10));
 
     // Idempotent: a second check doesn't reward again.
@@ -69,6 +72,15 @@ describe('life-goal completion', () => {
     checkLifeGoal(s);
     expect(s.goalDone).toBe(false);
   });
+
+  it('does not depend on dismissing the celebration to advance', () => {
+    const s = makeState({ age: 20, gold: 200 });
+    s.goalId = 'fortune';
+    checkLifeGoal(s);
+    expect(s.goalDone).toBe(false);
+    expect(s.goalId).not.toBeNull();
+    expect(s.goalId).not.toBe('fortune');
+  });
 });
 
 describe('goalView', () => {
@@ -82,6 +94,21 @@ describe('goalView', () => {
     expect(v.id).toBe('fortune');
     expect(v.progress).toBeCloseTo(0.5); // 75 / 150
     expect(v.done).toBe(false);
+  });
+
+  it('shows gradual, actionable progress for kind rule and completes without a rare epilogue', () => {
+    const s = makeState({ age: 35, lifetimeUnlocked: true });
+    s.goalId = 'kind_rule';
+    s.rankIdx = 3;
+    s.holding.loyalty = 40;
+    const early = goalView(s)!;
+    expect(early.desc).toMatch(/Monarch.*merciful.*Loyalty to 80/i);
+    expect(early.progress).toBeGreaterThan(0);
+
+    s.rankIdx = 5;
+    s.holding.loyalty = 80;
+    s.tags.push('kind_ruler');
+    expect(goalById('kind_rule')!.done(s)).toBe(true);
   });
 });
 

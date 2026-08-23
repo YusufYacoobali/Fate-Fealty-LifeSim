@@ -4,7 +4,7 @@
  */
 import { createLife, cloneState } from '../src/engine/gameState';
 import { applyChoice } from '../src/engine/storyGraph';
-import { isChoiceAvailable } from '../src/engine/eventPicker';
+import { eventById, isChoiceAvailable } from '../src/engine/eventPicker';
 import { ACTIVITY_DEFS } from '../src/data/activities';
 import { RANKS } from '../src/data/ranks';
 import { GameState } from '../src/types/game';
@@ -35,7 +35,7 @@ function checkInvariants(s: GameState) {
   assert(s.actionClock.used >= 0 && s.actionClock.used <= 24, `action clock out of range: ${s.actionClock.used}`);
   assert(s.actionClock.cap === 24, `unexpected action cap: ${s.actionClock.cap}`);
   assert(s.kin.filter((person) => person.alive).length <= 30, 'living world exceeded its soft cap');
-  for (const relationship of s.world.relationships) {
+  for (const relationship of Object.values(s.world.relationships)) {
     for (const perspective of [relationship.aToB, relationship.bToA]) {
       for (const value of Object.values(perspective)) assert(value >= 0 && value <= 100, `relationship dimension out of range: ${value}`);
     }
@@ -57,8 +57,8 @@ for (let i = 0; i < LIVES; i++) {
 
   while (!s.dead && guard < 400) {
     guard++;
-    if (s.event) {
-      const ev = s.event;
+    if (s.pendingEvent) {
+      const ev = eventById(s.pendingEvent.eventId)!;
       if (ev.arcNodeOnly) arcsSeen++;
       eventsSeen++;
       const choices = ev.choices.filter((c) => isChoiceAvailable(s, c));
@@ -69,7 +69,7 @@ for (let i = 0; i < LIVES; i++) {
       // Spend a variable part of the yearly allowance, including work, then
       // deliberately age up early or at the cap.
       const actions = Math.floor(Math.random() * 7);
-      for (let action = 0; action < actions && !s.dead && !s.event; action++) {
+      for (let action = 0; action < actions && !s.dead && !s.pendingEvent; action++) {
         if (!s.occupation.careerId && s.age >= 8 && Math.random() < 0.25) {
           s = gameReducer(s, { type: 'CAREER_ACTION', action: 'apply', careerId: randomChoice(ENTRY_CAREERS).id });
         } else if (s.occupation.careerId && Math.random() < 0.35) {

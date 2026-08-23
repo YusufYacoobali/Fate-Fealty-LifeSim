@@ -5,11 +5,11 @@
  *   1. Increments age, ages kin.
  *   2. Emits 1-2 annual flavour beats (with effects).
  *   3. Applies the slow attrition of old age.
- *   4. Continues any in-flight story arc, OR rolls for a new main event.
+ *   4. Asks the director what shape this year takes and fills it (see ./director).
  *   5. Ticks rank/path progression (may auto-promote).
  *   6. Runs the death engine.
  *
- * The returned state may carry `event != null`, meaning the UI should open a
+ * The returned state may carry `pendingEvent != null`, meaning the UI should open a
  * popup and wait for the player's choice before the year is truly "done".
  */
 
@@ -22,20 +22,23 @@ import { tickProgression } from './pathProgression';
 import { grantAcquiredTraits } from './traitEngine';
 import { assignLifeGoalIfDue, checkLifeGoal } from './goalEngine';
 import { tickAilments, tickImprisonment, tickKinMortality } from './lifecycleEngine';
-import { pickEvent } from './eventPicker';
-import { popReadyArc } from './storyGraph';
 import { chance } from './random';
 import { tickHoldingYear } from './holdingEngine';
 import { tickCareerAndEconomy } from './careerEngine';
 import { simulateLivingWorld } from './worldEngine';
-import { tickRelationshipDecay } from './relationshipEngine';
-
-const EVENT_CHANCE = 0.34;
+import { tickAffairs, tickRelationshipDecay } from './relationshipEngine';
+import { resolveScheduledConsequences, tickPersistentSociety, tickWorldConditions } from './worldSimulation';
+import { tickFamilyFormation } from './familyFormationEngine';
+import { tickStructuredHealth } from './healthEngine';
+import { beginLegalTrial, tickLegalSystem } from './legalEngine';
+import { bindDirectedEvent, directYear } from './director';
+import { tickFactions } from './factionEngine';
 
 export function ageUp(s: GameState): GameState {
-  if (s.dead || s.event) return s; // guard: don't advance mid-popup
+  if (s.dead || s.pendingEvent) return s; // guard: don't advance mid-popup
 
   s.age += 1;
+  s.world.currentYear += 1;
   s.tab = 'life';
   s.selectedKinId = null;
 
@@ -44,9 +47,11 @@ export function ageUp(s: GameState): GameState {
 
   // --- 2. annual flavour (1-2 beats) ---
   const beats = chance(0.5) ? 2 : 1;
+  const annualMessageIds: string[] = [];
   for (let i = 0; i < beats; i++) {
-    const msg = pickAnnualMessage(s);
+    const msg = pickAnnualMessage(s, annualMessageIds);
     if (!msg) continue;
+    annualMessageIds.push(msg.id);
     applyEffects(s, msg.effects);
     pushFeed(s, `AGE ${s.age} · ${msg.tag}`, msg.tagColor, msg.text, msg.tone);
     checkDeath(s);
@@ -59,6 +64,10 @@ export function ageUp(s: GameState): GameState {
   checkDeath(s);
   if (s.dead) return s;
   tickKinMortality(s);
+  tickFamilyFormation(s);
+  tickStructuredHealth(s);
+  checkDeath(s);
+  if (s.dead) return s;
   tickAilments(s);
   checkDeath(s);
   if (s.dead) return s;
@@ -72,7 +81,13 @@ export function ageUp(s: GameState): GameState {
   checkDeath(s);
   if (s.dead) return s;
   tickRelationshipDecay(s);
+  tickAffairs(s);
   simulateLivingWorld(s);
+  tickPersistentSociety(s);
+  tickWorldConditions(s);
+  tickFactions(s);
+  tickLegalSystem(s);
+  resolveScheduledConsequences(s);
 
   // Resolve the outgoing year's estate management. A health collapse is
   // finalised before another story is offered while Live Forever is enabled
@@ -83,12 +98,17 @@ export function ageUp(s: GameState): GameState {
     if (s.dead) return s;
   }
 
-  // --- 4. story arc continuation OR new main event ---
-  const arcNode = popReadyArc(s);
-  if (arcNode) {
-    s.event = arcNode;
-  } else if (chance(EVENT_CHANCE)) {
-    s.event = pickEvent(s);
+  // --- 4. the year's beat, chosen by the director ---
+  const directed = directYear(s);
+  if (directed.event) {
+    // Only commit the trial's charge once the popup is genuinely being opened.
+    if (!s.pendingEvent) {
+      if (directed.isLegal) beginLegalTrial(s);
+      s.pendingEvent = { eventId: directed.event.id, bindings: bindDirectedEvent(s, directed) };
+    }
+    s.world.pacing.quietYearsSinceStory = 0;
+  } else {
+    s.world.pacing.quietYearsSinceStory += 1;
   }
 
   // --- 5. progression + newly-earned acquired traits + life goal ---

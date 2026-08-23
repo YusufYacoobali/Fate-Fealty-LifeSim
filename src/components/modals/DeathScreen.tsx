@@ -1,16 +1,17 @@
 import React from 'react';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
 import { GameState } from '@/types/game';
 import { buildDeathSummary } from '@/engine/deathEngine';
 import { currentRank } from '@/state/viewModel';
 import { C } from '@/theme/theme';
+import { eligibleHeirs } from '@/engine/successionEngine';
 
 interface Props {
   state: GameState;
   onNewLife: () => void;
-  onContinueHeir: () => void;
+  onContinueHeir: (heirId?: string) => void;
 }
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
@@ -29,10 +30,15 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
 export function DeathScreen({ state, onNewLife, onContinueHeir }: Props) {
   const rank = currentRank(state);
   const summary = buildDeathSummary(state, rank.key);
-  const canContinue = summary.heirs > 0;
+  const heirs = eligibleHeirs(state);
+  const canContinue = heirs.length > 0;
 
   return (
-    <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 60, backgroundColor: C.ink, alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+    <ScrollView
+      style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 60, backgroundColor: C.ink }}
+      contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 32 }}
+      showsVerticalScrollIndicator={false}
+    >
       <PixelText size={50} style={{ marginBottom: 6 }}>
         🪦
       </PixelText>
@@ -52,7 +58,7 @@ export function DeathScreen({ state, onNewLife, onContinueHeir }: Props) {
 
       {/* legacy ledger */}
       <View style={{ marginTop: 16, paddingTop: 12, borderTopWidth: 2, borderTopColor: '#2b3a52', alignItems: 'center' }}>
-        <PixelText font="pixel" size={7} color={C.charm} style={{ marginBottom: 8 }}>
+        <PixelText font="pixel" size={8} color={C.charm} style={{ marginBottom: 8 }}>
           ~ LEGACY ~
         </PixelText>
         <SummaryRow label="Final rank" value={summary.rank} />
@@ -66,20 +72,28 @@ export function DeathScreen({ state, onNewLife, onContinueHeir }: Props) {
         “{summary.epitaph}”
       </PixelText>
 
+      <View style={{ marginTop: 10, maxWidth: 280 }}>
+        {summary.chronicle.slice(0, 3).map((line) => (
+          <PixelText key={line} font="body" size={13} color="#9fc4e8" style={{ textAlign: 'center', marginTop: 2 }}>
+            {line}
+          </PixelText>
+        ))}
+      </View>
+
       <View style={{ marginTop: 22, gap: 10, alignItems: 'center' }}>
-        {canContinue && (
-          <PixelButton bg={C.faith} shadow={C.faithDark} onPress={onContinueHeir} innerStyle={{ paddingVertical: 12, paddingHorizontal: 22, alignItems: 'center' }}>
-            <PixelText font="pixel" size={10} color={C.blueDark}>
-              ♚ CONTINUE AS HEIR
+        {canContinue && heirs.slice(0, 3).map((heir) => (
+          <PixelButton key={heir.id} bg={C.faith} shadow={C.faithDark} onPress={() => onContinueHeir(heir.id)} innerStyle={{ paddingVertical: 10, paddingHorizontal: 18, alignItems: 'center' }}>
+            <PixelText font="pixel" size={9} color={C.blueDark}>
+              ♚ CONTINUE AS {heir.name.toUpperCase()} · AGE {heir.age}
             </PixelText>
           </PixelButton>
-        )}
+        ))}
         <PixelButton bg={C.charm} shadow={C.charmDark} light="#fff1b0" onPress={onNewLife} innerStyle={{ paddingVertical: 12, paddingHorizontal: 22, alignItems: 'center' }}>
-          <PixelText font="pixel" size={11} color="#3a2a08">
+          <PixelText font="pixel" size={12} color="#3a2a08">
             ✦ NEW LIFE
           </PixelText>
         </PixelButton>
       </View>
-    </View>
+    </ScrollView>
   );
 }

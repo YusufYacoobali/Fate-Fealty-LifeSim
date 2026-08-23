@@ -70,9 +70,9 @@ export function NavBar({
                 justifyContent: 'center',
               }}
             >
-              {locked && <PixelText font="pixel" size={6} color={C.charm}>P</PixelText>}
+              {locked && <PixelText font="pixel" size={7} color={C.charm}>P</PixelText>}
             </View>
-            <PixelText font="pixel" size={6} color={locked ? C.charm : on ? C.white : '#7fa8d0'} style={{ marginTop: 5 }}>
+            <PixelText font="pixel" size={7} color={locked ? C.charm : on ? C.white : '#7fa8d0'} style={{ marginTop: 5 }}>
               {n.label}
             </PixelText>
           </Pressable>

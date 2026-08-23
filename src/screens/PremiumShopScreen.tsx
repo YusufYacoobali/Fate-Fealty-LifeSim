@@ -27,7 +27,7 @@ export function PremiumShopScreen({ unlocked, accessState, onPurchase, onRestore
       zIndex={75}
       headerRight={
         <TouchableOpacity onPress={onClose} accessibilityRole="button" accessibilityLabel="Close shop" style={{ padding: 4 }}>
-          <PixelText font="pixel" size={10} color={C.cream}>
+          <PixelText font="pixel" size={11} color={C.cream}>
             X
           </PixelText>
         </TouchableOpacity>

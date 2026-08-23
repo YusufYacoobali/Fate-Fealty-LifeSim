@@ -8,6 +8,7 @@ export interface PersistentGame {
   state: GameState;
   dispatch: React.Dispatch<GameAction>;
   loaded: boolean;
+  saveCompatibilityBlocked: boolean;
 }
 
 /**
@@ -17,13 +18,17 @@ export interface PersistentGame {
 export function usePersistentGame(): PersistentGame {
   const [state, dispatch] = useReducer(gameReducer, undefined, () => createLife());
   const [loaded, setLoaded] = useState(false);
+  const [savingAllowed, setSavingAllowed] = useState(false);
+  const [saveCompatibilityBlocked, setSaveCompatibilityBlocked] = useState(false);
 
   useEffect(() => {
     let active = true;
     (async () => {
-      const saved = await loadGame();
+      const result = await loadGame();
       if (!active) return;
-      if (saved) dispatch({ type: 'HYDRATE', state: saved });
+      if (result.state) dispatch({ type: 'HYDRATE', state: result.state });
+      setSavingAllowed(!result.blockedByFutureVersion);
+      setSaveCompatibilityBlocked(result.blockedByFutureVersion);
       setLoaded(true);
     })();
     return () => {
@@ -32,8 +37,8 @@ export function usePersistentGame(): PersistentGame {
   }, []);
 
   useEffect(() => {
-    if (loaded) saveGame(state);
-  }, [state, loaded]);
+    if (loaded && savingAllowed) saveGame(state);
+  }, [state, loaded, savingAllowed]);
 
-  return { state, dispatch, loaded };
+  return { state, dispatch, loaded, saveCompatibilityBlocked };
 }

@@ -14,7 +14,7 @@ export interface CareerActionAvailability {
 }
 
 export function careerActionAvailability(state: GameState, action: CareerAction, careerId?: string): CareerActionAvailability {
-  if (state.dead || state.event) return { available: false, reason: 'Unavailable just now' };
+  if (state.dead || state.pendingEvent) return { available: false, reason: 'Unavailable just now' };
   if (state.actionClock.used >= state.actionClock.cap) return { available: false, reason: 'No actions remain this year' };
   const current = careerById(state.occupation.careerId);
   if (action === 'apply') {
@@ -52,6 +52,18 @@ export function careerActionAvailability(state: GameState, action: CareerAction,
   return { available: true };
 }
 
+/** Days of honest labour before a trade is worked out for the year. */
+export const WORK_BEFORE_GLUT = 6;
+
+const POOR_DAY_LINES = [
+  'Half the day was spent waiting on a man who never came.',
+  'The work was there and the coin was not; you are promised it at Michaelmas.',
+  'Nobody in the market had money today, only opinions.',
+  'You were paid partly in cabbages, which the tally does not recognise.',
+  'A wet morning and an idle afternoon. It happens.',
+  'The customer disputed the price, at length, and won.',
+] as const;
+
 const WORK_LINES = [
   'You put in a long day. Your hands ache, but your purse sounds healthier.',
   'The work is honest, mostly. The payment is entirely honest, which matters more.',
@@ -67,7 +79,7 @@ export function performCareerAction(state: GameState, action: CareerAction, care
   switch (action) {
     case 'apply': {
       const career = careerById(careerId ?? null)!;
-      state.occupation = { careerId: career.id, experience: 0, performance: 50, workedThisYear: 0 };
+      state.occupation = { careerId: career.id, experience: 0, performance: 50, workedThisYear: 0, apprenticeshipYears: career.tier === 0 ? 0 : undefined, guildStanding: ['craft', 'trade', 'medicine', 'entertainment', 'law'].includes(career.family) ? 5 : 0 };
       addTag(state, 'gainfully_employed');
       addTag(state, `career_family_${career.family}`);
       pushFeed(state, 'NEW OCCUPATION', C.good, `You take work as ${career.title}. ${career.desc}`, 'good');
@@ -75,13 +87,38 @@ export function performCareerAction(state: GameState, action: CareerAction, care
     }
     case 'work': {
       const career = current!;
-      const pay = career.wage + rnd(0, Math.max(1, career.tier + 1));
-      addMoney(state, pay);
+      const prosperityFactor = 0.75 + state.world.conditions.prosperity / 200;
+      const guildFactor = ['craft', 'trade', 'medicine', 'entertainment', 'law'].includes(career.family) ? 1 + state.world.factions.guilds.playerStanding / 500 : 1;
+      const patronFactor = state.tags.includes('has_patron') ? 1.08 : 1;
+      // A trade only has so much work in it. Beyond a full season the day's
+      // takings fall away, so a year cannot be turned into coin simply by
+      // pressing the same button until the clock runs out.
+      const seasonFactor = 1 / (1 + Math.max(0, state.occupation.workedThisYear - WORK_BEFORE_GLUT) * 0.28);
+      const full = (career.wage + rnd(0, Math.max(1, career.tier + 1))) * prosperityFactor * guildFactor * patronFactor * seasonFactor;
+
+      // Wages were previously certain. They are not: a poor day is likelier
+      // when the work is going badly, when the trade is glutted, or when the
+      // village has no coin to spend.
+      const badDayChance = Math.min(0.4, 0.22
+        - state.occupation.performance / 500
+        - state.world.conditions.prosperity / 700
+        + Math.max(0, state.occupation.workedThisYear - WORK_BEFORE_GLUT) * 0.03);
+      const badDay = chance(Math.max(0.04, badDayChance));
+      const pay = badDay ? Math.floor(full * rnd(0, 40) / 100) : Math.max(1, Math.round(full));
+
+      if (pay > 0) addMoney(state, pay);
       state.occupation.experience += 5 + career.tier;
-      state.occupation.performance = Math.min(100, state.occupation.performance + rnd(1, 4));
+      const illnessPenalty = Math.min(4, state.world.characters[state.playerCharacterId]?.healthConditions?.length ?? 0);
+      state.occupation.performance = Math.min(100, state.occupation.performance + rnd(1, 4) - illnessPenalty - (badDay ? 2 : 0));
       state.occupation.workedThisYear += 1;
+      if (career.tier === 0) state.occupation.apprenticeshipYears = (state.occupation.apprenticeshipYears ?? 0) + 1;
+      if (['craft', 'trade', 'medicine', 'entertainment', 'law'].includes(career.family)) state.occupation.guildStanding = Math.min(100, (state.occupation.guildStanding ?? 0) + 1);
       if (career.healthRisk) applyEffects(state, { health: -career.healthRisk });
-      pushFeed(state, 'WORK', C.good, `${pickNarrative(state, 'career_work', WORK_LINES)} ${career.title} wages: ${pay}g.`, 'good');
+      if (badDay) {
+        pushFeed(state, 'WORK', C.amber, `${pick(POOR_DAY_LINES)} ${career.title} wages: ${pay}g.`, pay > 0 ? 'plain' : 'bad');
+      } else {
+        pushFeed(state, 'WORK', C.good, `${pickNarrative(state, 'career_work', WORK_LINES)} ${career.title} wages: ${pay}g.`, 'good');
+      }
       break;
     }
     case 'train':
@@ -92,7 +129,7 @@ export function performCareerAction(state: GameState, action: CareerAction, care
       break;
     case 'promote': {
       const next = careerById(current!.promotesTo!)!;
-      state.occupation = { careerId: next.id, experience: 10, performance: 55, workedThisYear: 0 };
+      state.occupation = { careerId: next.id, experience: 10, performance: 55, workedThisYear: 0, guildStanding: Math.min(100, (state.occupation.guildStanding ?? 0) + 10), patronId: state.occupation.patronId };
       addTag(state, `career_${next.id}`);
       pushFeed(state, 'CAREER RISE', C.purpleDark, `Your work is recognized. You are now ${next.title}.`, 'good');
       break;
@@ -123,10 +160,21 @@ export function performCareerAction(state: GameState, action: CareerAction, care
       performRankDuty(state);
       break;
     case 'odd_job': {
-      const pay = rnd(3, 7);
-      addMoney(state, pay);
-      applyEffects(state, { health: -1, path: { labour: 1 } });
-      pushFeed(state, 'ODD WORK', C.amber, `You carry sacks, mend a gate, and locate a missing hen. The village pays ${pay} gold for this improbable expertise.`, 'good');
+      // Casual labour is available without an occupation, but it is not a
+      // risk-free coin button. Some days the work falls through after costs.
+      if (chance(0.62)) {
+        const pay = rnd(2, 6);
+        addMoney(state, pay);
+        applyEffects(state, { health: -1, path: { labour: 1 } });
+        pushFeed(state, 'ODD WORK', C.amber, `You carry sacks, mend a gate, and locate a missing hen. The village pays ${pay} gold for this improbable expertise.`, 'good');
+      } else {
+        const loss = Math.min(state.gold, rnd(1, 4));
+        addMoney(state, -loss);
+        applyEffects(state, { health: -rnd(1, 3), reputation: -1, path: { labour: 1 } });
+        pushFeed(state, 'ODD WORK · GONE WRONG', C.bad, loss > 0
+          ? `A cart axle breaks while it is in thy care. The owner takes ${loss} gold for repairs, and the day's labour earns nothing.`
+          : `A cart axle breaks while it is in thy care. Thou earns nothing and goes home bruised besides.`, 'bad');
+      }
       break;
     }
     case 'craft': {
@@ -180,7 +228,7 @@ export function tickCareerAndEconomy(state: GameState): GameState {
       pushFeed(state, 'WORK', C.bad, `You neglected your duties as ${current.title}. Your employer has noticed.`, 'bad');
       if (state.occupation.performance < 20 && chance(0.55)) {
         pushFeed(state, 'DISMISSED', C.bad, `You are dismissed from your post as ${current.title}. Even the door seems eager to see you out.`, 'bad');
-        state.occupation = { careerId: null, experience: 0, performance: 50, workedThisYear: 0 };
+        state.occupation = { careerId: null, experience: 0, performance: 50, workedThisYear: 0, dismissedYear: state.world.currentYear };
       }
     } else {
       state.occupation.performance = Math.min(100, state.occupation.performance + Math.min(8, state.occupation.workedThisYear));

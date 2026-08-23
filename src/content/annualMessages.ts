@@ -31,7 +31,7 @@ export const ANNUAL_MESSAGES: AnnualMessage[] = [
   { id: 'plague_cough', tag: 'PLAGUE', tagColor: C.bad, tone: 'bad', text: 'A cough went round the village. You survived by holding your breath for a season.', effects: { health: -9 }, requires: { minAge: 5 } },
   { id: 'wisdom_hermit', tag: 'WISDOM', tagColor: C.blue, tone: 'good', text: "The hermit on the hill taught you to read three whole words. Two were 'turnip'.", effects: { wits: 6 }, requires: { minAge: 5 } },
   { id: 'blessing_candle', tag: 'BLESSING', tagColor: C.good, tone: 'good', text: 'You lit a candle at the chapel. You feel holier and slightly singed.', effects: { faith: 7, path: { church: 1 } }, requires: { minAge: 5 } },
-  { id: 'weather_harvest', tag: 'WEATHER', tagColor: C.amber, tone: 'good', text: 'The harvest was good! Bread for all. You ate eleven loaves out of principle.', effects: { health: 4, gold: 2 }, requires: { minAge: 4 } },
+  { id: 'weather_harvest', tag: 'WEATHER', tagColor: C.amber, tone: 'good', text: 'The harvest was good! Bread for all. You ate seven loaves out of principle.', effects: { health: 4, gold: 2 }, requires: { minAge: 4 } },
   { id: 'mishap_goat', tag: 'MISHAP', tagColor: C.bad, tone: 'bad', text: 'A goat headbutted you off the bridge. Sir Quackbeard witnessed your shame.', effects: { health: -6, charm: -2 }, requires: { minAge: 4 } },
   { id: 'fortune_merchant', tag: 'FORTUNE', tagColor: C.good, tone: 'good', text: 'A merchant overpaid you by mistake and rode off. You said nothing. Wise.', effects: { gold: 6, faith: -2 }, requires: { minAge: 8 } },
   { id: 'romance_wink', tag: 'ROMANCE', tagColor: C.healthDark, tone: 'good', text: "You winked at the miller's child across the square. You think it went well. It did not.", effects: { charm: 3 }, requires: { minAge: 14 } },
@@ -61,8 +61,15 @@ export const ANNUAL_MESSAGES: AnnualMessage[] = [
   { id: 'father_weather_knee', tag: 'WEATHER', tagColor: C.good, tone: 'plain', text: "Old Cedric's knee predicted rain. It also predicted stew, but only one came true.", effects: { wits: 2, kinRel: { id: 'father', delta: 2 } }, requires: { minAge: 6 } },
 ];
 
-export function pickAnnualMessage(s: GameState): AnnualMessage | null {
-  const eligible = ANNUAL_MESSAGES.filter((m) => meetsCondition(s, m.requires));
+const RECENT_ANNUAL_REPEAT_WINDOW = 8;
+
+export function pickAnnualMessage(s: GameState, excludedIds: readonly string[] = []): AnnualMessage | null {
+  const excluded = new Set(excludedIds);
+  const recentText = new Set(s.feed.slice(-RECENT_ANNUAL_REPEAT_WINDOW).map((entry) => entry.text));
+  const eligible = ANNUAL_MESSAGES.filter((m) =>
+    !excluded.has(m.id)
+    && !recentText.has(m.text)
+    && meetsCondition(s, m.requires));
   if (eligible.length === 0) return null;
   return pickWeighted(eligible, (m) => m.weight ?? 1);
 }

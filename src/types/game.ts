@@ -1,3 +1,5 @@
+import type { Thread } from '@/engine/director/threads';
+
 /**
  * Core type system for the Fate & Fealty engine.
  *
@@ -110,9 +112,9 @@ export interface TraitDef {
 
 export type KinKind = 'mother' | 'father' | 'sibling' | 'spouse' | 'child' | 'friend' | 'foe' | 'liege' | 'acquaintance';
 
-export type GenderIdentity = 'woman' | 'man' | 'nonbinary' | 'unspecified';
+export type GenderIdentity = 'woman' | 'man';
 export type PronounId = 'she' | 'he' | 'they';
-export type AttractionPreference = 'women' | 'men' | 'any' | 'none';
+export type AttractionPreference = 'women' | 'men' | 'none';
 
 export interface PronounSet {
   id: PronounId;
@@ -126,6 +128,10 @@ export interface OccupationState {
   experience: number;
   performance: number;
   workedThisYear: number;
+  apprenticeshipYears?: number;
+  guildStanding?: number;
+  patronId?: string;
+  dismissedYear?: number;
 }
 
 export interface Debt {
@@ -162,9 +168,126 @@ export interface KinMember extends CharacterCore {
   householdId?: string;
   healthTags: string[];
   memories: string[];
+  /** Stable genealogy/world-simulation links introduced by save schema v3. */
+  birthFamilyId?: string;
+  parentIds?: string[];
+  childIds?: string[];
+  spouseId?: string;
+  personalityTraits?: string[];
+  ambition?: NpcAmbition;
+  secret?: NpcSecret;
+  secretRevealed?: boolean;
+  vulnerability?: NpcVulnerability;
+  importance?: CharacterImportance;
+  lifeRole?: LifeRole;
+  worldMemories?: CharacterMemory[];
+  deathYear?: number;
+  deathCause?: string;
+  healthConditions?: HealthConditionState[];
+  legalState?: LegalState;
+  secrets?: CharacterSecretState[];
+  guardianIds?: string[];
+  lineageStatus?: LineageStatus;
+  childDevelopment?: ChildDevelopmentState;
+  factionId?: FactionKey;
+  factionInfluence?: number;
 }
 
 export type WorldCharacter = KinMember;
+
+export type HealthConditionKind = 'illness' | 'injury' | 'disability';
+export interface HealthConditionState {
+  id: string;
+  conditionId: string;
+  kind: HealthConditionKind;
+  severity: number;
+  diagnosed: boolean;
+  startedYear: number;
+  nextReviewYear: number;
+  sourceId?: string;
+}
+
+export type LegalStatus = 'free' | 'accused' | 'awaiting_trial' | 'imprisoned' | 'exiled' | 'outlawed';
+export interface LegalCharge {
+  id: string;
+  offence: string;
+  severity: number;
+  evidence: number;
+  victimIds: string[];
+  witnessIds: string[];
+  year: number;
+  resolved: boolean;
+}
+export interface LegalState {
+  status: LegalStatus;
+  suspicion: number;
+  notoriety: number;
+  charges: LegalCharge[];
+  sentenceYearsRemaining: number;
+}
+
+export interface CharacterSecretState {
+  id: string;
+  type: NpcSecret;
+  knownByIds: string[];
+  revealed: boolean;
+  severity: number;
+  createdYear: number;
+}
+
+export type LineageStatus = 'marital' | 'illegitimate' | 'acknowledged' | 'disputed' | 'adopted' | 'ward';
+export interface ChildDevelopmentState {
+  completedMilestones: number[];
+  education: 'none' | 'household' | 'craft' | 'church' | 'martial' | 'court';
+  investment: number;
+  favour: number;
+}
+
+export type CharacterImportance = 'core' | 'supporting' | 'background';
+export type NpcAmbition =
+  | 'protect_family'
+  | 'gain_land'
+  | 'marry_well'
+  | 'join_clergy'
+  | 'gain_status'
+  | 'become_wealthy'
+  | 'avenge_family'
+  | 'master_craft'
+  | 'win_glory'
+  | 'seek_freedom';
+export type NpcSecret =
+  | 'none'
+  | 'hidden_debt'
+  | 'forbidden_faith'
+  | 'illegitimate_child'
+  | 'cowardice_in_battle'
+  | 'stolen_property'
+  | 'secret_lover'
+  | 'false_lineage'
+  | 'criminal_contact'
+  | 'betrayed_friend';
+export type NpcVulnerability =
+  | 'pride'
+  | 'poverty'
+  | 'sick_relative'
+  | 'disputed_birth'
+  | 'loneliness'
+  | 'greed'
+  | 'fear'
+  | 'envy';
+
+export interface CharacterMemory {
+  id: string;
+  year: number;
+  type: string;
+  actorIds: string[];
+  storyInstanceId?: string;
+  choiceId?: string;
+  sentiment: number;
+  salience: 1 | 2 | 3 | 4 | 5;
+  inherited: boolean;
+  summary: string;
+}
 
 export interface RelationshipPerspective {
   affinity: number;
@@ -173,7 +296,7 @@ export interface RelationshipPerspective {
   attraction: number;
 }
 
-export type RelationshipFlag = 'family' | 'spouse' | 'friend' | 'rival' | 'authority' | 'feud' | 'former_spouse';
+export type RelationshipFlag = 'family' | 'spouse' | 'friend' | 'rival' | 'authority' | 'feud' | 'former_spouse' | 'affair';
 
 export interface Relationship {
   id: string;
@@ -191,17 +314,208 @@ export interface Household {
   id: string;
   memberIds: string[];
   wealth: number;
+  headId?: string;
+  foodSecurity?: number;
+  status?: number;
+  residenceQuality?: number;
+  capacity?: number;
+  storedFood?: number;
+}
+
+export interface FamilyMemory {
+  id: string;
+  year: number;
+  type: string;
+  sentiment: number;
+  salience: number;
+  summary: string;
+}
+
+export interface FamilyState {
+  id: string;
+  name: string;
+  memberIds: string[];
+  reputation: number;
+  wealthTier: number;
+  allyFamilyIds: string[];
+  enemyFamilyIds: string[];
+  inheritedMemories: FamilyMemory[];
+}
+
+export type RngAlgorithm = 'mulberry32-v1';
+export interface PersistedRngState {
+  algorithm: RngAlgorithm;
+  state: number;
+  draws: number;
+}
+
+export interface WorldConditions {
+  foodSecurity: number;
+  prosperity: number;
+  publicOrder: number;
+  warThreat: number;
+  diseasePressure: number;
+  religiousTension: number;
+}
+
+export type WorldConditionKey = keyof WorldConditions;
+export interface ConditionModifier {
+  id: string;
+  condition: WorldConditionKey;
+  label: string;
+  delta: number;
+  /** Annual pressure is applied once per yearly tick; one-shot modifiers are consumed. */
+  application?: 'annual' | 'once';
+  sourceId: string;
+  expiresYear?: number;
+  hiddenUntilRevealed?: boolean;
+}
+
+export type LifeRole = 'commoner' | 'artisan_merchant' | 'clergy' | 'martial' | 'landed_noble' | 'monarch' | 'outlaw';
+export type StoryScale = 'major' | 'medium' | 'relationship';
+export type StoryStatus = 'active' | 'paused' | 'completed' | 'failed' | 'cancelled';
+
+export interface StoryInstance {
+  id: string;
+  templateId: string;
+  scale: StoryScale;
+  status: StoryStatus;
+  bindings: Record<string, string>;
+  variables: Record<string, string | number | boolean | null>;
+  currentBeatId: string;
+  startedYear: number;
+  nextEligibleYear: number;
+  lastBeatYear: number;
+  generationStarted: number;
+}
+
+export type ConsequenceScope = 'character' | 'family' | 'household' | 'world';
+export type ConsequenceDescriptor =
+  | { type: 'effects'; effects: Effects; targetId?: string }
+  | { type: 'relationship'; aId: string; bId: string; affinity: number; trust?: number }
+  | { type: 'condition'; condition: WorldConditionKey; delta: number; label: string }
+  | { type: 'memory'; targetId: string; memoryType: string; sentiment: number; salience: 1 | 2 | 3 | 4 | 5; summary: string }
+  | { type: 'history'; historyType: string; summary: string; salience: number };
+
+export interface ScheduledConsequence {
+  id: string;
+  sourceStoryInstanceId?: string;
+  sourceChoiceId?: string;
+  dueYear: number;
+  expiresYear?: number;
+  scope: ConsequenceScope;
+  targetIds: string[];
+  condition?: { kind: 'character_alive' | 'condition_at_least' | 'condition_at_most'; key?: WorldConditionKey; value?: number };
+  resolution: ConsequenceDescriptor;
+  explanation: string;
+}
+
+export interface WorldHistoryEntry {
+  id: string;
+  year: number;
+  type: string;
+  participantIds: string[];
+  familyIds: string[];
+  storyInstanceId?: string;
+  choiceId?: string;
+  causes: string[];
+  summary: string;
+  salience: number;
+}
+
+export interface PacingState {
+  lastMajorYear: number | null;
+  lastImportantYear: number | null;
+  quietYearsSinceStory: number;
+  /** Consecutive years resolved by a story beat rather than a one-off event. */
+  storyBeatsInARow?: number;
+  /** Year the once-yearly death hazards were last rolled. */
+  hazardsRolledYear?: number;
+  /** Consecutive years in which nothing at all happened. */
+  quietRun?: number;
+  /** Years since the last deliberate good year. */
+  yearsSinceReward?: number;
+  /** Gap, rolled fresh each time, before the next one is owed. */
+  nextRewardAt?: number;
+  majorEventsThisLife: number;
+  mediumStoriesStarted: number;
+  immediateChainDepth: number;
+}
+
+export type ContentDomain = 'family' | 'health' | 'crime' | 'career' | 'politics' | 'household' | 'rare';
+export type ContentRarity = 'common' | 'uncommon' | 'rare';
+export interface ContentLedgerEntry {
+  lastYear: number;
+  timesResolved: number;
+  lastChoiceId?: string;
+}
+
+export type ExpectedChildRoute = 'pregnancy' | 'illegitimate' | 'adoption' | 'wardship';
+export interface ExpectedChild {
+  id: string;
+  parentIds: string[];
+  route: ExpectedChildRoute;
+  dueYear: number;
+  householdId: string;
+  familyId: string;
+  status: 'expected' | 'resolved' | 'cancelled';
+  sourceChoiceId?: string;
+}
+
+export type FactionKey = 'crown' | 'church' | 'guilds' | 'commons' | 'outlaws';
+export interface FactionState {
+  id: FactionKey;
+  name: string;
+  influence: number;
+  playerStanding: number;
+  leaderId?: string;
+  activePressure?: string;
+  lastActionYear: number;
+}
+
+export interface PlayerRunState {
+  /** World year in which control of the current character began. */
+  startedYear: number;
+  generation: number;
+  roleProgress: Partial<Record<LifeRole, number>>;
+}
+
+export interface PendingEvent {
+  eventId: string;
+  storyInstanceId?: string;
+  bindings?: Record<string, string>;
 }
 
 export type RelationFilter = 'all' | 'family' | 'romance' | 'friends' | 'acquaintances' | 'rivals' | 'authority' | 'deceased';
 
 export interface WorldState {
-  relationships: Relationship[];
+  relationships: Record<string, Relationship>;
   households: Household[];
   relationFilter: RelationFilter;
   feedFilter: FeedFilter;
   proposalFromId: string | null;
   recentNarrativeIds: string[];
+  /** Schema-v3 persistent simulation data. Arrays above remain UI adapters. */
+  currentYear: number;
+  worldSeed: number;
+  rngState: PersistedRngState;
+  contentVersion: number;
+  characters: Record<string, WorldCharacter>;
+  families: Record<string, FamilyState>;
+  conditions: WorldConditions;
+  conditionModifiers: ConditionModifier[];
+  activeStories: StoryInstance[];
+  scheduledConsequences: ScheduledConsequence[];
+  history: WorldHistoryEntry[];
+  pacing: PacingState;
+  recoveryNotice: boolean;
+  contentLedger: Record<string, ContentLedgerEntry>;
+  /** Ambient chains the player has opened and not yet finished. */
+  threads?: Thread[];
+  repetitionLedger: Record<string, number>;
+  recentDomains: ContentDomain[];
+  expectedChildren: ExpectedChild[];
+  factions: Record<FactionKey, FactionState>;
 }
 
 export interface ActionClock {
@@ -226,6 +540,10 @@ export interface NewKinSpec {
   rel?: number;
   age?: number;
   isHeir?: boolean;
+  /** Forced gender; omit to let the factory roll one. */
+  gender?: GenderIdentity;
+  /** Forced attraction; omit to derive it from gender. */
+  attraction?: AttractionPreference;
 }
 
 // ---------------------------------------------------------------------------
@@ -285,6 +603,8 @@ export interface Effects {
   memory?: { tag: string; weight?: number; note?: string };
   /** Shift a specific kin member's relationship. */
   kinRel?: { id: string; delta: number };
+  /** Shift the character bound to a persistent-story role. */
+  boundKinRel?: { role: string; delta: number };
   /** Add one or more new kin members (spouse, child, etc.). */
   addKin?: NewKinSpec | NewKinSpec[];
   /** Mark a kin member (by id or kind) as deceased. */
@@ -297,6 +617,20 @@ export interface Effects {
   /** Lighter consequences that get recorded as tags + memories. */
   prison?: boolean;
   exile?: boolean;
+  /** Persistent-world extensions. Existing effects still target the player. */
+  targetCharacterId?: string;
+  worldConditions?: Partial<WorldConditions>;
+  familyReputation?: { familyId?: string; delta: number };
+  storyVariables?: Record<string, string | number | boolean | null>;
+  revealSecretOf?: string;
+  schedule?: Omit<ScheduledConsequence, 'id'> | Array<Omit<ScheduledConsequence, 'id'>>;
+  healthCondition?: { conditionId: string; severity: number; targetId?: string; diagnosed?: boolean };
+  removeHealthCondition?: { conditionId: string; targetId?: string };
+  legal?: { targetId?: string; suspicion?: number; notoriety?: number; status?: LegalStatus; charge?: Omit<LegalCharge, 'id' | 'year' | 'resolved'>; sentenceYears?: number };
+  faction?: { factionId: FactionKey; influence?: number; playerStanding?: number; pressure?: string };
+  householdState?: { householdId?: string; wealth?: number; food?: number; quality?: number; capacity?: number; status?: number };
+  createSecret?: { targetId?: string; type: NpcSecret; severity: number; knownByIds?: string[] };
+  expectChild?: { route: ExpectedChildRoute; parentIds?: string[]; dueInYears?: number };
 }
 
 export interface Condition {
@@ -324,6 +658,21 @@ export interface Condition {
    * swear to a liege only while lieges = 0).
    */
   kinCountAtMost?: Partial<Record<KinKind, number>>;
+  roles?: LifeRole[];
+  worldAtLeast?: Partial<WorldConditions>;
+  worldAtMost?: Partial<WorldConditions>;
+  hasHealthCondition?: string[];
+  missingHealthCondition?: string[];
+  legalStatuses?: LegalStatus[];
+  suspicionAtLeast?: number;
+  factionStandingAtLeast?: Partial<Record<FactionKey, number>>;
+  householdAtLeast?: Partial<{ wealth: number; food: number; quality: number; status: number }>;
+  hasKnownSecret?: boolean;
+  hasWorldMemoryType?: string[];
+  /** Require every listed shop item to be owned (ids from `data/shop`). */
+  hasItems?: string[];
+  /** Require none of the listed shop items to be owned. */
+  missingItems?: string[];
   /** Escape hatch for one-off logic. */
   custom?: (s: GameState) => boolean;
 }
@@ -348,6 +697,8 @@ export interface Outcome {
 }
 
 export interface Choice {
+  /** Stable content id used by story transitions and save-safe history. */
+  id?: string;
   label: string;
   hint?: string;
   /** Only show this choice when the condition holds. */
@@ -363,6 +714,7 @@ export interface Choice {
   failure?: Outcome;
   /** For deterministic choices with no roll. */
   outcome?: Outcome;
+  forecast?: { risk: 'low' | 'medium' | 'high'; positive: string[]; negative: string[]; warnsDelayedConsequence?: boolean };
 }
 
 export type EventCategory =
@@ -376,6 +728,25 @@ export type EventCategory =
   | 'plague'
   | 'war'
   | 'arc';
+
+export interface EventActorRole {
+  minAge?: number;
+  maxAge?: number;
+  alive?: boolean;
+  excludePlayer?: boolean;
+  kinds?: KinKind[];
+  importance?: CharacterImportance[];
+  missingActor: 'clear_event' | 'substitute';
+}
+
+export interface EventChainRef {
+  /** Chain this beat belongs to, e.g. "stolen_chalice". */
+  id: string;
+  /** 0-based position of this beat in the chain. */
+  index: number;
+  /** Total beats in the chain. */
+  total: number;
+}
 
 export interface GameEvent {
   id: string;
@@ -401,6 +772,14 @@ export interface GameEvent {
   /** Internal arc nodes are never picked by the random picker. */
   arcNodeOnly?: boolean;
   choices: Choice[];
+  domain?: ContentDomain;
+  rarity?: ContentRarity;
+  cooldownYears?: number;
+  repetitionGroup?: string;
+  actorRoles?: Record<string, EventActorRole>;
+  editorialScore?: 1 | 2 | 3 | 4 | 5;
+  /** Set on ambient chain beats so the director can schedule continuations. */
+  chain?: EventChainRef;
 }
 
 /** A story arc that is mid-flight, waiting to continue on a later age-up. */
@@ -414,7 +793,7 @@ export interface ActiveArc {
 // Activities, shop, settings
 // ---------------------------------------------------------------------------
 
-export type ActivityCategory = 'leisure' | 'work' | 'faith' | 'martial' | 'crime' | 'health';
+export type ActivityCategory = 'leisure' | 'work' | 'faith' | 'martial' | 'crime' | 'vice' | 'health';
 
 export interface ActivityDef {
   id: string;
@@ -425,9 +804,13 @@ export interface ActivityDef {
   desc: string;
   /** Youngest age that may attempt this (default 0). Shown as a lock in the UI. */
   minAge?: number;
+  /** Explicit warning shown for actions designed to cause serious harm. */
+  danger?: 'high' | 'extreme';
+  roles?: LifeRole[];
+  premium?: boolean;
 }
 
-export type CareerFamily = 'agriculture' | 'craft' | 'trade' | 'church' | 'martial' | 'court' | 'outlaw';
+export type CareerFamily = 'agriculture' | 'craft' | 'trade' | 'church' | 'martial' | 'court' | 'outlaw' | 'medicine' | 'entertainment' | 'law';
 
 export interface CareerDef {
   id: string;
@@ -443,9 +826,23 @@ export interface CareerDef {
   healthRisk?: number;
   promotesTo?: string;
   desc: string;
+  premium?: boolean;
+  prestige?: boolean;
 }
 
 export type ShopItemType = 'consumable' | 'perm';
+
+/** The stalls and traders of Swineford, each with its own kind of wares. */
+export type ShopMarket =
+  | 'pedlar'
+  | 'market'
+  | 'apothecary'
+  | 'armourer'
+  | 'draper'
+  | 'beastmarket'
+  | 'reliquary'
+  | 'scrivener'
+  | 'landagent';
 
 export interface ShopItem {
   id: string;
@@ -459,6 +856,14 @@ export interface ShopItem {
   desc: string;
   /** Youngest age the merchant will sell this to (default 0). */
   minAge?: number;
+  /** Which stall carries it. */
+  market: ShopMarket;
+  /** Always in stock; everything else rotates from year to year. */
+  staple?: boolean;
+  /** Chance in 100 that a rotating item is stocked in any given year. */
+  stockChance?: number;
+  /** Station the seller expects before dealing (default 0). */
+  minRankIdx?: number;
 }
 
 export interface GameSettings {
@@ -468,6 +873,9 @@ export interface GameSettings {
   haptics: boolean;
   music: boolean;
   soundEffects: boolean;
+  reducedMotion?: boolean;
+  /** Collapse the Swineford panel on the Holding page. Carried across lives. */
+  villageCollapsed?: boolean;
 }
 
 export type Tab = 'life' | 'do' | 'kin' | 'hold' | 'shop' | 'me';
@@ -476,7 +884,34 @@ export type Tab = 'life' | 'do' | 'kin' | 'hold' | 'shop' | 'me';
 // The full game state
 // ---------------------------------------------------------------------------
 
+export type DuelKind = 'duel' | 'brawl';
+export type DuelOutcome = 'won' | 'lost' | 'yielded' | 'refused';
+
+/** A fight in progress, resolved exchange by exchange through the duel modal. */
+export interface DuelState {
+  opponentId: string;
+  kind: DuelKind;
+  /** Fight-local composure, 0..100. Not the same as health. */
+  playerVigour: number;
+  opponentVigour: number;
+  round: number;
+  /** The telegraphed attack the player is currently answering. */
+  moveId: string;
+  /** Narration of the exchanges so far, newest last. */
+  log: string[];
+  /** Set once the fight is decided, before the player closes the modal. */
+  outcome?: DuelOutcome;
+  /** Closing narration shown with the outcome. */
+  verdict?: string;
+}
+
 export interface GameState {
+  schemaVersion: 4;
+  playerCharacterId: string;
+  playerRun: PlayerRunState;
+  pendingEvent: PendingEvent | null;
+  /** Non-null only while a fight is being played out. */
+  duel: DuelState | null;
   // --- identity ---
   first: string;
   epithet: string;
@@ -503,6 +938,7 @@ export interface GameState {
   firedOnce: string[]; // ids of `once` events already seen
 
   // --- relationships ---
+  /** @deprecated Compatibility projection. Canonical people live in world.characters. */
   kin: KinMember[];
   world: WorldState;
 
@@ -522,7 +958,6 @@ export interface GameState {
   tab: Tab;
   selectedKinId: string | null;
   settingsOpen: boolean;
-  event: GameEvent | null;
 
   // --- life goal (assigned at coming-of-age) ---
   goalId: string | null;

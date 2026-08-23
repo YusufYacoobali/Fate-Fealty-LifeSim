@@ -21,6 +21,19 @@ npx tsx scripts/simulateSmart.ts # focused-play test (rank ladder reachability)
 npx tsx scripts/balance.ts       # balance report: rank reach + lifespan per difficulty
 ```
 
+## Persistent-world verification
+
+The regular suite is `npm test` (234 tests across 30 suites). Release-scale
+simulation is available through `npm run test:soak`; it runs 1,500 complete
+lives across all difficulties, 100 three-generation dynasties, 700 role lives,
+every flagship route/ending and deterministic reload checkpoints. The completed
+reference run took 842 seconds on the development machine.
+
+World responsibilities are split across focused modules: `characterState`,
+`stateDefaults`, `worldConditions`, `consequenceScheduler`, `npcDirector`,
+`worldIntegrity`, and `worldJournal`. Swineford maintains 30-60 living recurring
+characters, and flagship stories use conditional routes and multiple endings.
+
 ## Engagement features
 
 - **Notifications** — `src/services/notifications.ts` schedules a single
@@ -99,6 +112,29 @@ App.tsx                  # font loading + provider
 3. If an event is set, the UI opens `EventModal`; choosing an option runs
    `storyGraph.applyChoice`, which applies effects and may chain to a follow-up
    popup (`now`) or queue it for a later year (`nextYear`).
+
+## Persistent story world (save schema v3)
+
+Swineford is now a deterministic world rather than a disposable kin roster:
+
+- **30 recurring inhabitants** live in persistent families and households, with
+  personalities, ambitions, secrets, vulnerabilities, memories, careers and
+  mutual relationships.
+- **World conditions** track food, prosperity, order, war, disease and religious
+  tension. Named causes are surfaced in the Life screen and story explanations.
+- **Multi-year stories** use saveable template instances, dynamic NPC casting,
+  paced beats, local variables and delayed consequences. The five flagship arcs
+  cover rivalry, harvest crisis, inheritance, war and an ambitious child; every
+  life role also has its own activities and supporting story.
+- **Succession preserves the world**: choosing an heir changes the controlled
+  character while families, NPCs, stories, consequences and history continue.
+- Saves persist `worldSeed`, the exact `rngState`, and `contentVersion`. Identical
+  seeds, content and actions produce identical continuations, including across
+  save/load. Removed or renamed story content is recovered through aliases and
+  declared safe fallbacks without consuming the world's RNG stream.
+
+The v3 update intentionally starts a fresh active world while preserving the
+separate achievements, lifetime Chronicle and paid entitlement stores.
 
 ### Writing content
 
@@ -224,7 +260,10 @@ The Life Director runs yearly upkeep through `lifecycleEngine`:
 - **Pure core** — nothing under `engine/`, `content/`, or the `*Logic` services
   imports React/React Native, so it's all unit-testable in plain Node.
 
-## Status
+## Legacy release status (superseded)
+
+The figures below describe the pre-persistent-world build. Current verification
+and soak results are recorded in **Persistent-world verification** above.
 
 - ✅ Expo SDK 54 / RN 0.81 / React 19, TypeScript strict, clean typecheck.
 - ✅ Bundles through Metro (788 modules).

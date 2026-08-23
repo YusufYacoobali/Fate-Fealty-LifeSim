@@ -204,59 +204,6 @@ function RoyalOfferPanel({
         </View>
       </View>
 
-      {shop ? (
-        <View style={{ gap: compact ? 5 : 7 }}>
-          {SHOP_FEATURES.map((feature) => (
-            <View
-              key={feature.title}
-              style={{
-                minHeight: compact ? 54 : 64,
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: compact ? 7 : 10,
-                backgroundColor: ROYAL.panelLight,
-                borderWidth: 2,
-                borderColor: ROYAL.edge,
-                paddingHorizontal: compact ? 5 : 8,
-                paddingVertical: compact ? 4 : 6,
-              }}
-            >
-              <Image source={PAYWALL_ART.check} resizeMode="contain" style={{ width: compact ? 25 : 31, height: compact ? 25 : 31 }} />
-              <View style={{ flex: 1 }}>
-                <PixelText font="pixel" size={compact ? 7 : 7} color={ROYAL.gold}>{feature.title}</PixelText>
-                <PixelText font="body" size={compact ? 13 : 15} color={ROYAL.cream} style={{ marginTop: 3 }}>{feature.body}</PixelText>
-              </View>
-              <Image source={feature.art} resizeMode="contain" style={{ width: compact ? 43 : 52, height: compact ? 43 : 52 }} />
-            </View>
-          ))}
-        </View>
-      ) : (
-        <View>
-          {FEATURES.map((feature, index) => (
-          <View
-            key={feature.copy}
-            style={{
-              minHeight: compact ? 48 : 50,
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: compact ? 6 : 9,
-              borderBottomWidth: index === FEATURES.length - 1 ? 0 : 2,
-              borderBottomColor: ROYAL.edge,
-              borderStyle: 'dotted',
-              paddingHorizontal: compact ? 2 : 4,
-              paddingVertical: compact ? 1 : 2,
-            }}
-          >
-            <Image source={PAYWALL_ART.check} resizeMode="contain" style={{ width: compact ? 24 : 31, height: compact ? 24 : 31 }} />
-            <PixelText font="body" size={compact ? 15 : 16} color={ROYAL.cream} style={{ flex: 1 }}>
-              {feature.copy}
-            </PixelText>
-            <Image source={feature.art} resizeMode="contain" style={{ width: compact ? 41 : 40, height: compact ? 41 : 40 }} />
-          </View>
-          ))}
-        </View>
-      )}
-
       {unlocked ? (
         <View style={{ backgroundColor: ROYAL.panel, borderWidth: 3, borderColor: ROYAL.gold, padding: compact ? 11 : 16, alignItems: 'center' }}>
           <Image source={PAYWALL_ART.check} resizeMode="contain" style={{ width: compact ? 50 : 64, height: compact ? 50 : 64 }} />
@@ -290,7 +237,9 @@ function RoyalOfferPanel({
               disabled={unavailable}
               onPress={() => setSelected(id)}
               style={{
-                minHeight: isAnnual ? (compact ? 69 : 76) : compact ? 57 : 61,
+                // Yearly is the recommendation and stands tallest; monthly is the
+                // option of last resort and is given the least room accordingly.
+                minHeight: isAnnual ? (compact ? 69 : 76) : isLifetime ? (compact ? 57 : 61) : compact ? 46 : 50,
                 marginTop: index === 0 ? 0 : compact ? 6 : 8,
                 paddingHorizontal: compact ? 6 : 9,
                 paddingVertical: compact ? 4 : 6,
@@ -315,8 +264,8 @@ function RoyalOfferPanel({
                 source={isAnnual ? PAYWALL_ART.crown : isLifetime ? PAYWALL_ART.holding : PAYWALL_ART.monthly}
                 resizeMode="contain"
                 style={{
-                  width: isAnnual ? (compact ? 40 : 46) : compact ? 35 : 40,
-                  height: isAnnual ? (compact ? 40 : 46) : compact ? 35 : 40,
+                  width: isAnnual ? (compact ? 40 : 46) : isLifetime ? (compact ? 35 : 40) : compact ? 28 : 32,
+                  height: isAnnual ? (compact ? 40 : 46) : isLifetime ? (compact ? 35 : 40) : compact ? 28 : 32,
                 }}
               />
               <View style={{ flex: 1 }}>
@@ -379,6 +328,59 @@ function RoyalOfferPanel({
         </TouchableOpacity>
       )}
         </>
+      )}
+
+      {shop ? (
+        <View style={{ gap: compact ? 5 : 7 }}>
+          {SHOP_FEATURES.map((feature) => (
+            <View
+              key={feature.title}
+              style={{
+                minHeight: compact ? 54 : 64,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: compact ? 7 : 10,
+                backgroundColor: ROYAL.panelLight,
+                borderWidth: 2,
+                borderColor: ROYAL.edge,
+                paddingHorizontal: compact ? 5 : 8,
+                paddingVertical: compact ? 4 : 6,
+              }}
+            >
+              <Image source={PAYWALL_ART.check} resizeMode="contain" style={{ width: compact ? 25 : 31, height: compact ? 25 : 31 }} />
+              <View style={{ flex: 1 }}>
+                <PixelText font="pixel" size={compact ? 7 : 7} color={ROYAL.gold}>{feature.title}</PixelText>
+                <PixelText font="body" size={compact ? 13 : 15} color={ROYAL.cream} style={{ marginTop: 3 }}>{feature.body}</PixelText>
+              </View>
+              <Image source={feature.art} resizeMode="contain" style={{ width: compact ? 43 : 52, height: compact ? 43 : 52 }} />
+            </View>
+          ))}
+        </View>
+      ) : (
+        <View>
+          {FEATURES.map((feature, index) => (
+          <View
+            key={feature.copy}
+            style={{
+              minHeight: compact ? 48 : 50,
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: compact ? 6 : 9,
+              borderBottomWidth: index === FEATURES.length - 1 ? 0 : 2,
+              borderBottomColor: ROYAL.edge,
+              borderStyle: 'dotted',
+              paddingHorizontal: compact ? 2 : 4,
+              paddingVertical: compact ? 1 : 2,
+            }}
+          >
+            <Image source={PAYWALL_ART.check} resizeMode="contain" style={{ width: compact ? 24 : 31, height: compact ? 24 : 31 }} />
+            <PixelText font="body" size={compact ? 15 : 16} color={ROYAL.cream} style={{ flex: 1 }}>
+              {feature.copy}
+            </PixelText>
+            <Image source={feature.art} resizeMode="contain" style={{ width: compact ? 41 : 40, height: compact ? 41 : 40 }} />
+          </View>
+          ))}
+        </View>
       )}
     </View>
   );

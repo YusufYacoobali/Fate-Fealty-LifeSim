@@ -9,7 +9,7 @@ import { createLife, cloneState } from '../src/engine/gameState';
 import { ageUp } from '../src/engine/lifeDirector';
 import { applyChoice } from '../src/engine/storyGraph';
 import { doActivity } from '../src/engine/activityEngine';
-import { isChoiceAvailable } from '../src/engine/eventPicker';
+import { eventById, isChoiceAvailable } from '../src/engine/eventPicker';
 import { canPromote } from '../src/engine/pathProgression';
 import { RANKS } from '../src/data/ranks';
 import { GameState, Choice, Difficulty } from '../src/types/game';
@@ -57,8 +57,8 @@ function runLife(difficulty: Difficulty, useHolding: boolean): GameState {
   let guard = 0;
   while (!s.dead && guard < 400) {
     guard++;
-    if (s.event) {
-      const ev = s.event;
+    if (s.pendingEvent) {
+      const ev = eventById(s.pendingEvent.eventId)!;
       const choices = ev.choices.filter((c) => isChoiceAvailable(s, c));
       s = cloneState(s);
       applyChoice(s, ev, chooseOption(s, choices));

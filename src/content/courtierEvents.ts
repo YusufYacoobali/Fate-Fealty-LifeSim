@@ -6,7 +6,7 @@ export const COURTIER_EVENTS: GameEvent[] = [
     id: 'court_invitation',
     category: 'court',
     title: 'AN INVITATION TO THE HALL',
-    text: 'Word of your wit has reached the lord’s steward. You are invited to dine at the high table — a rare honour for one of your station.',
+    text: 'Word of your wit has reached the lord’s steward. You are invited to dine at the high table, which is not done for one of your station.',
     ageMin: 14,
     paths: ['court'],
     requires: { statAtLeast: { charm: 45 } },

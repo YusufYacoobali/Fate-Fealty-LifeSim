@@ -64,7 +64,7 @@ export const PEASANT_EVENTS: GameEvent[] = [
     ranks: ['Peasant'],
     once: true,
     choices: [
-      { label: 'Beg to be his squire', successChance: 0.6, success: { text: 'He grunted approval — you are on the path to knighthood! (Or at least to heavy lifting.)', effects: { charm: 5, wits: 4, path: { martial: 4 }, rankProgress: 60, memory: { tag: 'took_squire_path', weight: 3 } }, tone: 'good' }, failure: { text: 'He looked you up and down, sighed, and chose the blacksmith’s daughter instead.', effects: { charm: -3 }, tone: 'bad' } },
+      { label: 'Beg to be his squire', successChance: 0.6, success: { text: 'He grunted approval. You are on the path to knighthood, or at the very least to heavy lifting.', effects: { charm: 5, wits: 4, path: { martial: 4 }, rankProgress: 60, memory: { tag: 'took_squire_path', weight: 3 } }, tone: 'good' }, failure: { text: 'He looked you up and down, sighed, and chose the blacksmith’s daughter instead.', effects: { charm: -3 }, tone: 'bad' } },
       { label: 'Demand fair wages first', outcome: { text: 'He laughed, tossed you a coin, and rode off. Bold, but you remain a peasant.', effects: { charm: -3, gold: 5 }, tone: 'plain' } },
       { label: 'Hide behind the goose', outcome: { text: 'You hid behind Sir Quackbeard. The knight respected the goose, not you.', effects: { charm: -4, kinRel: { id: 'goose', delta: 3 } }, tone: 'plain' } },
     ],
@@ -73,12 +73,12 @@ export const PEASANT_EVENTS: GameEvent[] = [
     id: 'peasant_lucky_streak',
     category: 'peasant',
     title: 'AN UNCANNY STREAK',
-    text: 'Dice, cards, coin-tosses — of late you simply cannot lose. The other gamblers mutter darkly about witchcraft.',
+    text: 'Dice, cards, coin-tosses: of late you simply cannot lose. The other gamblers mutter darkly about witchcraft.',
     ageMin: 14,
     requires: { hasTraits: ['lucky'] },
     weight: 1.5,
     choices: [
-      { label: 'Ride the luck for all it is worth', successChance: 0.8, success: { text: 'You cleaned out the whole table and walked home whistling, pockets jingling.', effects: { gold: 16, charm: 4, path: { court: 1 } }, tone: 'good' }, failure: { text: 'Your luck finally blinked. You lost the lot — and a tooth, to a sore loser.', effects: { gold: -8, health: -5 }, tone: 'bad' } },
+      { label: 'Ride the luck for all it is worth', successChance: 0.8, success: { text: 'You cleaned out the whole table and walked home whistling, pockets jingling.', effects: { gold: 16, charm: 4, path: { court: 1 } }, tone: 'good' }, failure: { text: 'Your luck finally blinked. You lost the lot, and a tooth, to a sore loser.', effects: { gold: -8, health: -5 }, tone: 'bad' } },
       { label: 'Quit while you are ahead', outcome: { text: 'You pocketed your winnings and left. The gamblers glared; fortune, like milk, can turn.', effects: { gold: 7, wits: 3 }, tone: 'good' } },
     ],
   },
@@ -91,8 +91,8 @@ export const PEASANT_EVENTS: GameEvent[] = [
     requires: { hasTraits: ['sickly'] },
     weight: 1.3,
     choices: [
-      { label: 'Buy the strongest tonic (7g)', costGold: 7, outcome: { text: 'The tonic was vile and dear, but you saw the spring. For a sickly soul, that is a victory.', effects: { gold: -7, health: 14, faith: 2 }, tone: 'good' } },
-      { label: 'Endure it by the hearth', successChance: 0.55, success: { text: 'You wrapped in every blanket you own and outlasted the cold. Barely.', effects: { health: -4, faith: 3 }, tone: 'plain' }, failure: { text: 'The fever took hold and very nearly took you. You emerge in spring, hollow-eyed.', effects: { health: -16 }, tone: 'bad' } },
+      { label: 'Buy the strongest tonic (7g)', costGold: 7, outcome: { text: 'The tonic was vile and dear, but you saw the spring. For a sickly soul, that is a victory. The herb-wife now greets you by name across the market, which is not the compliment it sounds like.', effects: { gold: -7, health: 14, faith: 2, memory: { tag: 'the_herb_wifes_regular', weight: 2 } }, tone: 'good' } },
+      { label: 'Endure it by the hearth', successChance: 0.55, success: { text: 'You wrapped in every blanket you own and outlasted the cold. Barely.', effects: { health: -4, faith: 3, householdState: { food: -2 }, memory: { tag: 'outlasted_a_cruel_winter', weight: 2 } }, tone: 'plain' }, failure: { text: 'The fever took hold and very nearly took you. You emerge in spring, hollow-eyed, with a cough that never entirely leaves.', effects: { health: -16, healthCondition: { conditionId: 'consumption', severity: 20 }, memory: { tag: 'the_winter_that_nearly_took_you', weight: 4 } }, tone: 'bad' } },
     ],
   },
   {
@@ -133,7 +133,7 @@ export const PEASANT_EVENTS: GameEvent[] = [
     choices: [
       { label: 'Marry for love', outcome: { text: 'You wed! It is warm, it is real, and the goats are a fine dowry.', effects: { health: 4, charm: 4, addTags: ['married'], addKin: { kind: 'spouse' }, memory: { tag: 'married', weight: 3 } }, tone: 'good', next: 'arc_marriage_2', nextWhen: 'nextYear' } },
       { label: 'Hold out for nobility', requires: { statAtLeast: { charm: 50 } }, outcome: { text: 'You spurned the match, eyes fixed on a grander union. Ambitious. Possibly foolish.', effects: { charm: 2, path: { court: 2 } }, tone: 'plain' } },
-      { label: 'Decline — you have a goose', outcome: { text: 'You explained that your heart belongs to a goose. The matchmaker left, deeply confused.', effects: { kinRel: { id: 'goose', delta: 8 } }, tone: 'plain' } },
+      { label: 'Decline. You have a goose', outcome: { text: 'You explained that your heart belongs to a goose. The matchmaker left, deeply confused.', effects: { kinRel: { id: 'goose', delta: 8 } }, tone: 'plain' } },
     ],
   },
 ];

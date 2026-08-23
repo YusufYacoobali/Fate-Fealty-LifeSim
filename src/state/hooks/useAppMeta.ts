@@ -17,6 +17,7 @@ export interface AppMetaApi {
  */
 export function useAppMeta(): AppMetaApi {
   const metaRef = useRef<AppMeta>({ ...DEFAULT_META });
+  const saveQueueRef = useRef<Promise<void>>(Promise.resolve());
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -34,7 +35,10 @@ export function useAppMeta(): AppMetaApi {
 
   const update = useCallback((patch: Partial<AppMeta>) => {
     metaRef.current = { ...metaRef.current, ...patch };
-    saveMeta(metaRef.current);
+    const snapshot = metaRef.current;
+    // App-state changes and reward claims can arrive close together. Serialise
+    // writes so a slower older snapshot can never overwrite the latest one.
+    saveQueueRef.current = saveQueueRef.current.then(() => saveMeta(snapshot));
   }, []);
 
   return { metaRef, ready, update };

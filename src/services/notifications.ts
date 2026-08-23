@@ -1,11 +1,12 @@
 import { Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
-import { DAILY_REMINDER_HOUR, DAILY_REMINDER_MINUTE, pickReminder } from './notificationMessages';
+import { buildReminderSchedule } from './notificationMessages';
 
 const ANDROID_CHANNEL = 'reminders';
-const DAILY_REMINDER_ID = 'mls:daily-reminder';
+const REMINDER_ID_PREFIX = 'mls:daily-reminder:';
+const LEGACY_REMINDER_ID = 'mls:daily-reminder';
+const SCHEDULE_DAYS = 14;
 
-/** Foreground display behaviour. Call once, early (before scheduling). */
 export function configureNotificationHandler(): void {
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -20,7 +21,7 @@ export function configureNotificationHandler(): void {
 async function ensureAndroidChannel(): Promise<void> {
   if (Platform.OS !== 'android') return;
   await Notifications.setNotificationChannelAsync(ANDROID_CHANNEL, {
-    name: 'Reminders',
+    name: 'Swineford reminders',
     importance: Notifications.AndroidImportance.DEFAULT,
   });
 }
@@ -31,15 +32,12 @@ export interface ScheduleResult {
 }
 
 /**
- * Request permission and schedule one app-owned daily reminder. Idempotent: it
- * replaces only our known reminder id so relaunching never stacks duplicates or
- * disturbs notifications owned by other features.
- *
- * Returns whether permission was granted and whether a reminder is now set.
- * Wrapped defensively because local-notification support varies (e.g. limited
- * in Expo Go on Android) — it must never crash the app.
+ * Refresh a rolling two-week set of one-off reminders. One-off dates let the
+ * copy rotate; cancelling only our known identifiers keeps the operation
+ * idempotent and leaves every other app notification untouched.
  */
-export async function ensureDailyReminder(): Promise<ScheduleResult> {
+export async function ensureDailyReminder(now = new Date()): Promise<ScheduleResult> {
+  let permissionGranted = false;
   try {
     const current = await Notifications.getPermissionsAsync();
     let granted = current.granted;
@@ -48,23 +46,36 @@ export async function ensureDailyReminder(): Promise<ScheduleResult> {
       granted = req.granted;
     }
     if (!granted) return { granted: false, scheduled: false };
+    permissionGranted = true;
 
     await ensureAndroidChannel();
-    await Notifications.cancelScheduledNotificationAsync(DAILY_REMINDER_ID);
+    await Notifications.cancelScheduledNotificationAsync(LEGACY_REMINDER_ID);
+    await Promise.all(
+      Array.from({ length: SCHEDULE_DAYS }, (_, index) =>
+        Notifications.cancelScheduledNotificationAsync(`${REMINDER_ID_PREFIX}${index}`),
+      ),
+    );
 
-    const msg = pickReminder();
-    await Notifications.scheduleNotificationAsync({
-      identifier: DAILY_REMINDER_ID,
-      content: { title: msg.title, body: msg.body },
-      trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.DAILY,
-        hour: DAILY_REMINDER_HOUR,
-        minute: DAILY_REMINDER_MINUTE,
-        channelId: Platform.OS === 'android' ? ANDROID_CHANNEL : undefined,
-      },
-    });
-    return { granted: true, scheduled: true };
+    const schedule = buildReminderSchedule(now, SCHEDULE_DAYS);
+    await Promise.all(
+      schedule.map(({ date, message }, index) =>
+        Notifications.scheduleNotificationAsync({
+          identifier: `${REMINDER_ID_PREFIX}${index}`,
+          content: {
+            title: message.title,
+            body: message.body,
+            data: { kind: 'daily-reminder', category: message.category },
+          },
+          trigger: {
+            type: Notifications.SchedulableTriggerInputTypes.DATE,
+            date,
+            channelId: Platform.OS === 'android' ? ANDROID_CHANNEL : undefined,
+          },
+        }),
+      ),
+    );
+    return { granted: true, scheduled: schedule.length > 0 };
   } catch {
-    return { granted: false, scheduled: false };
+    return { granted: permissionGranted, scheduled: false };
   }
 }

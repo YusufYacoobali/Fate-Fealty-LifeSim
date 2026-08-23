@@ -1,6 +1,8 @@
 import {
-  SHOP_PROMO_ENTRY_FREQUENCY,
+  SHOP_PROMO_AGE_UP_FREQUENCY,
   SHOP_PROMO_MESSAGES,
+  SHOP_PROMO_PATIENCE_AGE_UPS,
+  shopPromoCadenceDue,
   shopPromoMessageIndex,
   shouldPromptShopPromo,
 } from '@/services/shopPromoLogic';
@@ -14,32 +16,32 @@ function goodMomentState() {
 }
 
 describe('shopPromoLogic.shouldPromptShopPromo', () => {
-  it('waits for 30 entries since the previous shop promo', () => {
-    const due = { ...DEFAULT_META, totalEntries: SHOP_PROMO_ENTRY_FREQUENCY };
+  it('opens on a good moment from the minimum cadence', () => {
+    const due = { ...DEFAULT_META, totalAgeUps: SHOP_PROMO_AGE_UP_FREQUENCY };
 
-    expect(shouldPromptShopPromo({ ...due, totalEntries: due.totalEntries - 1 }, goodMomentState(), false)).toBe(false);
+    expect(shouldPromptShopPromo({ ...due, totalAgeUps: due.totalAgeUps - 1 }, goodMomentState(), false)).toBe(false);
     expect(shouldPromptShopPromo(due, goodMomentState(), false)).toBe(true);
   });
 
   it('uses its own recurring cadence after a promo is shown', () => {
-    const meta = { ...DEFAULT_META, totalEntries: 74, shopPromoLastEntry: 45, shopPromoCount: 2 };
+    const meta = { ...DEFAULT_META, totalAgeUps: 64, shopPromoLastAgeUp: 45, shopPromoCount: 2 };
     expect(shouldPromptShopPromo(meta, goodMomentState(), false)).toBe(false);
-    expect(shouldPromptShopPromo({ ...meta, totalEntries: 75 }, goodMomentState(), false)).toBe(true);
+    expect(shouldPromptShopPromo({ ...meta, totalAgeUps: 65 }, goodMomentState(), false)).toBe(true);
   });
 
   it('is independent of whether the one-time review prompt was shown', () => {
-    const meta = { ...DEFAULT_META, totalEntries: 30, reviewPrompted: true };
+    const meta = { ...DEFAULT_META, totalAgeUps: SHOP_PROMO_AGE_UP_FREQUENCY, reviewPrompted: true };
     expect(shouldPromptShopPromo(meta, goodMomentState(), false)).toBe(true);
   });
 
   it('requires a good player moment and a clear screen', () => {
-    const meta = { ...DEFAULT_META, totalEntries: 30 };
+    const meta = { ...DEFAULT_META, totalAgeUps: SHOP_PROMO_AGE_UP_FREQUENCY };
     const bad = goodMomentState();
     bad.feed[0].tone = 'bad';
     expect(shouldPromptShopPromo(meta, bad, false)).toBe(false);
 
     const event = goodMomentState();
-    event.event = { id: 'x', category: 'peasant', title: 'A choice', text: 'Choose.', choices: [] };
+    event.pendingEvent = { eventId: 'x' };
     expect(shouldPromptShopPromo(meta, event, false)).toBe(false);
 
     const settings = goodMomentState();
@@ -51,8 +53,26 @@ describe('shopPromoLogic.shouldPromptShopPromo', () => {
     expect(shouldPromptShopPromo(meta, dead, false)).toBe(false);
   });
 
+  it('guarantees a promo by the hard deadline even without a good outcome', () => {
+    const bad = goodMomentState();
+    bad.feed[0].tone = 'bad';
+    const deadline = SHOP_PROMO_AGE_UP_FREQUENCY + SHOP_PROMO_PATIENCE_AGE_UPS;
+
+    expect(shouldPromptShopPromo({ ...DEFAULT_META, totalAgeUps: deadline - 1 }, bad, false)).toBe(false);
+    expect(shouldPromptShopPromo({ ...DEFAULT_META, totalAgeUps: deadline }, bad, false)).toBe(true);
+  });
+
+  it('queues a due age-up even while an event temporarily owns the screen', () => {
+    const state = goodMomentState();
+    state.pendingEvent = { eventId: 'x' };
+    const meta = { ...DEFAULT_META, totalAgeUps: SHOP_PROMO_AGE_UP_FREQUENCY };
+
+    expect(shopPromoCadenceDue(meta, state, false)).toBe(true);
+    expect(shouldPromptShopPromo(meta, state, false)).toBe(false);
+  });
+
   it('never promotes the shop to an existing premium player', () => {
-    const meta = { ...DEFAULT_META, totalEntries: 300 };
+    const meta = { ...DEFAULT_META, totalAgeUps: 300 };
     expect(shouldPromptShopPromo(meta, goodMomentState(), true)).toBe(false);
   });
 });

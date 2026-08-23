@@ -11,6 +11,7 @@ export const OUTCOME_MESSAGES: Record<PurchaseOutcome, string> = {
   purchased: 'Premium unlocked. Long may you reign!',
   cancelled: 'Purchase cancelled.',
   unavailable: 'The royal treasury is unreachable. Try again later.',
+  activation_error: 'Purchase completed, but Premium could not be activated. Try Restore purchases or contact support.',
   error: 'Something went awry. No coin was taken. Try again.',
 };
 

@@ -124,3 +124,22 @@ export const TONE_STYLE = {
   bad: { bg: C.badBg, border: C.badBorder, sd: '#f0b0b0', sl: '#fffafa', tagColor: C.bad },
   plain: { bg: C.parch, border: C.parchBorder, sd: C.parchSd, sl: C.parchSl, tagColor: C.amber },
 } as const;
+
+/**
+ * Life-feed surfaces. Two things had to become visible at a glance: where one
+ * entry ends and the next begins (hence the alternating `bgAlt`), and whose
+ * life an entry belongs to — the player's own beats keep the warm parchment
+ * palette, while autonomous world and NPC news is tinted cooler so it recedes.
+ */
+export const FEED_STYLE = {
+  player: {
+    good: { bg: C.goodBg, bgAlt: '#e7f1d6', border: C.goodBorder, sd: '#bcd494', sl: '#fbfff0', tagColor: '#5a8a2a' },
+    bad: { bg: C.badBg, bgAlt: '#f8dcdc', border: C.badBorder, sd: '#f0b0b0', sl: '#fffafa', tagColor: C.bad },
+    plain: { bg: C.parch, bgAlt: '#eeddb4', border: C.parchBorder, sd: C.parchSd, sl: C.parchSl, tagColor: C.amber },
+  },
+  world: {
+    good: { bg: '#e6f0ea', bgAlt: '#dbe8e0', border: '#8fb3a0', sd: '#b2ccbc', sl: '#f6fbf8', tagColor: '#3f7a5a' },
+    bad: { bg: '#f0e6ec', bgAlt: '#e6dae2', border: '#c99ab0', sd: '#ddb9c9', sl: '#fbf6f9', tagColor: '#a34a6a' },
+    plain: { bg: '#e8eef6', bgAlt: '#dde5f0', border: '#54688a', sd: '#b9c8dc', sl: '#f8fbff', tagColor: '#4a6a8a' },
+  },
+} as const;

@@ -1,13 +1,9 @@
 import { GameState } from '@/types/game';
 import { pushFeed } from './gameState';
 import { C } from '@/theme/theme';
+import { actionLimitForAccess } from './actionPolicy';
 
-export const ACTIONS_PER_YEAR = 24;
-export const PREMIUM_ACTIONS_PER_YEAR = 50;
-
-export function actionLimitForAccess(premiumUnlocked: boolean): number {
-  return premiumUnlocked ? PREMIUM_ACTIONS_PER_YEAR : ACTIONS_PER_YEAR;
-}
+export { ACTIONS_PER_YEAR, PREMIUM_ACTIONS_PER_YEAR, actionLimitForAccess } from './actionPolicy';
 
 export function syncActionLimit(state: GameState): GameState {
   state.actionClock.cap = actionLimitForAccess(state.lifetimeUnlocked);
@@ -22,7 +18,7 @@ export interface ActionAvailability {
 
 export function timedActionAvailability(state: GameState): ActionAvailability {
   if (state.dead) return { available: false, reason: 'Thy life is ended' };
-  if (state.event) return { available: false, reason: 'Resolve the current event' };
+  if (state.pendingEvent) return { available: false, reason: 'Resolve the current event' };
   if (state.tags.includes('imprisoned')) return { available: false, reason: 'Imprisoned' };
   if (state.actionClock.used >= state.actionClock.cap) return { available: false, reason: 'No actions remain this year' };
   return { available: true };

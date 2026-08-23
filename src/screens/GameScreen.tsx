@@ -41,12 +41,23 @@ import { MIN_ANDROID_BOTTOM_NAV_GUARD } from '@/components/systemLayout';
 import { useGameFeedback } from '@/state/hooks/useGameFeedback';
 import { GameAudioController } from '@/state/hooks/useGameAudio';
 import { haptic } from '@/services/haptics';
+import { WorldNotices } from '@/components/WorldNotices';
+import { eventById } from '@/engine/eventPicker';
+import { DailyRewardModal } from '@/components/modals/DailyRewardModal';
+import { ProTrialEndedPrompt } from '@/components/modals/ProTrialEndedPrompt';
+import { PromotionScreen } from '@/components/modals/PromotionScreen';
+import { GoalAchievedScreen } from '@/components/modals/GoalAchievedScreen';
+import { DuelModal } from '@/components/modals/DuelModal';
+import { usePromotionCelebration } from '@/state/hooks/usePromotionCelebration';
+import { useGoalCelebration } from '@/state/hooks/useGoalCelebration';
+import { ReturnRumourModal } from '@/components/modals/ReturnRumourModal';
 
 export function GameScreen() {
   const {
     state,
     dispatch,
     loaded,
+    saveCompatibilityBlocked,
     reviewVisible,
     resolveReview,
     shopPromoVisible,
@@ -62,9 +73,20 @@ export function GameScreen() {
     completeOnboarding,
     restartOnboarding,
     premiumUnlocked,
+    premiumEntitled,
+    premiumForNextLife,
     premiumAccessState,
     purchasePlan,
     restorePremium,
+    proTrialActive,
+    proTrialNoticeVisible,
+    dismissProTrialNotice,
+    dailyRewardStatus,
+    dailyRewardProgress,
+    claimDailyReward,
+    returnRumour,
+    followReturnRumour,
+    dismissReturnRumour,
   } = useGame();
   const rank = currentRank(state);
   const stats = selectStats(state);
@@ -74,6 +96,36 @@ export function GameScreen() {
   const [cartOpen, setCartOpen] = useState(false);
   const insets = useSafeAreaInsets();
   const bottomNavInset = Math.max(insets.bottom, MIN_ANDROID_BOTTOM_NAV_GUARD);
+  const currentEvent = state.pendingEvent ? eventById(state.pendingEvent.eventId) : undefined;
+  const { promotedTo, dismissPromotion } = usePromotionCelebration(state, loaded);
+  const { achievedGoalId, dismissGoal } = useGoalCelebration(state, loaded);
+  const passivePromptsAllowed =
+    !state.dead &&
+    !state.pendingEvent &&
+    !state.duel &&
+    !state.settingsOpen &&
+    !creating &&
+    !onboardingVisible &&
+    !chronicleOpen &&
+    !cartOpen &&
+    promotedTo == null &&
+    achievedGoalId == null &&
+    newAchievements.length === 0;
+  // Exactly one low-priority prompt may be visible. This prevents circular
+  // "hide when the other is open" checks from leaving every prompt hidden.
+  const passivePrompt: 'trialEnded' | 'daily' | 'rumour' | 'review' | 'shop' | null = !passivePromptsAllowed
+    ? null
+    : proTrialNoticeVisible
+      ? 'trialEnded'
+      : dailyRewardStatus
+        ? 'daily'
+        : returnRumour
+          ? 'rumour'
+          : reviewVisible
+            ? 'review'
+            : shopPromoVisible
+              ? 'shop'
+              : null;
 
   // Promotion/death haptics ride on engine transitions.
   useGameFeedback(state);
@@ -99,7 +151,10 @@ export function GameScreen() {
 
         {/* content area */}
         <View style={{ flex: 1, position: 'relative' }}>
-          {state.tab === 'life' && <LifeFeed feed={selectFeed(state)} autoScroll={state.settings.autoScroll} filter={state.world.feedFilter} onFilter={(filter) => dispatch({ type: 'SET_FEED_FILTER', filter })} />}
+          {state.tab === 'life' && <View style={{ flex: 1 }}>
+            <WorldNotices recoveryNotice={state.world.recoveryNotice} saveCompatibilityBlocked={saveCompatibilityBlocked} />
+            <LifeFeed feed={selectFeed(state)} autoScroll={state.settings.autoScroll} filter={state.world.feedFilter} onFilter={(filter) => dispatch({ type: 'SET_FEED_FILTER', filter })} />
+          </View>}
           {state.tab === 'do' && (
             <DoTab
               cat={state.doCat}
@@ -136,16 +191,16 @@ export function GameScreen() {
                 haptic('success', buzz);
                 dispatch({ type: 'BUY_HOLDING_UPGRADE', id });
               }}
+              onToggleVillage={() => dispatch({ type: 'SET_SETTINGS', settings: { villageCollapsed: !state.settings.villageCollapsed } })}
             />
           )}
           {state.tab === 'shop' && (
             <ShopTab
+              state={state}
               gold={state.gold}
-              age={state.age}
               income={state.income}
               expenses={state.expenses}
               inventory={state.inventory}
-              actionAvailable={state.actionClock.used < state.actionClock.cap}
               onBuy={(item) => {
                 haptic('medium', buzz);
                 dispatch({ type: 'BUY', item });
@@ -179,7 +234,7 @@ export function GameScreen() {
             haptic('light', buzz);
             dispatch({ type: 'AGE_UP' });
           }}
-          disabled={state.dead || !!state.event}
+          disabled={state.dead || !!state.pendingEvent || !!state.duel}
           actionsUsed={state.actionClock.used}
           actionCap={state.actionClock.cap}
         />
@@ -194,13 +249,13 @@ export function GameScreen() {
         </View>
 
         {/* overlays */}
-        {state.event && !state.dead && (
+        {currentEvent && !state.dead && (
           <EventModal
             state={state}
-            event={state.event}
-            onChoose={(event, choice) => {
+            event={currentEvent}
+            onChoose={(choice) => {
               haptic('medium', buzz);
-              dispatch({ type: 'CHOOSE', event, choice });
+              dispatch({ type: 'CHOOSE', choice });
             }}
           />
         )}
@@ -238,44 +293,82 @@ export function GameScreen() {
           <DeathScreen
             state={state}
             onNewLife={requestNewLife}
-            onContinueHeir={() => dispatch({ type: 'CONTINUE_AS_HEIR' })}
+            onContinueHeir={(heirId) => dispatch({ type: 'CONTINUE_AS_HEIR', heirId })}
           />
         )}
-        {reviewVisible && !state.dead && !state.event && !state.settingsOpen && !creating && (
-          <ReviewPrompt onResolved={resolveReview} />
+        {passivePrompt === 'trialEnded' && (
+          <ProTrialEndedPrompt
+            onExplore={() => {
+              haptic('light', buzz);
+              dismissProTrialNotice();
+              setCartOpen(true);
+            }}
+            onDismiss={dismissProTrialNotice}
+          />
         )}
-        {shopPromoVisible &&
-          !reviewVisible &&
-          !state.dead &&
-          !state.event &&
-          !state.settingsOpen &&
-          !creating &&
-          !onboardingVisible &&
-          !chronicleOpen &&
-          !cartOpen && (
-            <ShopPromoPrompt
-              messageIndex={shopPromoMessageIndex}
-              onExplore={() => {
-                haptic('light', buzz);
-                resolveShopPromo();
-                setCartOpen(true);
-              }}
-              onDismiss={resolveShopPromo}
-            />
-          )}
+        {passivePrompt === 'review' && <ReviewPrompt onResolved={resolveReview} />}
+        {passivePrompt === 'shop' && (
+          <ShopPromoPrompt
+            messageIndex={shopPromoMessageIndex}
+            onExplore={() => {
+              haptic('light', buzz);
+              resolveShopPromo();
+              setCartOpen(true);
+            }}
+            onDismiss={resolveShopPromo}
+          />
+        )}
+        {passivePrompt === 'daily' && dailyRewardStatus && (
+          <DailyRewardModal status={dailyRewardStatus} progress={dailyRewardProgress} onClaim={claimDailyReward} />
+        )}
+        {passivePrompt === 'rumour' && returnRumour && (
+          <ReturnRumourModal rumour={returnRumour} onFollow={followReturnRumour} onDismiss={dismissReturnRumour} />
+        )}
+        {state.duel && (
+          <DuelModal
+            state={state}
+            onRespond={(responseId) => {
+              haptic(state.duel?.outcome ? 'success' : 'medium', buzz);
+              dispatch({ type: 'DUEL_RESPOND', responseId });
+            }}
+            onClose={() => dispatch({ type: 'DUEL_CLOSE' })}
+          />
+        )}
+        {promotedTo != null && !state.dead && (
+          <PromotionScreen
+            rankIdx={promotedTo}
+            reducedMotion={!!state.settings.reducedMotion}
+            onDone={() => {
+              haptic('success', buzz);
+              dismissPromotion();
+            }}
+          />
+        )}
+        {achievedGoalId && promotedTo == null && !state.dead && (
+          <GoalAchievedScreen
+            goalId={achievedGoalId}
+            reducedMotion={!!state.settings.reducedMotion}
+            onDone={() => {
+              haptic('success', buzz);
+              dismissGoal();
+            }}
+          />
+        )}
         {chronicleOpen && <ChronicleScreen progress={getProgress()} onClose={() => setChronicleOpen(false)} />}
         {cartOpen && (
           <PremiumShopScreen
-            unlocked={premiumUnlocked}
+            // The storefront reflects what was actually bought, never the sample.
+            unlocked={premiumEntitled}
             accessState={premiumAccessState}
             onPurchase={purchasePlan}
             onRestore={restorePremium}
             onClose={() => setCartOpen(false)}
           />
         )}
-        {onboardingVisible && !creating && !state.dead && !state.event && (
+        {onboardingVisible && !creating && !state.dead && !state.pendingEvent && (
           <OnboardingScreen
-            premiumUnlocked={premiumUnlocked}
+            premiumUnlocked={premiumEntitled}
+            trialActive={proTrialActive}
             accessState={premiumAccessState}
             onPurchase={purchasePlan}
             onRestore={restorePremium}
@@ -285,7 +378,9 @@ export function GameScreen() {
         {creating && (
           <CharacterCreation
             initialDifficulty={state.settings.difficulty}
-            premiumUnlocked={premiumUnlocked}
+            // Birth traits are chosen for the NEXT life, which may not be the
+            // one the free sample is covering right now.
+            premiumUnlocked={premiumForNextLife}
             onLockedTraitPress={() => {
               haptic('light', buzz);
               setCartOpen(true);

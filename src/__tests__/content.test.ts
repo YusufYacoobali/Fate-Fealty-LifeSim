@@ -1,4 +1,4 @@
-import { ALL_EVENTS, EVENTS_BY_ID } from '@/content';
+import { ALL_EVENTS, AMBIENT_EVENTS, EVENTS_BY_ID } from '@/content';
 import { ANNUAL_MESSAGES } from '@/content/annualMessages';
 import { BASE_EXPANSION_EVENTS } from '@/content/baseExpansionEvents';
 import { createLife } from '@/engine/gameState';
@@ -61,7 +61,7 @@ describe('content integrity', () => {
   });
 
   it('includes a focused Lifetime Pass premium event pack', () => {
-    const premium = ALL_EVENTS.filter((e) => e.premium);
+    const premium = AMBIENT_EVENTS.filter((e) => e.premium);
     expect(premium.length).toBeGreaterThanOrEqual(25);
     expect(premium.length).toBeLessThanOrEqual(35);
   });
@@ -73,7 +73,8 @@ describe('content integrity', () => {
   it('keeps onboarding subscriptions separate from the complete Royal Shop', () => {
     expect(PAYWALL_PLAN_IDS).toEqual(['annual', 'monthly']);
     expect(PAYWALL_PLAN_IDS).not.toContain('lifetime');
-    expect(SHOP_PLAN_IDS).toEqual(['annual', 'monthly', 'lifetime']);
+    // Lifetime sits in the middle and monthly last: see SHOP_PLAN_IDS.
+    expect(SHOP_PLAN_IDS).toEqual(['annual', 'lifetime', 'monthly']);
   });
 
   it('includes a generous free/base content pool', () => {

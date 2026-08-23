@@ -3,7 +3,7 @@ import { buyItem } from '@/engine/shopEngine';
 import { meetsCondition } from '@/engine/eventPicker';
 import { ACTIVITY_DEFS } from '@/data/activities';
 import { SHOP_ITEMS, shopItemById } from '@/data/shop';
-import { ANNUAL_MESSAGES } from '@/content/annualMessages';
+import { ANNUAL_MESSAGES, pickAnnualMessage } from '@/content/annualMessages';
 import { makeState } from './helpers';
 
 describe('activity age gates', () => {
@@ -66,6 +66,14 @@ describe('shop age gates', () => {
 });
 
 describe('annual message age gates', () => {
+  it('does not pick an annual beat excluded earlier in the same year', () => {
+    const s = makeState({ age: 2 });
+    const eligible = ANNUAL_MESSAGES.filter((message) => meetsCondition(s, message.requires));
+    const allowed = eligible[0];
+    const picked = pickAnnualMessage(s, eligible.slice(1).map((message) => message.id));
+    expect(picked?.id).toBe(allowed.id);
+  });
+
   it('adult beats cannot fire for a toddler', () => {
     const s = makeState({ age: 2, gold: 20 });
     for (const id of ['fortune_coin', 'gossip_bard', 'wisdom_hermit', 'fortune_merchant', 'alehouse_proverb']) {

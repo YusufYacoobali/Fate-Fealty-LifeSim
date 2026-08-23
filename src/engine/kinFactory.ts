@@ -4,15 +4,16 @@
  * defaults for everything else, keeping event data terse and consistent.
  */
 
-import { GameState, KinKind, KinMember, NewKinSpec } from '@/types/game';
-import { CHILD_NAMES, FIRST_NAMES } from '@/data/names';
+import { GameState, GenderIdentity, KinKind, KinMember, NewKinSpec, WorldCharacter } from '@/types/game';
+import { namesForGender } from '@/data/names';
 import { pick, rnd } from './random';
 import { defaultPronouns } from '@/data/identity';
 import { ENTRY_CAREERS } from '@/data/careers';
-import { makePlayerRelationship } from './relationshipEngine';
+import { makePlayerRelationship } from './relationshipState';
+import { unlinkSpouse } from './characterState';
 
 interface KindDefaults {
-  name: () => string;
+  name: (gender: GenderIdentity) => string;
   role: string;
   emoji: string;
   trait: string;
@@ -23,7 +24,7 @@ interface KindDefaults {
 
 const DEFAULTS: Record<KinKind, KindDefaults> = {
   spouse: {
-    name: () => pick(FIRST_NAMES),
+    name: (gender) => pick(namesForGender(gender)),
     role: 'Thy Spouse',
     emoji: '🧑',
     trait: 'Steadfast',
@@ -32,7 +33,7 @@ const DEFAULTS: Record<KinKind, KindDefaults> = {
     age: () => rnd(18, 30),
   },
   child: {
-    name: () => pick(CHILD_NAMES),
+    name: (gender) => pick(namesForGender(gender, true)),
     role: 'Thy Child',
     emoji: '🧒',
     trait: 'Small and loud',
@@ -41,7 +42,7 @@ const DEFAULTS: Record<KinKind, KindDefaults> = {
     age: () => 0,
   },
   sibling: {
-    name: () => pick(FIRST_NAMES),
+    name: (gender) => pick(namesForGender(gender)),
     role: 'Thy Sibling',
     emoji: '🧑‍🌾',
     trait: 'Competitive',
@@ -50,7 +51,7 @@ const DEFAULTS: Record<KinKind, KindDefaults> = {
     age: () => rnd(1, 12),
   },
   friend: {
-    name: () => pick(FIRST_NAMES),
+    name: (gender) => pick(namesForGender(gender)),
     role: 'Thy Friend',
     emoji: '🧑',
     trait: 'Loyal',
@@ -59,7 +60,7 @@ const DEFAULTS: Record<KinKind, KindDefaults> = {
     age: () => rnd(16, 40),
   },
   foe: {
-    name: () => pick(FIRST_NAMES),
+    name: (gender) => pick(namesForGender(gender)),
     role: 'Thy Rival',
     emoji: '⚔️',
     trait: 'Spiteful',
@@ -68,7 +69,7 @@ const DEFAULTS: Record<KinKind, KindDefaults> = {
     age: () => rnd(20, 45),
   },
   liege: {
-    name: () => `Lord ${pick(FIRST_NAMES)}`,
+    name: (gender) => `${gender === 'woman' ? 'Lady' : 'Lord'} ${pick(namesForGender(gender))}`,
     role: 'Thy Liege',
     emoji: '👑',
     trait: 'Demanding',
@@ -77,7 +78,7 @@ const DEFAULTS: Record<KinKind, KindDefaults> = {
     age: () => rnd(35, 60),
   },
   acquaintance: {
-    name: () => pick(FIRST_NAMES),
+    name: (gender) => pick(namesForGender(gender)),
     role: 'Acquaintance',
     emoji: '🧑',
     trait: 'Unfamiliar',
@@ -85,16 +86,23 @@ const DEFAULTS: Record<KinKind, KindDefaults> = {
     rel: 50,
     age: () => rnd(16, 45),
   },
-  mother: { name: () => pick(FIRST_NAMES), role: 'Thy Mother', emoji: '👩‍🌾', trait: 'Loving', bio: 'Thy mother.', rel: 75, age: () => rnd(40, 55) },
-  father: { name: () => pick(FIRST_NAMES), role: 'Thy Father', emoji: '👨‍🌾', trait: 'Weary', bio: 'Thy father.', rel: 60, age: () => rnd(40, 60) },
+  mother: { name: () => pick(namesForGender('woman')), role: 'Thy Mother', emoji: '👩‍🌾', trait: 'Loving', bio: 'Thy mother.', rel: 75, age: () => rnd(40, 55) },
+  father: { name: () => pick(namesForGender('man')), role: 'Thy Father', emoji: '👨‍🌾', trait: 'Weary', bio: 'Thy father.', rel: 60, age: () => rnd(40, 60) },
 };
 
 /** Create and append a new kin member, returning it. Mutates `s`. */
 export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
   const d = DEFAULTS[spec.kind];
+  // A spouse arriving through an event must still be someone the player could
+  // plausibly have married; a random roll produced marriages that contradicted
+  // the character's own stated attraction.
+  const spouseGender: GenderIdentity | undefined = spec.kind === 'spouse' && s.attraction !== 'none'
+    ? (s.attraction === 'women' ? 'woman' : 'man')
+    : undefined;
+  const gender = spec.gender ?? spouseGender ?? pick(['woman', 'man'] as const);
   const member: KinMember = {
     id: `kin_${s.nextId++}`,
-    name: spec.name ?? d.name(),
+    name: spec.name ?? d.name(gender),
     role: spec.role ?? d.role,
     emoji: spec.emoji ?? d.emoji,
     trait: spec.trait ?? d.trait,
@@ -104,9 +112,9 @@ export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
     kind: spec.kind,
     alive: true,
     isHeir: spec.isHeir,
-    gender: 'unspecified',
-    pronouns: defaultPronouns('unspecified'),
-    attraction: 'any',
+    gender,
+    pronouns: defaultPronouns(gender),
+    attraction: spec.attraction ?? (gender === 'woman' ? 'men' : 'women'),
     stats: { health: rnd(45, 90), charm: rnd(25, 75), wits: rnd(25, 75), faith: rnd(15, 75) },
     traits: [spec.trait ?? d.trait],
     gold: rnd(0, 25),
@@ -116,8 +124,69 @@ export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
     healthTags: [],
     memories: [],
   };
+  const player = s.world.characters[s.playerCharacterId];
+  const playerHousehold = player?.householdId ?? 'house_player';
+  const familyId = spec.kind === 'child' && player?.birthFamilyId
+    ? player.birthFamilyId
+    : `family_${member.id}`;
+  const spouse = Object.values(s.world.characters).find((character) => character.spouseId === s.playerCharacterId && character.alive);
+  // Genealogy has to match the label. A `sibling` with no parents used to be
+  // family in the kin list and a stranger in the family tree.
+  const parentIds = spec.kind === 'child'
+    ? [s.playerCharacterId, ...(spouse ? [spouse.id] : [])]
+    : spec.kind === 'sibling'
+      ? [...(player?.parentIds ?? [])]
+      : [];
+  Object.assign(member, {
+    householdId: ['child', 'spouse'].includes(spec.kind) ? playerHousehold : `house_${member.id}`,
+    birthFamilyId: familyId,
+    parentIds,
+    childIds: [],
+    personalityTraits: Array.from(new Set([pick(['loyal', 'ambitious', 'devout', 'cunning']), pick(['patient', 'proud', 'brave', 'generous'])])),
+    ambition: pick(['protect_family', 'gain_land', 'marry_well', 'gain_status', 'become_wealthy'] as const),
+    secret: pick(['none', 'hidden_debt', 'stolen_property', 'secret_lover'] as const),
+    secretRevealed: false,
+    vulnerability: pick(['pride', 'poverty', 'loneliness', 'envy'] as const),
+    importance: spec.kind === 'child' || spec.kind === 'spouse' ? 'core' : 'supporting',
+    worldMemories: [],
+    healthConditions: [],
+    legalState: { status: 'free', suspicion: 0, notoriety: 0, charges: [], sentenceYearsRemaining: 0 },
+    secrets: [], guardianIds: [], lineageStatus: spec.kind === 'child' ? 'marital' : 'acknowledged',
+    childDevelopment: { completedMilestones: [], education: 'none', investment: 0, favour: 0 },
+    factionInfluence: 0,
+  } satisfies Partial<WorldCharacter>);
   s.kin = [...s.kin, member];
-  s.world.relationships.push(makePlayerRelationship(member, s.age));
+  s.world.characters[member.id] = member;
+  if (!s.world.families[familyId]) {
+    s.world.families[familyId] = { id: familyId, name: `${member.name}'s family`, memberIds: [], reputation: 0, wealthTier: 1, allyFamilyIds: [], enemyFamilyIds: [], inheritedMemories: [] };
+  }
+  s.world.families[familyId].memberIds.push(member.id);
+  let household = s.world.households.find((item) => item.id === member.householdId);
+  if (!household) {
+    household = { id: member.householdId!, headId: member.id, memberIds: [], wealth: member.gold, foodSecurity: 50, status: 40 };
+    s.world.households.push(household);
+  }
+  household.memberIds = Array.from(new Set([...household.memberIds, member.id]));
+  if (spec.kind === 'child') {
+    player?.childIds?.push(member.id);
+    if (spouse) spouse.childIds = Array.from(new Set([...(spouse.childIds ?? []), member.id]));
+  }
+  if (spec.kind === 'spouse' && player && !player.spouseId) {
+    // Without this link the marriage existed only as a label: family planning,
+    // inheritance and the kinship graph all read `spouseId`, not `kind`.
+    player.spouseId = member.id;
+    member.spouseId = player.id;
+    member.attraction = s.gender === 'woman' ? 'women' : 'men';
+    if (!s.tags.includes('married')) s.tags = [...s.tags, 'married'];
+  }
+  if (spec.kind === 'sibling') {
+    for (const parentId of parentIds) {
+      const parent = s.world.characters[parentId];
+      if (parent) parent.childIds = Array.from(new Set([...(parent.childIds ?? []), member.id]));
+    }
+  }
+  const relationship = makePlayerRelationship(s.playerCharacterId, member, s.age);
+  s.world.relationships[relationship.id] = relationship;
   return member;
 }
 
@@ -126,9 +195,16 @@ export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
  * "kin_42") or a kind ("child") — for a kind we take the first living match.
  */
 export function killKin(s: GameState, selector: string): KinMember | null {
-  let target = s.kin.find((k) => k.id === selector && k.alive);
-  if (!target) target = s.kin.find((k) => k.kind === (selector as KinKind) && k.alive);
+  let target = Object.values(s.world.characters).find((k) => k.id !== s.playerCharacterId && k.id === selector && k.alive);
+  if (!target) target = Object.values(s.world.characters).find((k) => k.id !== s.playerCharacterId && k.kind === (selector as KinKind) && k.alive);
   if (!target) return null;
+  unlinkSpouse(s, target.id);
   target.alive = false;
+  target.deathYear = s.world.currentYear;
+  const worldTarget = s.world.characters[target.id];
+  if (worldTarget) {
+    worldTarget.alive = false;
+    worldTarget.healthTags = Array.from(new Set([...worldTarget.healthTags, 'deceased']));
+  }
   return target;
 }

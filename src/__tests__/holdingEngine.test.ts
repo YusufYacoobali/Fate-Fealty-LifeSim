@@ -7,6 +7,7 @@ import {
   tickHoldingYear,
 } from '@/engine/holdingEngine';
 import { gameReducer } from '@/state/gameReducer';
+import { spawnKin } from '@/engine/kinFactory';
 import { normalizeGameState } from '@/state/persistence';
 import { isEventEligible } from '@/engine/eventPicker';
 import { NOBLE_EVENTS } from '@/content/nobleEvents';
@@ -210,7 +211,9 @@ describe('holding succession and persistence', () => {
       reputation: 40,
       holding: { stores: 80, security: 60, loyalty: 40, upgrades: ['fenced_field', 'watermill'], lastActionAge: 40, criticalYears: 1 },
     });
-    const heir = gameReducer(parent, { type: 'CONTINUE_AS_HEIR' });
+    const child = spawnKin(parent, { kind: 'child', age: 0, isHeir: true });
+    child.gold = 8;
+    const heir = gameReducer(parent, { type: 'CONTINUE_AS_HEIR', heirId: child.id });
     expect(heir.rankIdx).toBe(3);
     expect(heir.gold).toBe(48);
     expect(heir.reputation).toBe(20);

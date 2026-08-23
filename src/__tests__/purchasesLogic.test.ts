@@ -1,5 +1,6 @@
 import {
   annualSubscriptionValue,
+  confirmPurchasedEntitlement,
   ENTITLEMENT_ID,
   entitlementActive,
   isProductionRevenueCatKey,
@@ -36,10 +37,32 @@ describe('entitlementActive (gate on entitlement, never product)', () => {
   });
 });
 
+describe('confirmPurchasedEntitlement', () => {
+  const active = { entitlements: { active: { pro: { productIdentifier: 'pro_annual' } } } };
+  const inactive = { entitlements: { active: {} } };
+
+  it('accepts an entitlement returned directly by the completed purchase', async () => {
+    const refresh = jest.fn();
+    await expect(confirmPurchasedEntitlement(active, refresh)).resolves.toBe(true);
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it('refreshes once when purchase customer info has not propagated the entitlement yet', async () => {
+    const refresh = jest.fn().mockResolvedValue(active);
+    await expect(confirmPurchasedEntitlement(inactive, refresh)).resolves.toBe(true);
+    expect(refresh).toHaveBeenCalledTimes(1);
+  });
+
+  it('never reports an unlock when the refresh is inactive or unavailable', async () => {
+    await expect(confirmPurchasedEntitlement(inactive, async () => inactive)).resolves.toBe(false);
+    await expect(confirmPurchasedEntitlement(inactive, async () => { throw new Error('offline'); })).resolves.toBe(false);
+  });
+});
+
 describe('mergeEntitlement', () => {
-  it('keeps unavailable separate from a confirmed inactive entitlement', () => {
-    expect(mergeEntitlement(true, null)).toBeNull();
-    expect(mergeEntitlement(false, null)).toBeNull();
+  it('retains the last confirmed entitlement while the store is unavailable', () => {
+    expect(mergeEntitlement(true, null)).toBe(true);
+    expect(mergeEntitlement(false, null)).toBe(false);
   });
 
   it('a fresh reading wins in both directions', () => {

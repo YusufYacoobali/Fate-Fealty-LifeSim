@@ -68,7 +68,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: 'great_dynasty', name: 'Great Dynasty', emoji: '🏛️', desc: 'Secure a royal legacy.', premium: true, check: (c) => c.state.tags.includes('great_dynasty') || c.state.tags.includes('dynasty_secured') },
 
   // --- ambition ---
-  { id: 'ambition', name: 'Life’s Ambition', emoji: '🎯', desc: 'Fulfil the life goal set at your coming of age.', check: (c) => c.state.goalDone },
+  { id: 'ambition', name: 'Life’s Ambition', emoji: '🎯', desc: 'Fulfil the life goal set at your coming of age.', check: (c) => c.state.tags.includes('goal_done') },
 
   // --- meta / dynasty ---
   { id: 'reincarnated', name: 'Again, From the Mud', emoji: '♻️', desc: 'Begin a fifth life.', check: (c) => c.stats.livesLived >= 4 },
@@ -82,9 +82,9 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: 'borrower', name: 'Neither Lender Nor...', emoji: '🤝', desc: 'Take a loan.', check: (c) => c.state.tags.includes('has_borrowed') },
   { id: 'debt_free', name: 'Clear Ledger', emoji: '✅', desc: 'Repay a debt in full.', check: (c) => c.state.tags.includes('debt_repaid') },
   { id: 'working_fortune', name: 'By Thy Own Hands', emoji: '🪙', desc: 'Earn 200 gold during one life.', check: (c) => c.state.income >= 200, progress: (c) => ({ current: c.state.income, target: 200 }) },
-  { id: 'trusted_friend', name: 'In Confidence', emoji: '🔐', desc: 'Build mutual trust above 80.', check: (c) => c.state.world.relationships.some((r) => r.aId === 'player' && r.aToB.trust >= 80 && r.bToA.trust >= 80) },
-  { id: 'deep_friendship', name: 'Fast Friends', emoji: '🫂', desc: 'Build mutual affinity above 85.', check: (c) => c.state.world.relationships.some((r) => r.aId === 'player' && r.aToB.affinity >= 85 && r.bToA.affinity >= 85) },
-  { id: 'feud', name: 'This Means War', emoji: '⚔️', desc: 'Begin a personal feud.', check: (c) => c.state.world.relationships.some((r) => r.flags.includes('feud') && (r.aId === 'player' || r.bId === 'player')) },
+  { id: 'trusted_friend', name: 'In Confidence', emoji: '🔐', desc: 'Build mutual trust above 80.', check: (c) => Object.values(c.state.world.relationships).some((r) => (r.aId === c.state.playerCharacterId || r.bId === c.state.playerCharacterId) && r.aToB.trust >= 80 && r.bToA.trust >= 80) },
+  { id: 'deep_friendship', name: 'Fast Friends', emoji: '🫂', desc: 'Build mutual affinity above 85.', check: (c) => Object.values(c.state.world.relationships).some((r) => (r.aId === c.state.playerCharacterId || r.bId === c.state.playerCharacterId) && r.aToB.affinity >= 85 && r.bToA.affinity >= 85) },
+  { id: 'feud', name: 'This Means War', emoji: '⚔️', desc: 'Begin a personal feud.', check: (c) => Object.values(c.state.world.relationships).some((r) => r.flags.includes('feud') && (r.aId === c.state.playerCharacterId || r.bId === c.state.playerCharacterId)) },
   { id: 'peacemaker', name: 'Bury the Hatchet', emoji: '🕊️', desc: 'Reconcile with a rival.', check: (c) => c.state.tags.includes('made_peace') },
   { id: 'chosen_wedding', name: 'By Mine Own Heart', emoji: '💒', desc: 'Court and choose your own spouse.', check: (c) => c.state.tags.includes('chose_marriage') },
   { id: 'second_marriage', name: 'Love, Again', emoji: '💞', desc: 'Marry after divorce or widowhood.', check: (c) => c.state.tags.includes('married') && (c.state.tags.includes('divorced') || c.state.tags.includes('widowed')) },

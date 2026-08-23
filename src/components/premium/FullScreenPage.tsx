@@ -62,7 +62,7 @@ export function FullScreenPage({
           alignItems: 'center',
         }}
       >
-        <PixelText font="pixel" size={9} color={C.cream} style={{ flex: 1, textAlign: 'center' }}>
+        <PixelText font="pixel" size={10} color={C.cream} style={{ flex: 1, textAlign: 'center' }}>
           {title}
         </PixelText>
         {headerRight && <View style={{ position: 'absolute', right: 10 }}>{headerRight}</View>}

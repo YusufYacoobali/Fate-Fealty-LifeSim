@@ -2,7 +2,8 @@ import { Linking, Platform } from 'react-native';
 import * as StoreReview from 'expo-store-review';
 
 export {
-  REVIEW_ENTRY_THRESHOLD,
+  REVIEW_AGE_UP_THRESHOLD,
+  ageUpsDelta,
   REVIEW_OUTCOME_LOOKBACK,
   shouldPromptReview,
   hasRecentGoodOutcome,

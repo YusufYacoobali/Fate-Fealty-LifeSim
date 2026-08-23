@@ -91,6 +91,33 @@ describe('existing-system polish', () => {
     expect(after.tags).not.toContain('goal_done_scholar');
   });
 
+  it('diminishes repeated career training instead of letting it rush promotions', () => {
+    const s = makeState({ age: 22 });
+    s.occupation = { careerId: 'guard', experience: 20, performance: 55, workedThisYear: 0 };
+    s.world.repetitionLedger['activity-year:22:career_train'] = 3; // next use is the 50% fourth use
+
+    const after = gameReducer(s, { type: 'CAREER_ACTION', action: 'train' });
+
+    expect(after.occupation.experience).toBe(25); // +9 becomes +5
+    expect(after.occupation.performance).toBe(57); // +3 becomes +2
+    expect(after.stats.wits).toBe(51); // +2 becomes +1
+  });
+
+  it('diminishes rank-duty farming and blocks it after five uses', () => {
+    const s = makeState({ age: 22, rankIdx: 1, rankProgress: 10 });
+    s.world.repetitionLedger['activity-year:22:rank_duty'] = 3;
+
+    const after = gameReducer(s, { type: 'CAREER_ACTION', action: 'rank_duty' });
+    expect(after.rankProgress).toBe(12);
+    expect(after.stats.charm).toBe(51);
+
+    after.world.repetitionLedger['activity-year:22:rank_duty'] = MAX_ROUTINE_ACTIVITY_USES;
+    const usedBefore = after.actionClock.used;
+    const blocked = gameReducer(after, { type: 'CAREER_ACTION', action: 'rank_duty' });
+    expect(blocked.actionClock.used).toBe(usedBefore);
+    expect(blocked.rankProgress).toBe(after.rankProgress);
+  });
+
   it('makes clergy work respond to the existing religious world', () => {
     const s = makeState({ age: 24, reputation: 0 });
     s.occupation = { careerId: 'cleric', experience: 30, performance: 60, workedThisYear: 1 };

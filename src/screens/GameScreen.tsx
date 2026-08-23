@@ -98,6 +98,9 @@ export function GameScreen() {
   const bottomNavInset = Math.max(insets.bottom, MIN_ANDROID_BOTTOM_NAV_GUARD);
   const currentEvent = state.pendingEvent ? eventById(state.pendingEvent.eventId) : undefined;
   const { promotedTo, dismissPromotion } = usePromotionCelebration(state, loaded);
+  const promotionReason = promotedTo == null
+    ? undefined
+    : [...state.memories].reverse().find((memory) => memory.tag === `promoted_${rank.key.toLowerCase()}`)?.note;
   const { achievedGoalId, dismissGoal } = useGoalCelebration(state, loaded);
   const passivePromptsAllowed =
     !state.dead &&
@@ -337,6 +340,7 @@ export function GameScreen() {
         {promotedTo != null && !state.dead && (
           <PromotionScreen
             rankIdx={promotedTo}
+            reason={promotionReason}
             reducedMotion={!!state.settings.reducedMotion}
             onDone={() => {
               haptic('success', buzz);

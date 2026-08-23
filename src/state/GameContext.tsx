@@ -13,11 +13,10 @@ import { useShopPromoGate } from './hooks/useShopPromoGate';
 import type { PremiumAccessState } from './hooks/usePremium';
 import { NewLifeOptions } from './gameReducer';
 import { PlanId, PurchaseOutcome } from '@/services/purchases';
+import { isLaunchPaywallDue, nextAppOpenCount } from '@/services/launchPaywallLogic';
 import { useRetentionLoops } from './hooks/useRetentionLoops';
 import type { DailyRewardProgress, DailyRewardStatus } from '@/services/dailyRewards';
 import type { ReturnRumour } from '@/services/returnRumour';
-
-const LAUNCH_PAYWALL_INTERVAL = 5;
 
 interface GameContextValue {
   state: GameState;
@@ -96,9 +95,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!game.loaded || !meta.ready || launchCounted.current) return;
     launchCounted.current = true;
-    const nextCount = meta.metaRef.current.appOpenCount + 1;
+    const nextCount = nextAppOpenCount(meta.metaRef.current.appOpenCount);
     updateMeta({ appOpenCount: nextCount });
-    if (nextCount % LAUNCH_PAYWALL_INTERVAL === 0) setLaunchPaywallDue(true);
+    if (isLaunchPaywallDue(nextCount)) setLaunchPaywallDue(true);
   }, [game.loaded, meta.ready, meta.metaRef, updateMeta]);
 
   // Never flash a sales screen at a confirmed subscriber, someone currently

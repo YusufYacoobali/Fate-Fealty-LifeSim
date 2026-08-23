@@ -126,7 +126,12 @@ function applyCoreWorkContext(s: GameState, family: CareerFamily, before?: Caree
   if (earned > 0) {
     const adjusted = Math.max(0, Math.round(earned * context.payFactor));
     s.gold = before.gold + adjusted;
-    s.income = Math.max(before.income, before.income + adjusted);
+    s.income = before.income + adjusted;
+
+    // CareerEngine writes the ordinary work narration first. If the profession's
+    // world context changes the actual wage, keep that visible line truthful.
+    const last = s.feed.at(-1);
+    if (last?.tag === 'WORK') last.text = last.text.replace(/wages: \d+g\.$/, `wages: ${adjusted}g.`);
   }
   s.occupation.performance = Math.max(0, Math.min(100, s.occupation.performance + context.performanceDelta));
 }

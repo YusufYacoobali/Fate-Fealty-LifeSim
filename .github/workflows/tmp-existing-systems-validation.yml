@@ -1,6 +1,9 @@
 name: Temporary existing-system validation
 
 on:
+  pull_request:
+    branches:
+      - v4
   push:
     branches:
       - v4-existing-systems-polish

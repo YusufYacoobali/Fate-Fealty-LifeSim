@@ -14,7 +14,7 @@ export function useScheduledReminders(meta: AppMetaApi) {
     // builds, where the native module has the app-specific configuration.
     if (Constants.executionEnvironment === ExecutionEnvironment.StoreClient) return;
     let active = true;
-    (async () => {
+    void (async () => {
       const { configureNotificationHandler, ensureDailyReminder } = await import('@/services/notifications');
       configureNotificationHandler();
       if (meta.metaRef.current.notificationsDenied) return;
@@ -24,7 +24,11 @@ export function useScheduledReminders(meta: AppMetaApi) {
         notificationsScheduled: result.scheduled || meta.metaRef.current.notificationsScheduled,
         notificationsDenied: !result.granted && !result.scheduled,
       });
-    })();
+    })().catch((error) => {
+      // Import/configuration can itself fail before ensureDailyReminder's own
+      // guard runs. Never leave a native notification failure unhandled.
+      console.warn('[notifications] reminder setup failed', error);
+    });
     return () => {
       active = false;
     };

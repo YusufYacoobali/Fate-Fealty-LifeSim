@@ -7,6 +7,13 @@ import { CAREER_ACTION_ART, CAREER_FAMILY_ART, FEATURE_ART } from '@/assets/gene
 import { PixelButton } from '../ui/PixelButton';
 import { PixelText } from '../ui/PixelText';
 import { C, PANEL } from '@/theme/theme';
+import { MAX_ROUTINE_ACTIVITY_USES, routineActivityUseCount } from '@/engine/activityVariety';
+
+function careerRoutineId(action: CareerAction): string | null {
+  if (action === 'train') return 'career_train';
+  if (action === 'rank_duty') return 'rank_duty';
+  return null;
+}
 
 export function CareerPanel({ state, onAction }: { state: GameState; onAction: (action: CareerAction, careerId?: string) => void }) {
   const career = careerById(state.occupation.careerId);
@@ -16,7 +23,16 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
   const currentArt = career ? careerArt(career.family) : null;
 
   const button = (action: CareerAction, label: string, hint: string, careerId?: string) => {
-    const available = careerActionAvailability(state, action, careerId);
+    const baseAvailability = careerActionAvailability(state, action, careerId);
+    const routineId = careerRoutineId(action);
+    const routineExhausted = Boolean(
+      baseAvailability.available
+      && routineId
+      && routineActivityUseCount(state, routineId) >= MAX_ROUTINE_ACTIVITY_USES,
+    );
+    const available = routineExhausted
+      ? { available: false, reason: 'Enough for one year — try another pursuit.' }
+      : baseAvailability;
     const actionArt = CAREER_ACTION_ART[action as keyof typeof CAREER_ACTION_ART];
     return (
       <PixelButton

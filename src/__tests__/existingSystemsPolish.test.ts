@@ -5,7 +5,7 @@ import {
   routineActivityAvailable,
 } from '@/engine/activityVariety';
 import { captureCareerActionRewards, reinforceCareerIdentity } from '@/engine/careerIdentity';
-import { promote, tickProgression } from '@/engine/pathProgression';
+import { promote, standingContributions, tickProgression } from '@/engine/pathProgression';
 import { gameReducer } from '@/state/gameReducer';
 import { makeState } from './helpers';
 
@@ -153,6 +153,16 @@ describe('existing-system polish', () => {
     expect(s.stats.health).toBe(healthBefore + 2);
   });
 
+  it('does not let a regent-run childhood holding raise standing before age six', () => {
+    const child = makeState({ age: 5 });
+    child.holding = { ...child.holding, stores: 90, security: 90, loyalty: 90 };
+
+    expect(standingContributions(child).some((item) => item.label.includes('holding'))).toBe(false);
+
+    child.age = 6;
+    expect(standingContributions(child).some((item) => item.label === 'a flourishing holding')).toBe(true);
+  });
+
   it('surfaces when the holding is materially helping the climb', () => {
     const s = makeState({ age: 25, rankProgress: 20 });
     s.holding = { ...s.holding, stores: 80, security: 80, loyalty: 80 };
@@ -165,17 +175,17 @@ describe('existing-system polish', () => {
     expect(standing?.text).toContain('lifting thy station');
   });
 
-  it('still explains the holding when its effect is cancelled by other pressures', () => {
+  it('still explains a strong holding when its effect is cancelled by other pressures', () => {
     const s = makeState({ age: 25, rankProgress: 20, gold: 20 });
     s.paths = { martial: 0, court: 0, church: 0, labour: 10, outlaw: 0 };
-    s.holding = { ...s.holding, stores: 55, security: 55, loyalty: 55 };
-    s.debts = [{ id: 'small_debt', principal: 10, interestRate: 0.1 }];
+    s.holding = { ...s.holding, stores: 80, security: 80, loyalty: 80 };
+    s.debts = [{ id: 'large_debt', principal: 60, interestRate: 0.1 }];
 
     tickProgression(s);
 
     const standing = s.feed.at(-1);
     expect(standing?.tag).toBe('STANDING ↔');
-    expect(standing?.text).toContain('holding');
+    expect(standing?.text).toContain('flourishing holding');
   });
 
   it('stores the real promotion rationale for both feed and celebration UI', () => {

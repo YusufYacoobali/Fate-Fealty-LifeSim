@@ -95,6 +95,12 @@ function proLockedSettings(settings: GameSettings, lifetimeUnlocked: boolean): G
   return lifetimeUnlocked ? settings : { ...settings, liveForever: false };
 }
 
+function careerRoutineId(action: CareerAction): string | null {
+  if (action === 'train') return 'career_train';
+  if (action === 'rank_duty') return 'rank_duty';
+  return null;
+}
+
 export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case 'HYDRATE': {
@@ -166,13 +172,18 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'CAREER_ACTION': {
+      const routineId = careerRoutineId(action.action);
       return timed(
         state,
-        (s) => careerActionAvailability(s, action.action, action.careerId).available,
+        (s) => careerActionAvailability(s, action.action, action.careerId).available
+          && (!routineId || routineActivityAvailable(s, routineId)),
         (s) => {
-          const before = captureCareerActionRewards(s);
+          const careerBefore = captureCareerActionRewards(s);
+          const routineBefore = routineId ? captureActivityRewards(s) : null;
           performCareerAction(s, action.action, action.careerId);
-          reinforceCareerIdentity(s, action.action, before);
+          reinforceCareerIdentity(s, action.action, careerBefore);
+          if (routineId && routineBefore) applyActivityDiminishingReturns(s, routineId, routineBefore);
+          checkLifeGoal(s);
           return s;
         },
       );

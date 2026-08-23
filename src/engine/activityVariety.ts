@@ -1,12 +1,11 @@
-import { GameState, PathKey, StatKey } from '@/types/game';
+import { FactionKey, GameState, PathKey, StatKey, WorldConditionKey } from '@/types/game';
 import { pushFeed } from './gameState';
-import { goalById } from '@/data/goals';
 import { C } from '@/theme/theme';
 
 /**
  * Routine activities are useful, but doing the exact same thing all year should
- * not be the strongest way to play. High-risk, social and chance-driven actions
- * are intentionally excluded: their own outcomes already provide the trade-off.
+ * not be the strongest way to play. High-risk and strongly chance-driven actions
+ * keep their own risk/reward curve instead.
  */
 const ROUTINE_ACTIVITIES = new Set([
   'tavern',
@@ -41,15 +40,41 @@ const ROUTINE_ACTIVITIES = new Set([
   'manage_stores',
 ]);
 
+export const MAX_ROUTINE_ACTIVITY_USES = 5;
+
+type HoldingSnapshot = { stores: number; security: number; loyalty: number };
+type OccupationSnapshot = { experience: number; performance: number; guildStanding: number };
+type HouseholdSnapshot = { wealth: number; food: number; quality: number; capacity: number; status: number };
+type CharacterSnapshot = {
+  stats: Record<StatKey, number>;
+  rel: number;
+  childInvestment: number;
+  childFavour: number;
+  healthConditions: Record<string, number>;
+  suspicion: number;
+  notoriety: number;
+};
+type RelationshipSnapshot = {
+  aToB: { affinity: number; trust: number; respect: number; attraction: number };
+  bToA: { affinity: number; trust: number; respect: number; attraction: number };
+};
+
 export interface ActivityRewardSnapshot {
   gold: number;
   rankProgress: number;
   reputation: number;
   stats: Record<StatKey, number>;
   paths: Record<PathKey, number>;
-  holding: { stores: number; security: number; loyalty: number };
+  holding: HoldingSnapshot;
   income: number;
-  goalId: string | null;
+  occupation: OccupationSnapshot;
+  roleProgress: Record<string, number>;
+  conditions: Record<WorldConditionKey, number>;
+  factions: Record<FactionKey, number>;
+  families: Record<string, number>;
+  households: Record<string, HouseholdSnapshot>;
+  characters: Record<string, CharacterSnapshot>;
+  relationships: Record<string, RelationshipSnapshot>;
 }
 
 export function captureActivityRewards(s: GameState): ActivityRewardSnapshot {
@@ -65,7 +90,39 @@ export function captureActivityRewards(s: GameState): ActivityRewardSnapshot {
       loyalty: s.holding.loyalty,
     },
     income: s.income,
-    goalId: s.goalId,
+    occupation: {
+      experience: s.occupation.experience,
+      performance: s.occupation.performance,
+      guildStanding: s.occupation.guildStanding ?? 0,
+    },
+    roleProgress: { ...s.playerRun.roleProgress },
+    conditions: { ...s.world.conditions },
+    factions: Object.fromEntries(
+      Object.entries(s.world.factions).map(([id, faction]) => [id, faction.playerStanding]),
+    ) as Record<FactionKey, number>,
+    families: Object.fromEntries(
+      Object.entries(s.world.families).map(([id, family]) => [id, family.reputation]),
+    ),
+    households: Object.fromEntries(s.world.households.map((household) => [household.id, {
+      wealth: household.wealth,
+      food: household.storedFood ?? 50,
+      quality: household.residenceQuality ?? 50,
+      capacity: household.capacity ?? 4,
+      status: household.status ?? 50,
+    }])),
+    characters: Object.fromEntries(Object.entries(s.world.characters).map(([id, character]) => [id, {
+      stats: { ...character.stats },
+      rel: character.rel,
+      childInvestment: character.childDevelopment?.investment ?? 0,
+      childFavour: character.childDevelopment?.favour ?? 0,
+      healthConditions: Object.fromEntries((character.healthConditions ?? []).map((condition) => [condition.id, condition.severity])),
+      suspicion: character.legalState?.suspicion ?? 0,
+      notoriety: character.legalState?.notoriety ?? 0,
+    }])),
+    relationships: Object.fromEntries(Object.entries(s.world.relationships).map(([id, relationship]) => [id, {
+      aToB: { ...relationship.aToB },
+      bToA: { ...relationship.bToA },
+    }])),
   };
 }
 
@@ -76,13 +133,30 @@ function rewardMultiplier(use: number): number {
   return 0.25;
 }
 
-function trimPositiveGain(before: number, after: number, multiplier: number): number {
+function trimIncrease(before: number, after: number, multiplier: number): number {
   if (after <= before) return after;
   return before + Math.round((after - before) * multiplier);
 }
 
+function trimDecrease(before: number, after: number, multiplier: number): number {
+  if (after >= before) return after;
+  return before - Math.round((before - after) * multiplier);
+}
+
 function useKey(s: GameState, id: string): string {
   return `activity-year:${s.age}:${id}`;
+}
+
+export function isRoutineActivity(id: string): boolean {
+  return ROUTINE_ACTIVITIES.has(id);
+}
+
+export function routineActivityUseCount(s: GameState, id: string): number {
+  return ROUTINE_ACTIVITIES.has(id) ? (s.world.repetitionLedger[useKey(s, id)] ?? 0) : 0;
+}
+
+export function routineActivityAvailable(s: GameState, id: string): boolean {
+  return !ROUTINE_ACTIVITIES.has(id) || routineActivityUseCount(s, id) < MAX_ROUTINE_ACTIVITY_USES;
 }
 
 /** Keep only this year's activity counters so the persistent ledger stays tiny. */
@@ -93,9 +167,96 @@ function pruneOldActivityUses(s: GameState): void {
   }
 }
 
+const LOWER_IS_BETTER = new Set<WorldConditionKey>(['warThreat', 'diseasePressure', 'religiousTension']);
+
+function trimConnectedRewards(s: GameState, before: ActivityRewardSnapshot, multiplier: number): void {
+  const originalGold = s.gold;
+  s.gold = trimIncrease(before.gold, s.gold, multiplier);
+  const goldTrimmed = Math.max(0, originalGold - s.gold);
+  if (goldTrimmed > 0) s.income = Math.max(before.income, s.income - goldTrimmed);
+
+  s.rankProgress = trimIncrease(before.rankProgress, s.rankProgress, multiplier);
+  s.reputation = trimIncrease(before.reputation, s.reputation, multiplier);
+
+  (Object.keys(before.stats) as StatKey[]).forEach((key) => {
+    s.stats[key] = trimIncrease(before.stats[key], s.stats[key], multiplier);
+  });
+  (Object.keys(before.paths) as PathKey[]).forEach((key) => {
+    s.paths[key] = trimIncrease(before.paths[key], s.paths[key], multiplier);
+  });
+  s.holding.stores = trimIncrease(before.holding.stores, s.holding.stores, multiplier);
+  s.holding.security = trimIncrease(before.holding.security, s.holding.security, multiplier);
+  s.holding.loyalty = trimIncrease(before.holding.loyalty, s.holding.loyalty, multiplier);
+
+  s.occupation.experience = trimIncrease(before.occupation.experience, s.occupation.experience, multiplier);
+  s.occupation.performance = trimIncrease(before.occupation.performance, s.occupation.performance, multiplier);
+  if (s.occupation.guildStanding != null) {
+    s.occupation.guildStanding = trimIncrease(before.occupation.guildStanding, s.occupation.guildStanding, multiplier);
+  }
+
+  for (const [role, value] of Object.entries(s.playerRun.roleProgress)) {
+    s.playerRun.roleProgress[role] = trimIncrease(before.roleProgress[role] ?? 0, value, multiplier);
+  }
+
+  (Object.keys(before.conditions) as WorldConditionKey[]).forEach((key) => {
+    s.world.conditions[key] = LOWER_IS_BETTER.has(key)
+      ? trimDecrease(before.conditions[key], s.world.conditions[key], multiplier)
+      : trimIncrease(before.conditions[key], s.world.conditions[key], multiplier);
+  });
+
+  (Object.keys(before.factions) as FactionKey[]).forEach((id) => {
+    s.world.factions[id].playerStanding = trimIncrease(before.factions[id], s.world.factions[id].playerStanding, multiplier);
+  });
+
+  for (const [id, reputation] of Object.entries(before.families)) {
+    const family = s.world.families[id];
+    if (family) family.reputation = trimIncrease(reputation, family.reputation, multiplier);
+  }
+
+  for (const [id, snapshot] of Object.entries(before.households)) {
+    const household = s.world.households.find((item) => item.id === id);
+    if (!household) continue;
+    household.wealth = trimIncrease(snapshot.wealth, household.wealth, multiplier);
+    household.storedFood = trimIncrease(snapshot.food, household.storedFood ?? snapshot.food, multiplier);
+    household.residenceQuality = trimIncrease(snapshot.quality, household.residenceQuality ?? snapshot.quality, multiplier);
+    household.capacity = trimIncrease(snapshot.capacity, household.capacity ?? snapshot.capacity, multiplier);
+    household.status = trimIncrease(snapshot.status, household.status ?? snapshot.status, multiplier);
+  }
+
+  for (const [id, snapshot] of Object.entries(before.characters)) {
+    const character = s.world.characters[id];
+    if (!character) continue;
+    (Object.keys(snapshot.stats) as StatKey[]).forEach((key) => {
+      character.stats[key] = trimIncrease(snapshot.stats[key], character.stats[key], multiplier);
+    });
+    character.rel = trimIncrease(snapshot.rel, character.rel, multiplier);
+    if (character.childDevelopment) {
+      character.childDevelopment.investment = trimIncrease(snapshot.childInvestment, character.childDevelopment.investment, multiplier);
+      character.childDevelopment.favour = trimIncrease(snapshot.childFavour, character.childDevelopment.favour, multiplier);
+    }
+    for (const condition of character.healthConditions ?? []) {
+      const severity = snapshot.healthConditions[condition.id];
+      if (severity != null) condition.severity = trimDecrease(severity, condition.severity, multiplier);
+    }
+    if (character.legalState) {
+      character.legalState.suspicion = trimDecrease(snapshot.suspicion, character.legalState.suspicion, multiplier);
+      character.legalState.notoriety = trimDecrease(snapshot.notoriety, character.legalState.notoriety, multiplier);
+    }
+  }
+
+  for (const [id, snapshot] of Object.entries(before.relationships)) {
+    const relationship = s.world.relationships[id];
+    if (!relationship) continue;
+    for (const key of ['affinity', 'trust', 'respect', 'attraction'] as const) {
+      relationship.aToB[key] = trimIncrease(snapshot.aToB[key], relationship.aToB[key], multiplier);
+      relationship.bToA[key] = trimIncrease(snapshot.bToA[key], relationship.bToA[key], multiplier);
+    }
+  }
+}
+
 /**
- * Apply diminishing returns only to positive gains. Costs, wounds and other bad
- * consequences are never softened by repetition.
+ * Apply diminishing returns only to beneficial movement. Costs, wounds, lost
+ * standing and other bad consequences are never softened by repetition.
  */
 export function applyActivityDiminishingReturns(
   s: GameState,
@@ -111,29 +272,7 @@ export function applyActivityDiminishingReturns(
   const multiplier = rewardMultiplier(use);
   if (multiplier >= 1) return s;
 
-  // doActivity checks ambitions before returning. If this exact action has just
-  // fulfilled the ambition that was active when it began, honour the moment in
-  // full rather than trimming the state underneath an already-earned reward.
-  const activeGoal = before.goalId ? goalById(before.goalId) : undefined;
-  if (activeGoal?.done(s)) return s;
-
-  const originalGold = s.gold;
-  s.gold = trimPositiveGain(before.gold, s.gold, multiplier);
-  const goldTrimmed = Math.max(0, originalGold - s.gold);
-  if (goldTrimmed > 0) s.income = Math.max(before.income, s.income - goldTrimmed);
-
-  s.rankProgress = trimPositiveGain(before.rankProgress, s.rankProgress, multiplier);
-  s.reputation = trimPositiveGain(before.reputation, s.reputation, multiplier);
-
-  (Object.keys(before.stats) as StatKey[]).forEach((keyName) => {
-    s.stats[keyName] = trimPositiveGain(before.stats[keyName], s.stats[keyName], multiplier);
-  });
-  (Object.keys(before.paths) as PathKey[]).forEach((keyName) => {
-    s.paths[keyName] = trimPositiveGain(before.paths[keyName], s.paths[keyName], multiplier);
-  });
-  s.holding.stores = trimPositiveGain(before.holding.stores, s.holding.stores, multiplier);
-  s.holding.security = trimPositiveGain(before.holding.security, s.holding.security, multiplier);
-  s.holding.loyalty = trimPositiveGain(before.holding.loyalty, s.holding.loyalty, multiplier);
+  trimConnectedRewards(s, before, multiplier);
 
   if (use === 3) {
     pushFeed(
@@ -143,12 +282,12 @@ export function applyActivityDiminishingReturns(
       'The work still serves thee, but repetition has begun charging rent. A different use of the year may teach more.',
       'plain',
     );
-  } else if (use === 5) {
+  } else if (use === MAX_ROUTINE_ACTIVITY_USES) {
     pushFeed(
       s,
-      'VERY FAMILIAR GROUND',
+      'ENOUGH FOR ONE YEAR',
       C.amber,
-      'Even the village has noticed. Thou art becoming excellent at doing the same thing and less excellent at gaining from it.',
+      'Even the village has noticed. Thou hast wrung nearly all the profit from this pursuit; another road may prove kinder.',
       'plain',
     );
   }

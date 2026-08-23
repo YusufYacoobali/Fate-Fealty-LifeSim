@@ -8,8 +8,13 @@ import * as Haptics from 'expo-haptics';
 export type HapticKind = 'light' | 'medium' | 'heavy' | 'success' | 'warning' | 'error';
 
 function run(fn: () => Promise<unknown>): void {
-  // Fire-and-forget; swallow rejections (e.g. web / unsupported devices).
-  fn().catch(() => {});
+  // Expo native calls normally reject asynchronously, but a missing/released
+  // native module can throw synchronously before a Promise is returned.
+  try {
+    void fn().catch(() => {});
+  } catch {
+    // Haptics are optional feedback; never let them crash gameplay.
+  }
 }
 
 export function haptic(kind: HapticKind, enabled: boolean): void {

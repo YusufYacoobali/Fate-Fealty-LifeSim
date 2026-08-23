@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { Platform } from 'react-native';
 import { setAudioModeAsync, useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import { GameState } from '@/types/game';
 import { shouldPlayMoneySuccess } from '@/services/audioLogic';
@@ -33,17 +34,27 @@ export function useGameAudio(state: GameState, loaded: boolean): void {
   }, []);
 
   useEffect(() => {
-    musicPlayer.loop = true;
-    musicPlayer.volume = 0.3;
-    if (!loaded || !state.settings.music) {
-      musicPlayer.pause();
-      return;
+    try {
+      musicPlayer.loop = true;
+      musicPlayer.volume = 0.3;
+      if (!loaded || !state.settings.music) {
+        musicPlayer.pause();
+        return;
+      }
+      if (musicStatus.isLoaded && !musicStatus.playing) musicPlayer.play();
+    } catch (error) {
+      // Native shared audio objects can disappear during an OS audio-session
+      // transition. A failed music operation must never take down the game.
+      console.warn('[audio] music operation failed', error);
     }
-    if (musicStatus.isLoaded && !musicStatus.playing) musicPlayer.play();
   }, [loaded, musicPlayer, musicStatus.isLoaded, musicStatus.playing, state.settings.music]);
 
   useEffect(() => {
-    successPlayer.volume = 0.85;
+    try {
+      successPlayer.volume = 0.85;
+    } catch (error) {
+      console.warn('[audio] success volume setup failed', error);
+    }
   }, [successPlayer]);
 
   useEffect(() => {
@@ -87,10 +98,34 @@ export function useGameAudio(state: GameState, loaded: boolean): void {
     previousHistoryId.current = latestHistory?.id;
     if ((!shouldPlay && !milestone) || !successStatus.isLoaded) return;
 
-    void successPlayer
-      .seekTo(0)
-      .then(() => successPlayer.play())
-      .catch((error) => console.warn('[audio] success sound failed', error));
+    // expo-audio 1.1.1 (Expo SDK 54) has an intermittent native iOS
+    // EXC_BAD_ACCESS in seekTo(). Replacing this tiny bundled source resets it
+    // without entering the broken Swift CheckedContinuation path.
+    if (Platform.OS === 'ios') {
+      try {
+        successPlayer.replace(MONEY_SUCCESS_SOUND);
+        successPlayer.volume = 0.85;
+        successPlayer.play();
+      } catch (error) {
+        console.warn('[audio] success sound failed', error);
+      }
+      return;
+    }
+
+    try {
+      void successPlayer
+        .seekTo(0)
+        .then(() => {
+          try {
+            successPlayer.play();
+          } catch (error) {
+            console.warn('[audio] success sound play failed', error);
+          }
+        })
+        .catch((error) => console.warn('[audio] success sound failed', error));
+    } catch (error) {
+      console.warn('[audio] success sound failed', error);
+    }
   }, [loaded, state.gold, state.rankIdx, state.playerCharacterId, state.pendingEvent?.eventId, state.pendingEvent?.storyInstanceId, state.world.activeStories, state.world.history, state.settings.soundEffects, successPlayer, successStatus.isLoaded]);
 }
 

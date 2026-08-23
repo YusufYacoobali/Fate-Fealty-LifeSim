@@ -72,7 +72,7 @@ export interface ActivityRewardSnapshot {
   holding: HoldingSnapshot;
   income: number;
   occupation: OccupationSnapshot;
-  roleProgress: Record<string, number>;
+  roleProgress: Partial<Record<LifeRole, number>>;
   conditions: Record<WorldConditionKey, number>;
   factions: Record<FactionKey, number>;
   families: Record<string, number>;

@@ -1,6 +1,12 @@
-import { applyActivityDiminishingReturns, captureActivityRewards } from '@/engine/activityVariety';
-import { reinforceCareerIdentity } from '@/engine/careerIdentity';
+import {
+  applyActivityDiminishingReturns,
+  captureActivityRewards,
+  MAX_ROUTINE_ACTIVITY_USES,
+  routineActivityAvailable,
+} from '@/engine/activityVariety';
+import { captureCareerActionRewards, reinforceCareerIdentity } from '@/engine/careerIdentity';
 import { promote, tickProgression } from '@/engine/pathProgression';
+import { gameReducer } from '@/state/gameReducer';
 import { makeState } from './helpers';
 
 describe('existing-system polish', () => {
@@ -33,21 +39,106 @@ describe('existing-system polish', () => {
     expect(s.stats.health).toBe(54);
   });
 
+  it('diminishes connected rewards too and exhausts one routine after five uses', () => {
+    const s = makeState({ age: 20 });
+    const child = s.world.characters.elswyth;
+    const relationship = Object.values(s.world.relationships).find((item) => item.aId === s.playerCharacterId && item.bId === child.id)!;
+    s.playerRun.roleProgress.commoner = 0;
+    s.world.factions.commons.playerStanding = 0;
+
+    const gain = () => {
+      const before = captureActivityRewards(s);
+      s.playerRun.roleProgress.commoner = (s.playerRun.roleProgress.commoner ?? 0) + 8;
+      s.world.factions.commons.playerStanding += 4;
+      child.stats.wits += 4;
+      child.childDevelopment!.investment += 8;
+      relationship.aToB.affinity += 8;
+      applyActivityDiminishingReturns(s, 'village_service', before);
+    };
+
+    gain();
+    gain();
+    const beforeThirdRole = s.playerRun.roleProgress.commoner ?? 0;
+    const beforeThirdFaction = s.world.factions.commons.playerStanding;
+    const beforeThirdWits = child.stats.wits;
+    const beforeThirdInvestment = child.childDevelopment!.investment;
+    const beforeThirdAffinity = relationship.aToB.affinity;
+    gain();
+
+    expect((s.playerRun.roleProgress.commoner ?? 0) - beforeThirdRole).toBe(6);
+    expect(s.world.factions.commons.playerStanding - beforeThirdFaction).toBe(3);
+    expect(child.stats.wits - beforeThirdWits).toBe(3);
+    expect(child.childDevelopment!.investment - beforeThirdInvestment).toBe(6);
+    expect(relationship.aToB.affinity - beforeThirdAffinity).toBe(6);
+
+    gain();
+    gain();
+    expect(s.world.repetitionLedger['activity-year:20:village_service']).toBe(MAX_ROUTINE_ACTIVITY_USES);
+    expect(routineActivityAvailable(s, 'village_service')).toBe(false);
+  });
+
+  it('checks ambitions after diminished rewards, not before', () => {
+    const s = makeState({ age: 20 });
+    s.goalId = 'scholar';
+    s.goalDone = false;
+    s.stats.wits = 80;
+    s.world.repetitionLedger['activity-year:20:train'] = 2;
+
+    const after = gameReducer(s, { type: 'DO_ACTIVITY', id: 'train' });
+
+    expect(after.stats.wits).toBe(84); // +5 becomes +4 on the third identical use
+    expect(after.goalId).toBe('scholar');
+    expect(after.tags).not.toContain('goal_done_scholar');
+  });
+
   it('makes clergy work respond to the existing religious world', () => {
     const s = makeState({ age: 24, reputation: 0 });
     s.occupation = { careerId: 'cleric', experience: 30, performance: 60, workedThisYear: 1 };
     s.world.conditions.religiousTension = 70;
     const faithBefore = s.stats.faith;
+    const before = captureCareerActionRewards(s);
+    s.gold += 8;
+    s.income += 8;
+    s.occupation.performance += 2;
 
-    reinforceCareerIdentity(s, 'work');
+    reinforceCareerIdentity(s, 'work', before);
 
     expect(s.stats.faith).toBe(faithBefore + 1);
     expect(s.reputation).toBe(1);
     expect(s.world.factions.church.playerStanding).toBe(1);
+    expect(s.occupation.performance).toBeGreaterThan(62);
     expect(s.feed.at(-1)?.tag).toBe('A DIVIDED PARISH');
 
-    reinforceCareerIdentity(s, 'work');
+    const secondBefore = captureCareerActionRewards(s);
+    s.gold += 8;
+    s.income += 8;
+    reinforceCareerIdentity(s, 'work', secondBefore);
     expect(s.world.factions.church.playerStanding).toBe(1); // yearly identity beat, not a spam engine
+  });
+
+  it('makes the same trade pay very differently in a strong or weak market', () => {
+    const strong = makeState({ age: 28, gold: 20 });
+    strong.occupation = { careerId: 'trader', experience: 40, performance: 60, workedThisYear: 1, guildStanding: 80 };
+    strong.world.conditions.prosperity = 80;
+    strong.world.factions.guilds.playerStanding = 40;
+    const strongBefore = captureCareerActionRewards(strong);
+    strong.gold += 10;
+    strong.income += 10;
+    strong.occupation.performance += 2;
+    reinforceCareerIdentity(strong, 'work', strongBefore);
+
+    const weak = makeState({ age: 28, gold: 20 });
+    weak.occupation = { careerId: 'trader', experience: 40, performance: 60, workedThisYear: 1, guildStanding: 5 };
+    weak.world.conditions.prosperity = 20;
+    weak.world.factions.guilds.playerStanding = -40;
+    const weakBefore = captureCareerActionRewards(weak);
+    weak.gold += 10;
+    weak.income += 10;
+    weak.occupation.performance += 2;
+    reinforceCareerIdentity(weak, 'work', weakBefore);
+
+    expect(strong.gold - 20).toBeGreaterThan(weak.gold - 20);
+    expect(strong.occupation.performance).toBeGreaterThan(weak.occupation.performance);
   });
 
   it('makes career training reinforce the profession instead of only generic wits', () => {
@@ -69,12 +160,25 @@ describe('existing-system polish', () => {
 
     tickProgression(s);
 
-    const standing = s.feed.findLast((entry) => entry.tag.startsWith('STANDING'));
+    const standing = [...s.feed].reverse().find((entry) => entry.tag.startsWith('STANDING'));
     expect(standing?.text).toContain('flourishing holding');
     expect(standing?.text).toContain('lifting thy station');
   });
 
-  it('explains a promotion using the life the player actually built', () => {
+  it('still explains the holding when its effect is cancelled by other pressures', () => {
+    const s = makeState({ age: 25, rankProgress: 20, gold: 20 });
+    s.paths = { martial: 0, court: 0, church: 0, labour: 10, outlaw: 0 };
+    s.holding = { ...s.holding, stores: 55, security: 55, loyalty: 55 };
+    s.debts = [{ id: 'small_debt', principal: 10, interestRate: 0.1 }];
+
+    tickProgression(s);
+
+    const standing = s.feed.at(-1);
+    expect(standing?.tag).toBe('STANDING ↔');
+    expect(standing?.text).toContain('holding');
+  });
+
+  it('stores the real promotion rationale for both feed and celebration UI', () => {
     const s = makeState({
       age: 20,
       gold: 220,
@@ -87,8 +191,11 @@ describe('existing-system polish', () => {
 
     expect(promote(s)).toBe(true);
     const promotion = s.feed.at(-1);
+    const memory = s.memories.at(-1);
     expect(promotion?.tag).toContain('PROMOTED');
     expect(promotion?.text).toContain('Swineford can argue no longer');
     expect(promotion?.text).toMatch(/holding|wealth|name|court/);
+    expect(memory?.tag).toBe('promoted_squire');
+    expect(memory?.note).toMatch(/holding|wealth|name|court/);
   });
 });

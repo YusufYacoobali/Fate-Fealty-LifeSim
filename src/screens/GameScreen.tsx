@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useGame } from '@/state/GameContext';
@@ -63,6 +63,8 @@ export function GameScreen() {
     shopPromoVisible,
     shopPromoMessageIndex,
     resolveShopPromo,
+    launchPaywallVisible,
+    resolveLaunchPaywall,
     creating,
     requestNewLife,
     createCharacter,
@@ -129,6 +131,15 @@ export function GameScreen() {
             : shopPromoVisible
               ? 'shop'
               : null;
+
+  // The fifth-launch paywall is lower priority than gameplay, onboarding, and
+  // existing return/review prompts. Once the screen is clear, consume the cue
+  // and open the same Royal Shop the player can reach manually.
+  useEffect(() => {
+    if (!launchPaywallVisible || !passivePromptsAllowed || passivePrompt !== null) return;
+    resolveLaunchPaywall();
+    setCartOpen(true);
+  }, [launchPaywallVisible, passivePromptsAllowed, passivePrompt, resolveLaunchPaywall]);
 
   // Promotion/death haptics ride on engine transitions.
   useGameFeedback(state);

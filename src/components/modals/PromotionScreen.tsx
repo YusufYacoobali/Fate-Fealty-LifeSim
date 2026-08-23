@@ -4,6 +4,7 @@ import { RANKS } from '@/data/ranks';
 import { holdingTitle } from '@/data/holding';
 import { rankPortraitAsset } from '@/assets/generatedAssets';
 import { C } from '@/theme/theme';
+import { useGame } from '@/state/GameContext';
 import { ModalBackdrop } from './ModalBackdrop';
 import { PixelButton } from '../ui/PixelButton';
 import { PixelText } from '../ui/PixelText';
@@ -24,12 +25,16 @@ const RANK_MEANING: Record<number, string> = {
 };
 
 export function PromotionScreen({ rankIdx, reducedMotion, onDone }: Props) {
+  const { state } = useGame();
   const { width, height } = useWindowDimensions();
   const compact = width < 360 || height < 660;
   const rank = RANKS[rankIdx];
   const previous = RANKS[rankIdx - 1];
   const portrait = rankPortraitAsset(rank.key);
   const frame = compact ? 104 : 132;
+  const promotionMemory = [...state.memories]
+    .reverse()
+    .find((memory) => memory.tag === `promoted_${rank.key.toLowerCase()}`);
 
   const rise = useRef(new Animated.Value(reducedMotion ? 1 : 0)).current;
 
@@ -91,6 +96,11 @@ export function PromotionScreen({ rankIdx, reducedMotion, onDone }: Props) {
         </PixelText>
 
         <View style={{ backgroundColor: '#082c56', borderWidth: 3, borderColor: C.inkSoft, padding: 10, marginTop: 14, width: '100%' }}>
+          {promotionMemory?.note && (
+            <PixelText font="body" size={compact ? 16 : 17} color={C.charm} style={{ textAlign: 'center', marginBottom: 9 }}>
+              {promotionMemory.note}
+            </PixelText>
+          )}
           <PixelText font="body" size={compact ? 16 : 17} color={C.cream} style={{ textAlign: 'center' }}>
             {RANK_MEANING[rankIdx] ?? 'The village adjusts its opinion of thee, loudly.'}
           </PixelText>

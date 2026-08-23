@@ -1,4 +1,4 @@
-import { FactionKey, GameState, PathKey, StatKey, WorldConditionKey } from '@/types/game';
+import { FactionKey, GameState, LifeRole, PathKey, StatKey, WorldConditionKey } from '@/types/game';
 import { pushFeed } from './gameState';
 import { C } from '@/theme/theme';
 
@@ -194,7 +194,8 @@ function trimConnectedRewards(s: GameState, before: ActivityRewardSnapshot, mult
     s.occupation.guildStanding = trimIncrease(before.occupation.guildStanding, s.occupation.guildStanding, multiplier);
   }
 
-  for (const [role, value] of Object.entries(s.playerRun.roleProgress)) {
+  for (const [roleKey, value] of Object.entries(s.playerRun.roleProgress)) {
+    const role = roleKey as LifeRole;
     s.playerRun.roleProgress[role] = trimIncrease(before.roleProgress[role] ?? 0, value, multiplier);
   }
 

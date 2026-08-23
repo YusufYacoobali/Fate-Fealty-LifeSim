@@ -10,14 +10,14 @@ import { addMoney, cloneState, createLife, pushFeed, syncKinToWorld, syncPlayerF
 import { ageUp } from '@/engine/lifeDirector';
 import { applyChoice } from '@/engine/storyGraph';
 import { activityAvailability, doActivity } from '@/engine/activityEngine';
-import { applyActivityDiminishingReturns, captureActivityRewards } from '@/engine/activityVariety';
+import { applyActivityDiminishingReturns, captureActivityRewards, routineActivityAvailable } from '@/engine/activityVariety';
 import { buyItem, shopAvailability } from '@/engine/shopEngine';
 import { interactKin, KinAction, kinActionAvailability } from '@/engine/kinEngine';
 import { Choice } from '@/types/game';
 import { buyHoldingUpgrade, holdingActionAvailability, holdingUpgradeAvailability, manageHolding } from '@/engine/holdingEngine';
 import { resetActionClock, spendAction, syncActionLimit, timedActionAvailability } from '@/engine/actionClock';
 import { CareerAction, careerActionAvailability, performCareerAction } from '@/engine/careerEngine';
-import { reinforceCareerIdentity } from '@/engine/careerIdentity';
+import { captureCareerActionRewards, reinforceCareerIdentity } from '@/engine/careerIdentity';
 import { checkDeath } from '@/engine/deathEngine';
 import { runWithWorldRng } from '@/engine/random';
 import { eventById } from '@/engine/eventPicker';
@@ -127,11 +127,23 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     case 'DO_ACTIVITY': {
       return timed(
         state,
-        (s) => activityAvailability(s, action.id).available,
+        (s) => activityAvailability(s, action.id).available && routineActivityAvailable(s, action.id),
         (s) => {
           const before = captureActivityRewards(s);
+
+          // Activity handlers normally check ambitions before returning. Hold the
+          // ambition aside so diminishing returns settle first; otherwise a third
+          // or fourth identical action could earn a goal using rewards it does
+          // not actually keep after the anti-spam adjustment.
+          const heldGoalId = s.goalId;
+          const heldGoalDone = s.goalDone;
+          s.goalId = null;
           doActivity(s, action.id);
+          s.goalId = heldGoalId;
+          s.goalDone = heldGoalDone;
+
           applyActivityDiminishingReturns(s, action.id, before);
+          checkLifeGoal(s);
           return s;
         },
       );
@@ -158,8 +170,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         state,
         (s) => careerActionAvailability(s, action.action, action.careerId).available,
         (s) => {
+          const before = captureCareerActionRewards(s);
           performCareerAction(s, action.action, action.careerId);
-          reinforceCareerIdentity(s, action.action);
+          reinforceCareerIdentity(s, action.action, before);
           return s;
         },
       );

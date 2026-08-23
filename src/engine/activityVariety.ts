@@ -85,6 +85,7 @@ export interface ActivityRewardSnapshot {
   households: Record<string, HouseholdSnapshot>;
   characters: Record<string, CharacterSnapshot>;
   relationships: Record<string, RelationshipSnapshot>;
+  nextId: number;
 }
 
 export function captureActivityRewards(s: GameState): ActivityRewardSnapshot {
@@ -133,6 +134,7 @@ export function captureActivityRewards(s: GameState): ActivityRewardSnapshot {
       aToB: { ...relationship.aToB },
       bToA: { ...relationship.bToA },
     }])),
+    nextId: s.nextId,
   };
 }
 
@@ -178,6 +180,23 @@ function pruneOldActivityUses(s: GameState): void {
 }
 
 const LOWER_IS_BETTER = new Set<WorldConditionKey>(['warThreat', 'diseasePressure', 'religiousTension']);
+
+function reconcileRoleMasteryFeed(s: GameState, before: ActivityRewardSnapshot): void {
+  const invalidMasteryTags = new Set<string>();
+  for (const [roleKey, finalValue] of Object.entries(s.playerRun.roleProgress)) {
+    const role = roleKey as LifeRole;
+    const beforeValue = before.roleProgress[role] ?? 0;
+    if (beforeValue < 50 && finalValue < 50) {
+      invalidMasteryTags.add(`${role.replaceAll('_', ' ').toUpperCase()} MASTERY`);
+    }
+  }
+  if (!invalidMasteryTags.size) return;
+
+  // doActivity announces mastery before this post-processing layer runs. If the
+  // diminished reward no longer crosses 50, remove only the feed entry created
+  // by this action so the visible story cannot claim progress the state did not keep.
+  s.feed = s.feed.filter((entry) => entry.id < before.nextId || !invalidMasteryTags.has(entry.tag));
+}
 
 function trimConnectedRewards(s: GameState, before: ActivityRewardSnapshot, multiplier: number): void {
   const originalGold = s.gold;
@@ -263,6 +282,8 @@ function trimConnectedRewards(s: GameState, before: ActivityRewardSnapshot, mult
       relationship.bToA[key] = trimIncrease(snapshot.bToA[key], relationship.bToA[key], multiplier);
     }
   }
+
+  reconcileRoleMasteryFeed(s, before);
 }
 
 /**

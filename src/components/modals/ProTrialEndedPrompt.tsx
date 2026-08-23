@@ -4,14 +4,11 @@ import { PixelText } from '../ui/PixelText';
 import { C } from '@/theme/theme';
 import { FullScreenPage } from '@/components/premium/FullScreenPage';
 import { OnboardingPaywallPanel } from '@/components/premium/onboarding-paywall-panel';
-import type { PlanId } from '@/data/premiumPlans';
-import type { PurchaseOutcome } from '@/services/purchases';
-import type { PremiumAccessState } from '@/state/hooks/usePremium';
+import { useGame } from '@/state/GameContext';
 
 interface Props {
-  accessState: PremiumAccessState;
-  onPurchase: (plan: PlanId) => Promise<PurchaseOutcome>;
-  onRestore: () => Promise<boolean>;
+  /** Kept for compatibility with the existing GameScreen call site. */
+  onExplore: () => void;
   onDismiss: () => void;
 }
 
@@ -21,10 +18,11 @@ interface Props {
  * yearly-first subscription offer instead of adding an extra teaser tap.
  * Lifetime stays out of this surface so Yearly remains the obvious default.
  */
-export function ProTrialEndedPrompt({ accessState, onPurchase, onRestore, onDismiss }: Props) {
+export function ProTrialEndedPrompt({ onDismiss }: Props) {
   const { width, height } = useWindowDimensions();
   const compact = width < 390 || height < 780;
   const [restoring, setRestoring] = useState(false);
+  const { premiumEntitled, premiumAccessState, purchasePlan, restorePremium } = useGame();
 
   const footer = (
     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
@@ -34,7 +32,7 @@ export function ProTrialEndedPrompt({ accessState, onPurchase, onRestore, onDism
           setRestoring(true);
           let restored = false;
           try {
-            restored = await onRestore();
+            restored = await restorePremium();
           } finally {
             setRestoring(false);
           }
@@ -93,10 +91,10 @@ export function ProTrialEndedPrompt({ accessState, onPurchase, onRestore, onDism
 
       <OnboardingPaywallPanel
         compact={compact}
-        unlocked={false}
-        accessState={accessState}
-        onPurchase={onPurchase}
-        onRestore={onRestore}
+        unlocked={premiumEntitled}
+        accessState={premiumAccessState}
+        onPurchase={purchasePlan}
+        onRestore={restorePremium}
         onUnlocked={onDismiss}
       />
     </FullScreenPage>

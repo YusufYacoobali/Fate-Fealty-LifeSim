@@ -38,6 +38,10 @@ const ROUTINE_ACTIVITIES = new Set([
   'seek_patron',
   'repair_household',
   'manage_stores',
+  // Career-panel routines use namespaced ids so they share the same balancing
+  // rules without colliding with ordinary activities such as THE KEEP training.
+  'career_train',
+  'rank_duty',
 ]);
 
 export const MAX_ROUTINE_ACTIVITY_USES = 5;

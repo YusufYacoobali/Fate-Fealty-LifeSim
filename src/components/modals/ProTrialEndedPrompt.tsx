@@ -1,36 +1,104 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { C } from '@/theme/theme';
-import { RetentionPromptFrame } from './RetentionPromptFrame';
+import { FullScreenPage } from '@/components/premium/FullScreenPage';
+import { OnboardingPaywallPanel } from '@/components/premium/onboarding-paywall-panel';
+import type { PlanId } from '@/data/premiumPlans';
+import type { PurchaseOutcome } from '@/services/purchases';
+import type { PremiumAccessState } from '@/state/hooks/usePremium';
 
 interface Props {
-  onExplore: () => void;
+  accessState: PremiumAccessState;
+  onPurchase: (plan: PlanId) => Promise<PurchaseOutcome>;
+  onRestore: () => Promise<boolean>;
   onDismiss: () => void;
 }
 
 /**
- * Shown once, at the moment the free first-life Pro sample is spent. It exists
- * to explain why the world just got smaller, not to nag: the shop promo handles
- * the recurring invitation.
+ * The free first-life sample has already demonstrated Premium's value, so this
+ * is the strongest subscription moment in the game: go straight to the
+ * yearly-first subscription offer instead of adding an extra teaser tap.
+ * Lifetime stays out of this surface so Yearly remains the obvious default.
  */
-export function ProTrialEndedPrompt({ onExplore, onDismiss }: Props) {
-  return (
-    <RetentionPromptFrame
-      zIndex={59}
-      accent={C.blueDeep}
-      eyebrow="THE ROYAL FAVOUR ENDS"
-      title="Thy first life rode with a royal favour."
-      description={
-        <PixelText font="body" size={17} color={C.textBrown} style={{ textAlign: 'center' }}>
-          Premium stations, ruler events, baronial holdings, and 50 deeds a year were thine for that one lifetime. This
-          new life begins without them — unless thou keep the favour.
+export function ProTrialEndedPrompt({ accessState, onPurchase, onRestore, onDismiss }: Props) {
+  const { width, height } = useWindowDimensions();
+  const compact = width < 390 || height < 780;
+  const [restoring, setRestoring] = useState(false);
+
+  const footer = (
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+      <TouchableOpacity
+        disabled={restoring}
+        onPress={async () => {
+          setRestoring(true);
+          let restored = false;
+          try {
+            restored = await onRestore();
+          } finally {
+            setRestoring(false);
+          }
+          if (restored) onDismiss();
+        }}
+        style={{ padding: 7 }}
+      >
+        <PixelText font="body" size={14} color={C.creamBlue}>
+          {restoring ? 'Restoring...' : 'Restore purchases'}
         </PixelText>
-      }
-      primaryLabel="KEEP THE FAVOUR"
-      primaryStyle={{ background: C.charm, shadow: C.charmDark, text: '#3a2a08', light: '#fff1b0' }}
-      onPrimary={onExplore}
-      secondaryLabel="LIVE HUMBLY"
-      onSecondary={onDismiss}
-    />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={onDismiss} style={{ padding: 7 }}>
+        <PixelText font="body" size={14} color={C.creamBlue}>
+          Continue free &gt;
+        </PixelText>
+      </TouchableOpacity>
+    </View>
+  );
+
+  return (
+    <FullScreenPage
+      title="KEEP THE ROYAL FAVOUR"
+      zIndex={76}
+      footer={footer}
+      contentMaxWidth={620}
+      contentPadding={compact ? 8 : 10}
+      backgroundColor="#0a3768"
+      headerBackgroundColor="#082c56"
+      headerBorderColor="#b8790a"
+      footerBackgroundColor="#082c56"
+      footerBorderColor="#b8790a"
+    >
+      <View
+        style={{
+          backgroundColor: '#10477e',
+          borderWidth: 3,
+          borderColor: '#b8790a',
+          paddingHorizontal: compact ? 10 : 14,
+          paddingVertical: compact ? 9 : 12,
+          marginBottom: compact ? 7 : 10,
+        }}
+      >
+        <PixelText font="pixel" size={compact ? 7 : 8} color={C.charm} style={{ textAlign: 'center' }}>
+          THY FREE ROYAL LIFE HAS ENDED
+        </PixelText>
+        <PixelText
+          font="body"
+          size={compact ? 14 : 16}
+          color={C.cream}
+          style={{ textAlign: 'center', marginTop: 6 }}
+        >
+          Thou hast already lived with Premium. Keep 50 deeds each year, the rise to Baron and Monarch, royal Holding
+          orders, and Premium stories in every life.
+        </PixelText>
+      </View>
+
+      <OnboardingPaywallPanel
+        compact={compact}
+        unlocked={false}
+        accessState={accessState}
+        onPurchase={onPurchase}
+        onRestore={onRestore}
+        onUnlocked={onDismiss}
+      />
+    </FullScreenPage>
   );
 }

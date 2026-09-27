@@ -56,7 +56,7 @@ function configureRole(state: GameState, role: LifeRole): void {
 }
 
 function runLife(seed: number, difficulty: Difficulty, role?: LifeRole): GameState {
-  let state = createLife({ worldSeed: seed, settings: { autoScroll: false, difficulty, liveForever: false, haptics: false, music: false, soundEffects: false } });
+  let state = createLife({ worldSeed: seed, settings: { autoScroll: false, difficulty, liveForever: false, haptics: false, soundEffects: false } });
   if (role) configureRole(state, role);
   for (let year = 0; year < LIFE_GUARD && !state.dead; year++) {
     state = resolvePending(state);

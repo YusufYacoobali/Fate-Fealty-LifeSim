@@ -10,6 +10,7 @@
 
 import { GameState, PathKey } from '@/types/game';
 import { RANKS } from '@/data/ranks';
+import { HOLDING_UNLOCK_AGE } from '@/data/holding';
 import { addMemory, pushFeed } from './gameState';
 import { C } from '@/theme/theme';
 
@@ -43,19 +44,58 @@ export function canPromote(s: GameState): boolean {
   return true;
 }
 
+const PROMOTION_REASON: Record<string, string> = {
+  'a life under arms': 'service under arms',
+  'a life at court': 'years spent learning which fork and which lie to use at court',
+  'a life in the Church': 'visible devotion to the Church',
+  'honest trade and toil': 'honest work that even the lazy have noticed',
+  'a name known for the right reasons': 'a name spoken well beyond thy own table',
+  'a growing good name': 'a steadily improving name',
+  'a name beginning to travel': 'a name beginning to travel',
+  'conspicuous wealth': 'wealth too conspicuous to dismiss',
+  'a comfortable purse': 'a comfortably heavy purse',
+  'a purse that covers appearances': 'enough coin to look respectable at a distance',
+  'courtly bearing': 'courtly bearing',
+  'letters and learning': 'letters and learning',
+  'a reputation for piety': 'a reputation for piety',
+  'a flourishing holding': 'a flourishing holding',
+  'a well-kept holding': 'a well-kept holding',
+  'powerful friends': 'powerful friends',
+  'friends in useful places': 'friends in useful places',
+  'respected work': 'respected work',
+};
+
+/** A short, player-facing account of what actually earned an ordinary promotion. */
+export function promotionRationale(s: GameState): string {
+  const reasons = standingContributions(s)
+    .filter((item) => item.delta > 0)
+    .sort((a, b) => b.delta - a.delta)
+    .map((item) => PROMOTION_REASON[item.label] ?? item.label)
+    .filter((value, index, all) => all.indexOf(value) === index)
+    .slice(0, 3);
+
+  if (!reasons.length) return 'Years of stubborn effort have finally become inconvenient to ignore.';
+  if (reasons.length === 1) return `Thy ${reasons[0]} has finally become inconvenient to ignore.`;
+  if (reasons.length === 2) return `Thy ${reasons[0]} and ${reasons[1]} have finally become inconvenient to ignore.`;
+  return `Thy ${reasons[0]}, ${reasons[1]}, and ${reasons[2]} have finally become inconvenient to ignore.`;
+}
+
 /** Promote one rank if possible (or forced). Resets rankProgress. */
 export function promote(s: GameState, force = false): boolean {
   const next = RANKS[s.rankIdx + 1];
   if (!next) return false;
   if (!force && !canPromote(s)) return false;
+  const reason = force
+    ? 'Fortune, favour, or somebody important has moved the ladder beneath thy feet.'
+    : promotionRationale(s);
   s.rankIdx += 1;
   s.rankProgress = 0;
-  addMemory(s, `promoted_${next.key.toLowerCase()}`, 3);
+  addMemory(s, `promoted_${next.key.toLowerCase()}`, 3, reason);
   pushFeed(
     s,
     `PROMOTED → ${next.short}`,
     C.good,
-    `Your station rises! You are now a ${next.key}. The village gasps, and one cousin weeps with envy.`,
+    `${reason} Swineford can argue no longer: you are now a ${next.key}. One cousin has taken the news personally.`,
     'good',
   );
   return true;
@@ -141,12 +181,14 @@ export function standingContributions(s: GameState): StandingContribution[] {
   if (s.stats.wits >= 70) add('letters and learning', 1);
   if (s.stats.faith >= 70) add('a reputation for piety', 1);
 
-  // A thriving estate is visible proof of competence; a failing one, of the
-  // opposite. This is the Holding's route into the class ladder.
-  const holdingFloor = Math.min(s.holding.stores, s.holding.security, s.holding.loyalty);
-  if (holdingFloor >= 75) add('a flourishing holding', 3);
-  else if (holdingFloor >= 50) add('a well-kept holding', 1);
-  else if (holdingFloor < 20) add('a holding falling apart', -3);
+  // Regents hold the land until the sixth winter. Before then the estate must
+  // not quietly earn social standing for a child who cannot yet manage it.
+  if (s.age >= HOLDING_UNLOCK_AGE) {
+    const holdingFloor = Math.min(s.holding.stores, s.holding.security, s.holding.loyalty);
+    if (holdingFloor >= 75) add('a flourishing holding', 3);
+    else if (holdingFloor >= 50) add('a well-kept holding', 1);
+    else if (holdingFloor < 20) add('a holding falling apart', -3);
+  }
 
   const standings = Object.values(s.world.factions).map((faction) => faction.playerStanding);
   const bestFaction = Math.max(0, ...standings);
@@ -170,6 +212,67 @@ export function yearlyStandingDelta(s: GameState): number {
   return standingContributions(s).reduce((sum, item) => sum + item.delta, 0);
 }
 
+function humanReasons(items: StandingContribution[], positive: boolean): string[] {
+  return items
+    .filter((item) => positive ? item.delta > 0 : item.delta < 0)
+    .filter((item) => item.label !== 'the passing of a year')
+    .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))
+    .slice(0, 2)
+    .map((item) => item.label);
+}
+
+function holdingStandingLine(s: GameState, items: StandingContribution[]): string {
+  const holding = items.find((item) => item.label.includes('holding'));
+  if (!holding) return '';
+  if (holding.label === 'a flourishing holding') return ' Thy flourishing holding is doing more than feeding people; it is lifting thy station.';
+  if (holding.label === 'a well-kept holding') return ' The holding is tidy enough that important people have begun pretending they noticed first.';
+
+  const weakest = (['stores', 'security', 'loyalty'] as const)
+    .reduce((lowest, key) => s.holding[key] < s.holding[lowest] ? key : lowest, 'stores');
+  if (weakest === 'stores') return ' Thy emptying stores make the estate look poorly governed; higher station is becoming harder to argue for.';
+  if (weakest === 'security') return ' Thy neglected security makes the estate look weak; higher station is becoming harder to argue for.';
+  return ' Thy people are openly losing faith in thee; higher station is becoming harder to argue for.';
+}
+
+function explainStanding(s: GameState, items: StandingContribution[], delta: number): void {
+  const strongHoldingSignal = items.some((item) => item.label.includes('holding') && Math.abs(item.delta) >= 3);
+  if (Math.abs(delta) < 2 && !strongHoldingSignal) return;
+
+  const reasons = humanReasons(items, delta >= 0);
+  const reasonText = reasons.length === 0
+    ? ''
+    : reasons.length === 1
+      ? ` The chief reason is ${reasons[0]}.`
+      : ` The loudest arguments are ${reasons[0]} and ${reasons[1]}.`;
+  const holdingText = holdingStandingLine(s, items);
+
+  if (delta > 0) {
+    pushFeed(
+      s,
+      `STANDING ↑ ${delta}`,
+      C.good,
+      `Thy name rises a little in the reckoning.${reasonText}${holdingText}`,
+      'good',
+    );
+  } else if (delta < 0) {
+    pushFeed(
+      s,
+      `STANDING ↓ ${Math.abs(delta)}`,
+      C.bad,
+      `The realm's opinion of thee has developed concerns.${reasonText}${holdingText}`,
+      'bad',
+    );
+  } else if (holdingText && strongHoldingSignal) {
+    pushFeed(
+      s,
+      'STANDING ↔',
+      C.amber,
+      `Thy standing holds where it is; the good arguments and the bad have cancelled one another.${holdingText}`,
+      'plain',
+    );
+  }
+}
+
 /**
  * Called every age-up after events resolve: settle the year's standing account,
  * then auto-promote if the player has earned it. Progress can fall as well as
@@ -177,7 +280,10 @@ export function yearlyStandingDelta(s: GameState): number {
  * next one is.
  */
 export function tickProgression(s: GameState): GameState {
-  s.rankProgress = Math.max(0, s.rankProgress + yearlyStandingDelta(s));
+  const contributions = standingContributions(s);
+  const delta = contributions.reduce((sum, item) => sum + item.delta, 0);
+  s.rankProgress = Math.max(0, s.rankProgress + delta);
+  explainStanding(s, contributions, delta);
   if (canPromote(s)) promote(s);
   return s;
 }

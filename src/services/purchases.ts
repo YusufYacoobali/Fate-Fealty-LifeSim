@@ -121,6 +121,7 @@ export async function restorePremium(): Promise<boolean | null> {
   const Purchases = rc();
   if (!Purchases || !configurePurchases()) return null;
   try {
+    await connectMetaPurchases(Purchases);
     const info = await Purchases.restorePurchases();
     return entitlementActive(info);
   } catch {

@@ -44,14 +44,21 @@ describe('playable RPG progression', () => {
     expect(s.rpg.mission).toBeNull(); expect(gameReducer(s, action).gold).toBe(gold);
     expect(gameReducer(s, { type: 'AGE_UP' }).age).toBe(s.age + 1);
   });
-  it('permits age-up between expedition visits, preserves stages, and charges once per visit', () => {
+  it('reserves three actions and opens each expedition decision automatically, including after reload', () => {
     let s = ready(); s = gameReducer(s, { type: 'RPG', command: { kind: 'expedition', id: 'woodland' } });
-    s = safeResolve(s); expect(s.rpg.expedition?.stage).toBe(1);
-    const before = s.age; s = gameReducer(s, { type: 'AGE_UP' }); expect(s.age).toBe(before + 1);
-    s.pendingEvent = null; s.rpg.mission = null;
-    const saved = normalizeGameState(JSON.parse(JSON.stringify(s))); expect(saved.rpg.expedition?.stage).toBe(1);
-    for (let stage = 1; stage < 3; stage++) { s = gameReducer(s, { type: 'RPG', command: { kind: 'expedition', id: 'woodland' } }); s = safeResolve(s); }
-    expect(s.rpg.expedition).toBeNull(); expect(s.actionClock.used).toBe(2);
+    expect(s.actionClock.used).toBe(3);
+    for (let stage = 0; stage < 3; stage++) {
+      expect(s.rpg.mission?.stage).toBe(stage);
+      expect(gameReducer(s, { type: 'AGE_UP' }).age).toBe(s.age);
+      s = normalizeGameState(JSON.parse(JSON.stringify(s)));
+      const previous = missionEvent(s)!.id;
+      s = safeResolve(s);
+      const snapshot = JSON.stringify(s);
+      s = gameReducer(s, { type: 'MISSION_CHOOSE', missionId: previous, optionId: 'safe' });
+      expect(JSON.stringify(s)).toBe(snapshot);
+      expect(s.actionClock.used).toBe(3);
+    }
+    expect(s.rpg.expedition).toBeNull(); expect(s.rpg.mission).toBeNull();
   });
   it('crafts a concrete item, consumes materials, and never stacks equip bonuses', () => {
     let s = ready(); const initialHealth = s.stats.health;
@@ -103,7 +110,7 @@ describe('interactive combat', () => {
     const loaded = normalizeGameState(JSON.parse(JSON.stringify(s))); expect(loaded.duel).toEqual(s.duel); expect(loaded.world.rngState).toEqual(rng);
     s.rpg.equipment.weapon = 'steel_blade:masterwork'; expect(s.duel!.combat!.damage).toBe(0);
   });
-  it('resolves fights within eight exchanges and settles once', () => {
+  it('resolves fights within four exchanges and settles once', () => {
     const s = fight();
     runWithWorldRng(s.world, () => {
       for (let guard = 0; guard < 40 && !s.duel!.outcome; guard++) {
@@ -112,13 +119,13 @@ describe('interactive combat', () => {
         else if (c.phase === 'attack') selectCombatMove(s, c.sequence, combatChoiceReason(s, 'quick') ? 'recover' : 'quick');
         else resolveCombatTiming(s, c.sequence, 0);
       }
-      expect(s.duel!.outcome).toBeDefined(); expect(s.duel!.round).toBeLessThanOrEqual(9);
+      expect(s.duel!.outcome).toBeDefined(); expect(s.duel!.round).toBeLessThanOrEqual(5);
       concludeDuel(s); const health = s.stats.health; concludeDuel(s); expect(s.stats.health).toBe(health);
     });
   });
-  it('practice causes no lasting effects and timing assist returns good', () => {
-    const s = ready(); s.settings.timingAssist = true; startDuel(s, 'roderick', 'duel', true);
-    expect(timingGrade(s, 10000)).toBe('good'); s.duel!.outcome = 'lost'; s.duel!.playerVigour = 0;
+  it('practice causes no lasting effects and missed timing stays a miss', () => {
+    const s = ready(); startDuel(s, 'roderick', 'duel', true);
+    expect(timingGrade(s, 10000)).toBe('miss'); s.duel!.outcome = 'lost'; s.duel!.playerVigour = 0;
     const health = s.stats.health; concludeDuel(s); expect(s.stats.health).toBe(health); expect(skillsOf(s).arms.xp).toBe(0);
   });
   it('upgrades a legacy duel without changing its round or vigour', () => { const s = fight(); delete s.duel!.combat; s.duel!.round = 3; s.duel!.playerVigour = 42; upgradeDuel(s); expect(s.duel!.round).toBe(3); expect(s.duel!.playerVigour).toBe(42); });

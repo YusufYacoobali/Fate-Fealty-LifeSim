@@ -1,3 +1,4 @@
+import { startDuel } from './duelEngine';
 /**
  * Story graph + choice resolution.
  *
@@ -63,6 +64,7 @@ export function applyChoice(s: GameState, event: GameEvent, ch: Choice): ChoiceR
     s.firedOnce = [...s.firedOnce, event.id];
   }
 
+  const challengeOpponent = ch.challenge ? s.pendingEvent?.bindings?.[ch.challenge.role] : undefined;
   const outcome = resolveOutcome(ch, s);
   recordEventResolution(s, event, ch.id ?? ch.label);
   let openNow: GameEvent | null = null;
@@ -137,6 +139,7 @@ export function applyChoice(s: GameState, event: GameEvent, ch: Choice): ChoiceR
   // Definitions remain static content; only the follow-up id enters state.
   if (openNow) s.pendingEvent = { eventId: openNow.id };
   else s.pendingEvent = null;
+  if (ch.challenge && challengeOpponent && !openNow && !s.dead) startDuel(s, challengeOpponent, 'duel', false, ch.challenge.stakes);
   return { openNow };
 }
 

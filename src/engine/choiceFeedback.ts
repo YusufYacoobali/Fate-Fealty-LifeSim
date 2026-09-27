@@ -1,14 +1,22 @@
 import { Choice, GameState, STAT_KEYS } from '@/types/game';
 
+export function labelHasGold(choice: Choice, amount: number): boolean {
+  return new RegExp(`(?:^|[^0-9])${amount}\\s*(?:g\\b|gold\\b)`, 'i').test(choice.label);
+}
+export function choiceHint(choice: Choice): string | undefined {
+  const amount = choice.costGold ?? Math.max(0, -(choice.outcome?.effects?.gold ?? 0));
+  return amount && labelHasGold(choice, amount) && /^(?:Pay|Costs?|Needs?|Requires?) \d+\s*(?:g|gold)[.!]?$/i.test(choice.hint ?? '') ? undefined : choice.hint;
+}
+
 /** A preview reads authored stakes; it never rolls an outcome or spends resources. */
 export function choiceStakes(choice: Choice): string[] {
   const lines: string[] = [];
   const effects = choice.outcome?.effects;
   const spend = effects?.gold && effects.gold < 0 ? -effects.gold : 0;
-  if (spend) lines.push(`Costs ${spend}g`);
-  if (choice.costGold && choice.costGold !== spend && !choice.hint?.includes(`Pay ${choice.costGold}g`)) lines.push(`Requires ${choice.costGold}g available`);
+  if (spend && !labelHasGold(choice, spend)) lines.push(`Costs ${spend}g`);
+  if (choice.costGold && choice.costGold !== spend && !labelHasGold(choice, choice.costGold) && !choice.hint?.includes(`Pay ${choice.costGold}g`)) lines.push(`Requires ${choice.costGold}g available`);
   const forecast = choice.forecast;
-  const authored = [...(forecast?.positive ?? []), ...(forecast?.negative ?? [])].filter((line) => !/^(A distinct response|The outcome may be remembered)\.?$/i.test(line));
+  const authored = [...(forecast?.positive ?? []), ...(forecast?.negative ?? [])].filter((line) => !(choice.costGold && labelHasGold(choice, choice.costGold) && /^(Costs?|Needs?|Requires?) \d+\s*(g|gold)\b/i.test(line))).filter((line) => !/^(A distinct response|The outcome may be remembered)\.?$/i.test(line));
   if (authored.length) lines.push(...authored.filter((line) => !spend || !/^Costs? \d+\s*(g|gold)\b/i.test(line)));
   if (choice.success || choice.failure) {
     lines.push('Outcome uncertain');

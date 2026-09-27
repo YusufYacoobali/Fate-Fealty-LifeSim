@@ -1,9 +1,13 @@
 # Release readiness — 27 September 2026
 
-**Verdict: do not submit this update yet.** App-side Meta integration is implemented, but the Meta app has not been created. External configuration and signed-device verification remain required.
+**Verdict: do not submit this update yet.** App-side Meta integration and the supplied App ID/Client Token are configured. External configuration and signed-device verification remain required.
 
 ## Automated evidence
 
+- Follow-up review: **568/568 tests passed across 62 suites**, including 21 targeted attribution/configuration checks; TypeScript passed. Fixed Android pre-consent provider initialization and explicit app-open reporting, purchase-identifier fallback on SDK errors, and restore consent sequencing. Gameplay review and account-side limitations are detailed in [follow-up verification](verification-follow-up-2026-09-27.md).
+- Follow-up native verification: fresh Android prebuild, `:meta-activation:compileDebugKotlin` and `:app:processReleaseMainManifest` passed (117 Gradle tasks) in an isolated audit project. The merged release manifest has zero Facebook startup providers and all three automatic initialization/logging/advertising-ID flags are false. The audit uses a minimal JavaScript entry point; it is not a signed full-game build or an iOS compile.
+- Gameplay-polish follow-up: **565/565 tests passed across 62 suites** in the final full run; TypeScript passed. Final production JavaScript exports passed for Android, iOS and web. Browser checks verified the Quests layout, immediate crafted-item use, rewarded anvil lessons, concise cost warnings and combat timing from outside the bar. See [gameplay polish](gameplay-polish-2026-09-27.md) for scope and save handling. These exports are not signed binaries; native device checks remain open.
+- The gameplay follow-up reconciled the existing reducer merge conflict and marked that file resolved. Other staged work was preserved. The release configuration check still blocks on missing Meta App ID/Client Token and the Android terms URL.
 - Full Jest run after integration: 532 tests passed across 58 suites. Three additional checkout-attribution tests passed separately; the targeted tracking/configuration run passed all 18 tests. Total unique tests checked: 535.
 - TypeScript check passed after the paywall link nullability fix.
 - Expo Doctor: 21/21 checks passed after compatible SDK 57 patch updates.
@@ -23,7 +27,7 @@ No new cloud build, store submission or release was started. Store approval and 
 
 ## Release blockers and owner actions
 
-1. Create/connect the Meta app; provide App ID and Client Token; set production EAS environment values.
+1. App ID and Client Token are now configured in the project's `.env` for local/EAS builds. Confirm the Meta app's platform, business/ad account and signing-key settings; account configuration remains unverified.
 2. Connect RevenueCat's Meta integration and sandbox credentials. Verify all three plans, `pro` entitlement, purchase/renewal delivery and Meta campaign eligibility. The repository's public RevenueCat keys alone do not prove dashboard configuration is correct.
 3. Update the published privacy policy and both stores' privacy disclosures for Meta/RevenueCat processing. Supply a published Android app terms URL, and confirm the iOS EULA choice.
 4. Build the actual native release for each intended store. Verify consent/ATT, install reporting, subscription/lifetime purchases, restores, offline behavior and withdrawal on real devices and sandbox accounts.

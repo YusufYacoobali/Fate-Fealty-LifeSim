@@ -21,7 +21,8 @@ export interface ContractOffer { id: string; templateId: string; clientId: strin
 export type ForgeTask = { kind: 'practice' } | { kind: 'work' } | { kind: 'recipe'; recipeId: string } | { kind: 'commission'; choiceId: string; chapter: number };
 export interface ForgeRun {
   id: string; ownerId: string; title: string;
-  practice: boolean; assisted: boolean; level: number;
+  practice: boolean; level: number;
+  lessonXp?: number; craftedKey?: string; recipeId?: string;
   targets: number[]; scores: number[];
   phase: 'ready' | 'striking' | 'result';
   bonusEligible: boolean; bonusXp: number; bonusIron: number;
@@ -40,17 +41,20 @@ export interface MissionRun {
   results?: boolean[];
   failed?: boolean;
   charged?: boolean;
+  previousResult?: string;
 }
 export interface RpgState {
   forge: ForgeRun | null;
   forgeBonuses: { ownerId: string; year: number; used: number };
   revision: number;
+  lastCrafted?: { key: string; recipeId: string };
+  forgeLesson?: { ownerId: string; year: number };
   materials: Record<MaterialId, number>;
   goods: Record<string, number>;
   equipment: Partial<Record<EquipmentSlot, string>>;
   board: { year: number; offers: ContractOffer[] };
   mission: MissionRun | null;
-  expedition: { id: string; stage: number; ownerId: string } | null;
+  expedition: { id: string; stage: number; ownerId: string; prepaid?: boolean } | null;
   branches: Record<CareerBranch, { assignments: number; chapter: number; choices?: Record<number, string>; clientId?: string }>;
   stewardId: string | null;
   lastHoldingEncounterYear: number | null;
@@ -70,6 +74,9 @@ export interface CombatState {
   archetype: 'brawler' | 'guard' | 'duellist' | 'veteran';
   damage: number; protection: number; dodgeCost: number; arms: number;
   weaponId?: string; armourId?: string;
-  practice: boolean; assist: boolean;
+  practice: boolean;
+  lastAction?: 'strike' | 'block' | 'dodge' | 'hurt' | 'miss';
+  impactId?: number;
+  opponentStartVigour?: number;
   lastGrade?: TimingGrade;
 }

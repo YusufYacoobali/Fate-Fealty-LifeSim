@@ -63,7 +63,7 @@ function payable(s: GameState, gold: number, materials: Partial<Record<MaterialI
   return null;
 }
 export function rpgAvailability(s: GameState, command: RpgCommand): string | null {
-  if (s.dead || s.pendingEvent || s.duel || s.rpg.mission || s.rpg.forge) return 'Finish the current encounter first';
+  if (s.dead || s.pendingEvent || s.duel || s.rpg.mission || (s.rpg.forge && !(s.rpg.forge.phase === 'result' && ['equip', 'use_good'].includes(command.kind)))) return 'Finish the current encounter first';
   if (command.kind === 'abandon') return s.rpg.expedition ? null : 'No expedition in progress';
   if (command.kind === 'unequip') return null;
   if (command.kind === 'equip') return ownsEquipment(s, command.id) && equipmentDefinition(command.id) ? null : 'Not owned';
@@ -81,6 +81,8 @@ export function rpgAvailability(s: GameState, command: RpgCommand): string | nul
       const def = EXPEDITIONS[command.id];
       if (!def) return 'Unknown destination';
       if (s.age < def.minAge) return `Requires age ${def.minAge}`;
+      const remaining = def.stages.length - (s.rpg.expedition?.id === command.id ? s.rpg.expedition.stage : 0);
+      if (s.actionClock.cap - s.actionClock.used < remaining) return `Needs ${remaining} actions for the whole journey`;
       return s.rpg.expedition && s.rpg.expedition.id !== command.id ? 'Finish or abandon your current expedition' : null;
     }
     case 'career': return branchRequirement(s, command.id);
@@ -142,6 +144,8 @@ export function performRpgCommand(s: GameState, command: RpgCommand): GameState 
     }
     case 'expedition': {
       s.rpg.expedition ??= { id: command.id, stage: 0, ownerId: s.playerCharacterId };
+      for (let stage = s.rpg.expedition.stage + 1; stage < EXPEDITIONS[command.id].stages.length; stage++) spendAction(s);
+      s.rpg.expedition.prepaid = true;
       openMission(s, EXPEDITIONS[command.id].stages[s.rpg.expedition.stage], 'expedition', s.rpg.expedition.stage); break;
     }
     case 'career': {
@@ -157,6 +161,7 @@ export function performRpgCommand(s: GameState, command: RpgCommand): GameState 
       const quality = qualityAtLevel(skillLevel(s, 'craftsmanship'));
       const key = recipe.equipment ? `${recipe.equipment}:${quality}` : recipe.id;
       s.rpg.goods[key] = (s.rpg.goods[key] ?? 0) + 1;
+      s.rpg.lastCrafted = { key, recipeId: recipe.id };
       grantSkillXp(s, 'craftsmanship', 6, `crafted ${recipe.name}`);
       pushFeed(s, 'CRAFTED', '#387245', `${quality} ${recipe.name} added to your possessions. ${recipe.description}`, 'good'); break;
     }
@@ -252,7 +257,7 @@ export function missionEvent(s: GameState): GameEvent | undefined {
   if (!def || !run || run.phase !== 'choice') return undefined;
   const client = run.clientId ? s.world.characters[run.clientId] : null;
   const name = client?.alive ? client.name : s.world.factions[run.faction].name;
-  return { id: run.id, title: def.title, category: 'arc', text: `${def.text.replaceAll('{client}', name)}\n\n${SKILL_NAMES[def.skill]} ${skillLevel(s, def.skill)} · ${def.pressure.replaceAll(/([A-Z])/g, ' $1').toLowerCase()}: ${s.world.conditions[def.pressure]}. No further actions required.`, choices: def.options.map((o) => {
+  return { id: run.id, title: def.title, category: 'arc', text: `${run.previousResult ? run.previousResult + '\n\n' : ''}${def.text.replaceAll('{client}', name)}\n\n${SKILL_NAMES[def.skill]} ${skillLevel(s, def.skill)} · ${def.pressure.replaceAll(/([A-Z])/g, ' $1').toLowerCase()}: ${s.world.conditions[def.pressure]}. No further actions required.`, choices: def.options.map((o) => {
     const reason = optionUnavailable(s, o);
     return { id: o.id, label: o.label, disabledReason: reason ?? undefined, hint: [o.combat ? 'Interactive duel; injury and defeat possible' : o.check ? 'Skill check · outcome uncertain' : describeEffects(o.effects), o.gold ? `Pay ${o.gold}g` : '', o.material ? `Uses ${o.material.count} ${o.material.id}` : '', o.good ? `Uses 1 ${o.good.replaceAll('_', ' ')}` : '', o.check ? `Failure: ${describeEffects(o.failure ?? { reputation: -2 })}` : ''].filter(Boolean).join(' · '), costGold: o.gold,
       outcome: { text: o.text, effects: o.effects } };
@@ -284,6 +289,7 @@ function resolveMission(s: GameState, option: MissionOption, success: boolean): 
     (run.results ??= [])[run.stage] = success;
     run.failed = run.failed || !success;
     pushFeed(s, 'ON THE ROAD', '#365f88', success ? option.text : option.failureText ?? 'The road is difficult.', 'plain');
+    run.previousResult = success ? option.text : option.failureText ?? 'The road is difficult.';
     run.stage += 1;
     run.definitionId = CARAVAN_JOURNEY[run.stage].id;
     // A double-tap from the preceding page cannot choose the next page.
@@ -323,6 +329,11 @@ function resolveMission(s: GameState, option: MissionOption, success: boolean): 
   }
   if (run.kind === 'holding' && s.rpg.stewardId && s.world.characters[s.rpg.stewardId]?.alive) applyRelationshipShift(s, s.rpg.stewardId, {}, { affinity: option.id === 'share' || option.id === 'deliver' ? 4 : success ? 1 : -2 });
   s.rpg.mission = null;
+  if (run.kind === 'expedition' && s.rpg.expedition?.prepaid && !s.dead && s.stats.health > 0) {
+    const progress = s.rpg.expedition;
+    openMission(s, EXPEDITIONS[progress.id].stages[progress.stage], 'expedition', progress.stage, run.clientId);
+    s.rpg.mission!.previousResult = text;
+  }
 }
 export function chooseMission(s: GameState, missionId: string, optionId: string): void {
   const run = s.rpg.mission, def = missionDefinition(s);

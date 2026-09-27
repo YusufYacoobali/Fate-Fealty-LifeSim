@@ -90,7 +90,7 @@ describe('pathProgression standing', () => {
   });
 
   it('charges every year against thee, so standing must be maintained', () => {
-    const idle = makeState();
+    const idle = makeState({ age: 24 });
     // A drifting labourer with nothing to show earns nothing and loses ground.
     idle.paths = { martial: 0, court: 0, church: 0, labour: 1, outlaw: 0 };
     idle.holding = { ...idle.holding, stores: 10, security: 10, loyalty: 10 };
@@ -99,7 +99,7 @@ describe('pathProgression standing', () => {
   });
 
   it('counts a flourishing holding and powerful friends', () => {
-    const lord = makeState();
+    const lord = makeState({ age: 24 });
     lord.holding = { ...lord.holding, stores: 80, security: 80, loyalty: 80 };
     lord.world.factions.crown.playerStanding = 25;
 

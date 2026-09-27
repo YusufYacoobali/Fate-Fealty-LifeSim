@@ -10,6 +10,7 @@ import { PixelText } from '../ui/PixelText';
 
 interface Props {
   rankIdx: number;
+  reason?: string;
   reducedMotion: boolean;
   onDone: () => void;
 }
@@ -23,7 +24,7 @@ const RANK_MEANING: Record<number, string> = {
   5: 'A monarch rules the realm. There is no one left above thee to blame.',
 };
 
-export function PromotionScreen({ rankIdx, reducedMotion, onDone }: Props) {
+export function PromotionScreen({ rankIdx, reason, reducedMotion, onDone }: Props) {
   const { width, height } = useWindowDimensions();
   const compact = width < 360 || height < 660;
   const rank = RANKS[rankIdx];
@@ -91,6 +92,11 @@ export function PromotionScreen({ rankIdx, reducedMotion, onDone }: Props) {
         </PixelText>
 
         <View style={{ backgroundColor: '#082c56', borderWidth: 3, borderColor: C.inkSoft, padding: 10, marginTop: 14, width: '100%' }}>
+          {reason && (
+            <PixelText font="body" size={compact ? 16 : 17} color={C.charm} style={{ textAlign: 'center', marginBottom: 9 }}>
+              {reason}
+            </PixelText>
+          )}
           <PixelText font="body" size={compact ? 16 : 17} color={C.cream} style={{ textAlign: 'center' }}>
             {RANK_MEANING[rankIdx] ?? 'The village adjusts its opinion of thee, loudly.'}
           </PixelText>

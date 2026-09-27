@@ -17,6 +17,9 @@ if (config) {
   if (!sdk || sdk.isAutoInitEnabled !== false || sdk.autoLogAppEventsEnabled !== false || sdk.advertiserIDCollectionEnabled !== false) {
     errors.push('Meta automatic initialization, event logging and advertising-ID collection must be disabled.');
   }
+  if (!config.plugins.includes('./plugins/withMetaConsent')) {
+    errors.push('Restore the Meta consent plugin that removes Android startup initialization.');
+  }
 }
 if (!packageJson.expo?.autolinking?.exclude?.includes('react-native-fbsdk-next')) {
   errors.push('Restore the FBSDK native autolinking exclusion; the local consent bridge owns initialization.');

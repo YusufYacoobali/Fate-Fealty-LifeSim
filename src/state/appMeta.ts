@@ -46,6 +46,8 @@ export interface AppMeta {
   totalEntries: number;
   /** Cumulative AGE UP presses across all lives; actions never increment this. */
   totalAgeUps: number;
+  /** Number of full app launches on this install. */
+  appOpenCount: number;
   /** Legacy one-shot flag; superseded by reviewPromptCount and kept for migration. */
   reviewPrompted: boolean;
   /** How many times the "are you enjoying it?" prompt has been shown. */
@@ -92,6 +94,7 @@ export interface AppMeta {
 export const DEFAULT_META: AppMeta = {
   totalEntries: 0,
   totalAgeUps: 0,
+  appOpenCount: 0,
   reviewPrompted: false,
   reviewPromptCount: 0,
   reviewLastEntry: 0,
@@ -134,6 +137,7 @@ export function migrateMeta(parsed: Partial<AppMeta>): AppMeta {
     ...DEFAULT_META,
     ...parsed,
     lifetimeUnlocked: parsed.lifetimeUnlocked ?? false,
+    appOpenCount: parsed.appOpenCount ?? 0,
     reviewPromptCount,
     reviewLastEntry: parsed.reviewLastEntry ?? (reviewPromptCount > 0 ? parsed.totalEntries ?? 0 : 0),
     // Old builds counted feed rows. Start their new age-up cadence from zero

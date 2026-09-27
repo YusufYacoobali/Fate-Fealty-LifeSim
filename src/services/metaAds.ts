@@ -57,14 +57,22 @@ async function reconcile(allowPermissionPrompt = false): Promise<void> {
   if (!MetaActivation) return;
 
   await MetaActivation.configure(true);
-  if (!activated) {
-    await MetaActivation.activateApp();
-    activated = true;
-  }
-  if (purchases) {
-    const anonymousId = await MetaActivation.getAnonymousID();
-    if (anonymousId) await purchases.setFBAnonymousID(anonymousId);
-    await purchases.collectDeviceIdentifiers();
+  try {
+    if (!activated) {
+      await MetaActivation.activateApp();
+      activated = true;
+    }
+  } finally {
+    // An activation or anonymous-ID failure must not discard the independent
+    // advertising-ID route for an otherwise consented purchase.
+    if (purchases) {
+      try {
+        const anonymousId = await MetaActivation.getAnonymousID();
+        if (anonymousId) await purchases.setFBAnonymousID(anonymousId);
+      } finally {
+        await purchases.collectDeviceIdentifiers();
+      }
+    }
   }
 }
 

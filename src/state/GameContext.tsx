@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { GameState } from '@/types/game';
 import { GameAction } from './gameReducer';
 import { usePersistentGame } from './hooks/usePersistentGame';
@@ -13,6 +13,7 @@ import { useShopPromoGate } from './hooks/useShopPromoGate';
 import type { PremiumAccessState } from './hooks/usePremium';
 import { NewLifeOptions } from './gameReducer';
 import { PlanId, PurchaseOutcome } from '@/services/purchases';
+import { isLaunchPaywallDue, nextAppOpenCount } from '@/services/launchPaywallLogic';
 import { useRetentionLoops } from './hooks/useRetentionLoops';
 import type { DailyRewardProgress, DailyRewardStatus } from '@/services/dailyRewards';
 import type { ReturnRumour } from '@/services/returnRumour';
@@ -27,6 +28,9 @@ interface GameContextValue {
   shopPromoVisible: boolean;
   shopPromoMessageIndex: number;
   resolveShopPromo: () => void;
+  /** True on every fifth full app launch for an eligible free player. */
+  launchPaywallVisible: boolean;
+  resolveLaunchPaywall: () => void;
   creating: boolean;
   requestNewLife: () => void;
   createCharacter: (options: NewLifeOptions) => void;
@@ -76,6 +80,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const retention = useRetentionLoops(game.state, game.loaded, meta, game.dispatch);
   const updateMeta = meta.update;
   const [onboardingVisible, setOnboardingVisible] = useState(false);
+  const [launchPaywallDue, setLaunchPaywallDue] = useState(false);
+  const launchCounted = useRef(false);
 
   useEffect(() => {
     if (game.loaded && meta.ready && meta.metaRef.current.onboarded && !meta.metaRef.current.tutorialSeen) {
@@ -83,11 +89,44 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     }
   }, [game.loaded, meta.ready, meta.metaRef, game.state.lifeNo]);
 
-    const shopPromo = useShopPromoGate(game.state, game.loaded, meta, {
-      // Never sell Pro to someone who currently has it, sample included.
-      eligible: premium.premiumAccessState === 'inactive' && !proAccess.trialActive,
-      reviewVisible: review.reviewVisible,
-    });
+  // Count a full app mount once. Every fifth launch queues the existing Royal
+  // Shop for free players; entitlement resolution below decides whether it is
+  // actually safe to show.
+  useEffect(() => {
+    if (!game.loaded || !meta.ready || launchCounted.current) return;
+    launchCounted.current = true;
+    const nextCount = nextAppOpenCount(meta.metaRef.current.appOpenCount);
+    updateMeta({ appOpenCount: nextCount });
+    if (isLaunchPaywallDue(nextCount)) setLaunchPaywallDue(true);
+  }, [game.loaded, meta.ready, meta.metaRef, updateMeta]);
+
+  // Never flash a sales screen at a confirmed subscriber, someone currently
+  // using the free Pro sample, or while the store/entitlement check is offline.
+  // Loading is intentionally left queued until RevenueCat gives a real answer.
+  useEffect(() => {
+    if (!launchPaywallDue) return;
+    if (
+      premium.premiumAccessState === 'active' ||
+      premium.premiumAccessState === 'unavailable' ||
+      proAccess.trialActive
+    ) {
+      setLaunchPaywallDue(false);
+    }
+  }, [launchPaywallDue, premium.premiumAccessState, proAccess.trialActive]);
+
+  const launchPaywallVisible =
+    launchPaywallDue &&
+    premium.premiumAccessState === 'inactive' &&
+    !proAccess.trialActive &&
+    meta.metaRef.current.tutorialSeen;
+
+  const resolveLaunchPaywall = useCallback(() => setLaunchPaywallDue(false), []);
+
+  const shopPromo = useShopPromoGate(game.state, game.loaded, meta, {
+    // Never sell Pro to someone who currently has it, sample included.
+    eligible: premium.premiumAccessState === 'inactive' && !proAccess.trialActive,
+    reviewVisible: review.reviewVisible,
+  });
 
   // Character creation decides the NEXT life's access, which differs from the
   // outgoing life's at exactly the moment the free sample starts or is spent.
@@ -121,6 +160,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       shopPromoVisible: shopPromo.shopPromoVisible,
       shopPromoMessageIndex: shopPromo.shopPromoMessageIndex,
       resolveShopPromo: shopPromo.resolveShopPromo,
+      launchPaywallVisible,
+      resolveLaunchPaywall,
       creating: creation.creating,
       requestNewLife: creation.requestNewLife,
       createCharacter,
@@ -157,6 +198,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       shopPromo.shopPromoVisible,
       shopPromo.shopPromoMessageIndex,
       shopPromo.resolveShopPromo,
+      launchPaywallVisible,
+      resolveLaunchPaywall,
       creation.creating,
       creation.requestNewLife,
       createCharacter,

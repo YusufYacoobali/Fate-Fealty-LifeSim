@@ -14,76 +14,76 @@ export const FLAGSHIP_STORY_COPY: Record<string, StoryCopy> = {
   rivals_rise: {
     1: {
       title: 'THE RIVAL · A CONTEST MADE PUBLIC',
-      text: '{{rival.name}} turns a village contest into something with an audience, a wager and a named loser. They are exactly your age and they have picked you deliberately.',
+      text: "{{rival.name}} challenges you to carry a sack of turnips across the village green. They have drawn a finish line, gathered a crowd and already practised their victory bow.",
       choices: [
-        { id: 'compete', label: 'Meet them at it', text: 'You take the contest seriously in front of everybody. It is exactly what they wanted, and you win by a length.', effects: { charm: 5, health: -3, reputation: 4, memory: { tag: 'met_the_rival_head_on', weight: 4 } }, tone: 'plain' },
-        { id: 'decline', label: 'Refuse to make it a contest', text: 'You decline in a way that costs them their audience. It works completely and it makes the whole thing personal in a way the contest would not have.', effects: { wits: 5, charm: -2, memory: { tag: 'refused_the_rivals_contest', weight: 4 } }, tone: 'plain' },
-        { id: 'befriend', label: 'Try to make an ally of them instead', text: 'You put a genuine offer in front of them. They take it as condescension, which it partly was, and it is worse afterwards than before.', effects: { charm: 3, boundKinRel: { role: 'rival', delta: -6 }, memory: { tag: 'offered_the_rival_friendship', weight: 4 } }, tone: 'plain' },
+        { id: 'compete', label: 'Win the turnip race', text: "You cross first, wheezing turnip dust. {{rival.name}} insists the sack was uneven. The crowd insists they do the victory bow anyway.", effects: { charm: 5, health: -3, reputation: 4, memory: { tag: 'met_the_rival_head_on', weight: 4 } }, tone: 'plain' },
+        { id: 'decline', label: 'Refuse to make it a contest', text: "You ask why anyone should carry turnips for free. The crowd drifts away. {{rival.name}} is left guarding two sacks and an excellent bow.", effects: { wits: 5, charm: -2, memory: { tag: 'refused_the_rivals_contest', weight: 4 } }, tone: 'plain' },
+        { id: 'befriend', label: 'Try to make an ally of them instead', text: "You offer to carry the sack together. {{rival.name}} accuses you of pitying them, then drops it on their own foot.", effects: { charm: 3, boundKinRel: { role: 'rival', delta: -6 }, memory: { tag: 'offered_the_rival_friendship', weight: 4 } }, tone: 'plain' },
       ],
     },
     2: {
       title: 'THE RIVAL · A PATRON TAKES AN INTEREST',
-      text: '{{rival.name}} has got themselves into {{patron.name}}’s notice and makes very sure you hear about it, at length, in the market.',
+      text: "{{patron.name}} has hired {{rival.name}} to supervise the prize pigs. Your rival struts through the market wearing a brass badge that says Deputy Pig Marshal. They tell you the job comes with paid meals.",
       choices: [
-        { id: 'court_patron', label: 'Put yourself in front of {{patron.name}} too', text: 'You engineer a meeting and make a decent impression. {{patron.name}} now has two of you and is entirely aware of what that is worth.', effects: { charm: 5, path: { court: 2 }, reputation: 3, memory: { tag: 'courted_the_same_patron', weight: 4 } }, tone: 'plain' },
-        { id: 'build_own', label: 'Build something that does not need a patron', text: 'Two years of unglamorous work and a position that belongs to you. {{rival.name}} is ahead of you the whole time and considerably less secure.', effects: { wits: 5, holding: { stores: 5 }, householdState: { wealth: 3 }, memory: { tag: 'built_without_a_patron', weight: 4 } }, tone: 'good' },
-        { id: 'undermine', label: 'Let {{patron.name}} hear the worst of them', text: 'Nothing untrue, all of it selected. {{patron.name}} cools toward them by Lady Day and never entirely warms to you either.', effects: { charm: 3, faith: -3, boundKinRel: { role: 'rival', delta: -10 }, memory: { tag: 'poisoned_the_patrons_ear', weight: 4 } }, tone: 'plain' },
+        { id: 'court_patron', label: 'Put yourself in front of {{patron.name}} too', text: "You offer to keep the pig accounts. {{patron.name}} likes your confidence. {{rival.name}} now has to explain every missing turnip to you.", effects: { charm: 5, path: { court: 2 }, reputation: 3, memory: { tag: 'courted_the_same_patron', weight: 4 } }, tone: 'plain' },
+        { id: 'build_own', label: 'Improve your own vegetable patch', text: "You improve your own vegetable patch and fill the store cupboard. No patron required. No badge either, which is a mercy.", effects: { wits: 5, holding: { stores: 5 }, householdState: { wealth: 3 }, memory: { tag: 'built_without_a_patron', weight: 4 } }, tone: 'good' },
+        { id: 'undermine', label: 'Let {{patron.name}} hear the worst of them', text: "You tell {{patron.name}} that the Deputy Pig Marshal lost a pig inside the chapel. It is true. Repeating the part about the baptismal font is optional, but you do.", effects: { charm: 3, faith: -3, boundKinRel: { role: 'rival', delta: -10 }, memory: { tag: 'poisoned_the_patrons_ear', weight: 4 } }, tone: 'plain' },
       ],
     },
     3: {
       title: 'THE RIVAL · A RUMOUR WITH ONE SOURCE',
-      text: 'Something damaging is going round Swineford about you, and every version of it can be traced back to the same three conversations. How you answer this sets the shape of the next ten years.',
+      text: "{{rival.name}} claims you stole the church bell’s clapper and sold it as a soup ladle. Three market sellers repeat the story. Customers are starting to avoid your household.",
       choices: [
-        { id: 'bold', label: 'Name {{rival.name}} as the source, publicly', text: 'You say it in the market with the three conversations laid out. Half the village takes your side at once and the other half decides you are both impossible.', effects: { charm: 4, reputation: 5, boundKinRel: { role: 'rival', delta: -14 }, worldConditions: { publicOrder: -1 }, storyVariables: { approach: 'bold' }, memory: { tag: 'named_the_rival_publicly', weight: 5 } }, tone: 'plain' },
-        { id: 'cautious', label: 'Trace it properly and say nothing yet', text: 'Four months of quiet asking and you have the whole shape of it, including two people you had not suspected and one you had trusted.', effects: { wits: 7, revealSecretOf: 'rival', storyVariables: { approach: 'cautious' }, memory: { tag: 'traced_the_rumour_quietly', weight: 5 } }, tone: 'plain' },
-        { id: 'family', label: 'Make sure it cannot touch your household', text: 'You spend the year making your household unassailable rather than answering the rumour. It works and the rumour is repeated for a decade unchallenged.', effects: { householdState: { wealth: 3, status: 2 }, familyReputation: { delta: 2 }, reputation: -3, storyVariables: { approach: 'family' }, memory: { tag: 'shielded_the_household_from_the_rumour', weight: 5 } }, tone: 'plain' },
+        { id: 'bold', label: 'Name {{rival.name}} as the source, publicly', text: "You name {{rival.name}} as the liar and demand they produce the alleged ladle. Half the market cheers. The other half wants to see the ladle.", effects: { charm: 4, reputation: 5, boundKinRel: { role: 'rival', delta: -14 }, worldConditions: { publicOrder: -1 }, storyVariables: { approach: 'bold' }, memory: { tag: 'named_the_rival_publicly', weight: 5 } }, tone: 'plain' },
+        { id: 'cautious', label: 'Trace it properly and say nothing yet', text: "You question the sellers. Each heard the tale from {{rival.name}}, who received a sealed note from {{patron.name}}. You keep the note.", effects: { wits: 7, revealSecretOf: 'rival', storyVariables: { approach: 'cautious' }, memory: { tag: 'traced_the_rumour_quietly', weight: 5 } }, tone: 'plain' },
+        { id: 'family', label: 'Make sure it cannot touch your household', text: "You settle your household’s accounts in front of witnesses. The traders keep selling to your family, though the ladle jokes continue.", effects: { householdState: { wealth: 3, status: 2 }, familyReputation: { delta: 2 }, reputation: -3, storyVariables: { approach: 'family' }, memory: { tag: 'shielded_the_household_from_the_rumour', weight: 5 } }, tone: 'plain' },
       ],
     },
     '4_bold': {
       title: 'THE RIVAL · THE FEUD IN DAYLIGHT',
-      text: 'Naming them has made it everybody’s business. Swineford has taken sides, {{patron.name}} is watching to see who breaks first, and neither of you can now back down cheaply.',
+      text: "The market is arguing over the missing clapper. {{rival.name}} demands an apology. {{patron.name}} offers to settle the quarrel if you both work for lower wages.",
       choices: [
-        { id: 'escalate', label: 'Press it while you have the advantage', text: 'You push hard for a season and they lose ground publicly. It is decisive and it costs you four people who were on your side in the spring.', effects: { reputation: 5, charm: -3, boundKinRel: { role: 'rival', delta: -12 }, memory: { tag: 'pressed_the_public_feud', weight: 4 } }, tone: 'plain' },
-        { id: 'hold', label: 'Say your piece once and then stop', text: 'You say it, once, well, and then refuse to say anything further for a year. The silence does more damage than the accusation did.', effects: { wits: 5, charm: 5, reputation: 4, memory: { tag: 'said_it_once_and_stopped', weight: 4 } }, tone: 'good' },
+        { id: 'escalate', label: 'Press it while you have the advantage', text: "You ask {{rival.name}} to describe the ladle. They change its size three times. The crowd laughs, then gets tired of you asking a fourth time.", effects: { reputation: 5, charm: -3, boundKinRel: { role: 'rival', delta: -12 }, memory: { tag: 'pressed_the_public_feud', weight: 4 } }, tone: 'plain' },
+        { id: 'hold', label: 'Say your piece once and then stop', text: "You point out that the church bell still rings. Then you stop talking. The bell supplies a considerably better argument.", effects: { wits: 5, charm: 5, reputation: 4, memory: { tag: 'said_it_once_and_stopped', weight: 4 } }, tone: 'good' },
       ],
     },
     '4_cautious': {
       title: 'THE RIVAL · THE SHAPE OF THE THING',
-      text: 'You now know who carried what and what {{patron.name}} actually wants out of the pair of you. Neither of you had guessed anywhere near it.',
+      text: "The sealed note proves {{patron.name}} invented the clapper story. A second note offers both of you lower wages while your reputations recover. Your patron is paying you less to clean up their own lie.",
       choices: [
-        { id: 'use_it', label: 'Use what you have found', text: 'You place two facts in front of the right people and the whole structure comes apart without your name being attached to any of it.', effects: { wits: 6, reputation: 4, boundKinRel: { role: 'rival', delta: -10 }, memory: { tag: 'took_the_structure_apart', weight: 4 } }, tone: 'plain' },
-        { id: 'show_them', label: 'Show {{rival.name}} what you found', text: 'You lay it out in front of them, including the part where {{patron.name}} has been running both of you. They are furious and, for the first time, not at you.', effects: { wits: 5, charm: 4, boundKinRel: { role: 'rival', delta: 14 }, memory: { tag: 'showed_the_rival_the_truth', weight: 5 } }, tone: 'good' },
+        { id: 'use_it', label: 'Use what you have found', text: "You send both notes to the guild clerk. The wage-cut scheme collapses. {{rival.name}} blames you for exposing how easily they were fooled.", effects: { wits: 6, reputation: 4, boundKinRel: { role: 'rival', delta: -10 }, memory: { tag: 'took_the_structure_apart', weight: 4 } }, tone: 'plain' },
+        { id: 'show_them', label: 'Show {{rival.name}} what you found', text: "You show {{rival.name}} both notes. They read the wage offer twice, then call {{patron.name}} a name usually reserved for diseased turnips.", effects: { wits: 5, charm: 4, boundKinRel: { role: 'rival', delta: 14 }, memory: { tag: 'showed_the_rival_the_truth', weight: 5 } }, tone: 'good' },
       ],
     },
     '4_family': {
       title: 'THE RIVAL · IT COMES TO THE DOOR ANYWAY',
-      text: 'Staying out of it has not kept it out. {{rival.name}} is now applying pressure to people in your household who never had anything to do with any of it.',
+      text: "{{rival.name}} tells the miller to refuse your household’s grain. The miller asks you to settle the feud before everyone has to eat turnip soup.",
       choices: [
-        { id: 'draw_line', label: 'Tell them the household is out of it', text: 'You say it once, privately, in terms that cannot be misread. They stop. Everything else between you gets considerably worse and stays between you.', effects: { charm: 5, reputation: 3, boundKinRel: { role: 'rival', delta: -6 }, familyReputation: { delta: 3 }, memory: { tag: 'drew_the_line_at_the_household', weight: 5 } }, tone: 'good' },
-        { id: 'answer_in_kind', label: 'Go after theirs', text: 'You do the same thing back and it is just as effective. Two households are now in it who never chose to be, on both sides.', effects: { reputation: 4, faith: -4, boundKinRel: { role: 'rival', delta: -14 }, familyReputation: { delta: -2 }, memory: { tag: 'went_after_their_household', weight: 5 } }, tone: 'bad' },
+        { id: 'draw_line', label: 'Tell them the household is out of it', text: "You tell {{rival.name}} to bring complaints to you, not the miller. They agree to leave your household alone and immediately insult you instead.", effects: { charm: 5, reputation: 3, boundKinRel: { role: 'rival', delta: -6 }, familyReputation: { delta: 3 }, memory: { tag: 'drew_the_line_at_the_household', weight: 5 } }, tone: 'good' },
+        { id: 'answer_in_kind', label: 'Go after theirs', text: "You persuade a baker to refuse their household’s flour. Now two innocent families need supper and both shopkeepers regret knowing you.", effects: { reputation: 4, faith: -4, boundKinRel: { role: 'rival', delta: -14 }, familyReputation: { delta: -2 }, memory: { tag: 'went_after_their_household', weight: 5 } }, tone: 'bad' },
       ],
     },
     5: {
       title: 'THE RIVAL · BEFORE THE WHOLE HALL',
-      text: '{{rival.name}} calls your honour into question in front of {{patron.name}} and half of Swineford. Whatever you say in the next minute is what this rivalry finally was.',
+      text: "At the village hall, {{rival.name}} repeats the bell-clapper accusation before {{patron.name}}. The priest arrives carrying the actual clapper. He would like everyone to stop discussing his ladle.",
       choices: [
-        { id: 'reconcile', label: 'Offer them terms in front of everyone', text: 'You propose an end, publicly, on terms that cost you something real. It is the last thing anybody expected and they have to take it or look small.', effects: { charm: 7, faith: 4, reputation: 4, boundKinRel: { role: 'rival', delta: 16 }, worldConditions: { publicOrder: 2 }, storyVariables: { resolution: 'reconcile' } }, tone: 'good' },
-        { id: 'hardline', label: 'Finish it', text: 'You answer with everything you have and it is comprehensive. They do not recover their position in Swineford and everybody watching learns what you are like when pressed.', effects: { reputation: 8, charm: -4, boundKinRel: { role: 'rival', delta: -20 }, storyVariables: { resolution: 'hardline' } }, tone: 'plain' },
-        { id: 'withdraw', label: 'Decline to answer and leave the hall', text: 'You walk out mid-sentence. It is read as defeat by everybody in the room and as something else entirely by the four people who know you.', effects: { wits: 4, reputation: -5, householdState: { wealth: 2 }, storyVariables: { resolution: 'withdraw' } }, tone: 'plain' },
+        { id: 'reconcile', label: 'Offer them terms in front of everyone', text: "You offer a truce: no more rumours, no pressure on either household, and one public apology each. {{rival.name}} agrees. The priest takes his clapper home.", effects: { charm: 7, faith: 4, reputation: 4, boundKinRel: { role: 'rival', delta: 16 }, worldConditions: { publicOrder: 2 }, storyVariables: { resolution: 'reconcile' } }, tone: 'good' },
+        { id: 'hardline', label: 'Make them repeat the accusation beside the evidence', text: "You ask the priest to hold up the clapper while {{rival.name}} repeats the accusation. They cannot finish. You have won, and made the humiliation needlessly thorough.", effects: { reputation: 8, charm: -4, boundKinRel: { role: 'rival', delta: -20 }, storyVariables: { resolution: 'hardline' } }, tone: 'plain' },
+        { id: 'withdraw', label: 'Decline to answer and leave the hall', text: "You leave the hall to finish your household’s accounts. The crowd calls it surrender. Your family calls it finally being home for supper.", effects: { wits: 4, reputation: -5, householdState: { wealth: 2 }, storyVariables: { resolution: 'withdraw' } }, tone: 'plain' },
       ],
     },
     '6_reconciled': {
       title: 'THE RIVAL · TWO LIVES MEASURED AGAINST EACH OTHER',
-      text: 'Thirty years of being measured against the same person, ended by agreement in a hall. You are both, unmistakably, what the other one made you.',
+      text: "{{rival.name}} meets you at market without an insult prepared. You discuss turnip prices. It is an unexpectedly pleasant improvement.",
       choices: [
-        { id: 'accept_ending', label: 'Let it be finished', text: 'You end up on the same side of four arguments in the next decade and are considerably more effective together than either of you ever was apart.', effects: { charm: 5, reputation: 5, boundKinRel: { role: 'rival', delta: 12 }, familyReputation: { delta: 4 }, memory: { tag: 'the_rivalry_ended_by_agreement', weight: 5, note: 'A thirty-year rivalry was ended publicly and on terms.' } }, tone: 'good' },
+        { id: 'accept_ending', label: 'Let it be finished', text: "You and {{rival.name}} jointly challenge a trader’s false weights. The trader looks at both of you and quietly fetches the honest scales.", effects: { charm: 5, reputation: 5, boundKinRel: { role: 'rival', delta: 12 }, familyReputation: { delta: 4 }, memory: { tag: 'the_rivalry_ended_by_agreement', weight: 5, note: 'The rivalry ended with public apologies and a promise to leave both households alone.' } }, tone: 'good' },
       ],
     },
     '6_hard': {
       title: 'THE RIVAL · WHAT THE RIVALRY MADE',
-      text: 'It ends without agreement, the way most of them do. Both of you are sharper, harder and more careful than you would otherwise have been, and one of you paid more for that.',
+      text: "You and {{rival.name}} pass on opposite sides of the market. The bell rings overhead. Neither of you mentions kitchen utensils.",
       choices: [
-        { id: 'accept_ending', label: 'Take what it made of you', text: 'You are better at nearly everything than you would have been and you never once say so. Neither do they, and they are thinking it at the same time.', effects: { wits: 5, reputation: 4, familyReputation: { delta: 1 }, memory: { tag: 'the_rivalry_never_ended', weight: 5 } }, tone: 'plain' },
+        { id: 'accept_ending', label: 'Take what it made of you', text: "You keep your accounts precise and your accusations provable. Your family has learned the same lesson, at the cost of many uncomfortable dinners.", effects: { wits: 5, reputation: 4, familyReputation: { delta: 1 }, memory: { tag: 'the_rivalry_never_ended', weight: 5 } }, tone: 'plain' },
       ],
     },
   },
@@ -153,7 +153,7 @@ export const FLAGSHIP_STORY_COPY: Record<string, StoryCopy> = {
       title: 'THE LEAN HARVEST · THE BARNS FILL AGAIN',
       text: 'The next harvest is ordinary, which after this year passes for plenty. Swineford has a written arrangement about lean years that it did not have in the spring.',
       choices: [
-        { id: 'accept_ending', label: 'Keep the arrangement in the parish chest', text: 'It is taken out twice more in the next forty years and both times it works, and both times somebody says it has always been done this way.', effects: { faith: 5, reputation: 5, familyReputation: { delta: 4 }, worldConditions: { foodSecurity: 3, publicOrder: 2 }, memory: { tag: 'the_lean_year_arrangement', weight: 5, note: 'Swineford came out of a famine year with a written rule for the next one.' } }, tone: 'good' },
+        { id: 'accept_ending', label: 'Keep the arrangement in the parish chest', text: 'You put the grain-sharing rules in the parish chest. The clerk adds a large drawing of a sack for the councillor who pretends to read.', effects: { faith: 5, reputation: 5, familyReputation: { delta: 4 }, worldConditions: { foodSecurity: 3, publicOrder: 2 }, memory: { tag: 'the_lean_year_arrangement', weight: 5, note: 'Swineford came out of a famine year with a written rule for the next one.' } }, tone: 'good' },
       ],
     },
     '6_hard': {
@@ -214,7 +214,7 @@ export const FLAGSHIP_STORY_COPY: Record<string, StoryCopy> = {
       text: 'The family sits down without proctors. Old affection turns out to be useful and old grievance turns out to be more detailed.',
       choices: [
         { id: 'divide_now', label: 'Get a division agreed at the table tonight', text: 'A long evening, one very bad half-hour, and a division everybody signs before going to bed. It is uneven and it is agreed.', effects: { charm: 6, familyReputation: { delta: 4 }, holding: { stores: -3 }, boundKinRel: { role: 'claimant', delta: 12 }, memory: { tag: 'divided_it_at_the_table', weight: 5 } }, tone: 'good' },
-        { id: 'adjourn', label: 'Adjourn before somebody says something final', text: 'You stop it at the point where it is about to become unrecoverable. Nothing is settled and nothing is broken, and it takes another three years.', effects: { wits: 5, charm: 4, familyReputation: { delta: 2 }, memory: { tag: 'adjourned_before_the_worst', weight: 4 } }, tone: 'plain' },
+        { id: 'adjourn', label: 'Adjourn before somebody says something final', text: 'You stop the inheritance meeting before anyone throws the inkpot. Each claimant must bring a written proposal next time.', effects: { wits: 5, charm: 4, familyReputation: { delta: 2 }, memory: { tag: 'adjourned_before_the_worst', weight: 4 } }, tone: 'plain' },
       ],
     },
     5: {
@@ -237,7 +237,7 @@ export const FLAGSHIP_STORY_COPY: Record<string, StoryCopy> = {
       title: 'THE INHERITANCE · THE LAND HAS AN OWNER',
       text: 'The property is settled beyond appeal. The family is settled too, into two halves that will be introduced to each other at funerals for the next sixty years.',
       choices: [
-        { id: 'accept_ending', label: 'Take possession', text: 'You hold it all and it is worth exactly what it was worth. The wound is not on any roll and it is inherited more reliably than the land is.', effects: { holding: { stores: 6 }, householdState: { wealth: 4 }, familyReputation: { delta: -2 }, memory: { tag: 'the_inheritance_taken_whole', weight: 5 } }, tone: 'plain' },
+        { id: 'accept_ending', label: 'Take possession', text: 'You take the whole estate. Your relatives refuse the celebratory supper and send back the invitation wrapped around a dead onion.', effects: { holding: { stores: 6 }, householdState: { wealth: 4 }, familyReputation: { delta: -2 }, memory: { tag: 'the_inheritance_taken_whole', weight: 5 } }, tone: 'plain' },
       ],
     },
   },
@@ -359,7 +359,7 @@ export const FLAGSHIP_STORY_COPY: Record<string, StoryCopy> = {
       title: 'THE AMBITIOUS CHILD · THE MENTOR UNDER TERMS',
       text: '{{mentor.name}} accepts every condition without argument, which is either good faith or the behaviour of somebody with a longer plan. {{child.name}} resents every review.',
       choices: [
-        { id: 'keep_terms', label: 'Hold to the terms exactly', text: 'Every Michaelmas, every review, no exceptions. It is joyless and correct and in the fourth year it catches something that would have ruined them.', effects: { wits: 6, householdState: { wealth: 3 }, boundKinRel: { role: 'child', delta: -4 }, memory: { tag: 'held_the_terms_exactly', weight: 5 } }, tone: 'good' },
+        { id: 'keep_terms', label: 'Hold to the terms exactly', text: 'You inspect the accounts at the agreed review. A landlord has charged rent twice. You catch the duplicate before your child pays it.', effects: { wits: 6, householdState: { wealth: 3 }, boundKinRel: { role: 'child', delta: -4 }, memory: { tag: 'held_the_terms_exactly', weight: 5 } }, tone: 'good' },
         { id: 'ease_off', label: 'Ease the conditions as they prove themselves', text: 'You loosen it year by year as they earn it. It is what they needed, and it takes away the one thing that was catching their mistakes.', effects: { charm: 5, boundKinRel: { role: 'child', delta: 12 }, householdState: { wealth: -2 }, memory: { tag: 'eased_the_conditions', weight: 4 } }, tone: 'plain' },
       ],
     },
@@ -375,7 +375,7 @@ export const FLAGSHIP_STORY_COPY: Record<string, StoryCopy> = {
       title: 'THE AMBITIOUS CHILD · CHILD AGAINST PARENT',
       text: '{{child.name}} refuses the future you chose and demands to name their own, in front of the household, without leaving either of you a graceful exit.',
       choices: [
-        { id: 'reconcile', label: 'Give way, and say why you were wrong', text: 'You concede in front of everybody and give your reasons rather than just the ground. It costs you something in the room and it settles something that would have run for forty years.', effects: { faith: 6, charm: 5, boundKinRel: { role: 'child', delta: 20 }, familyReputation: { delta: 4 }, storyVariables: { resolution: 'reconcile' } }, tone: 'good' },
+        { id: 'reconcile', label: 'Give way, and say why you were wrong', text: 'You admit that you mistook your child’s independence for ingratitude. The room goes quiet. Your child takes your hand.', effects: { faith: 6, charm: 5, boundKinRel: { role: 'child', delta: 20 }, familyReputation: { delta: 4 }, storyVariables: { resolution: 'reconcile' } }, tone: 'good' },
         { id: 'hardline', label: 'Refuse, and make it stick', text: 'You hold, entirely, and you have the household and the holding to hold with. They comply. They are still complying at forty and you can see it.', effects: { holding: { stores: 8 }, familyReputation: { delta: 2 }, boundKinRel: { role: 'child', delta: -20 }, storyVariables: { resolution: 'hardline' } }, tone: 'plain' },
         { id: 'withdraw', label: 'Tell them it is theirs to decide and step out of it', text: 'You take yourself out of the decision entirely and mean it. They are free, unadvised, and rather more frightened than they expected to be.', effects: { wits: 4, boundKinRel: { role: 'child', delta: 6 }, holding: { stores: -4 }, storyVariables: { resolution: 'withdraw' } }, tone: 'plain' },
       ],

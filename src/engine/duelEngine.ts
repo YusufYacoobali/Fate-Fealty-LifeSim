@@ -7,7 +7,7 @@
  * health until the fight ends. Only the conclusion touches the real character.
  */
 
-import { DuelKind, DuelState, GameState, WorldCharacter } from '@/types/game';
+import { DuelKind, DuelStakes, DuelState, GameState, WorldCharacter } from '@/types/game';
 import { DUEL_MOVE_BY_ID, DuelResponse, movesForKind } from '@/content/duelMoves';
 import { applyEffects } from './consequenceEngine';
 import { addMemory, pushFeed } from './gameState';
@@ -22,7 +22,7 @@ import { equippedBonus, grantSkillXp, skillLevel } from './rpgProgress';
 export const DUEL_START_VIGOUR = 100;
 
 /** After this many exchanges the fight is called on remaining composure. */
-export const DUEL_MAX_ROUNDS = 8;
+export const DUEL_MAX_ROUNDS = 4;
 
 /** Yielding becomes available once the fight has actually been joined. */
 export const DUEL_YIELD_AFTER_ROUND = 2;
@@ -44,7 +44,7 @@ function hasBlade(state: GameState): boolean {
   return Boolean(state.rpg.equipment.weapon) || ['sword', 'lance'].some((id) => state.inventory.includes(id));
 }
 
-export function duelAvailability(state: GameState, opponentId: string, kind: DuelKind): DuelAvailability {
+export function duelAvailability(state: GameState, opponentId: string, kind: DuelKind, loanedBlade = false): DuelAvailability {
   if (state.dead) return { available: false, reason: 'Thy life is ended' };
   if (state.duel) return { available: false, reason: 'A fight is already underway' };
   const opponent = state.world.characters[opponentId];
@@ -53,7 +53,7 @@ export function duelAvailability(state: GameState, opponentId: string, kind: Due
   const minAge = kind === 'duel' ? 16 : 14;
   if (state.age < minAge) return { available: false, reason: `Requires age ${minAge}` };
   if (opponent.age < minAge) return { available: false, reason: 'They are too young to face thee' };
-  if (kind === 'duel' && !hasBlade(state) && state.rankIdx < 1) {
+  if (kind === 'duel' && !loanedBlade && !hasBlade(state) && state.rankIdx < 1) {
     return { available: false, reason: 'A formal duel needs a blade or a station' };
   }
   return { available: true };
@@ -64,13 +64,14 @@ function nextMoveId(state: GameState, kind: DuelKind, previousId?: string): stri
   return pick(options.length ? options : movesForKind(kind)).id;
 }
 
-export function startDuel(state: GameState, opponentId: string, kind: DuelKind, practice = false): GameState {
-  if (!practice && !duelAvailability(state, opponentId, kind).available) return state;
+export function startDuel(state: GameState, opponentId: string, kind: DuelKind, practice = false, stakes?: DuelStakes): GameState {
+  if (!practice && !duelAvailability(state, opponentId, kind, !!stakes).available) return state;
   if (state.duel || state.dead || !state.world.characters[opponentId]?.alive) return state;
   const opponent = state.world.characters[opponentId]!;
   // A better fighter starts with more left in the tank than a village drunk.
   const opponentEdge = Math.round(opponentSkill(opponent) * 20) - 10;
   state.duel = {
+    ...(stakes ? { stakes } : {}),
     opponentId,
     kind,
     playerVigour: DUEL_START_VIGOUR,
@@ -83,9 +84,9 @@ export function startDuel(state: GameState, opponentId: string, kind: DuelKind, 
   state.duel.combat!.practice = practice;
   pushFeed(
     state,
-    practice ? 'SPARRING' : state.rpg.mission ? 'A CHAMPION STEPS FORWARD' : kind === 'duel' ? 'A DUEL IS CALLED' : 'A BRAWL BEGINS',
+    stakes ? 'CHALLENGE ACCEPTED' : practice ? 'SPARRING' : state.rpg.mission ? 'A CHAMPION STEPS FORWARD' : kind === 'duel' ? 'A DUEL IS CALLED' : 'A BRAWL BEGINS',
     kind === 'duel' ? C.healthDark : C.amber,
-    practice ? `${opponent.name} lends you the yard for a friendly practice bout.` : state.rpg.mission ? `${opponent.name} takes the opposing side in the dispute. Settle the challenge before returning to your assignment.` : kind === 'duel'
+    stakes ? `${opponent.name} meets you in the yard. Blunted swords are provided. ${stakes.summary}` : practice ? `${opponent.name} lends you the yard for a friendly practice bout.` : state.rpg.mission ? `${opponent.name} takes the opposing side in the dispute. Settle the challenge before returning to your assignment.` : kind === 'duel'
       ? `Thou calls out ${opponent.name} before witnesses. There is no walking this back now.`
       : `Thou swings first at ${opponent.name}. The tavern rearranges itself around the two of you.`,
     'plain',
@@ -253,6 +254,10 @@ export function concludeDuel(state: GameState): GameState {
       `Thou yielded to ${name}. It is the sensible choice, which is exactly what the village will call it.`, 'plain');
   }
 
+  if (duel.stakes) {
+    applyEffects(state, duel.outcome === 'won' ? duel.stakes.win : duel.stakes.lose);
+    pushFeed(state, 'CHALLENGE SETTLED', C.amber, duel.outcome === 'won' ? `You claim the promised reward. ${duel.stakes.summary}` : `The challenge is lost. ${duel.stakes.summary}`, duel.outcome === 'won' ? 'good' : 'bad');
+  }
   addMemory(state, duel.kind === 'duel' ? 'fought_a_duel' : 'fought_a_brawl', 2, name);
   if (!missionFight) grantSkillXp(state, 'arms', duel.outcome === 'won' ? 6 : 3, 'combat');
   state.duel = null;
@@ -263,6 +268,7 @@ export function concludeDuel(state: GameState): GameState {
 export function upgradeDuel(s: GameState): void {
   const duel = s.duel;
   if (!duel) return;
+  if (duel.combat) delete (duel.combat as unknown as Record<string, unknown>).assist;
   const opponent = s.world.characters[duel.opponentId];
   if (!opponent?.alive || s.dead) { s.duel = null; return; }
   if (!DUEL_MOVE_BY_ID[duel.moveId]) duel.moveId = 'high_swing';
@@ -272,7 +278,7 @@ export function upgradeDuel(s: GameState): void {
     archetype: duel.kind === 'brawl' ? 'brawler' : opponent.age > 35 ? 'veteran' : opponent.stats.wits > 60 ? 'duellist' : 'guard',
     damage: equippedBonus(s, 'damage'), protection: equippedBonus(s, 'protection'), dodgeCost: equippedBonus(s, 'dodgeCost'),
     arms: skillLevel(s, 'arms'), weaponId: s.rpg.equipment.weapon, armourId: s.rpg.equipment.armour,
-    practice: false, assist: Boolean(s.settings.timingAssist),
+    practice: false, opponentStartVigour: duel.opponentVigour,
   };
 }
 export function timingWindows(s: GameState): { good: number; perfect: number } {
@@ -281,7 +287,6 @@ export function timingWindows(s: GameState): { good: number; perfect: number } {
   return { good: 180 + progress * 60 + (c?.phase === 'defence_timing' && c.defence === 'block' ? 80 : 0), perfect: 60 + progress * 20 };
 }
 export function timingGrade(s: GameState, offsetMs: number): TimingGrade {
-  if (s.duel?.combat?.assist) return 'good';
   const windows = timingWindows(s);
   const difference = Math.abs(offsetMs);
   return difference <= windows.perfect ? 'perfect' : difference <= windows.good ? 'good' : 'miss';
@@ -312,7 +317,7 @@ export function resolveCombatTiming(s: GameState, sequence: number, offsetMs: nu
   const d = s.duel, c = d?.combat;
   if (!d || !c || d.outcome || c.sequence !== sequence || !Number.isFinite(offsetMs)) return;
   if (c.phase !== 'defence_timing' && c.phase !== 'attack_timing') return;
-  const grade = timingGrade(s, offsetMs); c.lastGrade = grade; c.sequence += 1;
+  const grade = timingGrade(s, offsetMs); c.lastGrade = grade; c.sequence += 1; c.impactId = c.sequence;
   if (c.phase === 'defence_timing') {
     const enemy = s.world.characters[d.opponentId];
     const heavy = d.moveId === 'high_swing' || d.moveId === 'wild_flurry';
@@ -325,15 +330,17 @@ export function resolveCombatTiming(s: GameState, sequence: number, offsetMs: nu
     if (success && c.defence === 'parry') mitigation = grade === 'perfect' ? 1 : 0.65;
     c.exposed = grade === 'perfect' && (c.defence === 'parry' || c.defence === 'dodge');
     const damage = Math.max(0, Math.round(incoming * (1 - mitigation)) - c.protection);
+    c.lastAction = !success ? 'hurt' : c.defence === 'dodge' ? 'dodge' : 'block';
     d.playerVigour = Math.max(0, d.playerVigour - damage);
     d.log = [...d.log, `${grade.toUpperCase()} ${c.defence}: ${damage ? `you lose ${damage} vigour` : 'no damage'}${c.exposed ? ' — a counter opening!' : '.'}`].slice(-6);
     if (d.playerVigour === 0) { finish(d, 'lost', 'Your guard gives way. The fight is over.'); return; }
     c.phase = 'attack';
   } else {
-    const base = c.attack === 'heavy' ? 23 : c.attack === 'feint' ? 7 : 13;
+    const base = c.attack === 'heavy' ? 34 : c.attack === 'feint' ? 18 : 24;
     const factor = grade === 'miss' ? 0 : grade === 'perfect' ? 1.35 : 1;
     const guard = c.archetype === 'guard' && !c.exposed && !c.feinted ? 5 : 0;
     const damage = Math.max(0, Math.round((base + c.damage + c.arms * 0.65 + (s.stats.health - 50) / 25 + (c.exposed ? c.defence === 'parry' ? 12 : 6 : 0) + (c.feinted ? 5 : 0)) * factor) - (factor ? guard : 0));
+    c.lastAction = grade === 'miss' ? 'miss' : 'strike';
     d.opponentVigour = Math.max(0, d.opponentVigour - damage);
     c.feinted = c.attack === 'feint' && grade !== 'miss';
     d.log = [...d.log, `${grade.toUpperCase()} ${c.attack}: ${damage} damage${c.feinted ? ' — their next defence is weakened' : ''}.`].slice(-6);
@@ -345,7 +352,13 @@ function nextExchange(s: GameState): void {
   const d = s.duel!, c = d.combat!;
   const previousDefence = c.defence;
   d.round += 1; c.sequence += 1;
-  if (d.round > DUEL_MAX_ROUNDS) { const won = d.playerVigour >= d.opponentVigour; finish(d, won ? 'won' : 'lost', won ? 'The witnesses judge the contest in your favour.' : 'The witnesses award the contest to your opponent.'); return; }
+  if (d.round > DUEL_MAX_ROUNDS) {
+    // Compare the share of starting vigour retained. An opponent who began below
+    // 100 must not award a victory simply because the player never attacked.
+    const won = d.playerVigour / DUEL_START_VIGOUR > d.opponentVigour / (c.opponentStartVigour ?? DUEL_START_VIGOUR);
+    finish(d, won ? 'won' : 'lost', won ? 'Four exchanges. You win on points.' : 'Four exchanges. You have not won the contest.');
+    return;
+  }
   c.playerStamina = Math.min(100, c.playerStamina + 10); c.opponentStamina = Math.min(100, c.opponentStamina + 10);
   c.phase = 'defence'; c.exposed = false; c.defence = undefined; c.attack = undefined;
   if (c.opponentStamina < 25) {

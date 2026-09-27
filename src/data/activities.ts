@@ -75,6 +75,7 @@ export interface CatDef {
 }
 
 export const CATEGORIES: CatDef[] = [
+  { id: 'practice', label: 'PRACTICE', bg: C.charm, sd: C.charmDark, fg: C.blueDark },
   { id: 'all', label: 'ALL', bg: C.blueDeep, sd: C.blueDark, fg: C.white },
   { id: 'leisure', label: 'LEISURE', bg: C.charm, sd: C.charmDark, fg: '#3a2a08' },
   { id: 'work', label: 'WORK', bg: '#cda35f', sd: '#9a7333', fg: '#2a1c08' },

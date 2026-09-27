@@ -89,13 +89,17 @@ describe('optional forge', () => {
     expect(s.rpg.forge!.scores).toHaveLength(before);
     perfect(s); syncPlayerToWorld(s); reload();
   });
-  it('makes practice free and timing assist predictable without farming bonuses', () => {
-    const s = ready(); s.actionClock.used = s.actionClock.cap; s.settings.timingAssist = true;
-    const stats = JSON.stringify(skillsOf(s)), iron = s.rpg.materials.iron, gold = s.gold;
+  it('teaches beginners once a year for one action and grants lesson XP exactly once', () => {
+    const s = ready(); const iron = s.rpg.materials.iron, gold = s.gold;
     startForge(s, { kind: 'practice' }); perfect(s);
-    expect(s.rpg.forge?.scores).toEqual([60, 60, 60, 60, 60]);
-    expect(s.rpg.forge?.bonusXp).toBe(0); expect(JSON.stringify(skillsOf(s))).toBe(stats);
+    expect(s.rpg.forge?.scores).toEqual([100, 100, 100, 100, 100]);
+    expect(s.rpg.forge?.bonusXp).toBe(0); expect(skillsOf(s).craftsmanship.xp).toBe(6);
+    expect(s.actionClock.used).toBe(1);
+    finishForge(s, s.rpg.forge!.id, true); expect(skillsOf(s).craftsmanship.xp).toBe(6);
+    closeForge(s, s.rpg.forge!.id); expect(forgeAvailability(s, { kind: 'practice' })).toContain('this year');
     expect(s.gold).toBe(gold); expect(s.rpg.materials.iron).toBe(iron); expect(forgeAllowance(s)).toBe(3);
+    nextYear(s); expect(forgeAvailability(s, { kind: 'practice' })).toBeNull();
+    skillsOf(s).craftsmanship.level = 3; expect(forgeAvailability(s, { kind: 'practice' })).toContain('complete');
   });
   it('caps paid bonuses at three and resets the allowance next year', () => {
     const s = ready();

@@ -87,7 +87,7 @@ describe('RPG journey and interruption invariants', () => {
   it('retreats without granting the final expedition reward', () => {
     let s = ready(); s = gameReducer(s, { type: 'RPG', command: { kind: 'expedition', id: 'woodland' } });
     const materials = { ...s.rpg.materials }; s = choose(s, 'retreat');
-    expect(s.rpg.expedition).toBeNull(); expect(s.rpg.materials).toEqual(materials); expect(s.actionClock.used).toBe(1);
+    expect(s.rpg.expedition).toBeNull(); expect(s.rpg.materials).toEqual(materials); expect(s.actionClock.used).toBe(3);
   });
   it('uses faction substitutes for deceased clients and recovers missing opponents', () => {
     let s = ready(); const offer = s.rpg.board.offers[0];

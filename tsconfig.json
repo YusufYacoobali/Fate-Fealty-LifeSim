@@ -8,5 +8,5 @@
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "tmp/meta-native-audit"]
+  "exclude": ["node_modules", "tmp/meta-native-audit", ".cache"]
 }

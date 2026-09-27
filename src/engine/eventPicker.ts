@@ -1,3 +1,4 @@
+import { duelAvailability } from './duelEngine';
 /**
  * Event picker. Evaluates conditions and selects the next main event for the
  * year from the content banks, respecting age range, path, rank, tags, stats,
@@ -167,6 +168,7 @@ export function isChoiceAvailable(s: GameState, ch: Choice): boolean {
 /** Whether a choice is selectable AND affordable (for UI gating). */
 export function isChoiceEnabled(s: GameState, ch: Choice): boolean {
   if (ch.disabledReason || !isChoiceAvailable(s, ch)) return false;
+  if (ch.challenge && (s.rpg.mission || s.rpg.forge || s.tags.includes('imprisoned') || !duelAvailability(s, s.pendingEvent?.bindings?.[ch.challenge.role] ?? '', 'duel', true).available)) return false;
   if (ch.costGold != null && s.gold < ch.costGold) return false;
   return true;
 }

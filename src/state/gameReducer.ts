@@ -10,12 +10,14 @@ import { addMoney, cloneState, createLife, pushFeed, syncKinToWorld, syncPlayerF
 import { ageUp } from '@/engine/lifeDirector';
 import { applyChoice } from '@/engine/storyGraph';
 import { activityAvailability, doActivity } from '@/engine/activityEngine';
+import { applyActivityDiminishingReturns, captureActivityRewards, routineActivityAvailable } from '@/engine/activityVariety';
 import { buyItem, shopAvailability } from '@/engine/shopEngine';
 import { interactKin, KinAction, kinActionAvailability } from '@/engine/kinEngine';
 import { Choice } from '@/types/game';
 import { buyHoldingUpgrade, holdingActionAvailability, holdingUpgradeAvailability, manageHolding } from '@/engine/holdingEngine';
 import { resetActionClock, spendAction, syncActionLimit, timedActionAvailability } from '@/engine/actionClock';
 import { CareerAction, careerActionAvailability, performCareerAction } from '@/engine/careerEngine';
+import { captureCareerActionRewards, reinforceCareerIdentity } from '@/engine/careerIdentity';
 import { checkDeath } from '@/engine/deathEngine';
 import { runWithWorldRng } from '@/engine/random';
 import { eventById } from '@/engine/eventPicker';
@@ -55,6 +57,7 @@ export type GameAction =
   | { type: 'BUY_HOLDING_UPGRADE'; id: string }
   | { type: 'CAREER_ACTION'; action: CareerAction; careerId?: string }
   | { type: 'SET_TAB'; tab: Tab }
+  | { type: 'SET_QUEST_SECTION'; section: NonNullable<GameState['questSection']>; recipeId?: string }
   | { type: 'SET_CAT'; cat: ActivityCategory | 'all' }
   | { type: 'SET_REL_FILTER'; filter: RelationFilter }
   | { type: 'SET_FEED_FILTER'; filter: FeedFilter }
@@ -111,6 +114,12 @@ function finishEngineTransaction(state: GameState): GameState {
 
 function proLockedSettings(settings: GameSettings, lifetimeUnlocked: boolean): GameSettings {
   return lifetimeUnlocked ? settings : { ...settings, liveForever: false };
+}
+
+function careerRoutineId(action: CareerAction): string | null {
+  if (action === 'train') return 'career_train';
+  if (action === 'rank_duty') return 'rank_duty';
+  return null;
 }
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
@@ -185,11 +194,29 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
     case 'DO_ACTIVITY': {
       if (action.id === 'run_caravan') return gameReducer(state, { type: 'RPG', command: { kind: 'caravan' } });
-      return timed(state, (s) => activityAvailability(s, action.id).available, (s) => {
-        doActivity(s, action.id);
-        if (action.id === 'rest' && s.inventory.includes('cottage')) applyEffects(s, { health: 2 });
-        return s;
-      });
+      return timed(
+        state,
+        (s) => activityAvailability(s, action.id).available && routineActivityAvailable(s, action.id),
+        (s) => {
+          const before = captureActivityRewards(s);
+
+          // Activity handlers normally check ambitions before returning. Hold the
+          // ambition aside so diminishing returns settle first; otherwise a third
+          // or fourth identical action could earn a goal using rewards it does
+          // not actually keep after the anti-spam adjustment.
+          const heldGoalId = s.goalId;
+          const heldGoalDone = s.goalDone;
+          s.goalId = null;
+          doActivity(s, action.id);
+          if (action.id === 'rest' && s.inventory.includes('cottage')) applyEffects(s, { health: 2 });
+          s.goalId = heldGoalId;
+          s.goalDone = heldGoalDone;
+
+          applyActivityDiminishingReturns(s, action.id, before);
+          checkLifeGoal(s);
+          return s;
+        },
+      );
     }
 
     case 'BUY': {
@@ -209,17 +236,25 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'CAREER_ACTION': {
-      if (action.action === 'craft') return { ...state, tab: 'do', doCat: 'work' };
+      if (action.action === 'craft') return { ...state, tab: 'quests', questSection: 'craft' };
+      const routineId = careerRoutineId(action.action);
       return timed(
         state,
-        (s) => careerActionAvailability(s, action.action, action.careerId).available,
+        (s) => careerActionAvailability(s, action.action, action.careerId).available
+          && (!routineId || routineActivityAvailable(s, routineId)),
         (s) => {
+          const careerBefore = captureCareerActionRewards(s);
+          const routineBefore = routineId ? captureActivityRewards(s) : null;
           performCareerAction(s, action.action, action.careerId);
+          reinforceCareerIdentity(s, action.action, careerBefore);
+          if (routineId && routineBefore) applyActivityDiminishingReturns(s, routineId, routineBefore);
+          checkLifeGoal(s);
           return s;
         },
       );
     }
 
+    case 'SET_QUEST_SECTION': return { ...state, tab: 'quests', questSection: action.section, questRecipe: action.recipeId };
     case 'SET_TAB': {
       return { ...state, tab: action.tab, selectedKinId: null };
     }

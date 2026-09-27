@@ -27,6 +27,7 @@ module.exports = ({ config }) => {
       ['expo-tracking-transparency', {
         userTrackingPermission: 'Allow Fate & Fealty to share app activity and purchase information with Meta to measure which ads bring players to the game.',
       }],
+      './plugins/withMetaConsent',
     ],
     extra: { ...config.extra, metaAds: { enabled }, legal: { termsUrl: process.env.TERMS_OF_USE_URL || null } },
   };

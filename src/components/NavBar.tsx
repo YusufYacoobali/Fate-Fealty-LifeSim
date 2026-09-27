@@ -1,5 +1,7 @@
 import React from 'react';
-import { View, Pressable } from 'react-native';
+import { View, Pressable, Image } from 'react-native';
+import { RpgIcon } from './rpg/RpgIcon';
+import { GOAL_ICONS, CAREER_ACTION_ART, UI_ICONS } from '@/assets/generatedAssets';
 import { PixelText } from './ui/PixelText';
 import { C } from '@/theme/theme';
 import { Tab } from '@/types/game';
@@ -13,6 +15,7 @@ interface NavDef {
 
 const NAV: NavDef[] = [
   { id: 'life', label: 'LIFE', sq: C.health, sqDark: C.healthDark },
+  { id: 'quests', label: 'QUESTS', sq: '#e7bd69', sqDark: '#a67a30' },
   { id: 'do', label: 'DO', sq: C.charm, sqDark: C.charmDark },
   { id: 'kin', label: 'PEOPLE', sq: C.faith, sqDark: C.faithDark },
   { id: 'hold', label: 'HOLD', sq: '#cda35f', sqDark: '#9a7333' },
@@ -51,12 +54,12 @@ export function NavBar({
             accessibilityRole="button"
             accessibilityLabel={locked ? `${n.label} locked. Opens Royal Shop.` : n.label}
             accessibilityState={{ disabled: false }}
-            style={{ flex: 1, alignItems: 'center', paddingHorizontal: 1, paddingVertical: 4 }}
+            style={{ flex: 1, alignItems: 'center', paddingHorizontal: 1, paddingVertical: 4, minHeight: 48 }}
           >
             <View
               style={{
-                width: 18,
-                height: 18,
+                width: 26,
+                height: 26,
                 backgroundColor: locked ? '#596b83' : on ? n.sq : '#3a6aa0',
                 borderBottomWidth: 2,
                 borderRightWidth: 2,
@@ -70,9 +73,10 @@ export function NavBar({
                 justifyContent: 'center',
               }}
             >
-              {locked && <PixelText font="pixel" size={7} color={C.charm}>P</PixelText>}
+              {n.id === 'quests' ? <RpgIcon name="board" size={22} /> : <Image accessible={false} source={n.id === 'life' ? GOAL_ICONS.elder : n.id === 'do' ? CAREER_ACTION_ART.work : n.id === 'kin' ? GOAL_ICONS.family : n.id === 'hold' ? GOAL_ICONS.barony : n.id === 'shop' ? UI_ICONS.shop : GOAL_ICONS.knighthood} style={{ width: 22, height: 22 }} resizeMode="contain" />}
+              {locked && <PixelText font="pixel" size={7} color={C.charm} style={{ position: 'absolute', right: -4, top: -4 }}>P</PixelText>}
             </View>
-            <PixelText font="pixel" size={7} color={locked ? C.charm : on ? C.white : '#7fa8d0'} style={{ marginTop: 5 }}>
+            <PixelText font="pixel" size={6} color={locked ? C.charm : on ? C.white : '#7fa8d0'} style={{ marginTop: 5 }}>
               {n.label}
             </PixelText>
           </Pressable>

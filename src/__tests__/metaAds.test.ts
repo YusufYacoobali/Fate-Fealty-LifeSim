@@ -12,6 +12,8 @@ let mockPlatform: string;
 let mockEnabled: boolean;
 const mockAlert = jest.fn();
 jest.mock('react-native', () => ({
+  // Expo's lazy fetch initialization also consults this optional native registry.
+  TurboModuleRegistry: { get: jest.fn(() => null) },
   Platform: { get OS() { return mockPlatform; } },
   AppState: { currentState: 'active' }, Alert: { alert: (...args: unknown[]) => mockAlert(...args) },
 }));
@@ -110,6 +112,16 @@ test('iOS permission revoked while backgrounded clears existing attribution', as
 test('SDK errors cannot reject the purchase preparation promise', async () => {
   mockConsent = 'granted'; mockActivation.getAnonymousID.mockRejectedValueOnce(new Error('native unavailable'));
   await expect(service().connectMetaPurchases(client())).resolves.toBeUndefined();
+  expect(mockRC.collectDeviceIdentifiers).toHaveBeenCalledTimes(1);
+});
+
+test('activation failure still attaches purchase identifiers and retries activation', async () => {
+  mockConsent = 'granted'; mockActivation.activateApp.mockRejectedValueOnce(new Error('activation unavailable'));
+  await service().connectMetaPurchases(client());
+  expect(mockRC.setFBAnonymousID).toHaveBeenCalledWith('fb-anonymous');
+  expect(mockRC.collectDeviceIdentifiers).toHaveBeenCalledTimes(1);
+  await service().refreshMetaConsent();
+  expect(mockActivation.activateApp).toHaveBeenCalledTimes(2);
 });
 
 test('first-launch choice is only presented once per process', async () => {

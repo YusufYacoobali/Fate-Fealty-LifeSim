@@ -3,7 +3,7 @@ import { Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
 import { TypewriterText } from '../ui/TypewriterText';
-import { choiceStakes } from '@/engine/choiceFeedback';
+import { choiceStakes, choiceHint } from '@/engine/choiceFeedback';
 import { Choice, GameEvent, GameState } from '@/types/game';
 import { isChoiceAvailable, isChoiceEnabled } from '@/engine/eventPicker';
 import { C, PANEL } from '@/theme/theme';
@@ -103,13 +103,13 @@ export function EventModal({ state, event, onChoose }: Props) {
                 <PixelText font="body" size={17} color={C.blueDark}>
                   {renderBoundText(state, c.label)}
                 </PixelText>
-                {c.hint ? (
+                {choiceHint(c) ? (
                   <PixelText font="body" size={14} color={C.blue} style={{ marginTop: 2 }}>
-                    {c.hint}
+                    {choiceHint(c)}
                   </PixelText>
                 ) : null}
                 {choiceStakes(c).map((line) => <PixelText key={line} font="body" size={14} color={C.textBrown} style={{ marginTop: 3 }}>{line}</PixelText>)}
-                {(c.disabledReason || (c.costGold != null && state.gold < c.costGold)) && <PixelText font="body" size={14} color={C.bad}>{c.disabledReason ?? `Needs ${c.costGold}g; you have ${state.gold}g`}</PixelText>}
+                {(c.disabledReason || (c.costGold != null && state.gold < c.costGold)) && <PixelText font="body" size={14} color={C.bad}>{c.costGold != null && state.gold < c.costGold ? `You have ${state.gold}g` : c.disabledReason}</PixelText>}
               </PixelButton>
             );
           })}

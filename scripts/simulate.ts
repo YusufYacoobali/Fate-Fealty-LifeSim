@@ -52,7 +52,7 @@ let arcsSeen = 0;
 let maxAge = 0;
 
 for (let i = 0; i < LIVES; i++) {
-  let s = createLife({ settings: { autoScroll: true, difficulty: randomChoice(['Merciful', 'Normal', 'Brutal']), liveForever: false, haptics: false, music: false, soundEffects: false } });
+  let s = createLife({ settings: { autoScroll: true, difficulty: randomChoice(['Merciful', 'Normal', 'Brutal']), liveForever: false, haptics: false, soundEffects: false } });
   s.lifetimeUnlocked = Math.random() < 0.5;
   let guard = 0;
 

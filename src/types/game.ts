@@ -707,7 +707,10 @@ export interface Outcome {
   nextWhen?: 'now' | 'nextYear';
 }
 
+export interface DuelStakes { win: Effects; lose: Effects; summary: string }
+
 export interface Choice {
+  challenge?: { role: string; stakes: DuelStakes };
   disabledReason?: string;
   /** Stable content id used by story transitions and save-safe history. */
   id?: string;
@@ -805,7 +808,7 @@ export interface ActiveArc {
 // Activities, shop, settings
 // ---------------------------------------------------------------------------
 
-export type ActivityCategory = 'leisure' | 'work' | 'faith' | 'martial' | 'crime' | 'vice' | 'health';
+export type ActivityCategory = 'practice' | 'leisure' | 'work' | 'faith' | 'martial' | 'crime' | 'vice' | 'health';
 
 export interface ActivityDef {
   id: string;
@@ -879,19 +882,17 @@ export interface ShopItem {
 }
 
 export interface GameSettings {
-  timingAssist?: boolean;
   autoScroll: boolean;
   difficulty: Difficulty;
   liveForever: boolean;
   haptics: boolean;
-  music: boolean;
   soundEffects: boolean;
   reducedMotion?: boolean;
   /** Collapse the Swineford panel on the Holding page. Carried across lives. */
   villageCollapsed?: boolean;
 }
 
-export type Tab = 'life' | 'do' | 'kin' | 'hold' | 'shop' | 'me';
+export type Tab = 'quests' | 'life' | 'do' | 'kin' | 'hold' | 'shop' | 'me';
 
 // ---------------------------------------------------------------------------
 // The full game state
@@ -902,6 +903,7 @@ export type DuelOutcome = 'won' | 'lost' | 'yielded' | 'refused';
 
 /** A fight in progress, resolved exchange by exchange through the duel modal. */
 export interface DuelState {
+  stakes?: DuelStakes;
   combat?: import('./rpg').CombatState;
   opponentId: string;
   kind: DuelKind;
@@ -971,6 +973,8 @@ export interface GameState {
 
   // --- transient UI ---
   tab: Tab;
+  questSection?: 'board' | 'explore' | 'craft' | 'careers';
+  questRecipe?: string;
   selectedKinId: string | null;
   settingsOpen: boolean;
 

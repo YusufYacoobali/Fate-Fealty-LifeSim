@@ -18,5 +18,5 @@ module.exports = {
   },
   testMatch: ['<rootDir>/src/**/__tests__/**/*.test.ts?(x)'],
   testPathIgnorePatterns: ['/node_modules/', '/dist/', '/scripts/'],
-  modulePathIgnorePatterns: ['<rootDir>/tmp/meta-native-audit/'],
+  modulePathIgnorePatterns: ['<rootDir>/tmp/meta-native-audit/', '<rootDir>/.cache/'],
 };

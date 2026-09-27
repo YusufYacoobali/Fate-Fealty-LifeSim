@@ -1,4 +1,3 @@
-import { QuestsTab } from '@/components/tabs/QuestsTab';
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -175,9 +174,8 @@ export function GameScreen() {
         <View style={{ flex: 1, position: 'relative' }}>
           {state.tab === 'life' && <View style={{ flex: 1 }}>
             <WorldNotices recoveryNotice={state.world.recoveryNotice} saveCompatibilityBlocked={saveCompatibilityBlocked} />
-            <LifeFeed bornYear={state.bornYear} reducedMotion={!!state.settings.reducedMotion} feed={selectFeed(state)} autoScroll={state.settings.autoScroll} filter={state.world.feedFilter} onFilter={(filter) => dispatch({ type: 'SET_FEED_FILTER', filter })} />
+            <LifeFeed bornYear={state.bornYear} reducedMotion={!!state.settings.reducedMotion} feed={selectFeed(state)} autoScroll={state.settings.autoScroll} resultKey={state.rpg.mission?.id ?? state.rpg.forge?.id ?? 'life'} filter={state.world.feedFilter} onFilter={(filter) => dispatch({ type: 'SET_FEED_FILTER', filter })} />
           </View>}
-          {state.tab === 'quests' && <QuestsTab />}
           {state.tab === 'do' && (
             <DoTab
               cat={state.doCat}

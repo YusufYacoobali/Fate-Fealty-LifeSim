@@ -1,12 +1,13 @@
 import { scheduleOnRN } from 'react-native-worklets';
 import { PixelLottie } from '../ui/PixelLottie';
-import React, { useCallback, useEffect, useState } from 'react';
-import { AppState, Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
-import Animated, { cancelAnimation, Easing, ReduceMotion, useReducedMotion, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { AppState, Image, Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
+import Animated, { cancelAnimation, Easing, ReduceMotion, useReducedMotion, useAnimatedStyle, useSharedValue, withDelay, withSequence, withTiming } from 'react-native-reanimated';
 import { Gesture } from 'react-native-gesture-handler';
 import { GameState } from '@/types/game';
 import { Attack, Defence } from '@/types/rpg';
 import { DUEL_MAX_ROUNDS, combatChoiceReason, combatCost, duelTelegraph, timingWindows } from '@/engine/duelEngine';
+import { combatPresentation } from '@/engine/combatPresentation';
 import { useGame } from '@/state/GameContext';
 import { haptic } from '@/services/haptics';
 import { C } from '@/theme/theme';
@@ -24,16 +25,44 @@ const scenes = {
   hurt: require('../../../assets/animations/pixel-combat-hurt.json'),
   miss: require('../../../assets/animations/pixel-combat-miss.json'),
   victory: require('../../../assets/animations/pixel-combat-victory.json'),
+  heavy: require('../../../assets/animations/pixel-combat-heavy.json'),
+  feint: require('../../../assets/animations/pixel-combat-feint.json'),
+  parry: require('../../../assets/animations/pixel-combat-parry.json'),
+  recover: require('../../../assets/animations/pixel-combat-recover.json'),
+  defeat: require('../../../assets/animations/pixel-combat-defeat.json'),
 };
 function Arena({ state, active }: { state: GameState; active: boolean }) {
   const duel = state.duel!, combat = duel.combat!;
   const systemReducedMotion = useReducedMotion();
-  const action = duel.outcome === 'won' ? 'victory' : combat.lastAction ?? 'idle';
+  const cue = combatPresentation(duel), action = cue.scene;
+  const reducedMotion = !!state.settings.reducedMotion || systemReducedMotion;
+  const camera = useSharedValue(0), pop = useSharedValue(0);
+  const previousImpact = useRef(combat.impactId ?? 0);
+  useEffect(() => {
+    cancelAnimation(camera); cancelAnimation(pop); camera.set(0); pop.set(0);
+    const fresh = previousImpact.current !== combat.impactId;
+    previousImpact.current = combat.impactId ?? 0;
+    if (!active || reducedMotion || !combat.impactId || !fresh) return;
+    const impactMs = action === 'heavy' ? 350 : action === 'feint' ? 400 : 250;
+    pop.set(withDelay(impactMs, withTiming(1, { duration: 800, easing: Easing.out(Easing.cubic) })));
+    if (!['idle', 'dodge', 'miss', 'recover'].includes(action)) {
+      const amount = action === 'heavy' || action === 'victory' ? 5 : 3;
+      camera.set(withDelay(impactMs, withSequence(withTiming(-amount, { duration: 40 }), withTiming(amount, { duration: 45 }), withTiming(-amount / 2, { duration: 45 }), withTiming(0, { duration: 70 }))));
+    }
+    const timer = setTimeout(() => haptic(action === 'heavy' || action === 'victory' ? 'heavy' : action === 'parry' ? 'success' : 'medium', state.settings.haptics), impactMs);
+    return () => { clearTimeout(timer); cancelAnimation(camera); cancelAnimation(pop); };
+  }, [combat.impactId, active, reducedMotion, action, camera, pop, state.settings.haptics]);
+  const cameraStyle = useAnimatedStyle(() => ({ transform: [{ translateX: camera.get() }, { scale: 1.025 }] }));
+  const damageStyle = useAnimatedStyle(() => ({ opacity: pop.get() === 0 ? 0 : pop.get() > .8 ? (1 - pop.get()) * 5 : 1, transform: [{ translateY: -pop.get() * 30 }, { scale: pop.get() < .25 ? .9 + pop.get() * 2 : 1.4 - (pop.get() - .25) * .4 }] }));
   return <View style={{ borderWidth: 3, borderColor: '#b4783b', marginVertical: 10, backgroundColor: '#271e25' }}>
-    <View accessibilityLabel={combat.practice ? 'Practice in the village yard' : 'Blue fighter faces the red challenger in the village yard'} style={{ width: '100%', aspectRatio: 320 / 180, overflow: 'hidden' }}>
-      <PixelLottie source={scenes[action]} trigger={combat.impactId ?? 0} active={active} reducedMotion={!!state.settings.reducedMotion || systemReducedMotion} />
+    <View accessibilityLabel={combat.practice ? 'Practice in the village yard' : 'Blue fighter faces the red challenger in the village yard'} style={{ width: '100%', aspectRatio: 320 / 208, overflow: 'hidden' }}>
+      <Animated.View style={[StyleSheet.absoluteFill, cameraStyle]}>
+        <Image source={require('../../../assets/generated/combat-yard-pixel.png')} resizeMode="stretch" style={[StyleSheet.absoluteFill, { width: '100%', height: '100%' }]} accessible={false} />
+        <PixelLottie source={scenes[action]} trigger={combat.impactId ?? 0} active={active} stillProgress={['victory', 'defeat'].includes(action) ? 1 : 0} reducedMotion={reducedMotion} />
+      </Animated.View>
+      {!reducedMotion && cue.detail && <Animated.View pointerEvents="none" style={[{ position: 'absolute', left: cue.defending ? '9%' : '62%', top: '38%' }, damageStyle]}><PixelText font="pixel" size={13} color={cue.defending && combat.lastDamage ? '#ffb198' : '#fff2c9'} style={{ textShadowColor: '#101a2a', textShadowRadius: 1, textShadowOffset: { width: 2, height: 2 } }}>{cue.detail}</PixelText></Animated.View>}
     </View>
-    <View style={{ padding: 8, backgroundColor: '#352830' }}><PixelText font="pixel" size={8} color="#f4c57b">{duel.outcome === 'won' ? 'THE YARD IS YOURS!' : combat.exposed ? 'COUNTER NOW!' : combat.lastGrade ? combat.lastGrade.toUpperCase() + ' · ' + action.toUpperCase() : 'WATCH. DEFEND. STRIKE.'}</PixelText></View>
+    <View accessibilityLiveRegion="polite" style={{ padding: 8, backgroundColor: '#352830', gap: 5 }}><PixelText font="pixel" size={8} color="#f4c57b">{cue.label}{cue.detail ? `  ${cue.detail}` : ''}</PixelText>{combat.lastGrade === 'perfect' && <PixelText font="pixel" size={7} color="#b5e8e8">{combat.exposed ? 'PERFECT · COUNTER NOW!' : 'PERFECT TIMING'}</PixelText>}</View>
   </View>;
 }
 /** One UI-thread clock for the marker and every tap across the full backdrop. */

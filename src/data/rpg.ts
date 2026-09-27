@@ -57,3 +57,5 @@ export const RPG_BUILDINGS = [
   { id: 'training_yard', name: 'Training yard', gold: 26, materials: { timber: 4, stone: 3 }, description: 'Unlock advanced Arms exercises and company work.' },
 ] as const;
 export const MATERIAL_PRICES = { timber: 2, stone: 3, iron: 4, herbs: 2 };
+// Per outing, not per unit: gathering stays cheaper than retail, but ore is an investment.
+export const GATHERING_COSTS = { timber: 2, stone: 4, iron: 6, herbs: 3 };

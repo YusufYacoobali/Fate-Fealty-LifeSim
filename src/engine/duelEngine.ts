@@ -308,7 +308,7 @@ export function selectCombatMove(s: GameState, sequence: number, move: Defence |
     c.defence = move as Defence; c.phase = 'defence_timing';
   } else if (c.phase === 'attack' && ['quick', 'heavy', 'feint', 'recover'].includes(move)) {
     c.attack = move as Attack;
-    if (move === 'recover') { c.playerStamina = Math.min(100, c.playerStamina + 30); d.log = [...d.log, 'You give up the attack and recover 30 stamina.'].slice(-6); nextExchange(s); return; }
+    if (move === 'recover') { c.playerStamina = Math.min(100, c.playerStamina + 30); c.lastAction = 'recover'; c.lastMove = 'recover'; c.lastDamage = 0; c.lastGrade = undefined; c.impactId = c.sequence + 1; d.log = [...d.log, 'You give up the attack and recover 30 stamina.'].slice(-6); nextExchange(s); return; }
     c.phase = 'attack_timing';
   } else return;
   c.playerStamina -= combatCost(s, move); c.sequence += 1;
@@ -330,6 +330,7 @@ export function resolveCombatTiming(s: GameState, sequence: number, offsetMs: nu
     if (success && c.defence === 'parry') mitigation = grade === 'perfect' ? 1 : 0.65;
     c.exposed = grade === 'perfect' && (c.defence === 'parry' || c.defence === 'dodge');
     const damage = Math.max(0, Math.round(incoming * (1 - mitigation)) - c.protection);
+    c.lastMove = c.defence; c.lastDamage = damage;
     c.lastAction = !success ? 'hurt' : c.defence === 'dodge' ? 'dodge' : 'block';
     d.playerVigour = Math.max(0, d.playerVigour - damage);
     d.log = [...d.log, `${grade.toUpperCase()} ${c.defence}: ${damage ? `you lose ${damage} vigour` : 'no damage'}${c.exposed ? ' — a counter opening!' : '.'}`].slice(-6);
@@ -341,6 +342,7 @@ export function resolveCombatTiming(s: GameState, sequence: number, offsetMs: nu
     const guard = c.archetype === 'guard' && !c.exposed && !c.feinted ? 5 : 0;
     const damage = Math.max(0, Math.round((base + c.damage + c.arms * 0.65 + (s.stats.health - 50) / 25 + (c.exposed ? c.defence === 'parry' ? 12 : 6 : 0) + (c.feinted ? 5 : 0)) * factor) - (factor ? guard : 0));
     c.lastAction = grade === 'miss' ? 'miss' : 'strike';
+    c.lastMove = c.attack; c.lastDamage = damage;
     d.opponentVigour = Math.max(0, d.opponentVigour - damage);
     c.feinted = c.attack === 'feint' && grade !== 'miss';
     d.log = [...d.log, `${grade.toUpperCase()} ${c.attack}: ${damage} damage${c.feinted ? ' — their next defence is weakened' : ''}.`].slice(-6);

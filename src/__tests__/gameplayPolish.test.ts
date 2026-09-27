@@ -31,7 +31,40 @@ describe('crafting and quest navigation', () => {
   });
   it('redirects the existing career craft action without spending an action', () => {
     const s = gameReducer(ready(), { type: 'CAREER_ACTION', action: 'craft' });
-    expect(s.tab).toBe('quests'); expect(s.questSection).toBe('craft'); expect(s.actionClock.used).toBe(0);
+    expect(s.tab).toBe('do'); expect(s.doCat).toBe('quests'); expect(s.questSection).toBe('craft'); expect(s.actionClock.used).toBe(0);
+  });
+  it('keeps quest sections inside Do and migrates saves from the old main tab', () => {
+    const s = gameReducer(ready(), { type: 'SET_QUEST_SECTION', section: 'craft', recipeId: 'repair_kit' });
+    expect(s).toMatchObject({ tab: 'do', doCat: 'quests', questSection: 'craft', questRecipe: 'repair_kit' });
+    const oldSave = JSON.parse(JSON.stringify(s)); oldSave.tab = 'quests'; oldSave.doCat = 'all';
+    expect(normalizeGameState(oldSave)).toMatchObject({ tab: 'do', doCat: 'quests', questSection: 'craft', questRecipe: 'repair_kit' });
+  });
+  it('reveals Life and the quest result even when a saved encounter used another tab/filter', () => {
+    let s = ready(); s.tab = 'do'; s.doCat = 'quests'; s.world.feedFilter = 'world';
+    s.rpg.board = { year: s.world.currentYear, offers: [{ id: 'cart', templateId: 'broken_cart', clientId: null, attempted: false }] };
+    s = gameReducer(s, { type: 'RPG', command: { kind: 'contract', id: 'cart' } });
+    expect(s.tab).toBe('life'); expect(s.world.feedFilter).toBe('all');
+    s.tab = 'do'; s.world.feedFilter = 'world';
+    s = normalizeGameState(JSON.parse(JSON.stringify(s)));
+    s = gameReducer(s, { type: 'MISSION_CHOOSE', missionId: s.rpg.mission!.id, optionId: 'safe' });
+    expect(s.tab).toBe('life'); expect(s.world.feedFilter).toBe('all'); expect(s.rpg.mission).toBeNull();
+    expect(s.feed.some(entry => entry.text.includes('The cart reaches market'))).toBe(true);
+  });
+  it('does not navigate or charge for an unavailable quest', () => {
+    let s = ready(); s.tab = 'do'; s.doCat = 'quests'; s.actionClock.used = s.actionClock.cap;
+    s = gameReducer(s, { type: 'RPG', command: { kind: 'expedition', id: 'woodland' } });
+    expect(s.tab).toBe('do'); expect(s.rpg.mission).toBeNull(); expect(s.actionClock.used).toBe(s.actionClock.cap);
+  });
+  it('returns from a completed anvil lesson to its Life result without granting XP again', () => {
+    let s = ready(); s.tab = 'do'; s.doCat = 'practice';
+    s = gameReducer(s, { type: 'FORGE_START', task: { kind: 'practice' }, revision: s.rpg.revision });
+    const id = s.rpg.forge!.id;
+    s = gameReducer(s, { type: 'FORGE_QUICK', id });
+    const xp = s.world.characters[s.playerCharacterId].skills!.craftsmanship.xp;
+    s = gameReducer(s, { type: 'FORGE_CLOSE', id });
+    expect(s.tab).toBe('life'); expect(s.rpg.forge).toBeNull();
+    s = gameReducer(s, { type: 'FORGE_CLOSE', id });
+    expect(s.world.characters[s.playerCharacterId].skills!.craftsmanship.xp).toBe(xp);
   });
   it('offers the exact crafted quality and equips directly from a settled forge', () => {
     let s = ready();

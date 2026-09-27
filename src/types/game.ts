@@ -808,7 +808,7 @@ export interface ActiveArc {
 // Activities, shop, settings
 // ---------------------------------------------------------------------------
 
-export type ActivityCategory = 'practice' | 'leisure' | 'work' | 'faith' | 'martial' | 'crime' | 'vice' | 'health';
+export type ActivityCategory = 'quests' | 'practice' | 'leisure' | 'work' | 'faith' | 'martial' | 'crime' | 'vice' | 'health';
 
 export interface ActivityDef {
   id: string;
@@ -892,7 +892,7 @@ export interface GameSettings {
   villageCollapsed?: boolean;
 }
 
-export type Tab = 'quests' | 'life' | 'do' | 'kin' | 'hold' | 'shop' | 'me';
+export type Tab = 'life' | 'do' | 'kin' | 'hold' | 'shop' | 'me';
 
 // ---------------------------------------------------------------------------
 // The full game state

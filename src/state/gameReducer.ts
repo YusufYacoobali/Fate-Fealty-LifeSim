@@ -138,7 +138,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         if (action.type === 'FORGE_STRIKE') strikeForge(s, action.id, action.sequence, action.position);
         if (action.type === 'FORGE_QUICK') finishForge(s, action.id, true);
         if (action.type === 'FORGE_CLOSE') closeForge(s, action.id);
-        if (action.type === 'TRADE_CHOOSE') resolveTradeChoice(s, action.chapter, action.choiceId);
+        if (action.type === 'TRADE_CHOOSE' && resolveTradeChoice(s, action.chapter, action.choiceId)) {
+          s.tab = 'life'; s.world.feedFilter = 'all';
+        }
         if (!s.dead && s.stats.health <= 0) checkDeath(s);
       });
       return finishEngineTransaction(s);
@@ -236,7 +238,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'CAREER_ACTION': {
-      if (action.action === 'craft') return { ...state, tab: 'quests', questSection: 'craft' };
+      if (action.action === 'craft') return { ...state, tab: 'do', doCat: 'quests', questSection: 'craft' };
       const routineId = careerRoutineId(action.action);
       return timed(
         state,
@@ -254,7 +256,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       );
     }
 
-    case 'SET_QUEST_SECTION': return { ...state, tab: 'quests', questSection: action.section, questRecipe: action.recipeId };
+    case 'SET_QUEST_SECTION': return { ...state, tab: 'do', doCat: 'quests', questSection: action.section, questRecipe: action.recipeId };
     case 'SET_TAB': {
       return { ...state, tab: action.tab, selectedKinId: null };
     }

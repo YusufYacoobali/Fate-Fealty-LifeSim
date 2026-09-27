@@ -196,6 +196,9 @@ export function normalizeGameState(parsed: GameState): GameState {
 
   const normalized: GameState = {
     ...parsed,
+    // Older saves used Quests as a main tab. Keep the same section inside Do.
+    tab: (parsed.tab as string) === 'quests' ? 'do' : parsed.tab,
+    doCat: (parsed.tab as string) === 'quests' ? 'quests' : parsed.doCat,
     schemaVersion: 5,
     playerCharacterId,
     playerRun: parsed.playerRun

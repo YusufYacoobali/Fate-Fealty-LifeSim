@@ -6,7 +6,7 @@ The gameplay requests are implemented and the regression suite passes. Meta attr
 
 | Request | Review result |
 | --- | --- |
-| Dedicated Quests tab | Contracts, Explore, Craft and career journeys render there; the Do categories no longer repeat the quest hub. |
+| Quests inside Do | Contracts, Explore, Craft and career journeys render only in Do → Quests. Main navigation and quest section buttons have no artwork icons. |
 | Useful recipes and immediate actions | All 12 recipes describe their purpose; current matching contracts are linked; exact-quality equipment and consumables have immediate Equip/Use. |
 | Continuous multi-stage quests | Journeys advance to the next decision automatically; action reservation, reloads and stale taps are covered by tests. Meaningful decisions still require the player's choice. |
 | Useful anvil practice | One beginner lesson per year until Craftsmanship 3, costing one action and granting 6 XP once. Paid forge rewards and annual bonus limits are tested. |

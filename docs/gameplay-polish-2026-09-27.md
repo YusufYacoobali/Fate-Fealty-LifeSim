@@ -1,5 +1,7 @@
 # Gameplay polish — 27 September 2026
 
+The subsequent [navigation and combat follow-up](navigation-combat-follow-up-2026-09-27.md) supersedes the main-tab placement, navigation icons and original combat artwork described below: Quests now lives inside Do, Craftsmanship leads Practice, and combat uses image-generated pixel art in Lottie layers.
+
 ## Player-facing changes
 
 - Quests has its own navigation tab: Contracts, Explore, Craft and Careers. These panels no longer appear above every Do category. Trade career chapters live under Quests → Careers.

@@ -4,7 +4,7 @@ import { recordTradeWork } from './tradeJourney';
 import { Effects, FactionKey, GameEvent, GameState, HoldingResource } from '@/types/game';
 import { CareerBranch, ContractOffer, MaterialId, MissionRun, SkillId, SKILLS } from '@/types/rpg';
 import { ALL_RPG_MISSIONS, CARAVAN_JOURNEY, CAREER_MISSIONS, CONTRACTS, EXPEDITIONS, HOLDING_MISSIONS, MissionDefinition, MissionOption } from '@/content/rpgMissions';
-import { BRANCH_ASSIGNMENTS, BRANCH_MILESTONES, freshRpg, MASTERY_TITLES, MATERIAL_PRICES, RECIPES, RPG_BUILDINGS, SKILL_NAMES } from '@/data/rpg';
+import { BRANCH_ASSIGNMENTS, BRANCH_MILESTONES, freshRpg, GATHERING_COSTS, MASTERY_TITLES, MATERIAL_PRICES, RECIPES, RPG_BUILDINGS, SKILL_NAMES } from '@/data/rpg';
 import { careerById } from '@/data/careers';
 import { addMoney, pushFeed } from './gameState';
 import { applyEffects } from './consequenceEngine';
@@ -23,6 +23,12 @@ export type RpgCommand =
   | { kind: 'gather'; id: MaterialId } | { kind: 'buy_material'; id: MaterialId }
   | { kind: 'build'; id: string } | { kind: 'use_good'; id: string } | { kind: 'steward'; id: string }
   | { kind: 'train'; id: SkillId } | { kind: 'mastery'; id: SkillId };
+
+export function gatheringQuote(s: GameState, material: MaterialId) {
+  const skill = material === 'herbs' ? 'scholarship' : material === 'timber' ? 'husbandry' : 'craftsmanship';
+  const amount = 2 + gatheringBonus(s, material) + Math.floor(skillLevel(s, skill) / 3) + (material === 'herbs' && s.holding.upgrades.includes('herb_garden') ? 1 : 0);
+  return { gold: GATHERING_COSTS[material], amount, skill } as const;
+}
 
 export function refreshWorkBoard(s: GameState): void {
   if (s.rpg.board.year === s.world.currentYear) return;
@@ -102,7 +108,7 @@ export function rpgAvailability(s: GameState, command: RpgCommand): string | nul
       return s.holding.upgrades.includes(def.id) ? 'Already built' : payable(s, def.gold, def.materials);
     }
     case 'buy_material': return command.id in MATERIAL_PRICES ? payable(s, MATERIAL_PRICES[command.id], {}) : 'Unknown material';
-    case 'gather': return command.id in MATERIAL_PRICES ? null : 'Unknown material';
+    case 'gather': return command.id in GATHERING_COSTS ? s.gold < GATHERING_COSTS[command.id] ? `You have ${s.gold}g` : null : 'Unknown material';
     case 'train': return !SKILLS.includes(command.id) ? 'Unknown skill' : skillLevel(s, command.id) === 10 ? 'Maximum skill level' : command.id === 'arms' && skillLevel(s, 'arms') >= 3 && !s.holding.upgrades.includes('training_yard') ? 'Build a training yard for advanced exercises' : null;
     case 'steward': {
       const person = s.world.characters[command.id];
@@ -126,6 +132,8 @@ function clientFor(s: GameState, faction?: FactionKey): string | null {
   return candidates[0]?.id ?? null;
 }
 function openMission(s: GameState, def: MissionDefinition, kind: MissionRun['kind'], stage = 0, clientId = clientFor(s, def.faction)): void {
+  s.tab = 'life';
+  s.world.feedFilter = 'all';
   s.rpg.mission = { id: `mission_${s.nextId++}`, ownerId: s.playerCharacterId, kind, definitionId: def.id, stage, clientId, faction: def.faction, phase: 'choice', skill: def.skill };
 }
 export function performRpgCommand(s: GameState, command: RpgCommand): GameState {
@@ -171,9 +179,11 @@ export function performRpgCommand(s: GameState, command: RpgCommand): GameState 
     }
     case 'buy_material': pay(s, MATERIAL_PRICES[command.id], {}); s.rpg.materials[command.id] += 1; break;
     case 'gather': {
-      const skill = command.id === 'herbs' ? 'scholarship' : command.id === 'timber' ? 'husbandry' : 'craftsmanship';
-      const yieldCount = 2 + gatheringBonus(s, command.id) + Math.floor(skillLevel(s, skill) / 3) + (command.id === 'herbs' && s.holding.upgrades.includes('herb_garden') ? 1 : 0);
-      s.rpg.materials[command.id] += yieldCount; grantSkillXp(s, skill, 6, `gathered ${yieldCount} ${command.id}`); break;
+      const { gold, amount, skill } = gatheringQuote(s, command.id);
+      pay(s, gold, {});
+      s.rpg.materials[command.id] += amount;
+      grantSkillXp(s, skill, 6, `gathered ${amount} ${command.id}`);
+      pushFeed(s, 'GATHERED', '#387245', `You bring home ${amount} ${command.id}. The outing costs ${gold}g.`, 'good'); break;
     }
     case 'train': grantSkillXp(s, command.id, 6, 'practical exercises'); break;
     case 'steward': s.rpg.stewardId = command.id; s.holding.lastActionAge = s.age; applyRelationshipShift(s, command.id, { trust: 3 }, { affinity: 5, trust: 3 }); pushFeed(s, 'STEWARD', '#365f88', `${s.world.characters[command.id].name} takes responsibility for the holding.`, 'good'); break;
@@ -257,7 +267,7 @@ export function missionEvent(s: GameState): GameEvent | undefined {
   if (!def || !run || run.phase !== 'choice') return undefined;
   const client = run.clientId ? s.world.characters[run.clientId] : null;
   const name = client?.alive ? client.name : s.world.factions[run.faction].name;
-  return { id: run.id, title: def.title, category: 'arc', text: `${run.previousResult ? run.previousResult + '\n\n' : ''}${def.text.replaceAll('{client}', name)}\n\n${SKILL_NAMES[def.skill]} ${skillLevel(s, def.skill)} · ${def.pressure.replaceAll(/([A-Z])/g, ' $1').toLowerCase()}: ${s.world.conditions[def.pressure]}. No further actions required.`, choices: def.options.map((o) => {
+  return { id: run.id, title: def.title, category: 'arc', text: `${run.previousResult ? run.previousResult + '\n\n' : ''}${def.text.replaceAll('{client}', name)}\n\n${SKILL_NAMES[def.skill]} ${skillLevel(s, def.skill)} · ${def.pressure.replaceAll(/([A-Z])/g, ' $1').toLowerCase()}: ${s.world.conditions[def.pressure]}.`, choices: def.options.map((o) => {
     const reason = optionUnavailable(s, o);
     return { id: o.id, label: o.label, disabledReason: reason ?? undefined, hint: [o.combat ? 'Interactive duel; injury and defeat possible' : o.check ? 'Skill check · outcome uncertain' : describeEffects(o.effects), o.gold ? `Pay ${o.gold}g` : '', o.material ? `Uses ${o.material.count} ${o.material.id}` : '', o.good ? `Uses 1 ${o.good.replaceAll('_', ' ')}` : '', o.check ? `Failure: ${describeEffects(o.failure ?? { reputation: -2 })}` : ''].filter(Boolean).join(' · '), costGold: o.gold,
       outcome: { text: o.text, effects: o.effects } };
@@ -280,6 +290,8 @@ export function contractPreview(s: GameState, offer: ContractOffer): string[] {
 function resolveMission(s: GameState, option: MissionOption, success: boolean): void {
   const run = s.rpg.mission;
   if (!run || run.ownerId !== s.playerCharacterId || s.dead) return;
+  s.tab = 'life';
+  s.world.feedFilter = 'all';
   const def = missionDefinition(s)!;
   const before = feedbackSnapshot(s);
   applyEffects(s, success ? option.effects : option.failure ?? { reputation: -2 });
@@ -398,4 +410,3 @@ export function normalizeRpg(s: GameState): void {
   if (s.rpg.stewardId && (s.rpg.stewardId === s.playerCharacterId || !s.world.characters[s.rpg.stewardId]?.alive || s.world.characters[s.rpg.stewardId].age < 18)) s.rpg.stewardId = null;
   refreshWorkBoard(s);
 }
-

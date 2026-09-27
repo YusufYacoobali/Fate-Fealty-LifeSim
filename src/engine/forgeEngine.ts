@@ -104,4 +104,10 @@ export function finishForge(s: GameState, id: string, quick: boolean): void {
   if (run.bonusIron) s.rpg.materials.iron += run.bonusIron;
   if (!run.practice) pushFeed(s, 'AT THE ANVIL', '#9b5c29', quick ? 'You finish at an ordinary pace. Your normal work, item and XP are kept; no forge bonus.' : `${grade} hammer work. Your normal task rewards are kept. Bonus: ${run.bonusXp} Craftsmanship XP${run.bonusIron ? ' and 1 recovered iron' : ''}.`, run.bonusXp ? 'good' : 'plain');
 }
-export function closeForge(s: GameState, id: string): void { if (s.rpg.forge?.id === id && s.rpg.forge.phase === 'result') s.rpg.forge = null; }
+export function closeForge(s: GameState, id: string): void {
+  if (s.rpg.forge?.id === id && s.rpg.forge.phase === 'result') {
+    s.rpg.forge = null;
+    s.tab = 'life';
+    s.world.feedFilter = 'all';
+  }
+}

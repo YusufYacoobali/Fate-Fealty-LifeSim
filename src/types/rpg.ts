@@ -75,7 +75,10 @@ export interface CombatState {
   damage: number; protection: number; dodgeCost: number; arms: number;
   weaponId?: string; armourId?: string;
   practice: boolean;
-  lastAction?: 'strike' | 'block' | 'dodge' | 'hurt' | 'miss';
+  lastAction?: 'strike' | 'block' | 'dodge' | 'hurt' | 'miss' | 'recover';
+  /** The resolved move survives nextExchange clearing the pending selection. */
+  lastMove?: Attack | Defence;
+  lastDamage?: number;
   impactId?: number;
   opponentStartVigour?: number;
   lastGrade?: TimingGrade;

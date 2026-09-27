@@ -1,4 +1,5 @@
 import { TrainingPanel } from '../rpg/RpgPanels';
+import { QuestsTab } from './QuestsTab';
 import React from 'react';
 import { Image, ScrollView, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
@@ -53,7 +54,7 @@ export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
       </ScrollView>
 
       {/* activity grid */}
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 11, paddingBottom: 7 }}>
+      {cat === 'quests' ? <QuestsTab /> : <ScrollView key={cat} style={{ flex: 1 }} contentContainerStyle={{ padding: 11, paddingBottom: 7 }}>
         {cat === 'practice' && <TrainingPanel /> }
         {(cat === 'all' || cat === 'work') && <CareerPanel state={state} onAction={onCareer} />}
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
@@ -104,7 +105,7 @@ export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
             );
           })}
         </View>
-      </ScrollView>
+      </ScrollView>}
     </View>
   );
 }

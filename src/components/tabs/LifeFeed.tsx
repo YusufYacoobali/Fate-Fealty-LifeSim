@@ -23,11 +23,17 @@ interface FeedVM {
   source: FeedSource;
 }
 
-export function LifeFeed({ feed, autoScroll, filter, onFilter, bornYear, reducedMotion }: { bornYear: number; reducedMotion: boolean; feed: FeedVM[]; autoScroll: boolean; filter: FeedFilter; onFilter: (filter: FeedFilter) => void }) {
+export function LifeFeed({ feed, autoScroll, filter, onFilter, bornYear, reducedMotion, resultKey }: { bornYear: number; reducedMotion: boolean; feed: FeedVM[]; autoScroll: boolean; filter: FeedFilter; onFilter: (filter: FeedFilter) => void; resultKey?: string }) {
   const [edition, setEdition] = useState<number | null>(null);
   const groups = new Map<number, FeedVM[]>();
   if (filter === 'all' || filter === 'world') for (const entry of feed) if (isRoutineNews(entry)) groups.set(entry.age, [...(groups.get(entry.age) ?? []), entry]);
   const ref = useRef<ScrollView>(null);
+  // Returning from a quest reveals its result even with ongoing auto-scroll off.
+  useEffect(() => {
+    if (!resultKey) return;
+    const frame = requestAnimationFrame(() => ref.current?.scrollToEnd({ animated: false }));
+    return () => cancelAnimationFrame(frame);
+  }, [resultKey]);
 
   useEffect(() => {
     if (autoScroll) {

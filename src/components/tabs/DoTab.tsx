@@ -1,3 +1,4 @@
+import { RpgHub } from '../rpg/RpgPanels';
 import React from 'react';
 import { Image, ScrollView, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
@@ -52,6 +53,7 @@ export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
 
       {/* activity grid */}
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 11, paddingBottom: 7 }}>
+        <RpgHub />
         {(cat === 'all' || cat === 'work') && <CareerPanel state={state} onAction={onCareer} />}
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
           {activities.map((a) => {

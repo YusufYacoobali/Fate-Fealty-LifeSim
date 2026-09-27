@@ -1,20 +1,31 @@
 # Medieval Life — a pixel-art life sim
 
-A BitLife-style medieval life simulator for mobile, built with **Expo SDK 54 + React Native 0.81 + React 19 + TypeScript**. Be born a muddy peasant in Swineford, age up one year at a time, and claw your way toward knighthood and nobility — or die of a mild cough at 30. The goose is your best friend.
+A BitLife-style medieval life simulator for mobile, built with **Expo SDK 57 + React Native 0.86 + React 19.2 + TypeScript**. Be born a muddy peasant in Swineford, age up one year at a time, and claw your way toward knighthood and nobility — or die of a mild cough at 30. The goose is your best friend.
 
 Built to match the pixel-art mockup (`Medieval Life.dc.html`) 1:1, on top of a fully data-driven game engine.
 
+The workshop update adds optional five-strike forge play, a four-chapter craft/trade journey, independent career progression, clearer choice results and a quieter life feed. See [the update notes](docs/workshop-update.md) for play instructions, save behaviour and validation limits.
+
 ## Running it
+
+Use Node.js 22.13+ (22 LTS) or 24.3+ (24 LTS). SDK 57 uses React Native
+0.86.3 and React 19.2.3. Native iOS builds require macOS with Xcode 26.4+
+and target iOS 16.4 or later.
 
 ```bash
 npm install
 npm start          # then press a / i / w, or scan the QR with Expo Go
 ```
 
+After upgrading from SDK 54, rebuild native apps before connecting to Metro.
+The ignored `android/` and `ios/` projects are generated from `app.json` with
+`npx expo prebuild`; regenerate iOS on macOS or through EAS Build. Previous
+local native projects are preserved in `.cache/expo-sdk54-native-backup/`.
+
 Other scripts:
 
 ```bash
-npm test                     # jest suite (engine, content, services) — 56 tests
+npm test                     # engine, content, services and RPG regression suite
 npm run typecheck            # tsc --noEmit
 npx tsx scripts/simulate.ts      # headless engine soak test (500 random lives)
 npx tsx scripts/simulateSmart.ts # focused-play test (rank ladder reachability)
@@ -23,16 +34,76 @@ npx tsx scripts/balance.ts       # balance report: rank reach + lifespan per dif
 
 ## Persistent-world verification
 
-The regular suite is `npm test` (234 tests across 30 suites). Release-scale
+The regular suite is `npm test`. Release-scale
 simulation is available through `npm run test:soak`; it runs 1,500 complete
 lives across all difficulties, 100 three-generation dynasties, 700 role lives,
-every flagship route/ending and deterministic reload checkpoints. The completed
-reference run took 842 seconds on the development machine.
+every flagship route/ending and deterministic reload checkpoints.
 
 World responsibilities are split across focused modules: `characterState`,
 `stateDefaults`, `worldConditions`, `consequenceScheduler`, `npcDirector`,
 `worldIntegrity`, and `worldJournal`. Swineford maintains 30-60 living recurring
 characters, and flagship stories use conditional routes and multiple endings.
+
+## Playable RPG expansion (save schema v5)
+
+Age Up remains the main progression control. Optional missions, equipment,
+skills and home improvements use actions and game years. The expansion adds
+no real-world timers, collection deadlines, offline losses or reminders.
+
+- **Do → Contracts:** three stable yearly offers drawn from twelve templates.
+  Starting an offer costs one action; its choices and combat are included.
+  Safe work, risky checks, trusted clients, preparation and emergency relief
+  offer different approaches. Results can include debts and later consequences.
+- **Do → Explore:** woodland, quarry and watchtower each have three stages,
+  costing one action per stage. Between visits players can age up, resume or
+  abandon. Unfinished journeys never expire. The training yard offers free sparring.
+- **Do → Craft / Shop:** four raw materials plus crafted goods, twelve recipes, ordinary /
+  fine / masterwork quality, consumable goods and three equipment slots. Costs,
+  output and modifiers are shown before spending. Equipment never reapplies
+  a possession’s original purchase benefits.
+- **Me:** Husbandry, Craftsmanship, Scholarship and Arms advance through use.
+  Levels require 20 × current level XP; ordinary deeds grant 6 (3 on failure),
+  charged mission stages 10 (5 on failure). Capstones recognise mastery.
+- **Holding:** workshop, herb garden, training yard, property benefits and named
+  stewards. Twelve harvest, raid and village encounters join the annual pacing.
+  Player-started estate decisions share the existing annual management allowance;
+  construction uses ordinary actions separately.
+- **Careers:** mercenary, caravan and court branches each have three chapters.
+  Progress survives career changes, with choices, faction standing and recurring
+  clients affecting later chapters. Independent caravans play through three
+  decisions for one action and an 8g cargo stake.
+- **Duels:** side-on pixel arena, four opponent archetypes, defensive choices,
+  timing input, counterattacks, stamina and equipment. Timing Assist supplies
+  good results while preserving tactical choices and rewards. Reduced motion
+  removes lunges; backgrounding pauses input and resumes with a countdown.
+
+The TypeScript engine owns transactions, mission inputs and combat outcomes.
+Annual stories use the existing scheduler; optional missions have separate
+state. Active choices and fights guard Age Up at engine level, including when
+entry consumed the year’s last action. Save writes are serialized, completed
+mission inputs cannot be replayed, and duel phases preserve committed moves.
+Schema v3/v4 saves migrate additively. Heirs keep their own skills, inherit
+materials/equipment/buildings, and do not inherit personal mission rewards.
+
+Expansion-specific checks live in `rpgExpansion.test.ts` and
+`rpgJourneys.test.ts`, including mixed-play dynasty simulations and reloads
+through every combat phase. Before store release, run a native release build
+on physical iOS and Android devices: check touch responsiveness, background /
+resume countdowns, audio/haptics preferences and reduced motion. Web preview
+and Metro export checks do not replace this device gate.
+
+Expansion verification on 17 September 2026: all 479 tests across 53 suites
+passed, TypeScript passed, and Android/iOS Metro exports completed. Release-scale
+checks passed 1,500 lives across difficulties and 100 three-generation dynasties.
+The role matrix exposed an expected-child household reference bug; after the
+fix, its seeded regression and all 700 role lives passed. Phone-sized browser
+checks covered contract costs and completion, Age Up, persisted duel phases,
+free sparring and Timing Assist. Physical-device release-build testing remains
+outstanding; this update has not been published to the stores.
+
+The [21 September implementation audit](docs/rpg-expansion-audit.md) records
+requirement coverage and follow-up fixes to caravan decisions, career milestones,
+mastery commissions, contract previews, XP awards and combat accessibility.
 
 ## Engagement features
 
@@ -267,7 +338,7 @@ and soak results are recorded in **Persistent-world verification** above.
 
 - ✅ Expo SDK 54 / RN 0.81 / React 19, TypeScript strict, clean typecheck.
 - ✅ Bundles through Metro (788 modules).
-- ✅ `npm test` — 99 tests across 16 suites (consequence/path/death/event/story/
+- ✅ `npm test` — 517 tests across 56 suites (consequence/path/death/event/story/
   life-director/trait/lifecycle/meta-progression/goal engines, kin factory +
   family effects, seeded-RNG determinism, content integrity, reducer, review +
   notification logic).
@@ -288,5 +359,7 @@ Measured Noble-reach rates (`scripts/balance.ts`, skilled-play agent):
 
 Careless (random) play reaches Noble ~0% — you cannot stumble into nobility, it
 must be earned through deliberate play.
-#   F a t e - F e a l t y - L i f e S i m  
- 
+# Fate-Fealty-LifeSim
+# Meta ads and release setup
+
+See [Meta Ads setup](docs/meta-ads-release.md) for the required credentials, RevenueCat connection, consent behavior and device checks. The [27 September release audit](docs/release-readiness-2026-09-27.md) records the checks completed and remaining release blockers. Run `npm run release:check` to validate local release configuration.

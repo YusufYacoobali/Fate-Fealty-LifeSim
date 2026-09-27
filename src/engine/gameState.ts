@@ -1,3 +1,4 @@
+import { freshRpg, freshSkills } from '@/data/rpg';
 /**
  * State primitives: creating a fresh life, immutable-ish cloning, and the small
  * mutation helpers (feed/memory/money) the rest of the engine builds on.
@@ -150,6 +151,7 @@ export function createLife(opts: FreshLifeOptions = {}): GameState {
   const worldSeed = (opts.worldSeed ?? rnd(0, 0xffffffff)) >>> 0;
   const created = runWithPersistedRng(initialRngState(worldSeed), () => createLifeFromWorldSeed(opts, worldSeed));
   created.value.world.rngState = created.rngState;
+  for (const person of Object.values(created.value.world.characters)) person.skills ??= freshSkills();
   return created.value;
 }
 
@@ -328,7 +330,8 @@ function createLifeFromWorldSeed(opts: FreshLifeOptions, worldSeed: number): Gam
   });
   for (const household of households) for (const id of household.memberIds) characters[id].householdId = household.id;
   return {
-    schemaVersion: 4,
+    schemaVersion: 5,
+    rpg: freshRpg(),
     playerCharacterId: playerId,
     playerRun: { startedYear: 1320, generation: opts.lifeNo ?? 1, roleProgress: {} },
     pendingEvent: null,
@@ -427,8 +430,9 @@ export function cloneState(s: GameState): GameState {
   const characters = Object.fromEntries(Object.entries(s.world.characters).map(([id, character]) => [id, cloneCharacter(character)]));
   const cloned = {
     ...s,
+    rpg: JSON.parse(JSON.stringify(s.rpg ?? freshRpg())),
     stats: { ...s.stats },
-    duel: s.duel ? { ...s.duel, log: [...s.duel.log] } : null,
+    duel: s.duel ? { ...s.duel, log: [...s.duel.log], combat: s.duel.combat ? { ...s.duel.combat } : undefined } : null,
     paths: { ...s.paths },
     tags: [...s.tags],
     traits: [...s.traits],
@@ -521,7 +525,7 @@ export function pushFeed(
   tagColor: string,
   text: string,
   tone: Tone = 'plain',
-  meta: Pick<FeedEntry, 'traitId'> = {},
+  meta: Pick<FeedEntry, 'traitId' | 'changes'> = {},
   actorId = 'player',
   source: FeedEntry['source'] = 'player',
 ): GameState {

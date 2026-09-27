@@ -1,10 +1,11 @@
+import { resolveRpgEncounter } from '../src/__tests__/rpgSoakHelpers';
 /**
  * Headless engine smoke test. Plays many full lives with random choices and
  * asserts invariants. Run: npx tsx scripts/simulate.ts
  */
 import { createLife, cloneState } from '../src/engine/gameState';
 import { applyChoice } from '../src/engine/storyGraph';
-import { eventById, isChoiceAvailable } from '../src/engine/eventPicker';
+import { eventById, isChoiceEnabled } from '../src/engine/eventPicker';
 import { ACTIVITY_DEFS } from '../src/data/activities';
 import { RANKS } from '../src/data/ranks';
 import { GameState } from '../src/types/game';
@@ -57,11 +58,12 @@ for (let i = 0; i < LIVES; i++) {
 
   while (!s.dead && guard < 400) {
     guard++;
+    resolveRpgEncounter(s);
     if (s.pendingEvent) {
       const ev = eventById(s.pendingEvent.eventId)!;
       if (ev.arcNodeOnly) arcsSeen++;
       eventsSeen++;
-      const choices = ev.choices.filter((c) => isChoiceAvailable(s, c));
+      const choices = ev.choices.filter((c) => isChoiceEnabled(s, c));
       const choice = randomChoice(choices);
       s = cloneState(s);
       applyChoice(s, ev, choice);

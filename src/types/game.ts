@@ -53,6 +53,7 @@ export type FeedSource = 'player' | 'npc' | 'world';
 export type FeedFilter = 'all' | 'player' | 'world';
 
 export interface FeedEntry {
+  changes?: string[];
   id: number;
   age: number;
   tag: string;
@@ -142,6 +143,9 @@ export interface Debt {
 }
 
 export interface CharacterCore {
+  tradeJourney?: import('./rpg').TradeJourney;
+  annualNarrativeYears?: Record<string, number>;
+  skills?: import('./rpg').Skills;
   id: string;
   name: string;
   age: number;
@@ -584,6 +588,10 @@ export interface HoldingUpgradeDef {
 // ---------------------------------------------------------------------------
 
 export interface Effects {
+  skillXp?: Partial<Record<import('./rpg').SkillId, number>>;
+  debt?: { principal: number; lenderId?: string; interestRate?: number };
+  materials?: Partial<Record<import('./rpg').MaterialId, number>>;
+  goods?: Record<string, number>;
   health?: number;
   charm?: number;
   wits?: number;
@@ -634,6 +642,9 @@ export interface Effects {
 }
 
 export interface Condition {
+  skillAtLeast?: Partial<Record<import('./rpg').SkillId, number>>;
+  materialsAtLeast?: Partial<Record<import('./rpg').MaterialId, number>>;
+  equipped?: string[];
   minAge?: number;
   maxAge?: number;
   minGold?: number;
@@ -697,6 +708,7 @@ export interface Outcome {
 }
 
 export interface Choice {
+  disabledReason?: string;
   /** Stable content id used by story transitions and save-safe history. */
   id?: string;
   label: string;
@@ -867,6 +879,7 @@ export interface ShopItem {
 }
 
 export interface GameSettings {
+  timingAssist?: boolean;
   autoScroll: boolean;
   difficulty: Difficulty;
   liveForever: boolean;
@@ -889,6 +902,7 @@ export type DuelOutcome = 'won' | 'lost' | 'yielded' | 'refused';
 
 /** A fight in progress, resolved exchange by exchange through the duel modal. */
 export interface DuelState {
+  combat?: import('./rpg').CombatState;
   opponentId: string;
   kind: DuelKind;
   /** Fight-local composure, 0..100. Not the same as health. */
@@ -906,7 +920,8 @@ export interface DuelState {
 }
 
 export interface GameState {
-  schemaVersion: 4;
+  schemaVersion: 5;
+  rpg: import('./rpg').RpgState;
   playerCharacterId: string;
   playerRun: PlayerRunState;
   pendingEvent: PendingEvent | null;

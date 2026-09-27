@@ -1,6 +1,7 @@
 import { GameState, WorldCharacter } from '@/types/game';
 import { appendWorldHistory, pushFeed, syncKinToWorld } from './gameState';
 import { C } from '@/theme/theme';
+import { freshRpg } from '@/data/rpg';
 
 export function eligibleHeirs(state: GameState): WorldCharacter[] {
   const player = state.world.characters[state.playerCharacterId];
@@ -43,6 +44,14 @@ export function continueAsHeir(state: GameState, requestedHeirId?: string): Game
   heir.rankIdx = Math.max(heir.rankIdx, state.rankIdx);
   heir.isHeir = true;
   state.playerCharacterId = heir.id;
+  if (state.rpg.stewardId === heir.id) state.rpg.stewardId = null;
+  state.rpg.forge = null;
+  state.rpg.forgeBonuses = { ownerId: heir.id, year: state.world.currentYear, used: 0 };
+  state.rpg.mission = null;
+  state.rpg.expedition = null;
+  state.rpg.board = freshRpg().board;
+  state.rpg.branches = freshRpg().branches;
+  state.duel = null;
   state.playerRun = { startedYear: state.world.currentYear, generation: state.playerRun.generation + 1, roleProgress: {} };
   state.first = heir.name;
   state.epithet = 'the Heir';

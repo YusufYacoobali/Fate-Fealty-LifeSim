@@ -9,6 +9,7 @@ import { usePremiumOffers } from '@/state/hooks/usePremiumOffers';
 import { usePurchaseFlow } from '@/state/hooks/usePurchaseFlow';
 import { PixelButton } from '../ui/PixelButton';
 import { PixelText } from '../ui/PixelText';
+import { openLegalLink, PRIVACY_POLICY_URL, TERMS_OF_USE_URL } from '@/services/legal';
 
 const ROYAL = {
   page: '#0a3768',
@@ -310,7 +311,7 @@ function RoyalOfferPanel({
       </PixelButton>
 
       <PixelText font="body" size={compact ? 11 : 13} color="#a9c9e8" style={{ textAlign: 'center' }}>
-        {selected === 'lifetime' ? 'One payment. No subscription.' : 'No commitment. Cancel anytime.'}
+        {selected === 'lifetime' ? 'One payment. No subscription.' : 'Payment is charged to your store account. Subscriptions renew automatically unless cancelled at least 24 hours before the current period ends. Manage or cancel in your store subscription settings.'}
       </PixelText>
       {storeBlocked && (
         <PixelText font="body" size={compact ? 11 : 13} color={ROYAL.cream} style={{ textAlign: 'center' }}>
@@ -322,11 +323,19 @@ function RoyalOfferPanel({
           {message}
         </PixelText>
       )}
-      {shop && (
-        <TouchableOpacity onPress={handleRestore} disabled={busy} style={{ alignSelf: 'center', padding: 7 }}>
-          <PixelText font="body" size={compact ? 13 : 15} color={ROYAL.paleBlue}>Restore purchases</PixelText>
+      <TouchableOpacity onPress={handleRestore} disabled={busy} style={{ alignSelf: 'center', padding: 7 }}>
+        <PixelText font="body" size={compact ? 13 : 15} color={ROYAL.paleBlue}>Restore purchases</PixelText>
+      </TouchableOpacity>
+      <View style={{ flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap', gap: 8 }}>
+        <TouchableOpacity accessibilityRole="link" onPress={() => { void openLegalLink(PRIVACY_POLICY_URL); }} style={{ padding: 7 }}>
+          <PixelText font="body" size={14} color={ROYAL.paleBlue}>Privacy policy</PixelText>
         </TouchableOpacity>
-      )}
+        {TERMS_OF_USE_URL && (
+          <TouchableOpacity accessibilityRole="link" onPress={() => { if (TERMS_OF_USE_URL) void openLegalLink(TERMS_OF_USE_URL); }} style={{ padding: 7 }}>
+            <PixelText font="body" size={14} color={ROYAL.paleBlue}>Terms of use</PixelText>
+          </TouchableOpacity>
+        )}
+      </View>
         </>
       )}
 

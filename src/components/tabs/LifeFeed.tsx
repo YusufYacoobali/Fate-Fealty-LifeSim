@@ -1,13 +1,17 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Image, ScrollView, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { C } from '@/theme/theme';
+import { VillageNewspaper } from '../modals/VillageNewspaper';
 import { traitIconAsset } from '@/assets/generatedAssets';
 import { PixelButton } from '../ui/PixelButton';
+import { isRoutineNews } from '@/engine/choiceFeedback';
 import { FeedFilter, FeedSource } from '@/types/game';
 
 interface FeedVM {
   id: number;
+  age: number;
+  changes?: string[];
   tag: string;
   tagColor: string;
   text: string;
@@ -19,7 +23,10 @@ interface FeedVM {
   source: FeedSource;
 }
 
-export function LifeFeed({ feed, autoScroll, filter, onFilter }: { feed: FeedVM[]; autoScroll: boolean; filter: FeedFilter; onFilter: (filter: FeedFilter) => void }) {
+export function LifeFeed({ feed, autoScroll, filter, onFilter, bornYear, reducedMotion }: { bornYear: number; reducedMotion: boolean; feed: FeedVM[]; autoScroll: boolean; filter: FeedFilter; onFilter: (filter: FeedFilter) => void }) {
+  const [edition, setEdition] = useState<number | null>(null);
+  const groups = new Map<number, FeedVM[]>();
+  if (filter === 'all' || filter === 'world') for (const entry of feed) if (isRoutineNews(entry)) groups.set(entry.age, [...(groups.get(entry.age) ?? []), entry]);
   const ref = useRef<ScrollView>(null);
 
   useEffect(() => {
@@ -61,6 +68,17 @@ export function LifeFeed({ feed, autoScroll, filter, onFilter }: { feed: FeedVM[
         showsVerticalScrollIndicator
       >
         {feed.map((e) => {
+          const group = groups.get(e.age);
+          if (isRoutineNews(e) && group && group.length > 0) {
+            if (group[0].id !== e.id) return null;
+            return <View key={e.id} style={{ backgroundColor: C.lightFill, padding: 10, borderWidth: 2, borderColor: C.paleEdge }}>
+              <PixelButton bg={C.parch} shadow={C.parchSd} light={C.parchSl} onPress={() => setEdition(e.age)} innerStyle={{ padding: 12, minHeight: 44, gap: 8 }}>
+                <PixelText font="pixel" size={8} color={C.blueDark}>SWINEFORD GAZETTE</PixelText>
+                <PixelText font="body" size={17} color={C.textBrown}>Village news · year {bornYear + e.age} · {group.length} updates</PixelText>
+                <PixelText font="body" size={18} color={C.blue}>Read the newspaper →</PixelText>
+              </PixelButton>
+            </View>;
+          }
           const traitIcon = e.traitId ? traitIconAsset(e.traitId) : undefined;
 
           return (
@@ -87,10 +105,12 @@ export function LifeFeed({ feed, autoScroll, filter, onFilter }: { feed: FeedVM[
                   {e.text}
                 </PixelText>
               </View>
+              {!!e.changes?.length && <PixelText font="body" size={14} color={C.blueDark} style={{ marginTop: 6 }}>Changed: {e.changes.join(' · ')}</PixelText>}
             </View>
           );
         })}
       </ScrollView>
+      {edition !== null && <VillageNewspaper articles={groups.get(edition) ?? []} year={bornYear + edition} reducedMotion={reducedMotion} onClose={() => setEdition(null)} />}
     </View>
   );
 }

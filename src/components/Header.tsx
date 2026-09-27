@@ -11,6 +11,7 @@ interface Props {
   fullName: string;
   age: number;
   classRank: string;
+  profession?: string;
   gold: number;
   onOpenShop: () => void;
   onOpenSettings: () => void;
@@ -33,7 +34,7 @@ function HeaderAction({ icon, asset, bg, shadow, onPress }: { icon: string; asse
   );
 }
 
-export function Header({ portrait, fullName, age, classRank, gold, onOpenShop, onOpenSettings }: Props) {
+export function Header({ portrait, fullName, age, classRank, profession, gold, onOpenShop, onOpenSettings }: Props) {
   const portraitAsset = rankPortraitAsset(classRank);
 
   return (
@@ -77,8 +78,9 @@ export function Header({ portrait, fullName, age, classRank, gold, onOpenShop, o
           {fullName}
         </PixelText>
         <PixelText font="body" size={13} color={C.creamBlue} numberOfLines={1}>
-          Age {age} · {classRank}
+          Age {age} · {profession ?? classRank}
         </PixelText>
+        {profession && <PixelText font="body" size={12} color={C.creamBlue}>Station: {classRank}</PixelText>}
       </View>
 
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>

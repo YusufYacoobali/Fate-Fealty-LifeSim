@@ -21,12 +21,30 @@ import { runWithWorldRng } from '@/engine/random';
 import { eventById } from '@/engine/eventPicker';
 import { continueAsHeir } from '@/engine/successionEngine';
 import { DailyRewardBonus } from '@/services/dailyRewards';
-import { concludeDuel, respondToDuel } from '@/engine/duelEngine';
+import { concludeDuel, respondToDuel, selectCombatMove, resolveCombatTiming, startDuel } from '@/engine/duelEngine';
+import { RpgCommand, performRpgCommand, chooseMission, refreshWorkBoard, resumeMissionAfterDuel } from '@/engine/rpgEngine';
+import { awardActivitySkill, grantSkillXp } from '@/engine/rpgProgress';
+import { Attack, Defence } from '@/types/rpg';
+import { careerById } from '@/data/careers';
 import { shopItemById } from '@/data/shop';
 import { applyEffects } from '@/engine/consequenceEngine';
 import { checkLifeGoal } from '@/engine/goalEngine';
+import { ForgeTask } from '@/types/rpg';
+import { beginForge, closeForge, finishForge, startForge, strikeForge } from '@/engine/forgeEngine';
+import { resolveTradeChoice } from '@/engine/tradeJourney';
 
 export type GameAction =
+  | { type: 'FORGE_START'; task: ForgeTask; revision: number }
+  | { type: 'FORGE_BEGIN'; id: string }
+  | { type: 'FORGE_STRIKE'; id: string; sequence: number; position: number }
+  | { type: 'FORGE_QUICK'; id: string }
+  | { type: 'FORGE_CLOSE'; id: string }
+  | { type: 'TRADE_CHOOSE'; chapter: number; choiceId: string }
+  | { type: 'RPG'; command: RpgCommand; revision?: number }
+  | { type: 'MISSION_CHOOSE'; missionId: string; optionId: string }
+  | { type: 'COMBAT_SELECT'; sequence: number; move: Defence | Attack; fightId?: string }
+  | { type: 'COMBAT_TIMING'; sequence: number; offsetMs: number; fightId?: string }
+  | { type: 'PRACTICE_DUEL' }
   | { type: 'HYDRATE'; state: GameState }
   | { type: 'AGE_UP' }
   | { type: 'CHOOSE'; choice: Choice }
@@ -85,6 +103,8 @@ function timed(
 }
 
 function finishEngineTransaction(state: GameState): GameState {
+  if (state.dead) { state.rpg.forge = null; state.rpg.mission = null; state.rpg.expedition = null; }
+  refreshWorkBoard(state);
   syncKinToWorld(state);
   return syncPlayerToWorld(state);
 }
@@ -95,6 +115,46 @@ function proLockedSettings(settings: GameSettings, lifetimeUnlocked: boolean): G
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
+    case 'FORGE_START':
+    case 'FORGE_BEGIN':
+    case 'FORGE_STRIKE':
+    case 'FORGE_QUICK':
+    case 'FORGE_CLOSE':
+    case 'TRADE_CHOOSE': {
+      if (action.type === 'FORGE_START' && action.revision !== state.rpg.revision) return state;
+      const s = cloneState(state);
+      runWithWorldRng(s.world, () => {
+        if (action.type === 'FORGE_START') { startForge(s, action.task); s.rpg.revision += 1; }
+        if (action.type === 'FORGE_BEGIN') beginForge(s, action.id);
+        if (action.type === 'FORGE_STRIKE') strikeForge(s, action.id, action.sequence, action.position);
+        if (action.type === 'FORGE_QUICK') finishForge(s, action.id, true);
+        if (action.type === 'FORGE_CLOSE') closeForge(s, action.id);
+        if (action.type === 'TRADE_CHOOSE') resolveTradeChoice(s, action.chapter, action.choiceId);
+        if (!s.dead && s.stats.health <= 0) checkDeath(s);
+      });
+      return finishEngineTransaction(s);
+    }
+    case 'RPG':
+    case 'MISSION_CHOOSE':
+    case 'COMBAT_SELECT':
+    case 'COMBAT_TIMING':
+    case 'PRACTICE_DUEL': {
+      if (action.type === 'RPG' && action.revision !== undefined && action.revision !== state.rpg.revision) return state;
+      if ((action.type === 'COMBAT_SELECT' || action.type === 'COMBAT_TIMING') && action.fightId !== undefined && action.fightId !== state.duel?.combat?.id) return state;
+      const s = cloneState(state);
+      runWithWorldRng(s.world, () => {
+        if (action.type === 'RPG') performRpgCommand(s, action.command);
+        if (action.type === 'MISSION_CHOOSE') chooseMission(s, action.missionId, action.optionId);
+        if (action.type === 'COMBAT_SELECT') selectCombatMove(s, action.sequence, action.move);
+        if (action.type === 'COMBAT_TIMING') resolveCombatTiming(s, action.sequence, action.offsetMs);
+        if (action.type === 'PRACTICE_DUEL' && !s.dead && !s.duel && !s.pendingEvent && !s.rpg.mission && !s.rpg.forge && s.age >= 8 && !s.tags.includes('imprisoned')) {
+          const opponent = Object.values(s.world.characters).find((p) => p.alive && p.age >= 18 && p.id !== s.playerCharacterId);
+          if (opponent) startDuel(s, opponent.id, 'duel', true);
+        }
+        if (!s.duel && !s.dead && s.stats.health <= 0) checkDeath(s);
+      });
+      return finishEngineTransaction(s);
+    }
     case 'HYDRATE': {
       const s = cloneState(action.state);
       syncPlayerFromWorld(s);
@@ -104,6 +164,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         pushFeed(s, 'CHRONICLE · RECOVERED', '#7a4f9a', 'Some unfinished tales were safely concluded after the game was updated.', 'plain', {}, 'world', 'world');
         s.world.recoveryNotice = false;
       }
+      refreshWorkBoard(s);
       return s;
     }
 
@@ -123,7 +184,12 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'DO_ACTIVITY': {
-      return timed(state, (s) => activityAvailability(s, action.id).available, (s) => doActivity(s, action.id));
+      if (action.id === 'run_caravan') return gameReducer(state, { type: 'RPG', command: { kind: 'caravan' } });
+      return timed(state, (s) => activityAvailability(s, action.id).available, (s) => {
+        doActivity(s, action.id);
+        if (action.id === 'rest' && s.inventory.includes('cottage')) applyEffects(s, { health: 2 });
+        return s;
+      });
     }
 
     case 'BUY': {
@@ -135,18 +201,22 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'MANAGE_HOLDING': {
-      return timed(state, (s) => holdingActionAvailability(s, action.id).available, (s) => manageHolding(s, action.id));
+      return timed(state, (s) => holdingActionAvailability(s, action.id).available, (s) => { manageHolding(s, action.id); awardActivitySkill(s, action.id); return s; });
     }
 
     case 'BUY_HOLDING_UPGRADE': {
-      return timed(state, (s) => holdingUpgradeAvailability(s, action.id).available, (s) => buyHoldingUpgrade(s, action.id));
+      return timed(state, (s) => holdingUpgradeAvailability(s, action.id).available, (s) => { buyHoldingUpgrade(s, action.id); grantSkillXp(s, 'craftsmanship', 6, 'construction'); return s; });
     }
 
     case 'CAREER_ACTION': {
+      if (action.action === 'craft') return { ...state, tab: 'do', doCat: 'work' };
       return timed(
         state,
         (s) => careerActionAvailability(s, action.action, action.careerId).available,
-        (s) => performCareerAction(s, action.action, action.careerId),
+        (s) => {
+          performCareerAction(s, action.action, action.careerId);
+          return s;
+        },
       );
     }
 
@@ -231,8 +301,10 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (!state.duel?.outcome) return state;
       const s = cloneState(state);
       runWithWorldRng(s.world, () => {
-        concludeDuel(s);
-        checkDeath(s);
+          const won = s.duel?.outcome === 'won';
+          concludeDuel(s);
+          if (s.stats.health <= 0) checkDeath(s);
+          resumeMissionAfterDuel(s, won);
         return s;
       });
       return finishEngineTransaction(s);

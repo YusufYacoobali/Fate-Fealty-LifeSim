@@ -10,6 +10,7 @@ import { addMemory, addMoney, pushFeed } from './gameState';
 import { pick } from './random';
 import { C } from '@/theme/theme';
 import { RANKS } from '@/data/ranks';
+import { maybeHoldingEncounter } from './rpgEngine';
 
 export interface HoldingAvailability {
   available: boolean;
@@ -214,6 +215,7 @@ function firstCriticalWarning(s: GameState, lowest: HoldingResource): void {
 }
 
 function severeCrisis(s: GameState, lowest: HoldingResource): void {
+  if (maybeHoldingEncounter(s, lowest)) return;
   if (lowest === 'stores') {
     adjustPopulation(s, -Math.max(3, Math.ceil(holdingPopulation(s) * 0.3)));
     applyEffects(s, { health: -25, holding: { stores: 25 - s.holding.stores, loyalty: -10 } });
@@ -279,6 +281,7 @@ export function tickHoldingYear(s: GameState): GameState {
 
   const upkeep = holdingYearlyUpkeep(s);
   applyEffects(s, { holding: { stores: -upkeep.stores, security: -upkeep.security } });
+  if (s.inventory.includes('manor_lease')) applyEffects(s, { holding: { stores: 2 } });
 
   if (holdingProsperity(s) < 15) {
     s.holding.criticalYears += 1;

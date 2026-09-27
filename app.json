@@ -5,13 +5,11 @@
     "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon/icon-ios.png",
-    "newArchEnabled": true,
+    "experiments": {
+      "reactCompiler": true
+    },
     "userInterfaceStyle": "light",
     "scheme": "fateandfealty",
-    "splash": {
-      "backgroundColor": "#0d1b2e",
-      "resizeMode": "contain"
-    },
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -44,13 +42,23 @@
       "bundler": "metro"
     },
     "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#0d1b2e"
+        }
+      ],
       "expo-asset",
       "expo-notifications",
-      "expo-audio"
+      "expo-audio",
+      [
+        "expo-status-bar",
+        {
+          "hidden": true
+        }
+      ],
+      "expo-font"
     ],
-    "androidStatusBar": {
-      "hidden": true
-    },
     "extra": {
       "eas": {
         "projectId": "bb28a220-3a1e-4c84-8e16-7525b1117aed"

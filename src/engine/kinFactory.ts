@@ -11,6 +11,7 @@ import { defaultPronouns } from '@/data/identity';
 import { ENTRY_CAREERS } from '@/data/careers';
 import { makePlayerRelationship } from './relationshipState';
 import { unlinkSpouse } from './characterState';
+import { freshSkills } from '@/data/rpg';
 
 interface KindDefaults {
   name: (gender: GenderIdentity) => string;
@@ -116,6 +117,7 @@ export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
     pronouns: defaultPronouns(gender),
     attraction: spec.attraction ?? (gender === 'woman' ? 'men' : 'women'),
     stats: { health: rnd(45, 90), charm: rnd(25, 75), wits: rnd(25, 75), faith: rnd(15, 75) },
+    skills: freshSkills(),
     traits: [spec.trait ?? d.trait],
     gold: rnd(0, 25),
     rankIdx: spec.kind === 'liege' ? Math.max(2, s.rankIdx) : spec.kind === 'foe' ? 2 : 0,

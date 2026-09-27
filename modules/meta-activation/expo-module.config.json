@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": {
+    "modules": ["MetaActivationModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.metaactivation.MetaActivationModule"]
+  }
+}

@@ -1,11 +1,12 @@
 import { EVENTS_BY_ID } from '@/content';
+import { resolveRpgEncounter } from './rpgSoakHelpers';
 import { createLife } from '@/engine/gameState';
 import { ageUp } from '@/engine/lifeDirector';
 import { applyChoice } from '@/engine/storyGraph';
 import { QUALITY_CHAIN_SPECS } from '@/content/qualityAmbientEvents';
 import { MAX_OPEN_THREADS, openThreads } from '@/engine/director/threads';
 import { RHYTHM } from '@/engine/director/rhythm';
-import { isEventEligible, isEventPlayable } from '@/engine/eventPicker';
+import { isChoiceEnabled, isEventEligible, isEventPlayable } from '@/engine/eventPicker';
 
 jest.setTimeout(600000);
 
@@ -23,6 +24,7 @@ function playLife(): Run {
   const run: Run = { deepest: {}, quietRunMax: 0, maxOpenThreads: 0, threadYears: 0, oneOffYears: 0, years: 0 };
   let quietRun = 0;
   while (!s.dead && s.age < 130) {
+    resolveRpgEncounter(s);
     s = ageUp(s);
     run.years += 1;
     run.maxOpenThreads = Math.max(run.maxOpenThreads, openThreads(s).length);
@@ -32,7 +34,9 @@ function playLife(): Run {
         run.deepest[event.chain.id] = Math.max(run.deepest[event.chain.id] ?? 0, event.chain.index + 1);
       }
       if ((event.chain?.index ?? 0) > 0 || event.arcNodeOnly) run.threadYears += 1; else run.oneOffYears += 1;
-      applyChoice(s, event, event.choices[0]);
+      const choice = event.choices.find((candidate) => isChoiceEnabled(s, candidate));
+      if (!choice) throw new Error(`No playable choice in ${event.id}`);
+      applyChoice(s, event, choice);
       s.pendingEvent = null;
       quietRun = 0;
     } else {

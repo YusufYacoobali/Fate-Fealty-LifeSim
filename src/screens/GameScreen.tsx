@@ -47,10 +47,13 @@ import { DailyRewardModal } from '@/components/modals/DailyRewardModal';
 import { ProTrialEndedPrompt } from '@/components/modals/ProTrialEndedPrompt';
 import { PromotionScreen } from '@/components/modals/PromotionScreen';
 import { GoalAchievedScreen } from '@/components/modals/GoalAchievedScreen';
-import { DuelModal } from '@/components/modals/DuelModal';
+import { DuelModal } from '@/components/modals/InteractiveDuelModal';
 import { usePromotionCelebration } from '@/state/hooks/usePromotionCelebration';
 import { useGoalCelebration } from '@/state/hooks/useGoalCelebration';
 import { ReturnRumourModal } from '@/components/modals/ReturnRumourModal';
+import { ForgeModal } from '@/components/rpg/Workshop';
+import { careerById } from '@/data/careers';
+import { missionEvent } from '@/engine/rpgEngine';
 
 export function GameScreen() {
   const {
@@ -97,12 +100,15 @@ export function GameScreen() {
   const insets = useSafeAreaInsets();
   const bottomNavInset = Math.max(insets.bottom, MIN_ANDROID_BOTTOM_NAV_GUARD);
   const currentEvent = state.pendingEvent ? eventById(state.pendingEvent.eventId) : undefined;
+  const currentMission = missionEvent(state);
   const { promotedTo, dismissPromotion } = usePromotionCelebration(state, loaded);
   const { achievedGoalId, dismissGoal } = useGoalCelebration(state, loaded);
   const passivePromptsAllowed =
     !state.dead &&
     !state.pendingEvent &&
     !state.duel &&
+    !state.rpg.mission &&
+    !state.rpg.forge &&
     !state.settingsOpen &&
     !creating &&
     !onboardingVisible &&
@@ -142,6 +148,7 @@ export function GameScreen() {
           fullName={fullName(state)}
           age={state.age}
           classRank={rank.key}
+          profession={careerById(state.occupation.careerId)?.title}
           gold={state.gold}
           onOpenShop={() => setCartOpen(true)}
           onOpenSettings={() => dispatch({ type: 'OPEN_SETTINGS' })}
@@ -153,7 +160,7 @@ export function GameScreen() {
         <View style={{ flex: 1, position: 'relative' }}>
           {state.tab === 'life' && <View style={{ flex: 1 }}>
             <WorldNotices recoveryNotice={state.world.recoveryNotice} saveCompatibilityBlocked={saveCompatibilityBlocked} />
-            <LifeFeed feed={selectFeed(state)} autoScroll={state.settings.autoScroll} filter={state.world.feedFilter} onFilter={(filter) => dispatch({ type: 'SET_FEED_FILTER', filter })} />
+            <LifeFeed bornYear={state.bornYear} reducedMotion={!!state.settings.reducedMotion} feed={selectFeed(state)} autoScroll={state.settings.autoScroll} filter={state.world.feedFilter} onFilter={(filter) => dispatch({ type: 'SET_FEED_FILTER', filter })} />
           </View>}
           {state.tab === 'do' && (
             <DoTab
@@ -234,7 +241,7 @@ export function GameScreen() {
             haptic('light', buzz);
             dispatch({ type: 'AGE_UP' });
           }}
-          disabled={state.dead || !!state.pendingEvent || !!state.duel}
+          disabled={state.dead || !!state.pendingEvent || !!state.duel || !!state.rpg.mission || !!state.rpg.forge}
           actionsUsed={state.actionClock.used}
           actionCap={state.actionClock.cap}
         />
@@ -249,6 +256,8 @@ export function GameScreen() {
         </View>
 
         {/* overlays */}
+        {state.rpg.forge && !state.dead && <ForgeModal />}
+        {currentMission && !state.dead && !state.duel && <EventModal state={state} event={currentMission} onChoose={(choice) => dispatch({ type: 'MISSION_CHOOSE', missionId: currentMission.id, optionId: choice.id! })} />}
         {currentEvent && !state.dead && (
           <EventModal
             state={state}
@@ -334,7 +343,7 @@ export function GameScreen() {
             onClose={() => dispatch({ type: 'DUEL_CLOSE' })}
           />
         )}
-        {promotedTo != null && !state.dead && (
+        {promotedTo != null && !state.rpg.forge && !state.dead && (
           <PromotionScreen
             rankIdx={promotedTo}
             reducedMotion={!!state.settings.reducedMotion}
@@ -344,7 +353,7 @@ export function GameScreen() {
             }}
           />
         )}
-        {achievedGoalId && promotedTo == null && !state.dead && (
+        {achievedGoalId && promotedTo == null && !state.rpg.forge && !state.dead && (
           <GoalAchievedScreen
             goalId={achievedGoalId}
             reducedMotion={!!state.settings.reducedMotion}
@@ -392,7 +401,7 @@ export function GameScreen() {
           />
         )}
         <AchievementToast
-          id={newAchievements[0] ?? null}
+          id={state.rpg.forge ? null : newAchievements[0] ?? null}
           onDone={() => {
             haptic('success', buzz);
             dismissAchievement();

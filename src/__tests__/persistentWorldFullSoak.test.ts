@@ -1,6 +1,7 @@
+import { resolveRpgEncounter } from './rpgSoakHelpers';
 import { createLife } from '@/engine/gameState';
 import { gameReducer } from '@/state/gameReducer';
-import { eventById, isChoiceAvailable } from '@/engine/eventPicker';
+import { eventById, isChoiceEnabled } from '@/engine/eventPicker';
 import { buildLifeChronicle } from '@/engine/deathEngine';
 import { normalizeGameState } from '@/state/persistence';
 import { spawnKin } from '@/engine/kinFactory';
@@ -17,11 +18,12 @@ const LIVES_PER_ROLE = FULL ? 100 : 1;
 const LIFE_GUARD = 130;
 
 function resolvePending(state: GameState): GameState {
+  resolveRpgEncounter(state);
   let guard = 0;
   while (state.pendingEvent && !state.dead && guard++ < 4) {
     const event = eventById(state.pendingEvent.eventId);
     if (!event) throw new Error(`missing pending event ${state.pendingEvent.eventId}`);
-    const choice = event.choices.find((candidate) => isChoiceAvailable(state, candidate));
+    const choice = event.choices.find((candidate) => isChoiceEnabled(state, candidate));
     if (!choice) throw new Error(`blocked event ${event.id}`);
     state = gameReducer(state, { type: 'CHOOSE', choice });
   }
@@ -68,6 +70,10 @@ function runLife(seed: number, difficulty: Difficulty, role?: LifeRole): GameSta
 
 describe('persistent-world full soak matrix', () => {
   jest.setTimeout(FULL ? 30 * 60_000 : 120_000);
+
+  it('retains expected-child household references when an artisan household moves', () => {
+    runLife(71_043, 'Normal', 'artisan_merchant');
+  });
 
   it('completes the configured life count per difficulty', () => {
     for (const [difficultyIndex, difficulty] of (['Merciful', 'Normal', 'Brutal'] as Difficulty[]).entries()) {

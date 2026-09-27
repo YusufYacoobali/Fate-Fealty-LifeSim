@@ -8,22 +8,30 @@ import { CURRENT_CONTENT_VERSION } from '@/content/contentVersion';
 import { syncPlayerFromWorld } from '@/engine/gameState';
 import { createStateDefaults } from '@/engine/stateDefaults';
 import { correctedNpcName } from '@/data/names';
+import { normalizeRpg } from '@/engine/rpgEngine';
+import { upgradeDuel } from '@/engine/duelEngine';
 
-const SAVE_KEY = 'mls:world:v4';
-const LEGACY_SAVE_KEY = 'mls:world:v3';
+const SAVE_KEY = 'mls:world:v5';
+const LEGACY_SAVE_KEY = 'mls:world:v4';
+const OLDER_SAVE_KEY = 'mls:world:v3';
 
-interface SaveEnvelopeV4 {
-  schemaVersion: 4;
+interface SaveEnvelopeV5 {
+  schemaVersion: 5;
   savedAt: number;
   game: GameState;
 }
 
 /**
- * Persist only the durable parts of the state. Transient UI fields (open modals,
- * selected kin, the current event popup) are reset on load so a reload never
- * traps the player in a half-resolved popup.
+ * Persist encounters, decisions and combat phases; only settings and selection
+ * panels are transient. Serialize writes so an older snapshot cannot win.
  */
-export async function saveGame(state: GameState): Promise<void> {
+let saveQueue: Promise<void> = Promise.resolve();
+export function saveGame(state: GameState): Promise<void> {
+  const snapshot = JSON.parse(JSON.stringify(state)) as GameState;
+  saveQueue = saveQueue.catch(() => undefined).then(() => writeGame(snapshot));
+  return saveQueue;
+}
+async function writeGame(state: GameState): Promise<void> {
   try {
     const toSave: GameState = {
       ...state,
@@ -33,7 +41,7 @@ export async function saveGame(state: GameState): Promise<void> {
       kin: [],
       pendingEvent: state.pendingEvent,
     };
-    const envelope: SaveEnvelopeV4 = { schemaVersion: 4, savedAt: Date.now(), game: toSave };
+    const envelope: SaveEnvelopeV5 = { schemaVersion: 5, savedAt: Date.now(), game: toSave };
     await AsyncStorage.setItem(SAVE_KEY, JSON.stringify(envelope));
   } catch (e) {
     // Saving is best-effort; never crash the game over it.
@@ -49,12 +57,11 @@ export interface LoadGameResult {
 export async function loadGame(): Promise<LoadGameResult> {
   try {
     const currentRaw = await AsyncStorage.getItem(SAVE_KEY);
-    const legacyRaw = currentRaw ? null : await AsyncStorage.getItem(LEGACY_SAVE_KEY);
+    const legacyRaw = currentRaw ? null : (await AsyncStorage.getItem(LEGACY_SAVE_KEY) ?? await AsyncStorage.getItem(OLDER_SAVE_KEY));
     const raw = currentRaw ?? legacyRaw;
     if (!raw) return { state: null, blockedByFutureVersion: false };
     const envelope = JSON.parse(raw) as { schemaVersion: number; savedAt: number; game: GameState };
-    if (![3, 4].includes(envelope.schemaVersion) || ![3, 4].includes(envelope.game.schemaVersion as number)) return { state: null, blockedByFutureVersion: true };
-    if (envelope.schemaVersion > 4 || (envelope.game.schemaVersion as number) > 4) return { state: null, blockedByFutureVersion: true };
+    if (![3, 4, 5].includes(envelope.schemaVersion) || ![3, 4, 5].includes(envelope.game.schemaVersion as number)) return { state: null, blockedByFutureVersion: true };
     const parsed = normalizeGameState(envelope.game);
     if (parsed.world.contentVersion > CURRENT_CONTENT_VERSION) {
       console.warn('[persistence] save belongs to a newer content version; leaving it untouched');
@@ -189,15 +196,14 @@ export function normalizeGameState(parsed: GameState): GameState {
 
   const normalized: GameState = {
     ...parsed,
-    schemaVersion: 4,
+    schemaVersion: 5,
     playerCharacterId,
     playerRun: parsed.playerRun
       ? { ...parsed.playerRun, roleProgress: { ...(parsed.playerRun.roleProgress ?? {}) } }
       : { startedYear: parsed.world?.currentYear ?? parsed.bornYear + parsed.age, generation: parsed.lifeNo ?? 1, roleProgress: {} },
     pendingEvent: parsed.pendingEvent ?? null,
-    // A half-fought duel is not worth restoring: the player would return to an
-    // exchange with no memory of how they got there.
-    duel: null,
+    // Keep the committed move and input sequence across interruptions.
+    duel: parsed.duel ?? null,
     traits: normalizedTraits,
     tags: normalizedTags,
     feed: (parsed.feed ?? []).map((entry) => entry.traitId === 'ill_starred' ? { ...entry, traitId: 'golden_child' } : entry),
@@ -209,6 +215,7 @@ export function normalizeGameState(parsed: GameState): GameState {
       music: savedSettings.music ?? true,
       soundEffects: savedSettings.soundEffects ?? true,
       reducedMotion: savedSettings.reducedMotion ?? false,
+      ...(savedSettings.timingAssist !== undefined ? { timingAssist: Boolean(savedSettings.timingAssist) } : {}),
     },
     gender: fallbackGender,
     pronouns: defaultPronouns(fallbackGender),
@@ -263,13 +270,21 @@ export function normalizeGameState(parsed: GameState): GameState {
       criticalYears: typeof saved?.criticalYears === 'number' ? Math.max(0, saved.criticalYears) : 0,
     },
   };
+  normalizeRpg(normalized);
+  upgradeDuel(normalized);
+  if (normalized.rpg.mission?.phase === 'combat' && !normalized.duel) {
+    // An unavailable opponent must never strand the mission overlay.
+    normalized.rpg.mission.phase = 'choice';
+  }
   return syncPlayerFromWorld(normalized);
 }
 
 export async function clearSave(): Promise<void> {
   try {
+    await saveQueue;
     await AsyncStorage.removeItem(SAVE_KEY);
     await AsyncStorage.removeItem(LEGACY_SAVE_KEY);
+    await AsyncStorage.removeItem(OLDER_SAVE_KEY);
   } catch (e) {
     console.warn('[persistence] clear failed', e);
   }

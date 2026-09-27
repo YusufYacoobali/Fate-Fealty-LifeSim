@@ -15,6 +15,8 @@ import { applyRelationshipShift } from './relationshipState';
 import { isCloseBlood, kinshipTo } from './kinship';
 import { chance, clamp, pick, rnd } from './random';
 import { C } from '@/theme/theme';
+import { Attack, Defence, TimingGrade } from '@/types/rpg';
+import { equippedBonus, grantSkillXp, skillLevel } from './rpgProgress';
 
 /** Composure both fighters start with. */
 export const DUEL_START_VIGOUR = 100;
@@ -39,10 +41,11 @@ function opponentSkill(opponent: WorldCharacter): number {
 
 /** Whether the player is carrying anything worth calling a weapon. */
 function hasBlade(state: GameState): boolean {
-  return ['sword', 'lance', 'mail_shirt'].some((id) => state.inventory.includes(id));
+  return Boolean(state.rpg.equipment.weapon) || ['sword', 'lance'].some((id) => state.inventory.includes(id));
 }
 
 export function duelAvailability(state: GameState, opponentId: string, kind: DuelKind): DuelAvailability {
+  if (state.dead) return { available: false, reason: 'Thy life is ended' };
   if (state.duel) return { available: false, reason: 'A fight is already underway' };
   const opponent = state.world.characters[opponentId];
   if (!opponent?.alive) return { available: false, reason: 'They are beyond fighting' };
@@ -61,8 +64,9 @@ function nextMoveId(state: GameState, kind: DuelKind, previousId?: string): stri
   return pick(options.length ? options : movesForKind(kind)).id;
 }
 
-export function startDuel(state: GameState, opponentId: string, kind: DuelKind): GameState {
-  if (!duelAvailability(state, opponentId, kind).available) return state;
+export function startDuel(state: GameState, opponentId: string, kind: DuelKind, practice = false): GameState {
+  if (!practice && !duelAvailability(state, opponentId, kind).available) return state;
+  if (state.duel || state.dead || !state.world.characters[opponentId]?.alive) return state;
   const opponent = state.world.characters[opponentId]!;
   // A better fighter starts with more left in the tank than a village drunk.
   const opponentEdge = Math.round(opponentSkill(opponent) * 20) - 10;
@@ -75,11 +79,13 @@ export function startDuel(state: GameState, opponentId: string, kind: DuelKind):
     moveId: nextMoveId(state, kind),
     log: [],
   };
+  upgradeDuel(state);
+  state.duel.combat!.practice = practice;
   pushFeed(
     state,
-    kind === 'duel' ? 'A DUEL IS CALLED' : 'A BRAWL BEGINS',
+    practice ? 'SPARRING' : state.rpg.mission ? 'A CHAMPION STEPS FORWARD' : kind === 'duel' ? 'A DUEL IS CALLED' : 'A BRAWL BEGINS',
     kind === 'duel' ? C.healthDark : C.amber,
-    kind === 'duel'
+    practice ? `${opponent.name} lends you the yard for a friendly practice bout.` : state.rpg.mission ? `${opponent.name} takes the opposing side in the dispute. Settle the challenge before returning to your assignment.` : kind === 'duel'
       ? `Thou calls out ${opponent.name} before witnesses. There is no walking this back now.`
       : `Thou swings first at ${opponent.name}. The tavern rearranges itself around the two of you.`,
     'plain',
@@ -124,12 +130,13 @@ export function duelResponses(state: GameState): Array<DuelResponse & { text: { 
 }
 
 export function canYield(state: GameState): boolean {
-  return Boolean(state.duel && !state.duel.outcome && state.duel.round > DUEL_YIELD_AFTER_ROUND);
+  return Boolean(state.duel && !state.duel.outcome && (state.duel.combat ? ['defence', 'attack'].includes(state.duel.combat.phase) : state.duel.round > DUEL_YIELD_AFTER_ROUND));
 }
 
 function finish(duel: DuelState, outcome: DuelState['outcome'], verdict: string): void {
   duel.outcome = outcome;
   duel.verdict = verdict;
+  if (duel.combat) duel.combat.phase = 'resolved';
 }
 
 /** Resolve one exchange. `responseId` of 'yield' concedes the fight. */
@@ -195,9 +202,11 @@ export function respondToDuel(state: GameState, responseId: string): GameState {
 export function concludeDuel(state: GameState): GameState {
   const duel = state.duel;
   if (!duel?.outcome) return state;
+  if (duel.combat?.practice) { state.duel = null; return state; }
   const opponent = state.world.characters[duel.opponentId];
   const name = opponent?.name ?? 'thy opponent';
-  const formal = duel.kind === 'duel';
+  const missionFight = state.rpg.mission?.phase === 'combat';
+  const formal = duel.kind === 'duel' || missionFight;
   // Composure spent maps onto real injury; a comfortable win barely marks thee.
   const punishment = Math.round((DUEL_START_VIGOUR - duel.playerVigour) / (formal ? 3 : 4));
 
@@ -245,6 +254,107 @@ export function concludeDuel(state: GameState): GameState {
   }
 
   addMemory(state, duel.kind === 'duel' ? 'fought_a_duel' : 'fought_a_brawl', 2, name);
+  if (!missionFight) grantSkillXp(state, 'arms', duel.outcome === 'won' ? 6 : 3, 'combat');
   state.duel = null;
   return state;
+}
+
+/** Upgrade old saves without rerolling their current attack or charging an action. */
+export function upgradeDuel(s: GameState): void {
+  const duel = s.duel;
+  if (!duel) return;
+  const opponent = s.world.characters[duel.opponentId];
+  if (!opponent?.alive || s.dead) { s.duel = null; return; }
+  if (!DUEL_MOVE_BY_ID[duel.moveId]) duel.moveId = 'high_swing';
+  duel.combat ??= {
+    version: 1, id: `fight_${s.nextId++}`, phase: duel.outcome ? 'resolved' : 'defence', sequence: 0,
+    playerStamina: 100, opponentStamina: 100, exposed: false, feinted: false,
+    archetype: duel.kind === 'brawl' ? 'brawler' : opponent.age > 35 ? 'veteran' : opponent.stats.wits > 60 ? 'duellist' : 'guard',
+    damage: equippedBonus(s, 'damage'), protection: equippedBonus(s, 'protection'), dodgeCost: equippedBonus(s, 'dodgeCost'),
+    arms: skillLevel(s, 'arms'), weaponId: s.rpg.equipment.weapon, armourId: s.rpg.equipment.armour,
+    practice: false, assist: Boolean(s.settings.timingAssist),
+  };
+}
+export function timingWindows(s: GameState): { good: number; perfect: number } {
+  const c = s.duel?.combat;
+  const progress = ((c?.arms ?? 1) - 1) / 9;
+  return { good: 180 + progress * 60 + (c?.phase === 'defence_timing' && c.defence === 'block' ? 80 : 0), perfect: 60 + progress * 20 };
+}
+export function timingGrade(s: GameState, offsetMs: number): TimingGrade {
+  if (s.duel?.combat?.assist) return 'good';
+  const windows = timingWindows(s);
+  const difference = Math.abs(offsetMs);
+  return difference <= windows.perfect ? 'perfect' : difference <= windows.good ? 'good' : 'miss';
+}
+export function combatCost(s: GameState, move: Defence | Attack): number {
+  return ({ block: 10, dodge: 20 + (s.duel?.combat?.dodgeCost ?? 0), parry: 15, brace: 0, quick: 10, heavy: 25, feint: 15, recover: 0 })[move];
+}
+export function combatChoiceReason(s: GameState, move: Defence | Attack): string | null {
+  const d = s.duel, c = d?.combat;
+  if (!d || !c || d.outcome) return 'Fight is decided';
+  if (move === 'parry' && d.moveId === 'grapple') return 'Cannot parry a grapple';
+  if (combatCost(s, move) > c.playerStamina) return `Needs ${combatCost(s, move)} stamina`;
+  return null;
+}
+export function selectCombatMove(s: GameState, sequence: number, move: Defence | Attack): void {
+  const d = s.duel, c = d?.combat;
+  if (!d || !c || c.sequence !== sequence || combatChoiceReason(s, move)) return;
+  if (c.phase === 'defence' && ['block', 'dodge', 'parry', 'brace'].includes(move)) {
+    c.defence = move as Defence; c.phase = 'defence_timing';
+  } else if (c.phase === 'attack' && ['quick', 'heavy', 'feint', 'recover'].includes(move)) {
+    c.attack = move as Attack;
+    if (move === 'recover') { c.playerStamina = Math.min(100, c.playerStamina + 30); d.log = [...d.log, 'You give up the attack and recover 30 stamina.'].slice(-6); nextExchange(s); return; }
+    c.phase = 'attack_timing';
+  } else return;
+  c.playerStamina -= combatCost(s, move); c.sequence += 1;
+}
+export function resolveCombatTiming(s: GameState, sequence: number, offsetMs: number): void {
+  const d = s.duel, c = d?.combat;
+  if (!d || !c || d.outcome || c.sequence !== sequence || !Number.isFinite(offsetMs)) return;
+  if (c.phase !== 'defence_timing' && c.phase !== 'attack_timing') return;
+  const grade = timingGrade(s, offsetMs); c.lastGrade = grade; c.sequence += 1;
+  if (c.phase === 'defence_timing') {
+    const enemy = s.world.characters[d.opponentId];
+    const heavy = d.moveId === 'high_swing' || d.moveId === 'wild_flurry';
+    const incoming = 15 + Math.round(opponentSkill(enemy) * 9) + (heavy ? 5 : 0) - (c.opponentStamina < 20 ? 6 : 0);
+    c.opponentStamina = Math.max(0, c.opponentStamina - (heavy ? 25 : 15));
+    const success = grade !== 'miss';
+    let mitigation = c.defence === 'brace' ? 0.2 : 0;
+    if (success && c.defence === 'block') mitigation = heavy ? 0.55 : grade === 'perfect' ? 0.95 : 0.8;
+    if (success && c.defence === 'dodge') mitigation = 1;
+    if (success && c.defence === 'parry') mitigation = grade === 'perfect' ? 1 : 0.65;
+    c.exposed = grade === 'perfect' && (c.defence === 'parry' || c.defence === 'dodge');
+    const damage = Math.max(0, Math.round(incoming * (1 - mitigation)) - c.protection);
+    d.playerVigour = Math.max(0, d.playerVigour - damage);
+    d.log = [...d.log, `${grade.toUpperCase()} ${c.defence}: ${damage ? `you lose ${damage} vigour` : 'no damage'}${c.exposed ? ' — a counter opening!' : '.'}`].slice(-6);
+    if (d.playerVigour === 0) { finish(d, 'lost', 'Your guard gives way. The fight is over.'); return; }
+    c.phase = 'attack';
+  } else {
+    const base = c.attack === 'heavy' ? 23 : c.attack === 'feint' ? 7 : 13;
+    const factor = grade === 'miss' ? 0 : grade === 'perfect' ? 1.35 : 1;
+    const guard = c.archetype === 'guard' && !c.exposed && !c.feinted ? 5 : 0;
+    const damage = Math.max(0, Math.round((base + c.damage + c.arms * 0.65 + (s.stats.health - 50) / 25 + (c.exposed ? c.defence === 'parry' ? 12 : 6 : 0) + (c.feinted ? 5 : 0)) * factor) - (factor ? guard : 0));
+    d.opponentVigour = Math.max(0, d.opponentVigour - damage);
+    c.feinted = c.attack === 'feint' && grade !== 'miss';
+    d.log = [...d.log, `${grade.toUpperCase()} ${c.attack}: ${damage} damage${c.feinted ? ' — their next defence is weakened' : ''}.`].slice(-6);
+    if (d.opponentVigour === 0) { finish(d, 'won', 'Your opponent yields. The field is yours.'); return; }
+    nextExchange(s);
+  }
+}
+function nextExchange(s: GameState): void {
+  const d = s.duel!, c = d.combat!;
+  const previousDefence = c.defence;
+  d.round += 1; c.sequence += 1;
+  if (d.round > DUEL_MAX_ROUNDS) { const won = d.playerVigour >= d.opponentVigour; finish(d, won ? 'won' : 'lost', won ? 'The witnesses judge the contest in your favour.' : 'The witnesses award the contest to your opponent.'); return; }
+  c.playerStamina = Math.min(100, c.playerStamina + 10); c.opponentStamina = Math.min(100, c.opponentStamina + 10);
+  c.phase = 'defence'; c.exposed = false; c.defence = undefined; c.attack = undefined;
+  if (c.opponentStamina < 25) {
+    c.opponentStamina = Math.min(100, c.opponentStamina + 30);
+    c.phase = 'attack'; c.exposed = true;
+    d.log = [...d.log, 'Your opponent gives up the attack to recover 30 stamina. Counter while their guard is open, or recover too.'].slice(-6);
+    return;
+  }
+  // Veterans adapt to the last defence; every committed threat is still saved.
+  const moves = c.archetype === 'brawler' ? ['wild_flurry', 'grapple', 'high_swing'] : c.archetype === 'guard' ? ['shield_press', 'low_cut', 'high_swing'] : c.archetype === 'duellist' ? ['feint', 'low_cut', 'crowd_play'] : previousDefence === 'parry' ? ['grapple', 'grapple', 'shield_press'] : previousDefence === 'block' ? ['high_swing', 'wild_flurry', 'feint'] : ['high_swing', 'feint', 'grapple', 'shield_press'];
+  d.moveId = pick(moves.filter((id) => id !== d.moveId));
 }

@@ -12,9 +12,14 @@ import { dominantPath } from './pathProgression';
 import { pick, pickWeighted } from './random';
 import { deriveLifeRole } from '@/content/persistentStories';
 import { MAX_OPEN_THREADS, noteChainBeatResolved, openThreads } from './director/threads';
+import { skillLevel } from './rpgProgress';
+import { MaterialId, SkillId } from '@/types/rpg';
 
 export function meetsCondition(s: GameState, c?: Condition): boolean {
   if (!c) return true;
+  if (Object.entries(c.skillAtLeast ?? {}).some(([id, level]) => skillLevel(s, id as SkillId) < level)) return false;
+  if (Object.entries(c.materialsAtLeast ?? {}).some(([id, count]) => s.rpg.materials[id as MaterialId] < count)) return false;
+  if (c.equipped?.some((id) => !Object.values(s.rpg.equipment).some((key) => key?.split(':')[0] === id))) return false;
   if (c.minAge != null && s.age < c.minAge) return false;
   if (c.maxAge != null && s.age > c.maxAge) return false;
   if (c.minGold != null && s.gold < c.minGold) return false;
@@ -74,7 +79,7 @@ export function meetsCondition(s: GameState, c?: Condition): boolean {
       if (cap != null && countLivingKin(s, kind) > cap) return false;
     }
   }
-  if (c.roles && !c.roles.includes(deriveLifeRole(s))) return false;
+  if (c.roles && !c.roles.includes(deriveLifeRole(s)) && !(s.rankIdx >= 5 && c.roles.includes('monarch')) && !(s.rankIdx >= 3 && c.roles.includes('landed_noble'))) return false;
   if (c.worldAtLeast) for (const [key, value] of Object.entries(c.worldAtLeast)) if (value != null && s.world.conditions[key as keyof typeof s.world.conditions] < value) return false;
   if (c.worldAtMost) for (const [key, value] of Object.entries(c.worldAtMost)) if (value != null && s.world.conditions[key as keyof typeof s.world.conditions] > value) return false;
   const player = s.world.characters[s.playerCharacterId];
@@ -161,7 +166,7 @@ export function isChoiceAvailable(s: GameState, ch: Choice): boolean {
 
 /** Whether a choice is selectable AND affordable (for UI gating). */
 export function isChoiceEnabled(s: GameState, ch: Choice): boolean {
-  if (!isChoiceAvailable(s, ch)) return false;
+  if (ch.disabledReason || !isChoiceAvailable(s, ch)) return false;
   if (ch.costGold != null && s.gold < ch.costGold) return false;
   return true;
 }

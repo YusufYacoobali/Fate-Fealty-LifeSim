@@ -1,3 +1,4 @@
+import { recordTradeWork } from './tradeJourney';
 import { CareerDef, GameState } from '@/types/game';
 import { CAREERS, careerAvailability, careerById } from '@/data/careers';
 import { addMoney, addTag, pushFeed } from './gameState';
@@ -5,6 +6,7 @@ import { applyEffects } from './consequenceEngine';
 import { chance, pick, rnd } from './random';
 import { C } from '@/theme/theme';
 import { pickNarrative } from './narrativeEngine';
+import { equipmentCheckBonus, grantSkillXp, skillLevel } from './rpgProgress';
 
 export type CareerAction = 'apply' | 'work' | 'train' | 'promote' | 'resign' | 'borrow' | 'repay' | 'rank_duty' | 'odd_job' | 'craft' | 'trade';
 
@@ -34,8 +36,7 @@ export function careerActionAvailability(state: GameState, action: CareerAction,
   if (action === 'rank_duty') return state.age < 12 ? { available: false, reason: 'Too young for public duties' } : { available: true };
   if (action === 'odd_job') return state.age < 6 ? { available: false, reason: 'Requires age 6' } : { available: true };
   if (action === 'craft') {
-    if (state.age < 10) return { available: false, reason: 'Requires age 10' };
-    return state.gold < 2 ? { available: false, reason: 'Needs 2g for materials' } : { available: true };
+    return { available: false, reason: 'Choose a recipe in Do → Craft' };
   }
   if (action === 'trade') {
     if (state.age < 8) return { available: false, reason: 'Requires age 8' };
@@ -94,7 +95,9 @@ export function performCareerAction(state: GameState, action: CareerAction, care
       // takings fall away, so a year cannot be turned into coin simply by
       // pressing the same button until the clock runs out.
       const seasonFactor = 1 / (1 + Math.max(0, state.occupation.workedThisYear - WORK_BEFORE_GLUT) * 0.28);
-      const full = (career.wage + rnd(0, Math.max(1, career.tier + 1))) * prosperityFactor * guildFactor * patronFactor * seasonFactor;
+      const skill = career.family === 'martial' ? 'arms' : career.family === 'agriculture' ? 'husbandry' : career.family === 'craft' ? 'craftsmanship' : 'scholarship';
+      const expertise = 1 + (skillLevel(state, skill) - 1) * 0.015 + equipmentCheckBonus(state, skill);
+      const full = (career.wage + rnd(0, Math.max(1, career.tier + 1))) * prosperityFactor * guildFactor * patronFactor * seasonFactor * expertise;
 
       // Wages were previously certain. They are not: a poor day is likelier
       // when the work is going badly, when the trade is glutted, or when the
@@ -111,6 +114,7 @@ export function performCareerAction(state: GameState, action: CareerAction, care
       const illnessPenalty = Math.min(4, state.world.characters[state.playerCharacterId]?.healthConditions?.length ?? 0);
       state.occupation.performance = Math.min(100, state.occupation.performance + rnd(1, 4) - illnessPenalty - (badDay ? 2 : 0));
       state.occupation.workedThisYear += 1;
+      recordTradeWork(state);
       if (career.tier === 0) state.occupation.apprenticeshipYears = (state.occupation.apprenticeshipYears ?? 0) + 1;
       if (['craft', 'trade', 'medicine', 'entertainment', 'law'].includes(career.family)) state.occupation.guildStanding = Math.min(100, (state.occupation.guildStanding ?? 0) + 1);
       if (career.healthRisk) applyEffects(state, { health: -career.healthRisk });
@@ -119,6 +123,7 @@ export function performCareerAction(state: GameState, action: CareerAction, care
       } else {
         pushFeed(state, 'WORK', C.good, `${pickNarrative(state, 'career_work', WORK_LINES)} ${career.title} wages: ${pay}g.`, 'good');
       }
+      grantSkillXp(state, skill, badDay ? 3 : 6, badDay ? 'a difficult working day' : 'professional work');
       break;
     }
     case 'train':
@@ -126,6 +131,7 @@ export function performCareerAction(state: GameState, action: CareerAction, care
       state.occupation.experience += 9;
       state.occupation.performance = Math.min(100, state.occupation.performance + 3);
       pushFeed(state, 'TRAINING', C.blue, `You study the finer points of being ${current!.title}. The coarse points remain more memorable.`, 'good');
+      grantSkillXp(state, current!.family === 'agriculture' ? 'husbandry' : current!.family === 'martial' ? 'arms' : current!.family === 'craft' ? 'craftsmanship' : 'scholarship', 6, 'professional training');
       break;
     case 'promote': {
       const next = careerById(current!.promotesTo!)!;
@@ -178,16 +184,7 @@ export function performCareerAction(state: GameState, action: CareerAction, care
       break;
     }
     case 'craft': {
-      addMoney(state, -2);
-      const success = chance(0.42 + state.stats.wits / 220);
-      if (success) {
-        addMoney(state, 9);
-        addTag(state, 'crafted_for_profit');
-        pushFeed(state, 'CRAFTED', C.good, 'Two gold of materials become nine gold of respectable workmanship. Nobody inspects the back too closely.', 'good');
-      } else {
-        applyEffects(state, { wits: 1 });
-        pushFeed(state, 'CRAFTING', C.bad, 'The materials become an educational object with no known buyer.', 'bad');
-      }
+      // Retained action identifier for old callers; recipes own all crafting.
       break;
     }
     case 'trade': {

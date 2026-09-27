@@ -13,6 +13,8 @@ import { clamp } from './random';
 import { promote, demote } from './pathProgression';
 import { killKin as killKinMember, spawnKin } from './kinFactory';
 import { applyRelationshipShift } from './relationshipState';
+import { grantSkillXp } from './rpgProgress';
+import { MaterialId, SkillId } from '@/types/rpg';
 
 // Normal deeds earn rank slowly; explicit promotion-claim scenes keep full value.
 const RANK_PROGRESS_GAIN_MULTIPLIER = 0.65;
@@ -42,10 +44,14 @@ function rankProgressDelta(delta: number, fullStrength: boolean): number {
 
 export function applyEffects(s: GameState, eff?: Effects): GameState {
   if (!eff) return s;
+  for (const [id, amount] of Object.entries(eff.materials ?? {})) s.rpg.materials[id as MaterialId] = Math.max(0, (s.rpg.materials[id as MaterialId] ?? 0) + amount);
+  for (const [id, amount] of Object.entries(eff.goods ?? {})) s.rpg.goods[id] = Math.max(0, (s.rpg.goods[id] ?? 0) + amount);
 
   const harsh = harshness(s);
   const resolveCharacterId = (id?: string) => id ? (s.pendingEvent?.bindings?.[id] ?? id) : s.playerCharacterId;
   const explicitTargetId = resolveCharacterId(eff.targetCharacterId);
+  for (const [id, amount] of Object.entries(eff.skillXp ?? {})) grantSkillXp(s, id as SkillId, amount, 'experience', explicitTargetId);
+  if (eff.debt && eff.debt.principal > 0) s.debts.push({ id: `debt_${s.nextId++}`, principal: eff.debt.principal, lenderId: eff.debt.lenderId, interestRate: eff.debt.interestRate ?? 0.1 });
   const target = explicitTargetId !== s.playerCharacterId
     ? s.world.characters[explicitTargetId]
     : null;

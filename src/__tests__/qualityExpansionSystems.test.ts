@@ -79,7 +79,7 @@ describe('quality expansion simulation slices', () => {
     expect(worldIntegrityIssues(state)).toEqual([]);
   });
 
-  it('migrates a v3 envelope into v4 without deleting or randomising the source save', async () => {
+  it('migrates a v3 envelope into v5 without deleting or randomising the source save', async () => {
     const state = createLife({ worldSeed: 4105 });
     const savedRng = { ...state.world.rngState };
     (state as unknown as { schemaVersion: number }).schemaVersion = 3;
@@ -89,17 +89,17 @@ describe('quality expansion simulation slices', () => {
     await AsyncStorage.setItem('mls:world:v3', legacyEnvelope);
     const result = await loadGame();
     expect(result.blockedByFutureVersion).toBe(false);
-    expect(result.state?.schemaVersion).toBe(4);
+    expect(result.state?.schemaVersion).toBe(5);
     expect(result.state?.world.contentVersion).toBe(CURRENT_CONTENT_VERSION);
     expect(result.state?.world.rngState).toEqual(savedRng);
     expect(['woman', 'man']).toContain(result.state?.gender);
     expect(await AsyncStorage.getItem('mls:world:v3')).toBe(legacyEnvelope);
-    expect(await AsyncStorage.getItem('mls:world:v4')).not.toBeNull();
+    expect(await AsyncStorage.getItem('mls:world:v5')).not.toBeNull();
   });
 
   it('rejects a future save without overwriting it', async () => {
     const state = createLife({ worldSeed: 4106 });
-    const future = JSON.stringify({ schemaVersion: 5, savedAt: 1, game: { ...state, schemaVersion: 5 } });
+    const future = JSON.stringify({ schemaVersion: 6, savedAt: 1, game: { ...state, schemaVersion: 6 } });
     await AsyncStorage.setItem('mls:world:v4', future);
     const result = await loadGame();
     expect(result).toEqual({ state: null, blockedByFutureVersion: true });

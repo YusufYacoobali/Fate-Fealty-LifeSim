@@ -5,6 +5,7 @@
 
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
+import { connectMetaPurchases } from './metaAds';
 import { confirmPurchasedEntitlement, entitlementActive, isProductionRevenueCatKey, PLAN_IDS, pickPackage, PlanId, PurchaseOutcome } from './purchasesLogic';
 
 export { ENTITLEMENT_ID, PLAN_IDS, isProductionRevenueCatKey, mergeEntitlement } from './purchasesLogic';
@@ -29,6 +30,7 @@ function apiKey(): string | null {
 }
 
 export function configurePurchases(): boolean {
+  if (Platform.OS !== 'ios' && Platform.OS !== 'android') return false;
   if (configured) return true;
   const Purchases = rc();
   const key = apiKey();
@@ -36,6 +38,7 @@ export function configurePurchases(): boolean {
   try {
     Purchases.configure({ apiKey: key });
     configured = true;
+    void connectMetaPurchases(Purchases);
     return true;
   } catch {
     return false;
@@ -100,6 +103,9 @@ export async function purchasePremium(plan: PlanId): Promise<PurchaseResult> {
     const offerings = await Purchases.getOfferings();
     const pack = pickPackage(offerings.current, plan);
     if (!pack) return { outcome: 'unavailable', unlocked: false };
+    // The store transaction carries the current attribution attributes to
+    // RevenueCat; it owns all purchase/renewal events sent to Meta.
+    await connectMetaPurchases(Purchases);
     const { customerInfo } = await Purchases.purchasePackage(pack as Parameters<typeof Purchases.purchasePackage>[0]);
     const unlocked = await confirmPurchasedEntitlement(customerInfo, () => Purchases.getCustomerInfo());
     return unlocked

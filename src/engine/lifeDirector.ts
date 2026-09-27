@@ -33,9 +33,10 @@ import { tickStructuredHealth } from './healthEngine';
 import { beginLegalTrial, tickLegalSystem } from './legalEngine';
 import { bindDirectedEvent, directYear } from './director';
 import { tickFactions } from './factionEngine';
+import { maybeHoldingEncounter } from './rpgEngine';
 
 export function ageUp(s: GameState): GameState {
-  if (s.dead || s.pendingEvent) return s; // guard: don't advance mid-popup
+  if (s.dead || s.pendingEvent || s.duel || s.rpg.mission || s.rpg.forge) return s;
 
   s.age += 1;
   s.world.currentYear += 1;
@@ -52,6 +53,7 @@ export function ageUp(s: GameState): GameState {
     const msg = pickAnnualMessage(s, annualMessageIds);
     if (!msg) continue;
     annualMessageIds.push(msg.id);
+    (s.world.characters[s.playerCharacterId].annualNarrativeYears ??= {})[msg.id] = s.world.currentYear;
     applyEffects(s, msg.effects);
     pushFeed(s, `AGE ${s.age} · ${msg.tag}`, msg.tagColor, msg.text, msg.tone);
     checkDeath(s);
@@ -99,7 +101,7 @@ export function ageUp(s: GameState): GameState {
   }
 
   // --- 4. the year's beat, chosen by the director ---
-  const directed = directYear(s);
+  const directed = s.rpg.mission ? { event: null, isLegal: false } : directYear(s);
   if (directed.event) {
     // Only commit the trial's charge once the popup is genuinely being opened.
     if (!s.pendingEvent) {
@@ -109,6 +111,7 @@ export function ageUp(s: GameState): GameState {
     s.world.pacing.quietYearsSinceStory = 0;
   } else {
     s.world.pacing.quietYearsSinceStory += 1;
+    maybeHoldingEncounter(s);
   }
 
   // --- 5. progression + newly-earned acquired traits + life goal ---

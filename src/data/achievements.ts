@@ -29,6 +29,9 @@ export interface AchievementDef {
 const livingChildren = (s: GameState) => s.kin.filter((k) => k.kind === 'child' && k.alive).length;
 
 export const ACHIEVEMENTS: AchievementDef[] = [
+  { id: 'trusted_maker', name: 'Trusted Maker', emoji: '⚒️', desc: 'Earn a trusted professional mark by making faults right.', check: (c) => c.state.world.characters[c.state.playerCharacterId]?.tradeJourney?.ending === 'trusted' },
+  { id: 'prosperous_trader', name: 'Prosperous Trader', emoji: '🪙', desc: 'Complete a profitable trade partnership.', check: (c) => c.state.world.characters[c.state.playerCharacterId]?.tradeJourney?.ending === 'prosperous' },
+  { id: 'independent_hand', name: 'Independent Hand', emoji: '🔨', desc: 'Finish your venture on your own terms.', check: (c) => c.state.world.characters[c.state.playerCharacterId]?.tradeJourney?.ending === 'independent' },
   // --- survival / age ---
   { id: 'coming_of_age', name: 'Coming of Age', emoji: '🌱', desc: 'Reach the age of 18.', check: (c) => c.state.age >= 18 },
   { id: 'greybeard', name: 'Greybeard', emoji: '🧓', desc: 'Live to the ripe age of 70.', check: (c) => c.state.age >= 70 },

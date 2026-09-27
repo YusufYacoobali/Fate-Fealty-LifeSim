@@ -128,7 +128,7 @@ describe('holding management', () => {
     expect(isHoldingUpgradeActive(s, 'stable')).toBe(true);
   });
 
-  it('warns on a first critical Stores year, then triggers famine', () => {
+  it('warns on a first critical Stores year, then opens a harvest decision without duplicate famine damage', () => {
     const s = makeState({
       age: 7,
       holding: { stores: 10, security: 50, loyalty: 50, upgrades: [], lastActionAge: 6, criticalYears: 0 },
@@ -140,8 +140,9 @@ describe('holding management', () => {
     s.holding.lastActionAge = 7;
     tickHoldingYear(s);
     expect(s.holding.criticalYears).toBe(0);
-    expect(s.holding.stores).toBe(25);
-    expect(s.memories.some((m) => m.tag === 'holding_famine')).toBe(true);
+    expect(s.holding.stores).toBe(20);
+    expect(s.rpg.mission).toMatchObject({ kind: 'holding', skill: 'husbandry' });
+    expect(s.stats.health).toBe(52);
   });
 
   it('destroys an active upgrade during a severe Security crisis', () => {

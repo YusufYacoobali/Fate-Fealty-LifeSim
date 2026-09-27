@@ -134,6 +134,17 @@ function archiveOldBackgroundCharacters(state: GameState): void {
   }
   for (const household of state.world.households) household.memberIds = household.memberIds.filter((id) => state.world.characters[id]?.householdId === household.id);
   state.world.households = state.world.households.filter((household) => household.memberIds.length > 0);
+  // A parent can move after conception (or shortly after a recorded birth).
+  // Keep that arrival attached to its family when the empty former home is
+  // pruned, instead of leaving a dangling reference or dropping the child.
+  const retainedHouseholds = new Set(state.world.households.map((household) => household.id));
+  for (const expected of state.world.expectedChildren) {
+    if (retainedHouseholds.has(expected.householdId)) continue;
+    const newHome = expected.parentIds
+      .map((id) => state.world.characters[id]?.householdId)
+      .find((id): id is string => Boolean(id && retainedHouseholds.has(id)));
+    if (newHome) expected.householdId = newHome;
+  }
   for (const household of state.world.households) {
     if (!household.headId || !state.world.characters[household.headId] || !household.memberIds.includes(household.headId)) {
       household.headId = household.memberIds

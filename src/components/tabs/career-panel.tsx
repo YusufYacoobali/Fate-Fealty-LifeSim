@@ -1,3 +1,4 @@
+import { ForgePlayButton, TradeJourneyPanel } from '../rpg/Workshop';
 import React from 'react';
 import { Image, View } from 'react-native';
 import { GameState } from '@/types/game';
@@ -46,7 +47,7 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
         <View style={{ padding: 10, borderTopWidth: 3, borderTopColor: C.parchSd }}>
           <PixelText font="pixel" size={9} color={C.blueDeep}>WORK BUILDS A LIFE</PixelText>
           <PixelText font="body" size={15} color={C.textDark} style={{ marginTop: 5 }}>
-            Take a job, work shifts for gold, then train for experience and better performance. Higher career tiers pay more and help shape your reputation and story path.
+            Take a job, work shifts for gold, then train for experience and better performance. Higher career tiers pay more and shape your story. Professional promotion is separate from social station.
           </PixelText>
           <PixelText font="body" size={14} color={C.textMuted} style={{ marginTop: 5 }}>
             Work at least once each year. Ignoring your job lowers performance and can get you dismissed.
@@ -88,10 +89,11 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
         {button('rank_duty', 'RANK DUTY', 'Earn rewards tied to your social station.')}
         {button(debt ? 'repay' : 'borrow', debt ? 'REPAY DEBT' : 'BORROW 20G', debt ? 'Pay up to 10g.' : 'Debt gains 10% interest each year.')}
         {button('odd_job', 'ODD WORK', 'Small dependable pay without taking a job.')}
-        {button('craft', 'CRAFT TO SELL', 'Spend 2g. Wits decides whether it profits.')}
         {button('trade', 'TRADE GOODS', 'Spend 3g. Charm decides whether it profits.')}
       </View>
 
+      {career?.family === 'craft' && <ForgePlayButton task={{ kind: 'work' }} label="WORK AT THE ANVIL · 1 ACTION" />}
+      <TradeJourneyPanel />
       {!career && (
         <>
           <PixelText font="pixel" size={8} color={C.blueDeep} style={{ marginVertical: 8 }}>CHOOSE AN OCCUPATION</PixelText>

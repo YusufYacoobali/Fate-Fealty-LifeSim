@@ -308,7 +308,13 @@ export function selectCombatMove(s: GameState, sequence: number, move: Defence |
     c.defence = move as Defence; c.phase = 'defence_timing';
   } else if (c.phase === 'attack' && ['quick', 'heavy', 'feint', 'recover'].includes(move)) {
     c.attack = move as Attack;
-    if (move === 'recover') { c.playerStamina = Math.min(100, c.playerStamina + 30); c.lastAction = 'recover'; c.lastMove = 'recover'; c.lastDamage = 0; c.lastGrade = undefined; c.impactId = c.sequence + 1; d.log = [...d.log, 'You give up the attack and recover 30 stamina.'].slice(-6); nextExchange(s); return; }
+    if (move === 'recover') {
+      c.lastStaminaGain = Math.min(30, 100 - c.playerStamina);
+      c.playerStamina += c.lastStaminaGain;
+      c.lastAction = 'recover'; c.lastMove = 'recover'; c.lastDamage = 0; c.lastGrade = undefined; c.impactId = c.sequence + 1;
+      d.log = [...d.log, `You give up the attack and recover ${c.lastStaminaGain} stamina.`].slice(-6);
+      nextExchange(s); return;
+    }
     c.phase = 'attack_timing';
   } else return;
   c.playerStamina -= combatCost(s, move); c.sequence += 1;

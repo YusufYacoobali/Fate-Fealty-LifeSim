@@ -89,13 +89,14 @@ for (const [action, label] of Object.entries(labels)) {
   const hit = !['idle','dodge','miss','recover'].includes(action);
   const impact = heavy ? 14 : action === 'feint' ? 16 : 10;
   const tint = ['block','parry','dodge'].includes(action) ? '96e5ef' : action === 'hurt' || action === 'defeat' ? 'ff9472' : action === 'recover' ? 'b8e889' : 'ffd477';
-  const px = action === 'dodge' ? 52 : attack ? heavy ? 132 : 126 : action === 'hurt' ? 54 : 80;
+  const px = action === 'dodge' ? 64 : attack ? heavy ? 132 : 126 : action === 'hurt' ? 64 : 80;
   const py = heavy ? 174 : action === 'dodge' ? 170 : 190;
-  const ex = action === 'miss' ? 266 : attack ? 226 : 190;
+  const ex = action === 'miss' ? 250 : attack ? 226 : 190;
   let pp = motion([[0,pos(82,190)],[4,pos(attack ? 66 : 82,194)],[impact - 2,pos(px,py)],[impact + 3,pos(px,py)],[impact + 7,pos(attack ? px + 5 : px - 3,190)],[29,pos(82,190)],[47,pos(82,190)]]);
   if (action === 'feint') pp = motion([[0,pos(82,190)],[4,pos(115,186)],[8,pos(88,190)],[14,pos(132,182)],[19,pos(132,182)],[25,pos(108,190)],[32,pos(82,190)],[47,pos(82,190)]]);
   if (action === 'recover') pp = motion([[0,pos(82,190)],[8,pos(76,194)],[20,pos(82,182)],[30,pos(82,190)],[47,pos(82,190)]]);
-  const ep = motion([[0,pos(238,190)],[4,pos(defending ? 224 : 238,192)],[impact - 2,pos(ex,defending ? 182 : 190)],[impact + 3,pos(ex,defending ? 182 : 190)],[impact + 8,pos(attack && action !== 'miss' ? 260 : ex,heavy ? 164 : 190)],[30,pos(action === 'victory' ? 253 : 238,190)],[47,pos(action === 'victory' ? 253 : 238,190)]]);
+  if (action === 'defeat') pp = motion([[0,pos(82,190)],[10,pos(72,184)],[18,pos(68,171)],[27,pos(82,145)],[47,pos(82,145)]]);
+  const ep = motion([[0,pos(238,190)],[4,pos(defending ? 224 : 238,192)],[impact - 2,pos(ex,defending ? 182 : 190)],[impact + 3,pos(ex,defending ? 182 : 190)],[impact + 8,pos(attack && action !== 'miss' ? 260 : ex,heavy ? 164 : 190)],[30,pos(action === 'victory' ? 253 : 238,action === 'victory' ? 145 : 190)],[47,pos(action === 'victory' ? 253 : 238,action === 'victory' ? 145 : 190)]]);
   const pr = action === 'defeat' ? motion([[0,0],[10,-20],[18,25],[27,85],[47,85]])
     : motion([[0,0],[4,attack ? -20 : 0],[impact - 2,attack ? heavy ? 26 : 18 : action === 'dodge' ? -24 : -8],[impact + 3,attack ? heavy ? 26 : 18 : -8],[impact + 8,action === 'hurt' ? -30 : 5],[29,0],[47,0]]);
   const er = action === 'victory' ? motion([[0,0],[impact,0],[impact + 4,22],[23,-42],[30,-88],[47,-88]])
@@ -103,6 +104,7 @@ for (const [action, label] of Object.entries(labels)) {
   const squash = motion([[0,scale(75)],[4,scale(82,66)],[impact - 2,scale(70,82)],[impact + 3,scale(70,82)],[impact + 8,scale(83,67)],[29,scale(75)],[47,scale(75)]]);
   const playerKs = { a: fixed([82,166,0]), p: pp, r: pr, s: squash };
   const rivalKs = { a: fixed([82,166,0]), p: ep, r: er, s: squash };
+  if (action === 'recover') Object.assign(rivalKs, {p:fixed(pos(238,190)),r:fixed(0),s:fixed(scale(75))});
   if (action === 'idle') {
     Object.assign(playerKs,{p:fixed(pos(82,190)),r:fixed(0),s:fixed(scale(75))});
     Object.assign(rivalKs,{p:fixed(pos(238,190)),r:fixed(0),s:fixed(scale(75))});

@@ -4,6 +4,8 @@
 
 ## Automated evidence
 
+- 28 September gameplay follow-up: **583 tests passed across 63 suites**; TypeScript and production exports for iOS, Android and web passed. Browser QA checked category order, quest copy, paid gathering and combat feedback; Lottie previews checked all twelve scenes. See [combat and gathering verification](combat-gathering-polish-2026-09-28.md). Native device performance and release verification remain open.
+
 - Latest navigation/combat follow-up: **63 targeted tests across five suites passed**, including four new navigation/save/result regressions. TypeScript and production exports for iOS, Android and web passed. Browser QA checked Do → Quests, simplified cards and icons, return to Life with auto-scroll disabled, anvil lessons under Craftsmanship, and generated-art combat with timing input outside the bar. See [navigation/combat notes and artwork prompts](navigation-combat-follow-up-2026-09-27.md). These exports are not signed device builds; the older full-suite count below predates this follow-up.
 - Follow-up review: **568/568 tests passed across 62 suites**, including 21 targeted attribution/configuration checks; TypeScript passed. Fixed Android pre-consent provider initialization and explicit app-open reporting, purchase-identifier fallback on SDK errors, and restore consent sequencing. Gameplay review and account-side limitations are detailed in [follow-up verification](verification-follow-up-2026-09-27.md).
 - Follow-up native verification: fresh Android prebuild, `:meta-activation:compileDebugKotlin` and `:app:processReleaseMainManifest` passed (117 Gradle tasks) in an isolated audit project. The merged release manifest has zero Facebook startup providers and all three automatic initialization/logging/advertising-ID flags are false. The audit uses a minimal JavaScript entry point; it is not a signed full-game build or an iOS compile.
@@ -29,7 +31,7 @@ No new cloud build, store submission or release was started. Store approval and 
 ## Release blockers and owner actions
 
 1. App ID and Client Token are now configured in the project's `.env` for local/EAS builds. Confirm the Meta app's platform, business/ad account and signing-key settings; account configuration remains unverified.
-2. Connect RevenueCat's Meta integration and sandbox credentials. Verify all three plans, `pro` entitlement, purchase/renewal delivery and Meta campaign eligibility. The repository's public RevenueCat keys alone do not prove dashboard configuration is correct.
+2. Verify all three purchase plans, the `pro` entitlement and restores in sandbox. RevenueCat → Meta is optional for server-side purchase/subscription reporting and is not required for Meta SDK install events. If using that forwarding integration, configure its credentials and verify purchase/renewal delivery separately. The repository's public RevenueCat keys alone do not prove dashboard configuration is correct.
 3. Update the published privacy policy and both stores' privacy disclosures for Meta/RevenueCat processing. Supply a published Android app terms URL, and confirm the iOS EULA choice.
 4. Build the actual native release for each intended store. Verify consent/ATT, install reporting, subscription/lifetime purchases, restores, offline behavior and withdrawal on real devices and sandbox accounts.
 5. Complete the gameplay/save-migration/device checklist and store metadata/product/review checks in `meta-ads-release.md`. Unit tests and exports cannot prove these are complete.

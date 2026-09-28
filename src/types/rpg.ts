@@ -79,6 +79,7 @@ export interface CombatState {
   /** The resolved move survives nextExchange clearing the pending selection. */
   lastMove?: Attack | Defence;
   lastDamage?: number;
+  lastStaminaGain?: number;
   impactId?: number;
   opponentStartVigour?: number;
   lastGrade?: TimingGrade;

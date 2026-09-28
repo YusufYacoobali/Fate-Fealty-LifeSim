@@ -60,7 +60,7 @@ function Arena({ state, active }: { state: GameState; active: boolean }) {
         <Image source={require('../../../assets/generated/combat-yard-pixel.png')} resizeMode="stretch" style={[StyleSheet.absoluteFill, { width: '100%', height: '100%' }]} accessible={false} />
         <PixelLottie source={scenes[action]} trigger={combat.impactId ?? 0} active={active} stillProgress={['victory', 'defeat'].includes(action) ? 1 : 0} reducedMotion={reducedMotion} />
       </Animated.View>
-      {!reducedMotion && cue.detail && <Animated.View pointerEvents="none" style={[{ position: 'absolute', left: cue.defending ? '9%' : '62%', top: '38%' }, damageStyle]}><PixelText font="pixel" size={13} color={cue.defending && combat.lastDamage ? '#ffb198' : '#fff2c9'} style={{ textShadowColor: '#101a2a', textShadowRadius: 1, textShadowOffset: { width: 2, height: 2 } }}>{cue.detail}</PixelText></Animated.View>}
+      {!reducedMotion && cue.detail && <Animated.View pointerEvents="none" style={[{ position: 'absolute', left: cue.defending || action === 'recover' ? '9%' : '62%', top: '38%' }, damageStyle]}><PixelText font="pixel" size={13} color={cue.defending && combat.lastDamage ? '#ffb198' : '#fff2c9'} style={{ textShadowColor: '#101a2a', textShadowRadius: 1, textShadowOffset: { width: 2, height: 2 } }}>{cue.detail}</PixelText></Animated.View>}
     </View>
     <View accessibilityLiveRegion="polite" style={{ padding: 8, backgroundColor: '#352830', gap: 5 }}><PixelText font="pixel" size={8} color="#f4c57b">{cue.label}{cue.detail ? `  ${cue.detail}` : ''}</PixelText>{combat.lastGrade === 'perfect' && <PixelText font="pixel" size={7} color="#b5e8e8">{combat.exposed ? 'PERFECT · COUNTER NOW!' : 'PERFECT TIMING'}</PixelText>}</View>
   </View>;
@@ -107,7 +107,7 @@ export function DuelModal({ state, onRespond, onClose }: Props) {
   const [paused, setPaused] = useState(AppState.currentState !== 'active');
   useEffect(() => { const sub = AppState.addEventListener('change', (value) => setPaused(value !== 'active')); return () => sub.remove(); }, []);
   const duel = state.duel, combat = duel?.combat; const sequence = combat?.sequence ?? 0; const fightId = combat?.id;
-  const resolve = useCallback((offsetMs: number) => { if (AppState.currentState === 'background' || AppState.currentState === 'inactive') return; haptic('light', state.settings.haptics); dispatch({ type: 'COMBAT_TIMING', fightId, sequence, offsetMs }); }, [dispatch, fightId, sequence, state.settings.haptics]);
+  const resolve = useCallback((offsetMs: number) => { if (AppState.currentState === 'background' || AppState.currentState === 'inactive') return; dispatch({ type: 'COMBAT_TIMING', fightId, sequence, offsetMs }); }, [dispatch, fightId, sequence]);
   const input = useTimingInput(state, paused, resolve);
   if (!duel || !combat) return null;
   const opponent = state.world.characters[duel.opponentId]; const timing = combat.phase === 'attack_timing' || combat.phase === 'defence_timing';

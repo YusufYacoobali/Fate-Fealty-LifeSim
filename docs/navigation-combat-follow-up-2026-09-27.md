@@ -1,5 +1,7 @@
 # Navigation and combat follow-up
 
+The [28 September follow-up](combat-gathering-polish-2026-09-28.md) extends combat to twelve states, reorders Do categories, trims quest copy and adds gathering prices. Its full-suite results supersede the targeted count below.
+
 - Restored the original six main navigation buttons and small colored markers, without artwork icons.
 - Quests is a category inside **Do**. Contracts, Explore, Craft and Careers use text-only buttons. Old saves on the former main Quests tab migrate to Do → Quests, preserving their section and recipe.
 - Contract cards omit the repeated age/action line and the list of choice previews. Each contract and expedition now has a subject-specific pixel icon. Recipe preparation shortcuts remain available.

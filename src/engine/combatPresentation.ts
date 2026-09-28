@@ -10,7 +10,7 @@ export function combatPresentation(duel: NonNullable<GameState['duel']>) {
     : c.lastAction ?? 'idle';
   const labels = { idle: 'WATCH. DEFEND. STRIKE.', strike: 'SLASH!', heavy: 'SMASH!', feint: 'FEINT!', block: 'BLOCK!', parry: 'PARRY!', dodge: 'DODGE!', hurt: 'OUCH!', miss: 'WHOOSH!', recover: 'BREATHE!', victory: 'VICTORY!', defeat: 'DOWN!' };
   const defending = ['block', 'dodge', 'hurt'].includes(c.lastAction ?? '');
-  const detail = c.lastAction === 'recover' ? '+30 STAMINA' : c.lastDamage === undefined ? ''
+  const detail = c.lastAction === 'recover' ? `+${c.lastStaminaGain ?? 30} STAMINA` : c.lastDamage === undefined ? ''
     : c.lastDamage > 0 ? `−${c.lastDamage}` : defending ? 'SAFE' : 'MISS';
-  return { scene, label: labels[scene], detail, defending };
+  return { scene, label: labels[scene], detail, defending } as const;
 }

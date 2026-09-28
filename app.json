@@ -45,7 +45,12 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#0d1b2e"
+          "backgroundColor": "#0d1b2e",
+          "android": {
+            "drawable": {
+              "icon": "./assets/splash/transparent.xml"
+            }
+          }
         }
       ],
       "expo-asset",

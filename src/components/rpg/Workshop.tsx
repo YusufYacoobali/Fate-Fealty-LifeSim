@@ -15,10 +15,12 @@ import { PixelButton } from '../ui/PixelButton';
 import { ModalBackdrop } from '../modals/ModalBackdrop';
 import { C } from '@/theme/theme';
 import { ForgeScene } from './ForgeScene';
+import { ProUnlockButton } from './ProUnlockButton';
 
 export function ForgePlayButton({ task, label = 'MAKE AT THE ANVIL · SAME COST' }: { task: ForgeTask; label?: string }) {
   const { state, dispatch } = useGame();
   const reason = forgeAvailability(state, task);
+  if (!state.lifetimeUnlocked) return <ProUnlockButton feature={task.kind === 'practice' ? 'ANVIL PRACTICE' : 'MAKE AT THE ANVIL'} />;
   if (task.kind !== 'practice' && forgeAllowance(state) === 0) return null;
   return <PixelButton bg={C.charm} shadow={C.charmDark} disabled={!!reason} onPress={() => dispatch({ type: 'FORGE_START', task, revision: state.rpg.revision })} style={{ marginTop: 8 }} innerStyle={{ padding: 12, minHeight: 44 }}>
     <PixelText font="pixel" size={7} color={C.blueDark}>{label}</PixelText>

@@ -11,7 +11,7 @@ import { rpgAvailability } from '@/engine/rpgEngine';
 import { timingGrade } from '@/engine/duelEngine';
 
 function ready() {
-  const s = makeState({ age: 24, gold: 50 });
+  const s = makeState({ age: 24, gold: 50, lifetimeUnlocked: true });
   s.world.currentYear = s.bornYear + s.age;
   s.world.characters.roderick.age = 26;
   s.rpg.materials = { timber: 20, stone: 20, iron: 20, herbs: 20 };

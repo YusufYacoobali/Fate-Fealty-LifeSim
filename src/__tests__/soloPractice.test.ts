@@ -7,7 +7,7 @@ import { skillsOf } from '@/engine/rpgProgress';
 import { forgeAvailability } from '@/engine/forgeEngine';
 import { Attack } from '@/types/rpg';
 
-function ready() { return makeState({ age: 24, gold: 50 }); }
+function ready() { return makeState({ age: 24, gold: 50, lifetimeUnlocked: true }); }
 function start(s = ready()) { return gameReducer(s, { type: 'ARMS_PRACTICE_START', revision: s.rpg.revision }); }
 function swing(s: ReturnType<typeof ready>, move: Attack = 'quick', offsetMs = 0) {
   s = gameReducer(s, { type: 'COMBAT_SELECT', fightId: s.duel!.combat!.id, sequence: s.duel!.combat!.sequence, move });

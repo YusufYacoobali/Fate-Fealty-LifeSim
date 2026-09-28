@@ -37,6 +37,7 @@ import { AchievementToast } from '@/components/modals/AchievementToast';
 import { ChronicleScreen } from '@/components/modals/ChronicleScreen';
 import { OnboardingScreen } from '@/screens/OnboardingScreen';
 import { PremiumShopScreen } from '@/screens/PremiumShopScreen';
+import { PremiumShopContext } from '@/components/premium/PremiumShopContext';
 import { MIN_ANDROID_BOTTOM_NAV_GUARD } from '@/components/systemLayout';
 import { useGameFeedback } from '@/state/hooks/useGameFeedback';
 import { GameAudioController } from '@/state/hooks/useGameAudio';
@@ -154,6 +155,7 @@ export function GameScreen() {
   const meStats = stats.map((s) => ({ ...s, label: STAT_STYLES[s.key].label }));
 
   return (
+    <PremiumShopContext.Provider value={() => setCartOpen(true)}>
     <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: C.blue }}>
       <GameAudioController state={state} loaded={loaded} />
       <View style={{ flex: 1, backgroundColor: C.sky }}>
@@ -424,5 +426,6 @@ export function GameScreen() {
         />
       </View>
     </SafeAreaView>
+    </PremiumShopContext.Provider>
   );
 }

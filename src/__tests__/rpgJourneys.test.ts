@@ -13,6 +13,7 @@ import { worldIntegrityIssues } from '@/engine/worldIntegrity';
 function ready(seed = 74000): GameState {
   const s = createLife({ worldSeed: seed });
   s.age = 24; s.world.currentYear = s.bornYear + 24; s.gold = 200;
+  s.lifetimeUnlocked = true;
   s.stats = { health: 100, charm: 70, wits: 70, faith: 60 };
   s.rpg.materials = { timber: 40, stone: 40, iron: 40, herbs: 40 };
   syncPlayerToWorld(s); refreshWorkBoard(s); return s;

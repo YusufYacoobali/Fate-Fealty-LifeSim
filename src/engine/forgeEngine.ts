@@ -18,6 +18,7 @@ export function forgeAllowance(s: GameState): number {
   return record?.ownerId === s.playerCharacterId && record.year === s.world.currentYear ? Math.max(0, FORGE_BONUS_LIMIT - record.used) : FORGE_BONUS_LIMIT;
 }
 export function forgeAvailability(s: GameState, task: ForgeTask): string | null {
+  if (!s.lifetimeUnlocked) return 'Requires Pro';
   if (s.dead || s.pendingEvent || s.duel || s.rpg.mission || s.rpg.forge) return 'Finish the current encounter';
   if (s.tags.includes('imprisoned')) return 'Cannot visit the forge while imprisoned';
   if (s.age < 10) return 'The forge opens at age 10';

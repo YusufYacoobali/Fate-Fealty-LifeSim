@@ -81,10 +81,15 @@ export const PREMIUM_BENEFIT_DETAILS = [
     title: 'TAKE 50 ACTIONS A YEAR',
     body: 'Raise the yearly action limit from 24 to 50 for longer, more flexible lives.',
   },
+  {
+    title: 'CRAFT AND TRAIN',
+    body: 'Craft recipes, spar in the yard, and play solo sword and anvil practice mini-games.',
+  },
 ] as const;
 
 /** Short enough to keep the onboarding paywall on one screen. */
 export const PREMIUM_BENEFIT_LINES = [
+  'Crafting, sword and anvil mini-games',
   'Baron and Monarch ranks',
   'Royal Holding orders and buildings',
   'Premium events and story arcs',

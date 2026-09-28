@@ -6,7 +6,7 @@ import Animated, { cancelAnimation, Easing, ReduceMotion, useReducedMotion, useA
 import { Gesture } from 'react-native-gesture-handler';
 import { GameState } from '@/types/game';
 import { Attack, Defence } from '@/types/rpg';
-import { DUEL_MAX_ROUNDS, combatChoiceReason, combatCost, duelTelegraph, timingWindows } from '@/engine/duelEngine';
+import { DUEL_MAX_ROUNDS, SOLO_PRACTICE_SWINGS, combatChoiceReason, combatCost, duelTelegraph, timingWindows } from '@/engine/duelEngine';
 import { combatPresentation } from '@/engine/combatPresentation';
 import { useGame } from '@/state/GameContext';
 import { haptic } from '@/services/haptics';
@@ -30,6 +30,13 @@ const scenes = {
   parry: require('../../../assets/animations/pixel-combat-parry.json'),
   recover: require('../../../assets/animations/pixel-combat-recover.json'),
   defeat: require('../../../assets/animations/pixel-combat-defeat.json'),
+};
+const soloScenes: Partial<typeof scenes> = {
+  idle: require('../../../assets/animations/pixel-solo-idle.json'),
+  strike: require('../../../assets/animations/pixel-solo-strike.json'),
+  heavy: require('../../../assets/animations/pixel-solo-heavy.json'),
+  feint: require('../../../assets/animations/pixel-solo-feint.json'),
+  miss: require('../../../assets/animations/pixel-solo-miss.json'),
 };
 function Arena({ state, active }: { state: GameState; active: boolean }) {
   const duel = state.duel!, combat = duel.combat!;
@@ -55,10 +62,10 @@ function Arena({ state, active }: { state: GameState; active: boolean }) {
   const cameraStyle = useAnimatedStyle(() => ({ transform: [{ translateX: camera.get() }, { scale: 1.025 }] }));
   const damageStyle = useAnimatedStyle(() => ({ opacity: pop.get() === 0 ? 0 : pop.get() > .8 ? (1 - pop.get()) * 5 : 1, transform: [{ translateY: -pop.get() * 30 }, { scale: pop.get() < .25 ? .9 + pop.get() * 2 : 1.4 - (pop.get() - .25) * .4 }] }));
   return <View style={{ borderWidth: 3, borderColor: '#b4783b', marginVertical: 10, backgroundColor: '#271e25' }}>
-    <View accessibilityLabel={combat.practice ? 'Practice in the village yard' : 'Blue fighter faces the red challenger in the village yard'} style={{ width: '100%', aspectRatio: 320 / 208, overflow: 'hidden' }}>
+    <View accessibilityLabel={combat.solo ? 'Solo sword practice in the village yard' : combat.practice ? 'Practice in the village yard' : 'Blue fighter faces the red challenger in the village yard'} style={{ width: '100%', aspectRatio: 320 / 208, overflow: 'hidden' }}>
       <Animated.View style={[StyleSheet.absoluteFill, cameraStyle]}>
         <Image source={require('../../../assets/generated/combat-yard-pixel.png')} resizeMode="stretch" style={[StyleSheet.absoluteFill, { width: '100%', height: '100%' }]} accessible={false} />
-        <PixelLottie source={scenes[action]} trigger={combat.impactId ?? 0} active={active} stillProgress={['victory', 'defeat'].includes(action) ? 1 : 0} reducedMotion={reducedMotion} />
+        <PixelLottie source={combat.solo ? soloScenes[action] ?? soloScenes.idle : scenes[action]} trigger={combat.impactId ?? 0} active={active} stillProgress={['victory', 'defeat'].includes(action) ? 1 : 0} reducedMotion={reducedMotion} />
       </Animated.View>
       {!reducedMotion && cue.detail && <Animated.View pointerEvents="none" style={[{ position: 'absolute', left: cue.defending || action === 'recover' ? '9%' : '62%', top: '38%' }, damageStyle]}><PixelText font="pixel" size={13} color={cue.defending && combat.lastDamage ? '#ffb198' : '#fff2c9'} style={{ textShadowColor: '#101a2a', textShadowRadius: 1, textShadowOffset: { width: 2, height: 2 } }}>{cue.detail}</PixelText></Animated.View>}
     </View>
@@ -111,16 +118,18 @@ export function DuelModal({ state, onRespond, onClose }: Props) {
   const input = useTimingInput(state, paused, resolve);
   if (!duel || !combat) return null;
   const opponent = state.world.characters[duel.opponentId]; const timing = combat.phase === 'attack_timing' || combat.phase === 'defence_timing';
-  const moves: (Defence | Attack)[] = combat.phase === 'defence' ? ['block', 'dodge', 'parry', 'brace'] : ['quick', 'heavy', 'feint', 'recover'];
+  const moves: (Defence | Attack)[] = combat.solo ? ['quick', 'heavy', 'feint'] : combat.phase === 'defence' ? ['block', 'dodge', 'parry', 'brace'] : ['quick', 'heavy', 'feint', 'recover'];
   const hints: Record<Defence | Attack, string> = { block: 'Wide window; heavy blows can break through', dodge: 'Good timing avoids damage; armour costs stamina', parry: 'Perfect timing opens a powerful counter', brace: 'Free fallback; absorbs only a little damage', quick: 'Cheap, steady damage', heavy: 'Strong against an exposed opponent', feint: 'Weakens their next defence', recover: 'Give up the strike; restore 30 stamina' };
+  if (combat.solo) Object.assign(hints, { quick: 'A short, clean cut', heavy: 'A full sweeping strike', feint: 'A false start, then a quick cut' });
   return <ModalBackdrop zIndex={70} gesture={input.gesture}><ScrollView scrollEnabled={!timing} style={{ maxHeight: height - 65, width: '100%', maxWidth: 480, alignSelf: 'center', backgroundColor: '#271e25', borderWidth: 3, borderColor: '#b4783b' }} contentContainerStyle={{ padding: 12 }}>
-    <PixelText font="pixel" size={10} color={C.charm}>{combat.practice ? 'THE TRAINING YARD' : duel.kind === 'duel' ? 'A DUEL' : 'A CLASH'}</PixelText><PixelText font="body" size={17} color={C.creamBlue}>{opponent?.name} · {combat.archetype} · Exchange {Math.min(duel.round, DUEL_MAX_ROUNDS)}/{DUEL_MAX_ROUNDS}</PixelText>
-    <View style={{ flexDirection: 'row', gap: 12, marginTop: 8 }}>{[{ name: 'THEE', vigour: duel.playerVigour, stamina: combat.playerStamina }, { name: 'OPPONENT', vigour: duel.opponentVigour, stamina: combat.opponentStamina }].map((fighter) => <View key={fighter.name} style={{ flex: 1 }}><PixelText font="pixel" size={7} color={C.cream}>{fighter.name} · {fighter.vigour}</PixelText><StatBar value={fighter.vigour} color={C.faith} dark={C.faithDark} height={10} /><PixelText font="body" size={14} color={C.creamBlue}>Stamina {fighter.stamina}</PixelText><StatBar value={fighter.stamina} color={C.charm} dark={C.charmDark} height={6} /></View>)}</View>
+    <PixelText font="pixel" size={10} color={C.charm}>{combat.solo ? 'SOLO SWORD PRACTICE' : combat.practice ? 'THE TRAINING YARD' : duel.kind === 'duel' ? 'A DUEL' : 'A CLASH'}</PixelText><PixelText font="body" size={17} color={C.creamBlue}>{combat.solo ? `${combat.solo.completed}/${SOLO_PRACTICE_SWINGS} swings${duel.outcome ? "" : " · Finish for 6 Arms XP"}` : `${opponent?.name} · ${combat.archetype} · Exchange ${Math.min(duel.round, DUEL_MAX_ROUNDS)}/${DUEL_MAX_ROUNDS}`}</PixelText>
+    {!combat.solo && <View style={{ flexDirection: 'row', gap: 12, marginTop: 8 }}>{[{ name: 'THEE', vigour: duel.playerVigour, stamina: combat.playerStamina }, { name: 'OPPONENT', vigour: duel.opponentVigour, stamina: combat.opponentStamina }].map((fighter) => <View key={fighter.name} style={{ flex: 1 }}><PixelText font="pixel" size={7} color={C.cream}>{fighter.name} · {fighter.vigour}</PixelText><StatBar value={fighter.vigour} color={C.faith} dark={C.faithDark} height={10} /><PixelText font="body" size={14} color={C.creamBlue}>Stamina {fighter.stamina}</PixelText><StatBar value={fighter.stamina} color={C.charm} dark={C.charmDark} height={6} /></View>)}</View>}
     {duel.stakes && <PixelText font="body" size={16} color="#f4c57b">{duel.stakes.summary}</PixelText>}
     <Arena state={state} active={!paused} />{duel.log.slice(-2).map((line, i) => <PixelText key={`${sequence}:${i}`} font="body" size={15} color={C.creamBlue} style={{ marginBottom: 4 }}>{line}</PixelText>)}
-    {duel.outcome ? <><PixelText font="pixel" size={12} color={duel.outcome === 'won' ? C.faith : C.health} style={{ marginVertical: 12 }}>{duel.outcome === 'won' ? 'VICTORY' : duel.outcome === 'lost' ? 'DEFEAT' : 'YIELDED'}</PixelText><PixelText font="body" size={18} color={C.cream}>{duel.verdict}</PixelText><PixelButton bg={C.charm} shadow={C.charmDark} onPress={onClose} style={{ marginTop: 12 }} innerStyle={{ padding: 14 }}><PixelText font="pixel" size={9} color={C.blueDark}>{combat.practice ? 'LEAVE THE YARD' : 'CONTINUE'}</PixelText></PixelButton></> : <>
-      <PixelText font="body" size={19} color={C.cream} style={{ marginVertical: 8 }}>{combat.phase.startsWith('defence') ? duelTelegraph(state) : combat.exposed ? 'An opening! Choose how to exploit it.' : 'Your turn to strike — or catch your breath.'}</PixelText>
-      {timing ? input.bar : <View style={{ gap: 7, flexDirection: 'row', flexWrap: 'wrap' }}>{moves.map((move) => { const reason = combatChoiceReason(state, move); return <PixelButton style={{ width: '48.5%' }} key={move} bg={C.lightFill} shadow={C.paleEdge} disabled={!!reason || paused} onPress={() => dispatch({ type: 'COMBAT_SELECT', fightId, sequence, move })} innerStyle={{ padding: 9, minHeight: 90 }}><PixelText font="pixel" size={7} color={C.blueDark}>{move.toUpperCase()} · {combatCost(state, move)} STAMINA</PixelText><PixelText font="body" size={15} color={reason ? C.bad : C.blue}>{reason ?? hints[move]}</PixelText></PixelButton>; })}<PixelButton style={{ width: '100%' }} bg="#432d32" shadow={C.healthDark} disabled={paused} onPress={() => onRespond('yield')} innerStyle={{ padding: 12, minHeight: 44 }}><PixelText font="pixel" size={8} color={C.health}>YIELD</PixelText></PixelButton></View>}
+    {duel.outcome ? <><PixelText font="pixel" size={12} color={duel.outcome === 'won' ? C.faith : C.health} style={{ marginVertical: 12 }}>{combat.solo ? 'PRACTICE COMPLETE' : duel.outcome === 'won' ? 'VICTORY' : duel.outcome === 'lost' ? 'DEFEAT' : 'YIELDED'}</PixelText><PixelText font="body" size={18} color={C.cream}>{duel.verdict}</PixelText><PixelButton bg={C.charm} shadow={C.charmDark} onPress={onClose} style={{ marginTop: 12 }} innerStyle={{ padding: 14 }}><PixelText font="pixel" size={9} color={C.blueDark}>{combat.practice ? 'LEAVE THE YARD' : 'CONTINUE'}</PixelText></PixelButton></> : <>
+      <PixelText font="body" size={19} color={C.cream} style={{ marginVertical: 8 }}>{combat.solo ? 'Choose a swing, then tap anywhere as the marker reaches gold.' : combat.phase.startsWith('defence') ? duelTelegraph(state) : combat.exposed ? 'An opening! Choose how to exploit it.' : 'Your turn to strike — or catch your breath.'}</PixelText>
+      {timing ? input.bar : <View style={{ gap: 7, flexDirection: 'row', flexWrap: 'wrap' }}>{moves.map((move) => { const reason = combatChoiceReason(state, move); return <PixelButton style={{ width: '48.5%' }} key={move} bg={C.lightFill} shadow={C.paleEdge} disabled={!!reason || paused} onPress={() => dispatch({ type: 'COMBAT_SELECT', fightId, sequence, move })} innerStyle={{ padding: 9, minHeight: 90 }}><PixelText font="pixel" size={7} color={C.blueDark}>{move.toUpperCase()}{!combat.solo && ` · ${combatCost(state, move)} STAMINA`}</PixelText><PixelText font="body" size={15} color={reason ? C.bad : C.blue}>{reason ?? hints[move]}</PixelText></PixelButton>; })}{!combat.solo && <PixelButton style={{ width: '100%' }} bg="#432d32" shadow={C.healthDark} disabled={paused} onPress={() => onRespond('yield')} innerStyle={{ padding: 12, minHeight: 44 }}><PixelText font="pixel" size={8} color={C.health}>YIELD</PixelText></PixelButton>}</View>}
+      {combat.solo && <PixelButton bg={C.lightFill} shadow={C.paleEdge} disabled={paused} onPress={() => dispatch({ type: 'ARMS_PRACTICE_FINISH', fightId: combat.id })} style={{ marginTop: 10 }} innerStyle={{ padding: 12, minHeight: 44 }}><PixelText font="body" size={17} color={C.blueDark}>Quick finish · earn 6 XP</PixelText></PixelButton>}
     </>}
   </ScrollView></ModalBackdrop>;
 }

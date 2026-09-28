@@ -82,7 +82,8 @@ function sweep(name, impact, at, tint, direction = 1, size = 100) {
 }
 
 const labels = { idle: '', strike: 'SLASH!', heavy: 'SMASH!', feint: 'FEINT!', block: 'BLOCK!', parry: 'PARRY!', dodge: 'DODGE!', hurt: 'OUCH!', miss: 'WHOOSH!', recover: 'BREATHE!', victory: 'VICTORY!', defeat: 'DOWN!' };
-for (const [action, label] of Object.entries(labels)) {
+const soloActions = ['idle', 'strike', 'heavy', 'feint', 'miss'];
+for (const [action, label, solo] of Object.entries(labels).flatMap(([action, label]) => [[action, label, false], ...(soloActions.includes(action) ? [[action, label, true]] : [])])) {
   const heavy = action === 'heavy';
   const attack = ['strike','heavy','feint','miss','victory'].includes(action);
   const defending = ['block','parry','dodge','hurt','defeat'].includes(action);
@@ -111,7 +112,7 @@ for (const [action, label] of Object.entries(labels)) {
   }
   const effects = [];
   if (label) effects.push(...word(label,tint,impact,['victory','defeat'].includes(action)));
-  if (hit) effects.push(...sparks(impact,pos(defending ? 124 : 190,122),tint,heavy ? 20 : 14));
+  if (hit && !solo) effects.push(...sparks(impact,pos(defending ? 124 : 190,122),tint,heavy ? 20 : 14));
   if (attack || defending) {
     effects.push(sweep('Steel slash arc',impact,pos(defending ? 140 : 169,130),'fff1cc',defending ? -1 : 1,heavy ? 120 : 88));
     effects.push(sweep('Gold slash edge',impact - 1,pos(defending ? 140 : 169,130),'f4b851',defending ? -1 : 1,heavy ? 130 : 96));
@@ -123,7 +124,8 @@ for (const [action, label] of Object.entries(labels)) {
     p:motion([[0,pos(attack ? 120 : 78,191)],[impact+5,pos(attack ? 120 : 78,191)],[impact+12,pos((attack ? 120 : 78)+(i-4)*8,180-i%3*5)],[impact+20,pos((attack ? 120 : 78)+(i-4)*12,189)]]),o:show(impact+5,impact+19,70),
   }));
   const streaks = action === 'idle' || action === 'recover' ? [] : Array.from({length:5},(_,i)=>shape('Speed streak '+i,[rect(0,0,24+i%2*15,2)],'f8da96',{p:fixed(pos(attack?45:245,100+i*15)),o:show(impact-4,impact-1,50)}));
-  const layers = [...effects,...dust,fighter('combat-player-pixel','Blue adventurer',playerKs),fighter('combat-rival-pixel','Red challenger',rivalKs),...ghosts,...streaks,
-    ...[82,238].map(x=>shape('Ground shadow',[{ty:'el',p:fixed([0,0]),s:fixed([58,9])}],'332631',{p:fixed(pos(x,192)),o:fixed(28)}))];
-  fs.writeFileSync(path.join(root,`assets/animations/pixel-combat-${action}.json`),JSON.stringify({v:'5.12.2',fr:40,ip:0,op:end,w:320,h:208,nm:'pixel-combat-'+action,ddd:0,assets,layers:layers.map((l,i)=>({...l,ind:i+1}))})+'\n');
+  const layers = [...effects,...dust,fighter('combat-player-pixel','Blue adventurer',playerKs),...(solo ? [] : [fighter('combat-rival-pixel','Red challenger',rivalKs)]),...ghosts,...streaks,
+    ...(solo ? [82] : [82,238]).map(x=>shape('Ground shadow',[{ty:'el',p:fixed([0,0]),s:fixed([58,9])}],'332631',{p:fixed(pos(x,192)),o:fixed(28)}))];
+  const name = `pixel-${solo ? 'solo' : 'combat'}-${action}`;
+  fs.writeFileSync(path.join(root,`assets/animations/${name}.json`),JSON.stringify({v:'5.12.2',fr:40,ip:0,op:end,w:320,h:208,nm:name,ddd:0,assets:solo ? [assets[0]] : assets,layers:layers.map((l,i)=>({...l,ind:i+1}))})+'\n');
 }

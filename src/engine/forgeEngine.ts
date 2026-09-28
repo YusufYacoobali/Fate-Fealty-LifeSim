@@ -22,9 +22,7 @@ export function forgeAvailability(s: GameState, task: ForgeTask): string | null 
   if (s.tags.includes('imprisoned')) return 'Cannot visit the forge while imprisoned';
   if (s.age < 10) return 'The forge opens at age 10';
   if (task.kind === 'practice') {
-    if (skillLevel(s, 'craftsmanship') >= 3) return 'Beginner lessons complete; craft items or take workshop shifts';
-    if (s.rpg.forgeLesson?.ownerId === s.playerCharacterId && s.rpg.forgeLesson.year === s.world.currentYear) return 'Lesson completed this year';
-    return s.actionClock.used >= s.actionClock.cap ? 'Needs 1 action' : null;
+    return s.actionClock.used >= s.actionClock.cap ? 'Needs 1 action' : rpgAvailability(s, { kind: 'train', id: 'craftsmanship' });
   }
   if (task.kind === 'recipe') {
     if (!RECIPES.some((r) => r.id === task.recipeId && (r.materials.iron ?? 0) > 0)) return 'Choose an ironworking recipe';
@@ -42,7 +40,7 @@ export function forgeAvailability(s: GameState, task: ForgeTask): string | null 
 export function startForge(s: GameState, task: ForgeTask): void {
   if (forgeAvailability(s, task)) return;
   const level = skillLevel(s, 'craftsmanship');
-  let title = 'A lesson at the anvil';
+  let title = level < 3 ? 'A lesson at the anvil' : 'Practice at the anvil';
   if (task.kind === 'practice') {
     spendAction(s);
     s.rpg.forgeLesson = { ownerId: s.playerCharacterId, year: s.world.currentYear };
@@ -98,7 +96,7 @@ export function finishForge(s: GameState, id: string, quick: boolean): void {
   run.phase = 'result'; // Settle before emitting rewards: replayed inputs are harmless.
   if (run.lessonXp) {
     grantSkillXp(s, 'craftsmanship', run.lessonXp, 'a lesson at the anvil');
-    pushFeed(s, 'ANVIL LESSON', '#9b5c29', 'You straighten a bent hinge under the smith’s watchful eye. Six Craftsmanship XP; one fewer crooked door in the village.', 'good');
+    pushFeed(s, 'ANVIL PRACTICE', '#9b5c29', run.level < 3 ? 'You straighten a bent hinge under the smith’s watchful eye. +6 Craftsmanship XP; one fewer crooked door in the village.' : 'You work a piece of scrap through five careful blows. The smith checks the edge, then reluctantly admits it is straight. +6 Craftsmanship XP.', 'good');
   }
   if (run.bonusXp) grantSkillXp(s, 'craftsmanship', run.bonusXp, 'careful forge work — bonus');
   if (run.bonusIron) s.rpg.materials.iron += run.bonusIron;

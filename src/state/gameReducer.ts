@@ -23,7 +23,7 @@ import { runWithWorldRng } from '@/engine/random';
 import { eventById } from '@/engine/eventPicker';
 import { continueAsHeir } from '@/engine/successionEngine';
 import { DailyRewardBonus } from '@/services/dailyRewards';
-import { concludeDuel, respondToDuel, selectCombatMove, resolveCombatTiming, startDuel } from '@/engine/duelEngine';
+import { concludeDuel, respondToDuel, selectCombatMove, resolveCombatTiming, startDuel, startArmsPractice, finishArmsPractice } from '@/engine/duelEngine';
 import { RpgCommand, performRpgCommand, chooseMission, refreshWorkBoard, resumeMissionAfterDuel } from '@/engine/rpgEngine';
 import { awardActivitySkill, grantSkillXp } from '@/engine/rpgProgress';
 import { Attack, Defence } from '@/types/rpg';
@@ -47,6 +47,8 @@ export type GameAction =
   | { type: 'COMBAT_SELECT'; sequence: number; move: Defence | Attack; fightId?: string }
   | { type: 'COMBAT_TIMING'; sequence: number; offsetMs: number; fightId?: string }
   | { type: 'PRACTICE_DUEL' }
+  | { type: 'ARMS_PRACTICE_START'; revision: number }
+  | { type: 'ARMS_PRACTICE_FINISH'; fightId: string }
   | { type: 'HYDRATE'; state: GameState }
   | { type: 'AGE_UP' }
   | { type: 'CHOOSE'; choice: Choice }
@@ -149,7 +151,10 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     case 'MISSION_CHOOSE':
     case 'COMBAT_SELECT':
     case 'COMBAT_TIMING':
+    case 'ARMS_PRACTICE_START':
+    case 'ARMS_PRACTICE_FINISH':
     case 'PRACTICE_DUEL': {
+      if (action.type === 'ARMS_PRACTICE_START' && action.revision !== state.rpg.revision) return state;
       if (action.type === 'RPG' && action.revision !== undefined && action.revision !== state.rpg.revision) return state;
       if ((action.type === 'COMBAT_SELECT' || action.type === 'COMBAT_TIMING') && action.fightId !== undefined && action.fightId !== state.duel?.combat?.id) return state;
       const s = cloneState(state);
@@ -158,6 +163,8 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         if (action.type === 'MISSION_CHOOSE') chooseMission(s, action.missionId, action.optionId);
         if (action.type === 'COMBAT_SELECT') selectCombatMove(s, action.sequence, action.move);
         if (action.type === 'COMBAT_TIMING') resolveCombatTiming(s, action.sequence, action.offsetMs);
+        if (action.type === 'ARMS_PRACTICE_START') { startArmsPractice(s); s.rpg.revision += 1; }
+        if (action.type === 'ARMS_PRACTICE_FINISH') finishArmsPractice(s, action.fightId);
         if (action.type === 'PRACTICE_DUEL' && !s.dead && !s.duel && !s.pendingEvent && !s.rpg.mission && !s.rpg.forge && s.age >= 8 && !s.tags.includes('imprisoned')) {
           const opponent = Object.values(s.world.characters).find((p) => p.alive && p.age >= 18 && p.id !== s.playerCharacterId);
           if (opponent) startDuel(s, opponent.id, 'duel', true);

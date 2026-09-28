@@ -4,6 +4,8 @@
 
 ## Automated evidence
 
+- Latest practice follow-up: **96 unique targeted tests passed across seven suites**, including solo swing persistence/reward guards and advanced anvil level progression. TypeScript and iOS/Android/web exports passed; browser QA confirmed Yard first, solo combat artwork/timing and both training rewards. See [practice mini-games](practice-minigames-2026-09-28.md). The full-suite count below predates these practice changes.
+
 - 28 September gameplay follow-up: **583 tests passed across 63 suites**; TypeScript and production exports for iOS, Android and web passed. Browser QA checked category order, quest copy, paid gathering and combat feedback; Lottie previews checked all twelve scenes. See [combat and gathering verification](combat-gathering-polish-2026-09-28.md). Native device performance and release verification remain open.
 
 - Latest navigation/combat follow-up: **63 targeted tests across five suites passed**, including four new navigation/save/result regressions. TypeScript and production exports for iOS, Android and web passed. Browser QA checked Do → Quests, simplified cards and icons, return to Life with auto-scroll disabled, anvil lessons under Craftsmanship, and generated-art combat with timing input outside the bar. See [navigation/combat notes and artwork prompts](navigation-combat-follow-up-2026-09-27.md). These exports are not signed device builds; the older full-suite count below predates this follow-up.

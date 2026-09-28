@@ -89,17 +89,21 @@ describe('optional forge', () => {
     expect(s.rpg.forge!.scores).toHaveLength(before);
     perfect(s); syncPlayerToWorld(s); reload();
   });
-  it('teaches beginners once a year for one action and grants lesson XP exactly once', () => {
+  it('supports repeated anvil training for one action per session and grants XP exactly once', () => {
     const s = ready(); const iron = s.rpg.materials.iron, gold = s.gold;
     startForge(s, { kind: 'practice' }); perfect(s);
     expect(s.rpg.forge?.scores).toEqual([100, 100, 100, 100, 100]);
     expect(s.rpg.forge?.bonusXp).toBe(0); expect(skillsOf(s).craftsmanship.xp).toBe(6);
     expect(s.actionClock.used).toBe(1);
     finishForge(s, s.rpg.forge!.id, true); expect(skillsOf(s).craftsmanship.xp).toBe(6);
-    closeForge(s, s.rpg.forge!.id); expect(forgeAvailability(s, { kind: 'practice' })).toContain('this year');
+    closeForge(s, s.rpg.forge!.id); expect(forgeAvailability(s, { kind: 'practice' })).toBeNull();
     expect(s.gold).toBe(gold); expect(s.rpg.materials.iron).toBe(iron); expect(forgeAllowance(s)).toBe(3);
     nextYear(s); expect(forgeAvailability(s, { kind: 'practice' })).toBeNull();
-    skillsOf(s).craftsmanship.level = 3; expect(forgeAvailability(s, { kind: 'practice' })).toContain('complete');
+    skillsOf(s).craftsmanship.level = 3; expect(forgeAvailability(s, { kind: 'practice' })).toBeNull();
+    startForge(s, { kind: 'practice' }); perfect(s);
+    expect(skillsOf(s).craftsmanship.xp).toBe(12);
+    closeForge(s, s.rpg.forge!.id);
+    skillsOf(s).craftsmanship.level = 10; expect(forgeAvailability(s, { kind: 'practice' })).toBe('Maximum skill level');
   });
   it('caps paid bonuses at three and resets the allowance next year', () => {
     const s = ready();

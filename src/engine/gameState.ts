@@ -431,7 +431,7 @@ export function cloneState(s: GameState): GameState {
     ...s,
     rpg: JSON.parse(JSON.stringify(s.rpg ?? freshRpg())),
     stats: { ...s.stats },
-    duel: s.duel ? { ...s.duel, log: [...s.duel.log], combat: s.duel.combat ? { ...s.duel.combat } : undefined } : null,
+    duel: s.duel ? { ...s.duel, log: [...s.duel.log], combat: s.duel.combat ? { ...s.duel.combat, ...(s.duel.combat.solo ? { solo: { ...s.duel.combat.solo } } : {}) } : undefined } : null,
     paths: { ...s.paths },
     tags: [...s.tags],
     traits: [...s.traits],

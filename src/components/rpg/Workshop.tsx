@@ -105,7 +105,7 @@ export function ForgeModal() {
       </>}
       {run.phase === 'result' && <>
         <PixelText font="pixel" size={10} color="#f4c57b">{run.scores.length === 5 ? forgeGrade(run).toUpperCase() : 'QUICK FINISH'}</PixelText>
-        <PixelText font="body" size={18} color="#fff0d4">{run.practice ? `Lesson complete. +${run.lessonXp ?? 0} Craftsmanship XP. More teaching next year, until level 3.` : `Normal rewards kept. Bonus: ${run.bonusXp} Craftsmanship XP${run.bonusIron ? ' + 1 iron' : ''}.`}</PixelText>
+        <PixelText font="body" size={18} color="#fff0d4">{run.practice ? `Practice complete. +${run.lessonXp ?? 0} Craftsmanship XP.` : `Normal rewards kept. Bonus: ${run.bonusXp} Craftsmanship XP${run.bonusIron ? ' + 1 iron' : ''}.`}</PixelText>
         <PixelText font="body" size={17} color="#efd6b0">Craftsmanship {skill.level} · {skill.level < 10 ? `${skill.xp}/${skill.level * 20} XP` : 'Maximum level'}{!run.practice ? ` · ${forgeAllowance(state)} bonus opportunities left this year` : ''}</PixelText>
         {run.craftedKey && run.recipeId && <View style={{ backgroundColor: C.parch, padding: 10 }}><CraftedItemActions itemKey={run.craftedKey} recipeId={run.recipeId} /></View>}
         <PixelButton bg={C.charm} shadow={C.charmDark} onPress={() => dispatch({ type: 'FORGE_CLOSE', id: run.id })} innerStyle={{ padding: 16 }}><PixelText font="pixel" size={9} color={C.blueDark}>CONTINUE</PixelText></PixelButton>

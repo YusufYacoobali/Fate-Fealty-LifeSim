@@ -75,6 +75,8 @@ export interface CombatState {
   damage: number; protection: number; dodgeCost: number; arms: number;
   weaponId?: string; armourId?: string;
   practice: boolean;
+  /** Solo drills reuse the timing/animation pipeline without an opposing character. */
+  solo?: { completed: number; xp: number };
   lastAction?: 'strike' | 'block' | 'dodge' | 'hurt' | 'miss' | 'recover';
   /** The resolved move survives nextExchange clearing the pending selection. */
   lastMove?: Attack | Defence;

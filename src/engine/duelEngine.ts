@@ -17,12 +17,43 @@ import { chance, clamp, pick, rnd } from './random';
 import { C } from '@/theme/theme';
 import { Attack, Defence, TimingGrade } from '@/types/rpg';
 import { equippedBonus, grantSkillXp, skillLevel } from './rpgProgress';
+import { spendAction, timedActionAvailability } from './actionClock';
 
 /** Composure both fighters start with. */
 export const DUEL_START_VIGOUR = 100;
 
 /** After this many exchanges the fight is called on remaining composure. */
 export const DUEL_MAX_ROUNDS = 4;
+export const SOLO_PRACTICE_SWINGS = 5;
+
+export function armsPracticeAvailability(s: GameState): string | null {
+  if (s.dead || s.duel || s.pendingEvent || s.rpg.mission || s.rpg.forge) return 'Finish the current encounter first';
+  const available = timedActionAvailability(s);
+  if (!available.available) return available.reason ?? 'Unavailable';
+  if (s.age < 8) return 'Sword practice opens at age 8';
+  if (skillLevel(s, 'arms') >= 10) return 'Maximum skill level';
+  if (skillLevel(s, 'arms') >= 3 && !s.holding.upgrades.includes('training_yard')) return 'Build a training yard for advanced exercises';
+  return null;
+}
+
+export function startArmsPractice(s: GameState): void {
+  if (armsPracticeAvailability(s)) return;
+  spendAction(s);
+  // The player is the saved session owner; solo resolution never reads an opponent.
+  s.duel = { opponentId: s.playerCharacterId, kind: 'duel', playerVigour: 100, opponentVigour: 100, round: 1, moveId: 'high_swing', log: [] };
+  upgradeDuel(s);
+  const c = s.duel!.combat!;
+  c.practice = true; c.solo = { completed: 0, xp: 0 }; c.phase = 'attack';
+}
+
+export function finishArmsPractice(s: GameState, fightId: string): void {
+  const d = s.duel, c = d?.combat;
+  if (!d || !c?.solo || c.id !== fightId || d.outcome || s.dead) return;
+  c.solo.xp = 6;
+  finish(d, 'won', 'Practice complete. +6 Arms XP.');
+  grantSkillXp(s, 'arms', 6, 'solo sword practice');
+  pushFeed(s, 'SWORD PRACTICE', C.healthDark, 'You rehearse your cuts and footwork alone. The air puts up a brave defence. +6 Arms XP.', 'good');
+}
 
 /** Yielding becomes available once the fight has actually been joined. */
 export const DUEL_YIELD_AFTER_ROUND = 2;
@@ -152,9 +183,10 @@ export function respondToDuel(state: GameState, responseId: string): GameState {
 
   if (responseId === 'yield') {
     if (!canYield(state)) return state;
-    finish(duel, 'yielded', `Thou lowers thy guard and steps back. ${opponent.name} accepts it, loudly.`);
+    finish(duel, 'yielded', duel.combat?.solo ? 'You leave the drill unfinished.' : `Thou lowers thy guard and steps back. ${opponent.name} accepts it, loudly.`);
     return state;
   }
+  if (duel.combat?.solo) return state;
 
   const move = DUEL_MOVE_BY_ID[duel.moveId];
   const response = move?.responses.find((item) => item.id === responseId);
@@ -203,7 +235,10 @@ export function respondToDuel(state: GameState, responseId: string): GameState {
 export function concludeDuel(state: GameState): GameState {
   const duel = state.duel;
   if (!duel?.outcome) return state;
-  if (duel.combat?.practice) { state.duel = null; return state; }
+  if (duel.combat?.practice) {
+    if (duel.combat.solo) { state.tab = 'life'; state.world.feedFilter = 'all'; }
+    state.duel = null; return state;
+  }
   const opponent = state.world.characters[duel.opponentId];
   const name = opponent?.name ?? 'thy opponent';
   const missionFight = state.rpg.mission?.phase === 'combat';
@@ -292,11 +327,13 @@ export function timingGrade(s: GameState, offsetMs: number): TimingGrade {
   return difference <= windows.perfect ? 'perfect' : difference <= windows.good ? 'good' : 'miss';
 }
 export function combatCost(s: GameState, move: Defence | Attack): number {
+  if (s.duel?.combat?.solo) return 0;
   return ({ block: 10, dodge: 20 + (s.duel?.combat?.dodgeCost ?? 0), parry: 15, brace: 0, quick: 10, heavy: 25, feint: 15, recover: 0 })[move];
 }
 export function combatChoiceReason(s: GameState, move: Defence | Attack): string | null {
   const d = s.duel, c = d?.combat;
   if (!d || !c || d.outcome) return 'Fight is decided';
+  if (c.solo && !['quick', 'heavy', 'feint'].includes(move)) return 'Choose a practice swing';
   if (move === 'parry' && d.moveId === 'grapple') return 'Cannot parry a grapple';
   if (combatCost(s, move) > c.playerStamina) return `Needs ${combatCost(s, move)} stamina`;
   return null;
@@ -324,6 +361,14 @@ export function resolveCombatTiming(s: GameState, sequence: number, offsetMs: nu
   if (!d || !c || d.outcome || c.sequence !== sequence || !Number.isFinite(offsetMs)) return;
   if (c.phase !== 'defence_timing' && c.phase !== 'attack_timing') return;
   const grade = timingGrade(s, offsetMs); c.lastGrade = grade; c.sequence += 1; c.impactId = c.sequence;
+  if (c.solo) {
+    c.lastMove = c.attack; c.lastAction = grade === 'miss' ? 'miss' : 'strike'; c.lastDamage = undefined;
+    c.solo.completed += 1;
+    d.log = [...d.log, `${grade.toUpperCase()} ${c.attack} · swing ${c.solo.completed}/${SOLO_PRACTICE_SWINGS}.`].slice(-6);
+    c.attack = undefined; c.phase = 'attack';
+    if (c.solo.completed === SOLO_PRACTICE_SWINGS) finishArmsPractice(s, c.id);
+    return;
+  }
   if (c.phase === 'defence_timing') {
     const enemy = s.world.characters[d.opponentId];
     const heavy = d.moveId === 'high_swing' || d.moveId === 'wild_flurry';

@@ -101,8 +101,8 @@ describe('interactive combat', () => {
     resolveCombatTiming(s, 1, 0); expect(s.duel!.playerVigour).toBe(100);
     const snapshot = JSON.stringify(s.duel); resolveCombatTiming(s, 1, 10000); expect(JSON.stringify(s.duel)).toBe(snapshot);
   });
-  it('prevents grappling parries and always permits an exhausted fallback', () => {
-    const s = fight(); s.duel!.moveId = 'grapple'; expect(combatChoiceReason(s, 'parry')).toContain('grapple');
+  it('prevents guard-breaker parries and always permits an exhausted fallback', () => {
+    const s = fight(); s.duel!.moveId = 'grapple'; expect(combatChoiceReason(s, 'parry')).toContain('guard-breaking strike');
     s.duel!.combat!.playerStamina = 0; expect(combatChoiceReason(s, 'block')).toContain('stamina'); expect(combatChoiceReason(s, 'brace')).toBeNull();
   });
   it('preserves committed attacks and equipment across reloads without RNG changes', () => {

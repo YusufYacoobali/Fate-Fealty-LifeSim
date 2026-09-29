@@ -121,7 +121,7 @@ export function startDuel(state: GameState, opponentId: string, kind: DuelKind, 
     kind === 'duel' ? C.healthDark : C.amber,
     stakes ? `${opponent.name} meets you in the yard. Blunted swords are provided. ${stakes.summary}` : practice ? `${opponent.name} lends you the yard for a friendly practice bout.` : state.rpg.mission ? `${opponent.name} takes the opposing side in the dispute. Settle the challenge before returning to your assignment.` : kind === 'duel'
       ? `Thou calls out ${opponent.name} before witnesses. There is no walking this back now.`
-      : `Thou swings first at ${opponent.name}. The tavern rearranges itself around the two of you.`,
+      : `You and ${opponent.name} take the fight into the yard. The spectators retreat to a cowardly but sensible distance.`,
     'plain',
   );
   return state;
@@ -148,7 +148,8 @@ export function duelTelegraph(state: GameState): string {
   const duel = state.duel;
   const opponent = duel ? state.world.characters[duel.opponentId] : undefined;
   if (!duel || !opponent) return '';
-  return fill(DUEL_MOVE_BY_ID[duel.moveId]?.telegraph ?? '', opponent);
+  const move = DUEL_MOVE_BY_ID[duel.moveId];
+  return fill((duel.combat ? move?.combatTelegraph : move?.telegraph) ?? '', opponent);
 }
 
 /** The answers open to the player this exchange, with their text filled in. */
@@ -265,7 +266,7 @@ export function concludeDuel(state: GameState): GameState {
     pushFeed(state, formal ? 'DUEL WON' : 'BRAWL WON', C.good,
       formal
         ? `Thou beat ${name} in open combat. The village will be repeating this for years, with improvements.`
-        : `Thou put ${name} through a table. The alehouse is impressed; the law will be less so.`,
+        : `You beat ${name} in the yard. The spectators are impressed; the law will be less so.`,
       'good');
   } else if (duel.outcome === 'lost') {
     applyEffects(state, {
@@ -336,7 +337,7 @@ export function combatChoiceReason(s: GameState, move: Defence | Attack): string
   const d = s.duel, c = d?.combat;
   if (!d || !c || d.outcome) return 'Fight is decided';
   if (c.solo && !['quick', 'heavy', 'feint'].includes(move)) return 'Choose a practice swing';
-  if (move === 'parry' && d.moveId === 'grapple') return 'Cannot parry a grapple';
+  if (move === 'parry' && d.moveId === 'grapple') return 'Cannot parry this guard-breaking strike';
   if (combatCost(s, move) > c.playerStamina) return `Needs ${combatCost(s, move)} stamina`;
   return null;
 }
@@ -366,7 +367,8 @@ export function resolveCombatTiming(s: GameState, sequence: number, offsetMs: nu
   if (c.solo) {
     c.lastMove = c.attack; c.lastAction = grade === 'miss' ? 'miss' : 'strike'; c.lastDamage = undefined;
     c.solo.completed += 1;
-    d.log = [...d.log, `${grade.toUpperCase()} ${c.attack} · swing ${c.solo.completed}/${SOLO_PRACTICE_SWINGS}.`].slice(-6);
+    const swing = c.attack === 'heavy' ? 'heavy swing' : c.attack === 'feint' ? 'feint and cut' : 'quick slash';
+    d.log = [...d.log, `${grade.toUpperCase()} · ${grade === 'miss' ? `Your ${swing} is mistimed. Reset your stance.` : `You complete a ${swing}.`} Swing ${c.solo.completed}/${SOLO_PRACTICE_SWINGS}.`].slice(-6);
     c.attack = undefined; c.phase = 'attack';
     if (c.solo.completed === SOLO_PRACTICE_SWINGS) finishArmsPractice(s, c.id);
     return;
@@ -386,7 +388,12 @@ export function resolveCombatTiming(s: GameState, sequence: number, offsetMs: nu
     c.lastMove = c.defence; c.lastDamage = damage;
     c.lastAction = !success ? 'hurt' : c.defence === 'dodge' ? 'dodge' : 'block';
     d.playerVigour = Math.max(0, d.playerVigour - damage);
-    d.log = [...d.log, `${grade.toUpperCase()} ${c.defence}: ${damage ? `you lose ${damage} vigour` : 'no damage'}${c.exposed ? ' — a counter opening!' : '.'}`].slice(-6);
+    const defenceText = !success ? 'You mistime your defence. The blow gets through.'
+      : c.defence === 'dodge' ? 'You dodge clear of the blade.'
+      : c.defence === 'parry' ? 'You turn the blade aside.'
+      : c.defence === 'brace' ? 'You brace behind your guard and take the impact.'
+      : 'You catch the swing on your guard.';
+    d.log = [...d.log, `${grade.toUpperCase()} · ${defenceText} ${damage ? `You lose ${damage} vigour.` : 'No vigour lost.'}${c.exposed ? ' Their guard is open. Counter now!' : ''}`].slice(-6);
     if (d.playerVigour === 0) { finish(d, 'lost', 'Your guard gives way. The fight is over.'); return; }
     c.phase = 'attack';
   } else {
@@ -398,8 +405,12 @@ export function resolveCombatTiming(s: GameState, sequence: number, offsetMs: nu
     c.lastMove = c.attack; c.lastDamage = damage;
     d.opponentVigour = Math.max(0, d.opponentVigour - damage);
     c.feinted = c.attack === 'feint' && grade !== 'miss';
-    d.log = [...d.log, `${grade.toUpperCase()} ${c.attack}: ${damage} damage${c.feinted ? ' — their next defence is weakened' : ''}.`].slice(-6);
-    if (d.opponentVigour === 0) { finish(d, 'won', 'Your opponent yields. The field is yours.'); return; }
+    const attackText = grade === 'miss' ? 'Your swing cuts empty air.'
+      : c.attack === 'heavy' ? 'Your heavy swing crashes home.'
+      : c.attack === 'feint' ? 'You sell the feint, then land the cut.'
+      : 'Your quick slash lands.';
+    d.log = [...d.log, `${grade.toUpperCase()} · ${attackText} ${damage ? `Your opponent loses ${damage} vigour.` : 'No vigour lost.'}${c.feinted ? ' Their next defence is weakened.' : ''}`].slice(-6);
+    if (d.opponentVigour === 0) { finish(d, 'won', 'Your opponent goes down. Victory is yours.'); return; }
     nextExchange(s);
   }
 }
@@ -411,7 +422,7 @@ function nextExchange(s: GameState): void {
     // Compare the share of starting vigour retained. An opponent who began below
     // 100 must not award a victory simply because the player never attacked.
     const won = d.playerVigour / DUEL_START_VIGOUR > d.opponentVigour / (c.opponentStartVigour ?? DUEL_START_VIGOUR);
-    finish(d, won ? 'won' : 'lost', won ? 'Four exchanges. You win on points.' : 'Four exchanges. You have not won the contest.');
+    finish(d, won ? 'won' : 'lost', won ? 'Four exchanges fought. You kept more of your starting vigour and win.' : 'Four exchanges fought. You needed a greater share of your starting vigour left to win.');
     return;
   }
   c.playerStamina = Math.min(100, c.playerStamina + 10); c.opponentStamina = Math.min(100, c.opponentStamina + 10);

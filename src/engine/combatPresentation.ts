@@ -1,9 +1,9 @@
 import { GameState } from '@/types/game';
 
 /** Visual cues follow the settled result, never the player's next selection. */
-export function combatPresentation(duel: NonNullable<GameState['duel']>) {
+export function combatPresentation(duel: NonNullable<GameState['duel']>, showOutcome = true) {
   const c = duel.combat!;
-  const scene = !c.solo && duel.outcome === 'won' ? 'victory' : !c.solo && duel.outcome === 'lost' ? 'defeat'
+  const scene = showOutcome && !c.solo && duel.outcome === 'won' ? 'victory' : showOutcome && !c.solo && duel.outcome === 'lost' ? 'defeat'
     : c.lastAction === 'strike' && c.lastMove === 'heavy' ? 'heavy'
     : c.lastAction === 'strike' && c.lastMove === 'feint' ? 'feint'
     : c.lastAction === 'block' && c.lastMove === 'parry' ? 'parry'

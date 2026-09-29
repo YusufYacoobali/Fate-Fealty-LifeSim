@@ -41,8 +41,14 @@ const soloScenes: Partial<typeof scenes> = {
 function Arena({ state, active }: { state: GameState; active: boolean }) {
   const duel = state.duel!, combat = duel.combat!;
   const systemReducedMotion = useReducedMotion();
-  const cue = combatPresentation(duel), action = cue.scene;
   const reducedMotion = !!state.settings.reducedMotion || systemReducedMotion;
+  const impactId = combat.impactId ?? 0;
+  const [finishedImpact, setFinishedImpact] = useState(-1);
+  const finishImpact = useCallback(() => setFinishedImpact(impactId), [impactId]);
+  // Let the final strike/defence land before playing victory or defeat.
+  // Interrupted scenes settle immediately instead of replaying on foreground.
+  useEffect(() => { if (!active || reducedMotion) setFinishedImpact(impactId); }, [active, reducedMotion, impactId]);
+  const cue = combatPresentation(duel, reducedMotion || !active || finishedImpact === impactId || !combat.lastAction), action = cue.scene;
   const camera = useSharedValue(0), pop = useSharedValue(0);
   const previousImpact = useRef(combat.impactId ?? 0);
   useEffect(() => {
@@ -65,7 +71,7 @@ function Arena({ state, active }: { state: GameState; active: boolean }) {
     <View accessibilityLabel={combat.solo ? 'Solo sword practice in the village yard' : combat.practice ? 'Practice in the village yard' : 'Blue fighter faces the red challenger in the village yard'} style={{ width: '100%', aspectRatio: 320 / 208, overflow: 'hidden' }}>
       <Animated.View style={[StyleSheet.absoluteFill, cameraStyle]}>
         <Image source={require('../../../assets/generated/combat-yard-pixel.png')} resizeMode="stretch" style={[StyleSheet.absoluteFill, { width: '100%', height: '100%' }]} accessible={false} />
-        <PixelLottie source={combat.solo ? soloScenes[action] ?? soloScenes.idle : scenes[action]} trigger={combat.impactId ?? 0} active={active} stillProgress={['victory', 'defeat'].includes(action) ? 1 : 0} reducedMotion={reducedMotion} />
+        <PixelLottie source={combat.solo ? soloScenes[action] ?? soloScenes.idle : scenes[action]} trigger={impactId} active={active} onFinish={finishImpact} stillProgress={['victory', 'defeat'].includes(action) ? 1 : 0} reducedMotion={reducedMotion} />
       </Animated.View>
       {!reducedMotion && cue.detail && <Animated.View pointerEvents="none" style={[{ position: 'absolute', left: cue.defending || action === 'recover' ? '9%' : '62%', top: '38%' }, damageStyle]}><PixelText font="pixel" size={13} color={cue.defending && combat.lastDamage ? '#ffb198' : '#fff2c9'} style={{ textShadowColor: '#101a2a', textShadowRadius: 1, textShadowOffset: { width: 2, height: 2 } }}>{cue.detail}</PixelText></Animated.View>}
     </View>

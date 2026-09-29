@@ -32,8 +32,8 @@ export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        style={{ flexGrow: 0, borderBottomWidth: 3, borderBottomColor: C.paleEdge }}
-        contentContainerStyle={{ gap: 5, paddingHorizontal: 11, paddingTop: 10, paddingBottom: 8 }}
+        style={{ flexGrow: 0, flexShrink: 0, minHeight: 65, borderBottomWidth: 3, borderBottomColor: C.paleEdge }}
+        contentContainerStyle={{ alignItems: 'center', gap: 5, paddingHorizontal: 11, paddingTop: 10, paddingBottom: 8 }}
       >
         {CATEGORIES.map((c) => {
           const on = cat === c.id;
@@ -43,7 +43,7 @@ export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
               bg={on ? c.bg : C.lighter}
               shadow={on ? c.sd : C.paleEdge}
               onPress={() => onCat(c.id)}
-              innerStyle={{ paddingHorizontal: 8, paddingVertical: 6 }}
+              innerStyle={{ paddingHorizontal: 8, paddingVertical: 6, minHeight: 44, justifyContent: 'center' }}
             >
               <PixelText font="pixel" size={8} color={on ? c.fg : '#3a5d8a'}>
                 {c.label}

@@ -97,4 +97,22 @@ describe('combat impact cues', () => {
     expect(combatPresentation(s.duel!)).toMatchObject({ scene: 'recover', detail: '+10 STAMINA' });
     expect(s.duel!.log.join(' ')).toContain('recover 10 stamina');
   });
+
+  it.each(['quick', 'heavy', 'feint'] as const)('keeps a finishing %s attack visible before victory', move => {
+    const s = fight(); s.duel!.opponentVigour = 1; s.duel!.combat!.phase = 'attack';
+    selectCombatMove(s, s.duel!.combat!.sequence, move);
+    resolveCombatTiming(s, s.duel!.combat!.sequence, 0);
+    expect(s.duel!.outcome).toBe('won');
+    expect(combatPresentation(s.duel!, false).scene).toBe(move === 'quick' ? 'strike' : move);
+    expect(combatPresentation(s.duel!, true).scene).toBe('victory');
+  });
+
+  it('shows the last incoming hit before defeat', () => {
+    const s = fight(); s.duel!.playerVigour = 1;
+    selectCombatMove(s, s.duel!.combat!.sequence, 'block');
+    resolveCombatTiming(s, s.duel!.combat!.sequence, 10000);
+    expect(s.duel!.outcome).toBe('lost');
+    expect(combatPresentation(s.duel!, false).scene).toBe('hurt');
+    expect(combatPresentation(s.duel!, true).scene).toBe('defeat');
+  });
 });

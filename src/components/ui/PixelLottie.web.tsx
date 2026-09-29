@@ -3,7 +3,7 @@ import lottie, { AnimationItem } from 'lottie-web';
 import type { PixelLottieProps } from './PixelLottie';
 
 /** Local SVG renderer: no remote animation files, CDN or WASM download. */
-export function PixelLottie({ source, trigger, reducedMotion, active = true, stillProgress = 0 }: PixelLottieProps) {
+export function PixelLottie({ source, trigger, reducedMotion, active = true, stillProgress = 0, onFinish }: PixelLottieProps) {
   const container = useRef<HTMLDivElement>(null);
   const animation = useRef<AnimationItem | null>(null);
   const played = useRef(0);
@@ -15,6 +15,12 @@ export function PixelLottie({ source, trigger, reducedMotion, active = true, sti
     played.current = 0;
     return () => { instance.destroy(); animation.current = null; };
   }, [source]);
+  useEffect(() => {
+    const instance = animation.current;
+    if (!instance || !onFinish || !active || reducedMotion) return;
+    instance.addEventListener('complete', onFinish);
+    return () => instance.removeEventListener('complete', onFinish);
+  }, [source, onFinish, active, reducedMotion]);
   useEffect(() => {
     const instance = animation.current;
     if (!instance) return;

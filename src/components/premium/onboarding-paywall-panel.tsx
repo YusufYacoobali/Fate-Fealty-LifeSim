@@ -133,6 +133,65 @@ function annualValueCopy(offers: PlanOffers | null): string {
   return `Only ${perMonth}/month | SAVE ${value.savingsPercent}%`;
 }
 
+function OnboardingFeatures({ compact }: { compact: boolean }) {
+  return (
+    <View>
+      {FEATURES.map((feature, index) => (
+        <View
+          key={feature.copy}
+          style={{
+            minHeight: compact ? 48 : 50,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: compact ? 6 : 9,
+            borderBottomWidth: index === FEATURES.length - 1 ? 0 : 2,
+            borderBottomColor: ROYAL.edge,
+            borderStyle: 'dotted',
+            paddingHorizontal: compact ? 2 : 4,
+            paddingVertical: compact ? 1 : 2,
+          }}
+        >
+          <Image source={PAYWALL_ART.check} resizeMode="contain" style={{ width: compact ? 24 : 31, height: compact ? 24 : 31 }} />
+          <PixelText font="body" size={compact ? 15 : 16} color={ROYAL.cream} style={{ flex: 1 }}>
+            {feature.copy}
+          </PixelText>
+          <Image source={feature.art} resizeMode="contain" style={{ width: compact ? 41 : 40, height: compact ? 41 : 40 }} />
+        </View>
+      ))}
+    </View>
+  );
+}
+
+function ShopFeatures({ compact }: { compact: boolean }) {
+  return (
+    <View style={{ gap: compact ? 5 : 7 }}>
+      {SHOP_FEATURES.map((feature) => (
+        <View
+          key={feature.title}
+          style={{
+            minHeight: compact ? 54 : 64,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: compact ? 7 : 10,
+            backgroundColor: ROYAL.panelLight,
+            borderWidth: 2,
+            borderColor: ROYAL.edge,
+            paddingHorizontal: compact ? 5 : 8,
+            paddingVertical: compact ? 4 : 6,
+          }}
+        >
+          <Image source={PAYWALL_ART.check} resizeMode="contain" style={{ width: compact ? 25 : 31, height: compact ? 25 : 31 }} />
+          <View style={{ flex: 1 }}>
+            <PixelText font="pixel" size={7} color={ROYAL.gold}>{feature.title}</PixelText>
+            <PixelText font="body" size={compact ? 13 : 15} color={ROYAL.cream} style={{ marginTop: 3 }}>{feature.body}</PixelText>
+          </View>
+          <Image source={feature.art} resizeMode="contain" style={{ width: compact ? 43 : 52, height: compact ? 43 : 52 }} />
+        </View>
+      ))}
+    </View>
+  );
+}
+
 function RoyalOfferPanel({
   surface,
   compact,
@@ -198,11 +257,11 @@ function RoyalOfferPanel({
           <PixelText font="pixel" size={compact ? 8 : 9} color={ROYAL.gold} style={{ textAlign: 'center' }}>
             {shop ? 'MORE REALM. MORE STORIES. MORE WAYS TO RULE.' : 'BEGIN AS NOTHING. RULE EVERYTHING.'}
           </PixelText>
-          <PixelText font="body" size={compact ? 15 : 16} color={ROYAL.cream} style={{ textAlign: 'center', marginTop: compact ? 3 : 6 }}>
-            {shop
-              ? 'Choose a subscription or own the complete premium adventure for life.'
-              : 'Rise beyond Noble, expand thy Holding, and chase the crown.'}
-          </PixelText>
+          {shop && (
+            <PixelText font="body" size={compact ? 15 : 16} color={ROYAL.cream} style={{ textAlign: 'center', marginTop: compact ? 3 : 6 }}>
+              Choose a subscription or own the complete premium adventure for life.
+            </PixelText>
+          )}
         </View>
       </View>
 
@@ -278,7 +337,9 @@ function RoyalOfferPanel({
                 )}
                 <View style={{ flexDirection: 'row', alignItems: 'baseline', flexWrap: 'wrap', gap: 7 }}>
                   <PixelText font="pixel" size={compact ? 7 : 9} color={isAnnual ? '#513100' : ROYAL.panel}>{plan.name}</PixelText>
-                  <PixelText font="pixel" size={compact ? 8 : 10} color={ROYAL.ink}>{unavailable ? 'UNAVAILABLE' : price}</PixelText>
+                  <PixelText font="pixel" size={compact ? 8 : 10} color={ROYAL.ink}>
+                    {unavailable ? 'UNAVAILABLE' : `${price}${isLifetime ? '' : isAnnual ? '/year' : '/month'}`}
+                  </PixelText>
                 </View>
                 <PixelText font="body" size={compact ? 12 : 14} color={isAnnual ? '#664308' : '#34597f'} style={{ marginTop: 2 }}>
                   {isAnnual ? annualValueCopy(offers) : isLifetime ? plan.blurb : plan.period}
@@ -311,8 +372,10 @@ function RoyalOfferPanel({
         </View>
       </PixelButton>
 
+      {shop ? <ShopFeatures compact={compact} /> : <OnboardingFeatures compact={compact} />}
+
       <PixelText font="body" size={compact ? 11 : 13} color="#a9c9e8" style={{ textAlign: 'center' }}>
-        {selected === 'lifetime' ? 'One payment. No subscription.' : 'Payment is charged to your store account. Subscriptions renew automatically unless cancelled at least 24 hours before the current period ends. Manage or cancel in your store subscription settings.'}
+        {selected === 'lifetime' ? 'One payment. No subscription.' : 'Renews automatically. Manage or cancel in your store subscription settings.'}
       </PixelText>
       {storeBlocked && (
         <PixelText font="body" size={compact ? 11 : 13} color={ROYAL.cream} style={{ textAlign: 'center' }}>
@@ -340,63 +403,12 @@ function RoyalOfferPanel({
         </>
       )}
 
-      {shop ? (
-        <View style={{ gap: compact ? 5 : 7 }}>
-          {SHOP_FEATURES.map((feature) => (
-            <View
-              key={feature.title}
-              style={{
-                minHeight: compact ? 54 : 64,
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: compact ? 7 : 10,
-                backgroundColor: ROYAL.panelLight,
-                borderWidth: 2,
-                borderColor: ROYAL.edge,
-                paddingHorizontal: compact ? 5 : 8,
-                paddingVertical: compact ? 4 : 6,
-              }}
-            >
-              <Image source={PAYWALL_ART.check} resizeMode="contain" style={{ width: compact ? 25 : 31, height: compact ? 25 : 31 }} />
-              <View style={{ flex: 1 }}>
-                <PixelText font="pixel" size={compact ? 7 : 7} color={ROYAL.gold}>{feature.title}</PixelText>
-                <PixelText font="body" size={compact ? 13 : 15} color={ROYAL.cream} style={{ marginTop: 3 }}>{feature.body}</PixelText>
-              </View>
-              <Image source={feature.art} resizeMode="contain" style={{ width: compact ? 43 : 52, height: compact ? 43 : 52 }} />
-            </View>
-          ))}
-        </View>
-      ) : (
-        <View>
-          {FEATURES.map((feature, index) => (
-          <View
-            key={feature.copy}
-            style={{
-              minHeight: compact ? 48 : 50,
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: compact ? 6 : 9,
-              borderBottomWidth: index === FEATURES.length - 1 ? 0 : 2,
-              borderBottomColor: ROYAL.edge,
-              borderStyle: 'dotted',
-              paddingHorizontal: compact ? 2 : 4,
-              paddingVertical: compact ? 1 : 2,
-            }}
-          >
-            <Image source={PAYWALL_ART.check} resizeMode="contain" style={{ width: compact ? 24 : 31, height: compact ? 24 : 31 }} />
-            <PixelText font="body" size={compact ? 15 : 16} color={ROYAL.cream} style={{ flex: 1 }}>
-              {feature.copy}
-            </PixelText>
-            <Image source={feature.art} resizeMode="contain" style={{ width: compact ? 41 : 40, height: compact ? 41 : 40 }} />
-          </View>
-          ))}
-        </View>
-      )}
+      {unlocked && (shop ? <ShopFeatures compact={compact} /> : <OnboardingFeatures compact={compact} />)}
     </View>
   );
 }
 
-/** End-of-onboarding subscription paywall. Lifetime is impossible on this surface. */
+/** End-of-onboarding paywall with yearly, lifetime, and monthly passes. */
 export function OnboardingPaywallPanel(props: Props) {
   return <RoyalOfferPanel {...props} surface="onboarding" />;
 }

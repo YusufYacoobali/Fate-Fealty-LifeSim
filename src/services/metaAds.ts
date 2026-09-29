@@ -101,10 +101,10 @@ export async function setMetaConsent(granted: boolean): Promise<void> {
 /** The same choice is available at first launch and from Settings. */
 export async function showMetaConsentChoices(): Promise<void> {
   if (!isMetaAdsConfigured()) return;
-  Alert.alert('Help measure our ads?',
-    'Allow Fate & Fealty to share device identifiers, app opens and purchase information with Meta to measure our Facebook and Instagram ads? This is optional and does not affect the game. You can change your choice in Settings.',
+  Alert.alert('Help improve the app?',
+    'Allow us to collect device and usage information to understand how people discover and use the app.\n\nYou can change this anytime in Settings.',
     [
-      { text: 'Do not allow', style: 'cancel', onPress: () => { void setMetaConsent(false); } },
+      { text: 'Not now', style: 'cancel', onPress: () => { void setMetaConsent(false); } },
       { text: 'Allow', onPress: () => { void setMetaConsent(true); } },
     ], { cancelable: false });
 }

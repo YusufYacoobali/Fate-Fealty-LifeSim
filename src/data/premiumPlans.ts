@@ -46,8 +46,8 @@ export const PREMIUM_PLANS: Record<PlanId, PremiumPlan> = {
   },
 };
 
-/** End-of-onboarding paywall: subscriptions only, yearly preselected. */
-export const PAYWALL_PLAN_IDS: PlanId[] = ['annual', 'monthly'];
+/** End-of-onboarding paywall: yearly preselected, lifetime in the middle. */
+export const PAYWALL_PLAN_IDS: PlanId[] = ['annual', 'lifetime', 'monthly'];
 
 /**
  * The premium shop: yearly first as the recommendation, lifetime in the middle

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { C } from '@/theme/theme';
 import { PixelButton } from '@/components/ui/PixelButton';
@@ -345,9 +345,17 @@ export function OnboardingScreen({ premiumUnlocked, trialActive, accessState, on
   const pages = onboardingPages();
   const [index, setIndex] = useState(0);
   const [restoring, setRestoring] = useState(false);
+  const [canContinueFree, setCanContinueFree] = useState(false);
   const page = pages[Math.min(index, pages.length - 1)];
   const isLast = index >= pages.length - 1;
   const paywallCompact = layout.compact || width < 390 || height < 780;
+
+  useEffect(() => {
+    setCanContinueFree(false);
+    if (page !== 'paywall' || premiumUnlocked) return;
+    const timer = setTimeout(() => setCanContinueFree(true), 5000);
+    return () => clearTimeout(timer);
+  }, [page, premiumUnlocked]);
 
   const footer =
     page === 'paywall' ? (
@@ -368,11 +376,13 @@ export function OnboardingScreen({ premiumUnlocked, trialActive, accessState, on
         >
           <PixelText font="body" size={14} color={C.creamBlue}>{restoring ? 'Restoring...' : 'Restore purchases'}</PixelText>
         </TouchableOpacity>
-        <TouchableOpacity onPress={onDone} style={{ padding: 7 }}>
-          <PixelText font="body" size={14} color={C.creamBlue}>
-            {premiumUnlocked ? 'Continue >' : 'Continue free >'}
-          </PixelText>
-        </TouchableOpacity>
+        {(premiumUnlocked || canContinueFree) && (
+          <TouchableOpacity accessibilityRole="button" onPress={onDone} style={{ padding: 7 }}>
+            <PixelText font="body" size={14} color={C.creamBlue}>
+              {premiumUnlocked ? 'Continue >' : 'Continue free >'}
+            </PixelText>
+          </TouchableOpacity>
+        )}
       </View>
     ) : (
       <PixelButton

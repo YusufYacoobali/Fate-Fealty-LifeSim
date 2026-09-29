@@ -190,17 +190,23 @@ export function isPlayerSpouse(state: GameState, kin: KinMember): boolean {
   return Boolean(player?.spouseId && player.spouseId === kin.id && kin.spouseId === player.id);
 }
 
-export function isRomanceEligible(state: GameState, kin: KinMember): boolean {
-  if (!kin.alive || state.age < 18 || kin.age < 18) return false;
+export function courtshipUnavailableReason(state: GameState, kin: KinMember): string | null {
+  if (!kin.alive) return 'This person has died.';
+  if (state.age < 18 || kin.age < 18) return 'You must both be at least 18 to begin a romance.';
   // Blood is read from the genealogy, not from `kind`: an NPC born to the
   // player's own parents carries the label 'acquaintance', and courting them
   // used to be perfectly allowed.
-  if (isCloseBlood(kinshipTo(state, kin.id))) return false;
+  if (isCloseBlood(kinshipTo(state, kin.id))) return 'This person is a close relative.';
+  if (!attractionAllows(state.attraction, kin.gender)) return 'Your character’s attraction preferences do not include this person.';
+  if (!attractionAllows(kin.attraction, state.gender)) return `${kin.name} is not romantically interested in your character’s gender. Friendship does not change that preference.`;
   const player = state.world.characters[state.playerCharacterId];
-  if (kin.spouseId && kin.spouseId !== state.playerCharacterId) return false;
-  if (player?.spouseId && player.spouseId !== kin.id) return false;
-  if (state.tags.includes('married') && !isPlayerSpouse(state, kin)) return false;
-  return attractionAllows(state.attraction, kin.gender) && attractionAllows(kin.attraction, state.gender);
+  if (kin.spouseId && kin.spouseId !== state.playerCharacterId) return `${kin.name} is married to someone else. Ordinary courtship is unavailable.`;
+  if ((player?.spouseId && player.spouseId !== kin.id) || (state.tags.includes('married') && !isPlayerSpouse(state, kin))) return 'You are already married. Ordinary courtship with someone else is unavailable.';
+  return null;
+}
+
+export function isRomanceEligible(state: GameState, kin: KinMember): boolean {
+  return courtshipUnavailableReason(state, kin) === null;
 }
 
 /** Proposing is only meaningful to someone thou art not already wed to. */

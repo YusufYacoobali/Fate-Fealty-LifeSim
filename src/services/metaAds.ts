@@ -98,7 +98,7 @@ export async function setMetaConsent(granted: boolean): Promise<void> {
   }
 }
 
-/** The same choice is available at first launch and from Settings. */
+/** In-app preferences, available from Settings and at Android first launch. */
 export async function showMetaConsentChoices(): Promise<void> {
   if (!isMetaAdsConfigured()) return;
   Alert.alert('Help improve the app?',
@@ -113,6 +113,14 @@ export async function startMetaAds(): Promise<void> {
   if (!isMetaAdsConfigured() || AppState.currentState !== 'active') return;
   try {
     const consent = await AsyncStorage.getItem(CONSENT_KEY);
+    if (Platform.OS === 'ios') {
+      // ATT is the only startup prompt on iOS. The local preference remains
+      // an additional opt-out for players who declined in an earlier build
+      // or explicitly disabled measurement from the in-game Settings.
+      if (consent === null) await setMetaConsent(true);
+      else await serialize(() => reconcile(true));
+      return;
+    }
     if (consent === null && !prompted) {
       prompted = true;
       await showMetaConsentChoices();

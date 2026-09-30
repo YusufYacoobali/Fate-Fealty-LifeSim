@@ -5,7 +5,7 @@ Status: **not ready for store release yet**. The supplied Meta App ID and Client
 ## What is implemented
 
 - Meta Core SDK configuration for iOS and Android, including native install/activation reporting and SKAdNetwork entries from the config plugin.
-- Optional ad-measurement consent, saved independently of game saves. iOS also requires ATT authorization. Settings offers the same allow/decline choice. Web and Expo Go do not initialize tracking.
+- iOS startup shows only Apple's ATT prompt; Android startup uses the in-app ad-measurement choice. In-game Settings still offers an additional allow/decline preference, saved independently of game saves, and earlier opt-outs remain respected. iOS always requires ATT authorization. Web and Expo Go do not initialize tracking.
 - Consent is checked again when returning to the app and before checkout. Opt-out disables collection and clears RevenueCat matching identifiers; explicit withdrawal attempts an immediate server sync. Offline changes sync when RevenueCat reconnects. Data already delivered is not deleted by changing this preference.
 - Attribution is attached to the configured RevenueCat customer before checkout. RevenueCat is the sole revenue-event sender. The app does not report restore, cancel, failed purchase, or a local premium flag as new revenue.
 - Automatic Meta purchase logging stays off, preventing a second sender from duplicating RevenueCat events.
@@ -55,7 +55,7 @@ Reference: [RevenueCat Meta integration](https://www.revenuecat.com/docs/integra
 ## Device acceptance checklist
 
 - Fresh install: no measurement before consent; allow reports activation/install. Decline still permits normal gameplay and purchases.
-- iOS ATT: authorized, denied, restricted, and changing permission in Settings. Denial must keep native measurement and matching identifiers off.
+- iOS ATT: fresh startup must show only Apple's prompt, without the "Help improve the app?" alert. Test authorized, denied, restricted, and changing permission in Settings, plus an existing in-app opt-out. Denial must keep native measurement and matching identifiers off.
 - Android: consent granted/declined, advertising ID unavailable, and background/resume. Inspect a release build's merged permissions.
 - Android merged manifest must not contain `com.facebook.internal.FacebookInitProvider`. After consent, confirm both the install signal and `fb_mobile_activate_app`, then verify no duplicate purchase logging. Declining at first launch must leave the SDK uninitialized.
 - Monthly, annual, lifetime and any configured introductory offers: correct store price/currency, exactly one appropriate revenue event, confirmed premium access.

@@ -1,4 +1,5 @@
 import React, { StrictMode } from 'react';
+import { LayoutChangeEvent, Platform } from 'react-native';
 import { act, create, ReactTestRenderer } from 'react-test-renderer';
 import { PixelLottie as NativeAnimation } from '@/components/ui/PixelLottie';
 import { PixelLottie as WebAnimation } from '@/components/ui/PixelLottie.web';
@@ -28,7 +29,11 @@ jest.mock('lottie-web', () => ({ __esModule: true, default: { loadAnimation: (..
 const source = require('../../assets/animations/pixel-hammer.json');
 let root: ReactTestRenderer;
 beforeEach(() => { jest.clearAllMocks(); mockNativePlaying = false; mockAutoLoad = true; });
-afterEach(() => { if (root) act(() => root.unmount()); });
+afterEach(() => { if (root) act(() => root.unmount()); jest.restoreAllMocks(); });
+
+function layoutNativeAnimation() {
+  mockNativeProps.onLayout?.({ nativeEvent: { layout: { x: 0, y: 0, width: 320, height: 208 } } } as LayoutChangeEvent);
+}
 
 it('native animation is playing after React replays mount effects', () => {
   act(() => { root = create(<StrictMode><NativeAnimation source={source} trigger={1} reducedMotion={false} /></StrictMode>); });
@@ -95,18 +100,80 @@ it.each(combatSources)('waits for %s to load and restarts its full frame range o
 });
 
 it('does not send a heavy attack to the previous composition while Android is loading it', () => {
+  jest.replaceProperty(Platform, 'OS', 'android');
   mockAutoLoad = false;
   const heavy = require('../../assets/animations/pixel-combat-heavy.json');
   act(() => { root = create(<NativeAnimation source={source} trigger={1} reducedMotion={false} />); });
   act(() => mockNativeProps.onAnimationLoaded?.());
   const oldLoad = mockNativeProps.onAnimationLoaded;
   act(() => root.update(<NativeAnimation source={heavy} trigger={2} reducedMotion={false} />));
+  act(layoutNativeAnimation);
   expect(mockNativePlay).toHaveBeenCalledTimes(1);
   act(() => oldLoad?.());
   expect(mockNativePlay).toHaveBeenCalledTimes(1);
   act(() => mockNativeProps.onAnimationLoaded?.());
   expect(mockNativePlay).toHaveBeenCalledTimes(2);
   expect(mockNativePlay).toHaveBeenLastCalledWith(0, 47);
+});
+
+it.each([['hammer', source] as const, ...combatSources])('iOS plays %s even when Fabric drops the load event', (_name, animation) => {
+  jest.replaceProperty(Platform, 'OS', 'ios');
+  mockAutoLoad = false;
+  const render = (trigger: number) => <NativeAnimation source={animation} trigger={trigger} reducedMotion={false} />;
+  act(() => { root = create(render(1)); });
+  expect(mockNativePlay).not.toHaveBeenCalled();
+  act(layoutNativeAnimation);
+  expect(mockNativePlay).toHaveBeenCalledTimes(1);
+  expect(mockNativePlay).toHaveBeenLastCalledWith(animation.ip, animation.op - 1);
+  // A late load event or another layout must not restart a running strike.
+  act(() => { mockNativeProps.onAnimationLoaded?.(); layoutNativeAnimation(); });
+  expect(mockNativePlay).toHaveBeenCalledTimes(1);
+  act(() => root.update(render(2)));
+  expect(mockNativePlay).toHaveBeenCalledTimes(2);
+});
+
+it('iOS waits for each replacement composition to mount when load events are missing', () => {
+  jest.replaceProperty(Platform, 'OS', 'ios');
+  mockAutoLoad = false;
+  const heavy = require('../../assets/animations/pixel-combat-heavy.json');
+  act(() => { root = create(<NativeAnimation source={source} trigger={1} reducedMotion={false} />); });
+  act(layoutNativeAnimation);
+  const oldLayout = mockNativeProps.onLayout;
+  act(() => root.update(<NativeAnimation source={heavy} trigger={2} reducedMotion={false} />));
+  act(() => oldLayout?.({} as LayoutChangeEvent));
+  expect(mockNativePlay).toHaveBeenCalledTimes(1);
+  act(layoutNativeAnimation);
+  expect(mockNativePlay).toHaveBeenCalledTimes(2);
+  expect(mockNativePlay).toHaveBeenLastCalledWith(0, 47);
+});
+
+it('iOS layout readiness preserves resting frames, reduced motion and background interruption', () => {
+  jest.replaceProperty(Platform, 'OS', 'ios');
+  mockAutoLoad = false;
+  const render = (trigger: number, active = true, reducedMotion = false) => <NativeAnimation source={source} trigger={trigger} active={active} reducedMotion={reducedMotion} />;
+  act(() => { root = create(render(0)); });
+  act(layoutNativeAnimation);
+  expect(mockNativePlay).not.toHaveBeenCalled();
+  act(() => root.update(render(1)));
+  expect(mockNativePlaying).toBe(true);
+  act(() => root.update(render(1, false)));
+  expect(mockNativePlaying).toBe(false);
+  act(() => root.update(render(1)));
+  act(() => root.update(render(2, true, true)));
+  act(() => root.update(render(2)));
+  expect(mockNativePlay).toHaveBeenCalledTimes(1);
+  act(() => root.update(render(3)));
+  expect(mockNativePlay).toHaveBeenCalledTimes(2);
+});
+
+it('iOS layout does not treat an asynchronous URL as loaded', () => {
+  jest.replaceProperty(Platform, 'OS', 'ios');
+  mockAutoLoad = false;
+  act(() => { root = create(<NativeAnimation source={{ uri: 'https://example.com/animation.json' }} trigger={0} reducedMotion={false} />); });
+  act(layoutNativeAnimation);
+  expect(mockNativePause).not.toHaveBeenCalled();
+  act(() => mockNativeProps.onAnimationLoaded?.());
+  expect(mockNativePause).toHaveBeenCalled();
 });
 
 it('uses the latest impact after a slow load, but never plays a backgrounded impact', () => {

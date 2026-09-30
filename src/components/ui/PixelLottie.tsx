@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import LottieView from 'lottie-react-native';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 
 export interface PixelLottieProps {
   source: React.ComponentProps<typeof LottieView>['source'];
@@ -30,6 +30,15 @@ function LoadedPixelLottie({ source, trigger, reducedMotion, active = true, stil
   const ref = useRef<LottieView>(null);
   const [loaded, setLoaded] = useState(false);
   const played = useRef(0);
+  const handleLayout = () => {
+    // iOS decodes inline JSON synchronously in setSourceJson, before layout.
+    // Fabric can drop its load event before the event emitter is attached.
+    // Layout is therefore a second readiness signal for bundled JSON only;
+    // Android and asynchronous URI sources must still wait for the load event.
+    if (Platform.OS === 'ios' && typeof source === 'object' && source !== null && 'layers' in source) {
+      setLoaded(true);
+    }
+  };
   useEffect(() => {
     if (!active || reducedMotion || !trigger) played.current = trigger;
     if (!loaded) return;
@@ -48,6 +57,6 @@ function LoadedPixelLottie({ source, trigger, reducedMotion, active = true, stil
     return () => { ref.current?.pause(); played.current = 0; };
   }, [source, trigger, reducedMotion, active, loaded]);
   return <View pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={StyleSheet.absoluteFill}>
-    <LottieView ref={ref} source={source} loop={false} autoPlay={false} onAnimationLoaded={() => setLoaded(true)} onAnimationFinish={(cancelled) => { if (!cancelled && active && !reducedMotion) onFinish?.(); }} progress={!active || reducedMotion || !trigger ? stillProgress : undefined} resizeMode="contain" style={StyleSheet.absoluteFill} />
+    <LottieView ref={ref} source={source} loop={false} autoPlay={false} onLayout={handleLayout} onAnimationLoaded={() => setLoaded(true)} onAnimationFinish={(cancelled) => { if (!cancelled && active && !reducedMotion) onFinish?.(); }} progress={!active || reducedMotion || !trigger ? stillProgress : undefined} resizeMode="contain" style={StyleSheet.absoluteFill} />
   </View>;
 }

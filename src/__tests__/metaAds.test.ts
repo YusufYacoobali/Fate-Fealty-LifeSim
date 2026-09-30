@@ -85,7 +85,7 @@ test.each(['denied', 'undetermined'])('iOS ATT %s does not initialize or collect
   expect(mockRequest).not.toHaveBeenCalled();
 });
 
-test('only explicit opt-in requests ATT', async () => {
+test('enabling measurement requests ATT before activating', async () => {
   mockPermission.mockResolvedValue({ status: 'undetermined' });
   await service().setMetaConsent(true);
   expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -124,10 +124,56 @@ test('activation failure still attaches purchase identifiers and retries activat
   expect(mockActivation.activateApp).toHaveBeenCalledTimes(2);
 });
 
-test('first-launch choice is only presented once per process', async () => {
+test('Android first-launch choice is only presented once per process', async () => {
+  mockPlatform = 'android';
   await service().startMetaAds(); await service().startMetaAds();
   expect(mockAlert).toHaveBeenCalledTimes(1);
   expect(mockRequest).not.toHaveBeenCalled();
+});
+
+test.each(['granted', 'denied'])('iOS first launch shows only ATT and respects %s', async (status) => {
+  mockPermission.mockResolvedValue({ status: 'undetermined' });
+  mockRequest.mockImplementationOnce(async () => {
+    expect(mockActivation.configure).not.toHaveBeenCalledWith(true);
+    mockPermission.mockResolvedValue({ status });
+    return { status };
+  });
+  await service().connectMetaPurchases(client());
+  await Promise.all([service().startMetaAds(), service().startMetaAds()]);
+  await service().startMetaAds();
+  expect(mockAlert).not.toHaveBeenCalled();
+  expect(mockRequest).toHaveBeenCalledTimes(1);
+  expect(mockActivation.configure).toHaveBeenLastCalledWith(status === 'granted');
+  if (status === 'denied') expect(mockRC.collectDeviceIdentifiers).not.toHaveBeenCalled();
+});
+
+test.each(['granted', 'denied'])('existing ATT %s does not show either startup prompt', async (status) => {
+  mockPermission.mockResolvedValue({ status });
+  await service().startMetaAds();
+  expect(mockAlert).not.toHaveBeenCalled();
+  expect(mockRequest).not.toHaveBeenCalled();
+  expect(mockActivation.configure).toHaveBeenLastCalledWith(status === 'granted');
+});
+
+test('iOS startup preserves a previous in-app opt-out', async () => {
+  mockConsent = 'denied';
+  await service().startMetaAds();
+  expect(mockAlert).not.toHaveBeenCalled();
+  expect(mockRequest).not.toHaveBeenCalled();
+  expect(mockActivation.configure).toHaveBeenLastCalledWith(false);
+  expect(mockConsent).toBe('denied');
+});
+
+test('iOS retries an undetermined ATT permission after returning to the app', async () => {
+  mockConsent = 'granted';
+  mockPermission.mockResolvedValue({ status: 'undetermined' });
+  mockRequest.mockResolvedValueOnce({ status: 'undetermined' });
+  await service().startMetaAds();
+  expect(mockActivation.configure).toHaveBeenLastCalledWith(false);
+  await service().startMetaAds();
+  expect(mockRequest).toHaveBeenCalledTimes(2);
+  expect(mockActivation.configure).toHaveBeenLastCalledWith(true);
+  expect(mockAlert).not.toHaveBeenCalled();
 });
 
 

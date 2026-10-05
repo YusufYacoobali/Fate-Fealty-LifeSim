@@ -20,11 +20,11 @@ import { ProUnlockButton } from './ProUnlockButton';
 export function ForgePlayButton({ task, label = 'MAKE AT THE ANVIL · SAME COST' }: { task: ForgeTask; label?: string }) {
   const { state, dispatch } = useGame();
   const reason = forgeAvailability(state, task);
-  if (!state.lifetimeUnlocked) return <ProUnlockButton feature={task.kind === 'practice' ? 'ANVIL PRACTICE' : 'MAKE AT THE ANVIL'} />;
-  if (task.kind !== 'practice' && forgeAllowance(state) === 0) return null;
+  if (reason === 'Requires Pro') return <ProUnlockButton feature={task.kind === 'commission' ? 'COMMISSIONED FORGE WORK' : 'ADVANCED CRAFTING'} />;
   return <PixelButton bg={C.charm} shadow={C.charmDark} disabled={!!reason} onPress={() => dispatch({ type: 'FORGE_START', task, revision: state.rpg.revision })} style={{ marginTop: 8 }} innerStyle={{ padding: 12, minHeight: 44 }}>
     <PixelText font="pixel" size={7} color={C.blueDark}>{label}</PixelText>
     {reason && <PixelText font="body" size={14} color={C.textBrown}>{reason}</PixelText>}
+    {!reason && task.kind !== 'practice' && forgeAllowance(state) === 0 && <PixelText font="body" size={14} color={C.textBrown}>Yearly forge bonuses used; normal rewards still apply.</PixelText>}
   </PixelButton>;
 }
 

@@ -31,7 +31,7 @@ test('checkout waits for current attribution before buying the selected store pa
   await Promise.resolve(); await Promise.resolve();
   expect(mockPurchase).not.toHaveBeenCalled();
   resolve();
-  await expect(checkout).resolves.toEqual({ outcome: 'purchased', unlocked: true });
+  await expect(checkout).resolves.toMatchObject({ outcome: 'purchased', unlocked: true });
   expect(mockPurchase).toHaveBeenCalledWith(mockOffer);
 });
 

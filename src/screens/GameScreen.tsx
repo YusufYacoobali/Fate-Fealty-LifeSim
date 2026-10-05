@@ -82,6 +82,7 @@ export function GameScreen() {
     premiumEntitled,
     premiumForNextLife,
     premiumAccessState,
+    premiumOwnership,
     purchasePlan,
     restorePremium,
     proTrialActive,
@@ -385,6 +386,7 @@ export function GameScreen() {
           <PremiumShopScreen
             // The storefront reflects what was actually bought, never the sample.
             unlocked={premiumEntitled}
+            ownership={premiumOwnership}
             accessState={premiumAccessState}
             onPurchase={purchasePlan}
             onRestore={restorePremium}

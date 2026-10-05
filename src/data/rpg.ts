@@ -39,17 +39,17 @@ export const EQUIPMENT: EquipmentDef[] = [
 ];
 export const RECIPES: RecipeDef[] = [
   { id: 'wood_axe', name: 'Wood axe', materials: { timber: 2, iron: 1 }, gold: 1, level: 1, equipment: 'wood_axe', description: 'A useful tool for gathering and repairs.' },
-  { id: 'mason_tools', name: "Mason's tools", materials: { timber: 1, iron: 3 }, gold: 3, level: 3, building: 'workshop', equipment: 'mason_tools', description: 'Fine tools for difficult commissions.' },
-  { id: 'herbal_kit', name: 'Herbal kit', materials: { timber: 1, herbs: 3 }, gold: 2, level: 3, scholarshipLevel: 3, building: 'herb_garden', equipment: 'herbal_kit', description: 'Prepare remedies and identify rare plants.' },
+  { id: 'mason_tools', name: "Mason's tools", materials: { timber: 1, iron: 3 }, gold: 3, level: 3, premium: true, building: 'workshop', equipment: 'mason_tools', description: 'Fine tools for difficult commissions.' },
+  { id: 'herbal_kit', name: 'Herbal kit', materials: { timber: 1, herbs: 3 }, gold: 2, level: 3, premium: true, scholarshipLevel: 3, building: 'herb_garden', equipment: 'herbal_kit', description: 'Prepare remedies and identify rare plants.' },
   { id: 'practice_sword', name: 'Balanced blade', materials: { timber: 1, iron: 2 }, gold: 2, level: 1, equipment: 'practice_sword', description: 'A reliable blade for a new adventurer.' },
-  { id: 'steel_blade', name: 'Tempered blade', materials: { iron: 5, timber: 1 }, gold: 8, level: 6, building: 'workshop', equipment: 'steel_blade', description: 'A powerful, carefully tempered weapon.' },
-  { id: 'gambeson', name: 'Quilted armour', materials: { herbs: 2, timber: 1 }, gold: 5, level: 3, equipment: 'gambeson', description: 'Light protection for road and battlefield.' },
-  { id: 'mail_shirt', name: 'Mail shirt', materials: { iron: 8 }, gold: 12, level: 6, building: 'workshop', equipment: 'mail_shirt', description: 'Strong protection at a cost in mobility.' },
+  { id: 'steel_blade', name: 'Tempered blade', materials: { iron: 5, timber: 1 }, gold: 8, level: 6, premium: true, building: 'workshop', equipment: 'steel_blade', description: 'A powerful, carefully tempered weapon.' },
+  { id: 'gambeson', name: 'Quilted armour', materials: { herbs: 2, timber: 1 }, gold: 5, level: 3, premium: true, equipment: 'gambeson', description: 'Light protection for road and battlefield.' },
+  { id: 'mail_shirt', name: 'Mail shirt', materials: { iron: 8 }, gold: 12, level: 6, premium: true, building: 'workshop', equipment: 'mail_shirt', description: 'Strong protection at a cost in mobility.' },
   { id: 'seed_bundle', name: 'Seed bundle', materials: { herbs: 2 }, gold: 1, level: 1, effects: { holding: { stores: 8 } }, description: 'Use to add 8 Stores, or deliver to a client.' },
   { id: 'repair_kit', name: 'Repair kit', materials: { timber: 2, iron: 1 }, gold: 1, level: 1, effects: { holding: { security: 8 } }, description: 'Use to add 8 Security, or fulfil repairs.' },
   { id: 'healing_salve', name: 'Healing salve', materials: { herbs: 3 }, gold: 1, level: 1, effects: { health: 10 }, description: 'Use to restore 10 Health, or deliver to a patient.' },
   { id: 'provisions', name: 'Travel provisions', materials: { herbs: 1, timber: 1 }, gold: 2, level: 1, effects: { health: 4, holding: { stores: 4 } }, description: 'Supplies that also unlock a safe expedition approach.' },
-  { id: 'masterpiece', name: 'Guild masterpiece', materials: { timber: 6, iron: 6, stone: 3 }, gold: 15, level: 10, building: 'workshop', description: 'A masterwork for the final guild commission.' },
+  { id: 'masterpiece', name: 'Guild masterpiece', materials: { timber: 6, iron: 6, stone: 3 }, gold: 15, level: 10, premium: true, building: 'workshop', description: 'A masterwork for the final guild commission.' },
 ];
 export const RPG_BUILDINGS = [
   { id: 'workshop', name: 'Workshop', gold: 24, materials: { timber: 5, stone: 2 }, description: 'Unlock advanced tools, armour and guild commissions.' },

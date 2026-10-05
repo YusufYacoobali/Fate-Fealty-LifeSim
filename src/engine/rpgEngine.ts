@@ -69,7 +69,7 @@ function payable(s: GameState, gold: number, materials: Partial<Record<MaterialI
   return null;
 }
 export function rpgAvailability(s: GameState, command: RpgCommand): string | null {
-  if (!s.lifetimeUnlocked && (command.kind === 'craft' || (command.kind === 'train' && ['arms', 'craftsmanship'].includes(command.id)))) return 'Requires Pro';
+  if (command.kind === 'craft' && !s.lifetimeUnlocked && RECIPES.find((recipe) => recipe.id === command.id)?.premium) return 'Requires Pro';
   if (s.dead || s.pendingEvent || s.duel || s.rpg.mission || (s.rpg.forge && !(s.rpg.forge.phase === 'result' && ['equip', 'use_good'].includes(command.kind)))) return 'Finish the current encounter first';
   if (command.kind === 'abandon') return s.rpg.expedition ? null : 'No expedition in progress';
   if (command.kind === 'unequip') return null;

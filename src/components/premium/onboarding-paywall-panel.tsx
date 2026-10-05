@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Image, ImageSourcePropType, TouchableOpacity, View } from 'react-native';
 import { ACTIVITY_ICONS, PAYWALL_ART, TRAIT_ICONS } from '@/assets/generatedAssets';
 import { PAYWALL_PLAN_IDS, PREMIUM_BENEFIT_DETAILS, PREMIUM_PLANS, SHOP_PLAN_IDS, PlanId } from '@/data/premiumPlans';
-import { PlanOffers, PurchaseOutcome } from '@/services/purchases';
-import { annualSubscriptionValue } from '@/services/purchasesLogic';
+import { managePremiumSubscriptions, PlanOffers, PurchaseOutcome, PremiumOwnership } from '@/services/purchases';
+import { annualSubscriptionValue, ownedPlan, upgradePlans } from '@/services/purchasesLogic';
 import type { PremiumAccessState } from '@/state/hooks/usePremium';
 import { usePremiumOffers } from '@/state/hooks/usePremiumOffers';
 import { usePurchaseFlow } from '@/state/hooks/usePurchaseFlow';
@@ -43,6 +43,7 @@ const SHOP_FEATURES: ReadonlyArray<{ title: string; body: string; art: ImageSour
 interface Props {
   compact: boolean;
   unlocked: boolean;
+  ownership?: PremiumOwnership | null;
   accessState: PremiumAccessState;
   onPurchase: (plan: PlanId) => Promise<PurchaseOutcome>;
   onRestore: () => Promise<boolean>;
@@ -196,39 +197,58 @@ function RoyalOfferPanel({
   surface,
   compact,
   unlocked,
+  ownership,
   accessState,
   onPurchase,
   onRestore,
   onUnlocked,
 }: RoyalOfferProps) {
   const shop = surface === 'shop';
-  const planIds = shop ? SHOP_PLAN_IDS : PAYWALL_PLAN_IDS;
-  const [selected, setSelected] = useState<PlanId>(planIds[0]);
-  const { offers, storeUnavailable } = usePremiumOffers(!unlocked);
+  const { offers, offersLoading, storeUnavailable, retryOffers } = usePremiumOffers(!unlocked || (shop && ownership?.kind === 'subscription'));
+  const currentPlan = ownedPlan(ownership, offers);
+  const planIds = shop && unlocked ? upgradePlans(ownership, currentPlan) : shop ? SHOP_PLAN_IDS : PAYWALL_PLAN_IDS;
+  const [selection, setSelected] = useState<PlanId>('annual');
+  const selected = planIds.includes(selection) ? selection : planIds[0] ?? 'annual';
+  const showOffers = !unlocked || (shop && planIds.length > 0);
+  const [changeNotice, setChangeNotice] = useState<string | undefined>();
+  const [managementError, setManagementError] = useState<string | undefined>();
   const { message, busy, buy, restore } = usePurchaseFlow(onPurchase, onRestore);
 
   const checkingAccess = accessState === 'loading';
-  const storeBlocked = storeUnavailable || accessState === 'unavailable';
+  // An ownership lookup failure does not mean StoreKit products are unavailable.
+  const storeBlocked = storeUnavailable;
   const selectedMissing = !!offers && !offers[selected].available;
-  const buyDisabled = unlocked || busy || checkingAccess || storeBlocked || selectedMissing;
-  const ctaText = unlocked
+  const buyDisabled = !showOffers || busy || checkingAccess || offersLoading || storeBlocked || selectedMissing;
+  const ctaText = !showOffers
     ? 'PREMIUM OWNED'
     : busy
       ? 'OPENING THE TREASURY...'
       : checkingAccess
         ? 'CHECKING ACCESS...'
-        : storeBlocked || selectedMissing
-          ? 'STORE NOT AVAILABLE'
-          : 'UNLOCK THE FULL REALM';
+        : offersLoading
+          ? 'LOADING STORE...'
+          : storeBlocked || selectedMissing
+            ? 'STORE NOT AVAILABLE'
+            : unlocked ? selected === 'lifetime' ? 'BUY LIFETIME' : 'SWITCH TO YEARLY' : 'UNLOCK THE FULL REALM';
 
   const handleBuy = async () => {
+    setChangeNotice(undefined);
     const outcome = await buy(selected);
-    if (outcome === 'purchased') onUnlocked?.();
+    if (outcome === 'purchased') {
+      if (unlocked && selected === 'annual') setChangeNotice('Your plan change was submitted. Your store confirms when the yearly plan starts.');
+      onUnlocked?.();
+    }
   };
 
   const handleRestore = async () => {
+    setChangeNotice(undefined);
     const restored = await restore();
     if (restored) onUnlocked?.();
+  };
+
+  const handleManage = async () => {
+    setManagementError(undefined);
+    if (!await managePremiumSubscriptions()) setManagementError('Could not open subscription settings. Try again or open them in your store.');
   };
 
   return (
@@ -259,21 +279,24 @@ function RoyalOfferPanel({
           </PixelText>
           {shop && (
             <PixelText font="body" size={compact ? 15 : 16} color={ROYAL.cream} style={{ textAlign: 'center', marginTop: compact ? 3 : 6 }}>
-              Choose a subscription or own the complete premium adventure for life.
+              {unlocked ? 'Keep thy crown. Choose the next pass for thy reign.' : 'Choose a subscription or own the complete premium adventure for life.'}
             </PixelText>
           )}
         </View>
       </View>
 
-      {unlocked ? (
+      {unlocked && (
         <View style={{ backgroundColor: ROYAL.panel, borderWidth: 3, borderColor: ROYAL.gold, padding: compact ? 11 : 16, alignItems: 'center' }}>
           <Image source={PAYWALL_ART.check} resizeMode="contain" style={{ width: compact ? 50 : 64, height: compact ? 50 : 64 }} />
-          <PixelText font="pixel" size={compact ? 8 : 10} color={ROYAL.gold} style={{ marginTop: 6 }}>PREMIUM OWNED</PixelText>
+          <PixelText font="pixel" size={compact ? 8 : 10} color={ROYAL.gold} style={{ marginTop: 6 }}>
+            {shop && currentPlan === 'monthly' ? 'MONTHLY PASS ACTIVE' : shop && currentPlan === 'annual' ? 'YEARLY PASS ACTIVE' : shop && currentPlan === 'lifetime' ? 'LIFETIME OWNED' : 'PREMIUM OWNED'}
+          </PixelText>
           <PixelText font="body" size={compact ? 14 : 16} color={ROYAL.cream} style={{ marginTop: 6, textAlign: 'center' }}>
             Every premium rank, Holding upgrade, story, goal, deed, and future chapter is unlocked.
           </PixelText>
         </View>
-      ) : (
+      )}
+      {showOffers && (
         <>
       <View style={{ backgroundColor: ROYAL.panel, borderWidth: 3, borderColor: ROYAL.gold, padding: compact ? 6 : 9 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: compact ? 5 : 8 }}>
@@ -377,14 +400,21 @@ function RoyalOfferPanel({
       <PixelText font="body" size={compact ? 11 : 13} color="#a9c9e8" style={{ textAlign: 'center' }}>
         {selected === 'lifetime' ? 'One payment. No subscription.' : 'Renews automatically. Manage or cancel in your store subscription settings.'}
       </PixelText>
-      {storeBlocked && (
-        <PixelText font="body" size={compact ? 11 : 13} color={ROYAL.cream} style={{ textAlign: 'center' }}>
-          The store is unreachable right now.
-        </PixelText>
+      {(storeBlocked || selectedMissing) && (
+        <View style={{ alignItems: 'center' }}>
+          <PixelText font="body" size={compact ? 11 : 13} color={ROYAL.cream} style={{ textAlign: 'center' }}>
+            {storeBlocked ? 'Could not load the store. Check your connection and try again.' : 'This pass is currently unavailable. Choose another pass or retry.'}
+          </PixelText>
+          <TouchableOpacity accessibilityRole="button" onPress={retryOffers} disabled={busy || offersLoading} style={{ padding: 10 }}>
+            <PixelText font="body" size={compact ? 13 : 15} color={ROYAL.paleBlue}>
+              {offersLoading ? 'Loading store...' : 'Retry store'}
+            </PixelText>
+          </TouchableOpacity>
+        </View>
       )}
       {!!message && (
         <PixelText font="body" size={compact ? 12 : 13} color={ROYAL.cream} style={{ textAlign: 'center' }}>
-          {message}
+          {changeNotice ?? message}
         </PixelText>
       )}
       <TouchableOpacity onPress={handleRestore} disabled={busy} style={{ alignSelf: 'center', padding: 7 }}>
@@ -403,7 +433,20 @@ function RoyalOfferPanel({
         </>
       )}
 
-      {unlocked && (shop ? <ShopFeatures compact={compact} /> : <OnboardingFeatures compact={compact} />)}
+      {shop && ownership?.hasActiveSubscription && (
+        <View style={{ alignItems: 'center', gap: 4 }}>
+          {(selected === 'lifetime' || ownership.kind === 'lifetime') && (
+            <PixelText font="body" size={compact ? 12 : 14} color={ROYAL.cream} style={{ textAlign: 'center' }}>
+              Buying Lifetime does not cancel an existing subscription. Cancel its renewal in your store subscription settings.
+            </PixelText>
+          )}
+          <TouchableOpacity accessibilityRole="button" onPress={handleManage} disabled={busy} style={{ padding: 10 }}>
+            <PixelText font="body" size={compact ? 13 : 15} color={ROYAL.paleBlue}>Manage subscription</PixelText>
+          </TouchableOpacity>
+          {!!managementError && <PixelText font="body" size={13} color={ROYAL.cream} style={{ textAlign: 'center' }}>{managementError}</PixelText>}
+        </View>
+      )}
+      {unlocked && !showOffers && (shop ? <ShopFeatures compact={compact} /> : <OnboardingFeatures compact={compact} />)}
     </View>
   );
 }

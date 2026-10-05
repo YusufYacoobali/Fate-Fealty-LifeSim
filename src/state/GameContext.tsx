@@ -12,7 +12,7 @@ import { useProTrial } from './hooks/useProTrial';
 import { useShopPromoGate } from './hooks/useShopPromoGate';
 import type { PremiumAccessState } from './hooks/usePremium';
 import { NewLifeOptions } from './gameReducer';
-import { PlanId, PurchaseOutcome } from '@/services/purchases';
+import { PlanId, PurchaseOutcome, PremiumOwnership } from '@/services/purchases';
 import { isLaunchPaywallDue, nextAppOpenCount } from '@/services/launchPaywallLogic';
 import { useRetentionLoops } from './hooks/useRetentionLoops';
 import type { DailyRewardProgress, DailyRewardStatus } from '@/services/dailyRewards';
@@ -45,6 +45,7 @@ interface GameContextValue {
   /** The paid entitlement alone — what the storefront must reflect. */
   premiumEntitled: boolean;
   premiumAccessState: PremiumAccessState;
+  premiumOwnership: PremiumOwnership | null;
   purchasePlan: (plan: PlanId) => Promise<PurchaseOutcome>;
   restorePremium: () => Promise<boolean>;
   proTrialActive: boolean;
@@ -174,6 +175,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       premiumUnlocked: proAccess.premiumUnlocked,
       premiumEntitled: premium.premiumUnlocked,
       premiumAccessState: premium.premiumAccessState,
+      premiumOwnership: premium.premiumOwnership,
       purchasePlan: premium.purchasePlan,
       restorePremium: premium.restorePremium,
       proTrialActive: proAccess.trialActive,
@@ -212,6 +214,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       proAccess.premiumUnlocked,
       premium.premiumUnlocked,
       premium.premiumAccessState,
+      premium.premiumOwnership,
       premium.purchasePlan,
       premium.restorePremium,
       proAccess.trialActive,

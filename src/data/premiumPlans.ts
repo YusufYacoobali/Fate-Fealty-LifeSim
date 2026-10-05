@@ -82,14 +82,14 @@ export const PREMIUM_BENEFIT_DETAILS = [
     body: 'Raise the yearly action limit from 24 to 50 for longer, more flexible lives.',
   },
   {
-    title: 'CRAFT AND TRAIN',
-    body: 'Craft recipes, spar in the yard, and play solo sword and anvil practice mini-games.',
+    title: 'ADVANCED CRAFTING',
+    body: 'Unlock advanced recipes and commissioned forge work. Practice mini-games and basic crafting are free.',
   },
 ] as const;
 
 /** Short enough to keep the onboarding paywall on one screen. */
 export const PREMIUM_BENEFIT_LINES = [
-  'Crafting, sword and anvil mini-games',
+  'Advanced recipes and commissioned forge work',
   'Baron and Monarch ranks',
   'Royal Holding orders and buildings',
   'Premium events and story arcs',

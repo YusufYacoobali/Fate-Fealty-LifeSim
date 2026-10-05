@@ -27,7 +27,6 @@ export const DUEL_MAX_ROUNDS = 4;
 export const SOLO_PRACTICE_SWINGS = 5;
 
 export function armsPracticeAvailability(s: GameState): string | null {
-  if (!s.lifetimeUnlocked) return 'Requires Pro';
   if (s.dead || s.duel || s.pendingEvent || s.rpg.mission || s.rpg.forge) return 'Finish the current encounter first';
   const available = timedActionAvailability(s);
   if (!available.available) return available.reason ?? 'Unavailable';
@@ -97,7 +96,6 @@ function nextMoveId(state: GameState, kind: DuelKind, previousId?: string): stri
 }
 
 export function startDuel(state: GameState, opponentId: string, kind: DuelKind, practice = false, stakes?: DuelStakes): GameState {
-  if (practice && !state.lifetimeUnlocked) return state;
   if (!practice && !duelAvailability(state, opponentId, kind, !!stakes).available) return state;
   if (state.duel || state.dead || !state.world.characters[opponentId]?.alive) return state;
   const opponent = state.world.characters[opponentId]!;

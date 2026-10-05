@@ -16,6 +16,7 @@ export interface RecipeDef {
   id: string; name: string; materials: Partial<Record<MaterialId, number>>; gold: number;
   level: number; building?: string; equipment?: string; effects?: Effects; description: string;
   scholarshipLevel?: number;
+  premium?: boolean;
 }
 export interface ContractOffer { id: string; templateId: string; clientId: string | null; attempted: boolean }
 export type ForgeTask = { kind: 'practice' } | { kind: 'work' } | { kind: 'recipe'; recipeId: string } | { kind: 'commission'; choiceId: string; chapter: number };

@@ -21,7 +21,7 @@ function Copy({ children }: { children: React.ReactNode }) { return <PixelText f
 function Box({ children }: { children: React.ReactNode }) { return <View style={{ backgroundColor: C.parch, borderWidth: 2, borderColor: C.parchBorder, padding: 10, marginBottom: 10 }}>{children}</View>; }
 function Action({ label, command }: { label: string; command: RpgCommand }) {
   const { state, dispatch } = useGame(); const reason = rpgAvailability(state, command);
-  if (command.kind === 'craft' && !state.lifetimeUnlocked) return <ProUnlockButton feature="CRAFT" />;
+  if (reason === 'Requires Pro') return <ProUnlockButton feature="ADVANCED CRAFTING" />;
   return <PixelButton bg={C.lightFill} shadow={C.paleEdge} disabled={!!reason} onPress={() => dispatch({ type: 'RPG', command, revision: state.rpg.revision })} style={{ marginTop: 6 }} innerStyle={{ padding: 10, minHeight: 44 }}>
     <PixelText font="pixel" size={7} color={reason ? C.textMuted : C.blueDark}>{label}</PixelText>
     {reason && <PixelText font="body" size={14} color={C.textMuted} style={{ marginTop: 4 }}>{reason}</PixelText>}
@@ -71,14 +71,14 @@ export function TrainingPanel() {
   const armsReason = armsPracticeAvailability(state);
   const practiceSkills = ['craftsmanship', ...SKILLS.filter(id => id !== 'craftsmanship')] as const;
   return <View>
-    <Box><Heading icon="arms">PRACTICE IN THE YARD</Heading><Copy>Learn to block, dodge and parry against a sparring partner. Sparring costs no actions, grants no XP and causes no lasting injury.</Copy>{!state.lifetimeUnlocked ? <ProUnlockButton feature="SPARRING" /> : <PixelButton bg={C.faith} shadow={C.faithDark} disabled={state.age < 8 || state.dead || !!state.duel || !!state.pendingEvent || !!state.rpg.mission || !!state.rpg.forge || state.tags.includes('imprisoned')} onPress={() => dispatch({ type: 'PRACTICE_DUEL' })} innerStyle={{ padding: 12, minHeight: 44 }}><PixelText font="pixel" size={8} color={C.blueDark}>SPAR · NO ACTION COST · AGE 8+</PixelText></PixelButton>}</Box>
+    <Box><Heading icon="arms">PRACTICE IN THE YARD</Heading><Copy>Learn to block, dodge and parry against a sparring partner. Sparring costs no actions, grants no XP and causes no lasting injury.</Copy><PixelButton bg={C.faith} shadow={C.faithDark} disabled={state.age < 8 || state.dead || !!state.duel || !!state.pendingEvent || !!state.rpg.mission || !!state.rpg.forge || state.tags.includes('imprisoned')} onPress={() => dispatch({ type: 'PRACTICE_DUEL' })} innerStyle={{ padding: 12, minHeight: 44 }}><PixelText font="pixel" size={8} color={C.blueDark}>SPAR · NO ACTION COST · AGE 8+</PixelText></PixelButton></Box>
     {practiceSkills.map((id) => <Box key={id}>
       <Heading icon={id}>{SKILL_NAMES[id]}</Heading>
       <Copy>Level {skills[id].level}{skills[id].mastered ? ' / ' + MASTERY_TITLES[id] : ''} · {skills[id].level < 10 ? skills[id].xp + '/' + skills[id].level * 20 + ' XP' : 'Maximum level'}</Copy>
       {id === 'craftsmanship' && <Copy>{skills.craftsmanship.level < 3 ? `${father ? father.name + ' takes you to the village forge. The smith' : 'The village smith'} shows you how to straighten a hinge without flattening your thumb.` : 'Practise shaping iron at the anvil. Five timed blows build your Craftsmanship.'}</Copy>}
       {id === 'arms' && <Copy>Five timed sword swings on your own. Practise quick cuts, heavy swings and feints to build Arms.</Copy>}
       <Copy>{skills[id].level < 3 ? 'Level 3: ' + SKILL_MILESTONES[id][3] : skills[id].level < 6 ? 'Level 6: ' + SKILL_MILESTONES[id][6] : skills[id].level < 10 ? 'Level 10: ' + SKILL_MILESTONES[id][10] : skills[id].mastered ? 'Mastery commission complete' : 'Complete the final commission to become ' + MASTERY_TITLES[id]}</Copy>
-      {id === 'craftsmanship' ? <ForgePlayButton task={{ kind: 'practice' }} label="ANVIL PRACTICE · 1 ACTION · 6 XP" /> : id === 'arms' ? !state.lifetimeUnlocked ? <ProUnlockButton feature="SOLO SWORD PRACTICE" /> : <PixelButton bg={C.charm} shadow={C.charmDark} disabled={!!armsReason} onPress={() => dispatch({ type: 'ARMS_PRACTICE_START', revision: state.rpg.revision })} innerStyle={{ padding: 12, minHeight: 44 }}><PixelText font="pixel" size={7} color={C.blueDark}>SOLO SWORD PRACTICE · 1 ACTION · 6 XP</PixelText>{armsReason && <Copy>{armsReason}</Copy>}</PixelButton> : <Action label="PRACTICAL EXERCISES · 1 ACTION · 6 XP" command={{ kind: 'train', id }} />}
+      {id === 'craftsmanship' ? <ForgePlayButton task={{ kind: 'practice' }} label="ANVIL PRACTICE · 1 ACTION · 6 XP" /> : id === 'arms' ? <PixelButton bg={C.charm} shadow={C.charmDark} disabled={!!armsReason} onPress={() => dispatch({ type: 'ARMS_PRACTICE_START', revision: state.rpg.revision })} innerStyle={{ padding: 12, minHeight: 44 }}><PixelText font="pixel" size={7} color={C.blueDark}>SOLO SWORD PRACTICE · 1 ACTION · 6 XP</PixelText>{armsReason && <Copy>{armsReason}</Copy>}</PixelButton> : <Action label="PRACTICAL EXERCISES · 1 ACTION · 6 XP" command={{ kind: 'train', id }} />}
       {skills[id].level === 10 && !skills[id].mastered && <Action label="MASTERY COMMISSION · 1 ACTION" command={{ kind: 'mastery', id }} />}
     </Box>)}
   </View>;

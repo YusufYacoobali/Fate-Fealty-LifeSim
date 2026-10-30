@@ -75,3 +75,15 @@ test('peace can fail or succeed while always charging the agreed embassy cost on
   }
   expect(truce).toBeGreaterThan(0); expect(rejected).toBeGreaterThan(0);
 });
+test('councillors react to the advice given before a successful decree, not its improved conditions', () => {
+  let s = monarch(21); s.world.court!.treasury = 70;
+  expect(councilAdvice(s,'tax_relief').every(a => a.support)).toBe(true);
+  s = gameReducer(s,{ type: 'COURT',action: 'tax_relief' });
+  expect(s.world.court!.treasury).toBe(50);
+  expect(s.world.court!.coalitions ?? []).toEqual([]);
+  s = monarch(22); s.world.conditions.warThreat = 40;
+  expect(councilAdvice(s,'mobilise').every(a => a.support)).toBe(true);
+  s = gameReducer(s,{ type: 'COURT',action: 'mobilise' });
+  expect(s.world.conditions.warThreat).toBeLessThan(40);
+  expect(s.world.court!.coalitions ?? []).toEqual([]);
+});

@@ -129,7 +129,7 @@ describe('specified life-depth acceptance scenarios', () => {
     expect(s.world.characters[s.playerCharacterId].legalState!.status).toBe('exiled');
     expect(s.dead).toBe(false);
   });
-  it('F: a free courtier earns influence and an office, while every crown route remains closed', () => {
+  it('F: a free courtier earns influence and contests an office, while every crown route remains closed', () => {
     let s = born('peasant'); s.age = 30; s.occupation.careerId = 'clerk';
     s.world.characters[s.playerCharacterId].education!.qualifications = ['literacy', 'court_education'];
     const ruler = s.world.court!.rulerId;
@@ -179,4 +179,23 @@ it('a noble earns martial training and a service knighthood while retaining nobi
   s = act(s,{ type: 'CAREER_ACTION',action: 'honour' });
   expect(s.world.characters[s.playerCharacterId].socialStatus!.martialHonour).toBe('knight');
   expect(s.world.characters[s.playerCharacterId].socialStatus!.estate).toBe('noble'); expect(s.rankIdx).toBe(3);
+});
+
+it('unpopular annual decrees grow an opposition coalition into a council crisis and a lost crown', () => {
+  const { dueCourtEvent } = require('@/engine/courtPolitics');
+  const { resolveScheduledConsequences } = require('@/engine/consequenceScheduler');
+  let s = born('royal',true); s.age = s.world.characters[s.playerCharacterId].age = 30;
+  killKin(s,s.world.court!.heirId!); killKin(s,'father');
+  s.world.conditions.foodSecurity = 20;
+  let audience = false;
+  for (let year = 0; year < 14 && s.world.court!.rulerId === s.playerCharacterId; year++) {
+    s = act(s,{ type: 'COURT',action: 'tax_raise',counsel: 'override' });
+    if (dueCourtEvent(s) === 'court_opposition_audience') { audience = true; s.pendingEvent = { eventId: 'court_opposition_audience' }; s = resolve(s,2); }
+    s = nextYear(s);
+    runWithWorldRng(s.world,() => { resolveScheduledConsequences(s); tickCourt(s); });
+  }
+  expect(audience).toBe(true);
+  expect(s.world.court!.records.some(r => r.kind === 'opposition_assert')).toBe(true);
+  expect(s.world.court!.rulerId).not.toBe(s.playerCharacterId);
+  expect(s.world.characters[s.playerCharacterId].legalState!.status).toBe('exiled');
 });

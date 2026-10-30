@@ -1,4 +1,4 @@
-import { beginOfficePetition, reactToDecree, tickCourtOpposition, addCourtOpposition } from './courtPolitics';
+import { beginOfficePetition, councilAdvice, reactToDecree, tickCourtOpposition, addCourtOpposition } from './courtPolitics';
 import type { CourtOffice, Effects, GameState, WorldCharacter } from '@/types/game';
 import { POLITICAL_OFFICES } from '@/data/politicalOffices';
 import { legacyStatus } from './lifeDepthState';
@@ -106,6 +106,7 @@ export function performCourtAction(state: GameState, action: CourtAction, target
   const court = state.world.court!, p = state.world.characters[state.playerCharacterId], target = targetId ? state.world.characters[targetId] : undefined;
   if (court.actionsYear !== state.world.currentYear) { court.actionsYear = state.world.currentYear; court.actionsUsed = 0; }
   court.actionsUsed++; (court.lastActionYears ??= {})[action] = state.world.currentYear;
+  const advice = court.rulerId === p.id ? councilAdvice(state,action) : [];
   const world = state.world.conditions;
   let text = '';
   switch (action) {
@@ -147,7 +148,7 @@ export function performCourtAction(state: GameState, action: CourtAction, target
     case 'disinherit': court.claims.find(c => c.characterId === target!.id)!.disinherited = true; if (court.heirId === target!.id) court.heirId = undefined; court.legitimacy = clamp(court.legitimacy - 10); applyRelationshipShift(state, target!.id, { trust: -15 }, { affinity: -35 }); text = `${target!.name} is disinherited. The family receives a legal decision and the beginnings of a feud.`; break;
     case 'abdicate': { const successor = royalCandidates(state)[0]; if (successor) recogniseRuler(state, successor.id, 'a recorded abdication'); text = 'You surrender the crown. The council and the treasury continue under the recognised successor.'; break; }
   }
-  if (court.rulerId === p.id && !PUBLIC_ACTIONS.includes(action)) text += reactToDecree(state,action,counsel,targetId);
+  if (court.rulerId === p.id && !PUBLIC_ACTIONS.includes(action)) text += reactToDecree(state,action,counsel,targetId,advice);
   court.treasury = clamp(court.treasury, 0, 5000);
   recordCourt(state, action, targetId, text);
   if (target) appendCharacterMemory(target, { id: `court_${state.nextId++}`, year: state.world.currentYear, type: `court_${action}`, actorIds: [p.id], sentiment: ['disinherit','dismiss','expose'].includes(action) ? -25 : 15, salience: 4, inherited: true, summary: text });

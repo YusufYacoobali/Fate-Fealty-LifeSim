@@ -52,3 +52,51 @@ test('v6 scholarships, saved names, qualifications and RNG survive additive migr
   expect(next.world.characters[p.id].education!.qualifications).toContain('literacy');
   expect(next.world.rngState).toEqual(s.world.rngState);
 });
+test('merit requires demonstrated learning and institutional support; free household learning supplies an alternative', () => {
+  let s = createLife({ worldSeed: 11,birthOrigin: 'peasant' }); s.age = 8; s.gold = 0; s.stats.wits = 20;
+  expect(sponsorshipEligibility(s,'merit','parish')).toMatch(/Show learning/);
+  s = gameReducer(s,{ type: 'EDUCATION',action: 'enrol',track: 'household' });
+  for (let year = 0; year < 3; year++) { s.world.currentYear++; s.actionClock.used = 0; for (let lesson = 0; lesson < 3; lesson++) s = gameReducer(s,{ type: 'EDUCATION',action: 'study' }); }
+  expect(s.world.characters[s.playerCharacterId].education!.progress).toBeGreaterThanOrEqual(25);
+  expect(sponsorshipEligibility(s,'merit','parish')).toBeNull();
+  s.world.factions.church.influence = 10;
+  expect(sponsorshipEligibility(s,'merit','parish')).toMatch(/cannot support/);
+  expect(s.gold).toBe(0);
+});
+test('patron support needs a real influential living person, trust and a purse', () => {
+  const { relationshipWith } = require('@/engine/relationshipState');
+  let approved = 0, declined = 0;
+  for (let seed = 1; seed <= 35; seed++) {
+    let s = createLife({ worldSeed: seed,birthOrigin: 'peasant' }); s.age = 12;
+    const patron = s.world.characters.beatrice; patron.gold = 40;
+    const relationship = relationshipWith(s,patron.id); relationship.bToA.trust = 20; relationship.bToA.affinity = 20; relationship.bToA.respect = 20;
+    expect(sponsorshipEligibility(s,'patron','cathedral',patron.id)).toMatch(/trust/);
+    relationship.bToA.trust = 90; relationship.bToA.affinity = 90; relationship.bToA.respect = 90;
+    patron.gold = 0; expect(sponsorshipEligibility(s,'patron','cathedral',patron.id)).toMatch(/cannot fund/); patron.gold = 40;
+    s = gameReducer(s,{ type: 'EDUCATION',action: 'scholarship',track: 'cathedral',funding: 'patron',sponsorId: patron.id });
+    const e = s.world.characters[s.playerCharacterId].education!;
+    if (e.applications![0].approved) { approved++; expect(e.sponsorships![0].sponsorId).toBe(patron.id); expect(s.world.characters[patron.id].gold).toBe(26); expect(tuitionDue(s,'noble')).toBe(20); }
+    else { declined++; expect(s.world.characters[patron.id].gold).toBe(40); }
+  }
+  expect(approved).toBeGreaterThan(0); expect(declined).toBeGreaterThan(0);
+});
+test('an adult reload replaces an accidentally saved childhood lesson without RNG or lost classmates', () => {
+  let s = createLife({ worldSeed: 55,birthOrigin: 'peasant' }); s.age = 8;
+  s = gameReducer(s,{ type: 'EDUCATION',action: 'enrol',track: 'household' });
+  const before = [...s.world.characters[s.playerCharacterId].education!.classmateIds];
+  s.age = 35; s.pendingEvent = { eventId: 'education_household_2' };
+  const next = normalizeGameState(JSON.parse(JSON.stringify(s)));
+  expect(next.pendingEvent?.eventId).toBe('education_adult_household_0');
+  expect(next.world.rngState).toEqual(s.world.rngState);
+  expect(next.world.characters[next.pendingEvent!.bindings!.classmate].age).toBeGreaterThanOrEqual(18);
+  expect(next.world.characters[next.playerCharacterId].education!.classmateIds).toEqual(expect.arrayContaining(before));
+});
+test('authored scholarship effects also use finite route coverage and cannot create a blanket waiver', () => {
+  const { applyEducationEffect } = require('@/engine/educationEngine');
+  let s = createLife({ worldSeed: 13,birthOrigin: 'artisan' }); s.age = 10;
+  s = gameReducer(s,{ type: 'EDUCATION',action: 'enrol',track: 'guild' });
+  applyEducationEffect(s,{ scholarship: true }); applyEducationEffect(s,{ scholarship: true });
+  const e = s.world.characters[s.playerCharacterId].education!;
+  expect(e.scholarship).toBe(false); expect(e.sponsorships).toHaveLength(1);
+  expect(e.sponsorships![0].remaining).toBe(12); expect(tuitionDue(s,'noble')).toBe(20);
+});

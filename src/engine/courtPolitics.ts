@@ -69,7 +69,7 @@ export function councilAdvice(s: GameState, action: CourtAction): { id: string; 
     const npc = s.world.characters[c.offices[o.id] ?? '']; if (!npc?.alive || npc.id === s.playerCharacterId) return [];
     let support = true, text = 'Preserve the Crown’s authority and the household accounts.';
     if (action === 'tax_raise') { support = w.foodSecurity >= 45 && (o.id === 'treasurer' || npc.ambition === 'gain_status'); text = support ? 'The treasury needs revenue; publish a clear assessment.' : `Food security is ${w.foodSecurity}; another levy risks resistance.`; }
-    else if (action === 'tax_relief') { support = o.id !== 'treasurer' || c.treasury >= 65; text = support ? 'Seed relief keeps occupied farms paying in later years.' : 'Relief leaves too little in the treasury for existing obligations.'; }
+    else if (action === 'tax_relief') { support = o.id !== 'treasurer' || c.treasury >= 65; text = o.id === 'treasurer' ? `The treasury holds ${c.treasury}g; ${support ? 'the seed grant can be met from present funds.' : 'relief leaves too little for existing obligations.'}` : o.id === 'marshal' ? `Food security ${w.foodSecurity} affects the company’s ration supply as well as the fields.` : o.id === 'religious_adviser' ? 'Parish households need seed as well as prayers; relief protects the vulnerable.' : 'Record the relieved arrears clearly so tenants and collectors share the same account.'; }
     else if (action === 'mobilise') { support = w.warThreat >= 40 || npc.ambition === 'win_glory'; text = support ? `War threat ${w.warThreat} calls for a prepared host.` : 'The harvest and treasury will suffer if the host marches without need.'; }
     else if (action === 'peace') { support = npc.ambition !== 'win_glory' && !(npc.personalityTraits?.includes('cruel')); text = support ? 'A truce needs credible guarantees and a competent envoy.' : 'Peace deprives the company of glory and unsettled claims.'; }
     else if (action === 'religion') { support = o.id === 'religious_adviser' || !npc.personalityTraits?.includes('cunning'); text = support ? `Parish relief addresses religious tension ${w.religiousTension}.` : 'This endowment strengthens a rival patronage network.'; }
@@ -86,13 +86,13 @@ export function addCourtOpposition(s: GameState, leaderId: string, amount: numbe
   c.coalitions.push({ leaderId, memberIds: [leaderId], strength: amount, lastMoveYear: s.world.currentYear });
   c.coalitions = c.coalitions.slice(-12);
 }
-export function reactToDecree(s: GameState, action: CourtAction, counsel: 'consult' | 'override', targetId?: string): string {
+export function reactToDecree(s: GameState, action: CourtAction, counsel: 'consult' | 'override', targetId?: string, advice = councilAdvice(s,action)): string {
   const c = s.world.court!, w = s.world.conditions, p = s.world.characters[s.playerCharacterId];
   let result = '';
-  for (const advice of councilAdvice(s,action)) {
-    const change = advice.support ? (counsel === 'consult' ? 3 : 0) : counsel === 'consult' ? -3 : -9;
-    applyRelationshipShift(s,advice.id,{}, { affinity: change, trust: change });
-    if (!advice.support) { addCourtOpposition(s,advice.id,counsel === 'consult' ? 5 : 12); appendCharacterMemory(s.world.characters[advice.id], { id: `dissent_${s.nextId++}`, year: s.world.currentYear, type: 'council_dissent', actorIds: [p.id], sentiment: -25, salience: 4, inherited: true, summary: `${action.replaceAll('_',' ')}: ${advice.text}` }); }
+  for (const recommendation of advice) {
+    const change = recommendation.support ? (counsel === 'consult' ? 3 : 0) : counsel === 'consult' ? -3 : -9;
+    applyRelationshipShift(s,recommendation.id,{}, { affinity: change, trust: change });
+    if (!recommendation.support) { addCourtOpposition(s,recommendation.id,counsel === 'consult' ? 5 : 12); appendCharacterMemory(s.world.characters[recommendation.id], { id: `dissent_${s.nextId++}`, year: s.world.currentYear, type: 'council_dissent', actorIds: [p.id], sentiment: -25, salience: 4, inherited: true, summary: `${action.replaceAll('_',' ')}: ${recommendation.text}` }); }
   }
   if (action === 'tax_raise' && w.foodSecurity < 45 && chance(counsel === 'consult' ? 0.35 : 0.7)) { c.treasury = Math.max(0,c.treasury - 8); w.publicOrder = clamp(w.publicOrder - 8); result = ' Hungry households resist collection: eight treasury gold goes unpaid and public order falls.'; }
   if (action === 'grant_title') {

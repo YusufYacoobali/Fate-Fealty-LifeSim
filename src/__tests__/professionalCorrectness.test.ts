@@ -59,3 +59,21 @@ test('skill, qualifications, experience and contact competence change the prospe
   client.stats.wits = 10; const weak = practiceProspects(s, 'treat_household', 2, client).odds;
   client.stats.wits = 90; expect(practiceProspects(s, 'treat_household', 2, client).odds).toBeGreaterThanOrEqual(weak);
 });
+test('rivals act infrequently, expose recorded misconduct and retain a named memory', () => {
+  const { tickProfessionalStanding } = require('@/engine/careerSpecializationEngine');
+  const { runWithWorldRng } = require('@/engine/random');
+  const s = createLife({ worldSeed: 71,birthOrigin: 'merchant' }); s.age = 30;
+  const record = professionalRecord(s.world.characters[s.playerCharacterId],'trade');
+  record.rivalId = 'beatrice'; record.contactIds = ['edwin']; record.reputation = 60; record.milestones = ['commercial_legacy_ruthless'];
+  s.world.characters.beatrice.rel = 20;
+  let moves = 0;
+  for (let year = 0; year < 50; year++) {
+    s.world.currentYear++; record.lastWorkedYear = s.world.currentYear;
+    const last = record.rivalryYear;
+    runWithWorldRng(s.world,() => tickProfessionalStanding(s));
+    if (last !== record.rivalryYear) { moves++; if (last) expect(record.rivalryYear! - last).toBeGreaterThanOrEqual(3); }
+  }
+  expect(moves).toBeGreaterThan(0); expect(moves).toBeLessThan(18);
+  expect(s.world.characters.beatrice.worldMemories!.some(m => m.type === 'professional_rivalry')).toBe(true);
+  expect(s.world.characters[s.playerCharacterId].legalState!.charges.some(c => c.offence === 'exposed professional misconduct')).toBe(true);
+});

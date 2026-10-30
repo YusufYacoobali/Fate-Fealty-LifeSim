@@ -81,7 +81,12 @@ export function applyEducationEffect(state: GameState, effect: NonNullable<Effec
   recoverEducationActors(state);
   e.progress = clamp(e.progress + (effect.progress ?? 0));
   e.misconduct = clamp(e.misconduct + (effect.misconduct ?? 0));
-  if (effect.scholarship) e.scholarship = true;
+  // Authored awards use the same finite route budget; only migrated v6 flags
+  // retain the old ongoing benefit. No new effect can mint a blanket waiver.
+  if (effect.scholarship && !e.sponsorships?.some(a => a.status === 'awarded' && (a.track === e.track || a.track === 'all'))) {
+    const fee = educationTrack(e.track).fee;
+    if (fee) (e.sponsorships ??= []).push({ id: `tuition_${state.nextId++}`, kind: 'merit', track: e.track, sponsorId: e.mentorId, status: 'awarded', year: state.world.currentYear, covered: fee, remaining: fee });
+  }
   if (e.mentorId && effect.mentorBond) applyRelationshipShift(state, e.mentorId, { affinity: effect.mentorBond }, { affinity: effect.mentorBond, trust: effect.mentorBond });
   const peerId = e.activeClassmateIds?.[0] ?? e.classmateIds[0];
   if (peerId && effect.peerBond) {

@@ -159,7 +159,7 @@ function HookPage({ layout }: { layout: OnboardingLayout }) {
         color={C.textDark}
         style={{ textAlign: 'center', marginBottom: layout.compact ? 9 : 14 }}
       >
-        You begin as a peasant in Swineford with little more than a name and a chance. Spend each year's actions on work, training, relationships, faith, health, or mischief. Then age up and live with the results.
+        Fate chooses your household in Swineford, or you may choose an origin. Learning, family and work open different routes through life. Spend each year's actions on work, training, relationships, faith, health, or mischief. Then age up and live with the results.
       </PixelText>
       <View style={{ flexDirection: 'row', justifyContent: 'center', gap: layout.rankGap }}>
         {RANKS.map((rank) => (

@@ -9,7 +9,7 @@ import { C } from '@/theme/theme';
 import { pickNarrative } from './narrativeEngine';
 import { equipmentCheckBonus, grantSkillXp, skillLevel } from './rpgProgress';
 
-export type CareerAction = 'specialize' | 'apply' | 'work' | 'train' | 'promote' | 'resign' | 'borrow' | 'repay' | 'rank_duty' | 'odd_job' | 'craft' | 'trade';
+export type CareerAction = 'honour' | 'specialize' | 'apply' | 'work' | 'train' | 'promote' | 'resign' | 'borrow' | 'repay' | 'rank_duty' | 'odd_job' | 'craft' | 'trade';
 
 export interface CareerActionAvailability {
   available: boolean;
@@ -29,6 +29,12 @@ export function careerActionAvailability(state: GameState, action: CareerAction,
     if (current?.id === target.id) return { available: false, reason: 'Already employed here' };
     return { available: true };
   }
+  if (action === 'honour') {
+    const p = state.world.characters[state.playerCharacterId], history = p.professionalHistory?.martial;
+    if (p.socialStatus?.martialHonour === 'knight') return { available: false, reason: 'Already knighted' };
+    if (state.age < 18 || current?.family !== 'martial' || !p.education?.qualifications.includes('martial_training') || skillLevel(state, 'arms') < 3 || (history?.reputation ?? 0) < 20 || !history?.milestones.some(m => ['service_honours', 'company_command'].includes(m))) return { available: false, reason: 'Needs martial training, Arms 3 and recognised command service' };
+    return { available: true };
+  }
   if (action === 'borrow') return state.debts.length ? { available: false, reason: 'Repay thy existing debt first' } : { available: true };
   if (action === 'repay') {
     if (!state.debts.length) return { available: false, reason: 'No debt to repay' };
@@ -44,6 +50,7 @@ export function careerActionAvailability(state: GameState, action: CareerAction,
     if (state.age < 8) return { available: false, reason: 'Requires age 8' };
     return state.gold < 3 ? { available: false, reason: 'Needs 3g for stock' } : { available: true };
   }
+  if (current?.premium && !state.lifetimeUnlocked && action !== 'resign') return { available: false, reason: 'Requires Premium access' };
   if (!current) return { available: false, reason: 'No occupation' };
   if (action === 'promote') {
     if (!current.promotesTo) return { available: false, reason: 'At the top of this career' };
@@ -80,6 +87,13 @@ export function performCareerAction(state: GameState, action: CareerAction, care
   const current = careerById(state.occupation.careerId);
 
   switch (action) {
+    case 'honour': {
+      const p = state.world.characters[state.playerCharacterId];
+      p.socialStatus!.martialHonour = 'knight'; p.socialStatus!.grants.push(`service_knighthood_${state.world.currentYear}`);
+      state.rankIdx = Math.max(2, state.rankIdx);
+      pushFeed(state, 'KNIGHTED', C.good, 'Your documented command service earns a formal knighthood. Your family estate remains a separate matter.', 'good');
+      return state;
+    }
     case 'specialize': return performSpecialization(state, careerId ?? '');
     case 'apply': {
       const career = careerById(careerId ?? null)!;

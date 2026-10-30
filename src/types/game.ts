@@ -594,9 +594,11 @@ export interface HoldingUpgradeDef {
 // ---------------------------------------------------------------------------
 
 export interface Effects {
+  royalTransition?: 'claim' | 'abdicate' | 'depose' | 'name_heir';
+  royalTreasury?: number;
   courtScandal?: 'investigate' | 'cover' | 'scapegoat' | 'dismiss';
   professional?: { family: CareerFamily; caseId: string; stage: 'approach' | 'finish'; choice: number };
-  education?: { progress?: number; misconduct?: number; mentorBond?: number; peerBond?: number; scholarship?: boolean; dismiss?: boolean };
+  education?: { qualifications?: import('./lifeDepth').Qualification[]; progress?: number; misconduct?: number; mentorBond?: number; peerBond?: number; scholarship?: boolean; dismiss?: boolean };
   skillXp?: Partial<Record<import('./rpg').SkillId, number>>;
   debt?: { principal: number; lenderId?: string; interestRate?: number };
   materials?: Partial<Record<import('./rpg').MaterialId, number>>;

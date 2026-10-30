@@ -308,7 +308,7 @@ export const TRAIT_ICONS: Record<string, ImageSourcePropType> = {
 };
 
 export function rankPortraitAsset(rank: string): ImageSourcePropType | undefined {
-  return RANK_PORTRAITS[rank as RankKey];
+  return RANK_PORTRAITS[(rank === 'Commoner' ? 'Peasant' : rank === 'Royal kin' ? 'Noble' : rank) as RankKey];
 }
 
 export function statIconAsset(stat: string): ImageSourcePropType | undefined {

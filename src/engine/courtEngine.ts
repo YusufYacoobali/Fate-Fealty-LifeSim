@@ -66,6 +66,7 @@ export function courtAvailability(state: GameState, action: CourtAction, targetI
   const ruler = court.rulerId === p.id;
   if (!PUBLIC_ACTIONS.includes(action) && (!ruler || !state.lifetimeUnlocked || court.regentId)) return 'Requires an entitled adult ruler';
   if (['appoint','dismiss','petition'].includes(action) && (!office || !POLITICAL_OFFICES.some(o => o.id === office))) return 'Choose an office';
+  if (action === 'patron' && (target!.age < 18 || (target!.rankIdx < 3 && !Object.values(court.offices).includes(target!.id)))) return 'Choose an adult noble or council patron';
   if (action === 'appoint' && (target!.age < 18 || target!.id === court.rulerId || Object.values(court.offices).includes(target!.id))) return 'An adult may hold one council office';
   if (action === 'dismiss' && !court.offices[office!]) return 'That office is vacant';
   if (action === 'petition') {
@@ -144,6 +145,14 @@ export function performCourtAction(state: GameState, action: CourtAction, target
     case 'disinherit': court.claims.find(c => c.characterId === target!.id)!.disinherited = true; if (court.heirId === target!.id) court.heirId = undefined; court.legitimacy = clamp(court.legitimacy - 10); applyRelationshipShift(state, target!.id, { trust: -15 }, { affinity: -35 }); text = `${target!.name} is disinherited. The family receives a legal decision and the beginnings of a feud.`; break;
     case 'abdicate': { const successor = royalCandidates(state)[0]; if (successor) recogniseRuler(state, successor.id, 'a recorded abdication'); text = 'You surrender the crown. The council and the treasury continue under the recognised successor.'; break; }
   }
+  for (const officeDef of POLITICAL_OFFICES) {
+    const official = state.world.characters[court.offices[officeDef.id] ?? ''];
+    if (!official || official.id === p.id || court.rulerId !== p.id) continue;
+    const opposed = (action === 'tax_raise' && official.factionId === 'commons') || (action === 'religion' && official.personalityTraits?.includes('cunning')) || (action === 'peace' && official.ambition === 'win_glory');
+    const change = opposed ? -6 : 2;
+    applyRelationshipShift(state, official.id, { respect: 0 }, { affinity: change, trust: change });
+    if (opposed) appendCharacterMemory(official, { id: `council_dissent_${state.nextId++}`, year: state.world.currentYear, type: 'council_dissent', actorIds: [p.id], sentiment: -25, salience: 4, inherited: true, summary: `${official.name} opposed ${p.name}'s ${action.replaceAll('_',' ')} decision.` });
+  }
   recordCourt(state, action, targetId, text);
   if (target) appendCharacterMemory(target, { id: `court_${state.nextId++}`, year: state.world.currentYear, type: `court_${action}`, actorIds: [p.id], sentiment: ['disinherit','dismiss','expose'].includes(action) ? -25 : 15, salience: 4, inherited: true, summary: text });
   return state;
@@ -152,6 +161,7 @@ export function performCourtAction(state: GameState, action: CourtAction, target
 export function reconcileCourt(state: GameState): void {
   initializeCourt(state);
   const court = state.world.court; if (!court) return;
+  court.claims = court.claims.filter(c => !!state.world.characters[c.characterId] && !!state.world.characters[c.throughId]);
   const seen = new Set([court.rulerId]);
   for (const office of POLITICAL_OFFICES) {
     const id = court.offices[office.id]; const c = state.world.characters[id ?? ''];
@@ -162,8 +172,8 @@ export function reconcileCourt(state: GameState): void {
   const ruler = state.world.characters[court.rulerId];
   if (ruler?.age >= 16) { if (court.regentId) court.formerRegentId = court.regentId; court.regentId = undefined; }
   else if (!court.regentId || !state.world.characters[court.regentId]?.alive) court.regentId = Object.values(court.offices).find(id => state.world.characters[id!]?.alive && state.world.characters[id!].age >= 18);
-  for (const c of Object.values(state.world.characters)) if (c.id !== court.rulerId && c.rankIdx >= 5) c.rankIdx = 3;
-  if (state.rankIdx >= 5 && court.rulerId !== state.playerCharacterId) state.rankIdx = 3;
+  for (const c of Object.values(state.world.characters)) if (c.alive && c.id !== court.rulerId && c.rankIdx >= 5) c.rankIdx = 3;
+  if (!state.dead && state.rankIdx >= 5 && court.rulerId !== state.playerCharacterId) state.rankIdx = 3;
   if (court.rulerId === state.playerCharacterId) state.rankIdx = 5;
   state.world.factions.crown.leaderId = court.rulerId;
   court.records = court.records.slice(-150);
@@ -199,7 +209,26 @@ export function tickCourt(state: GameState): void {
       if (former.id === state.playerCharacterId && !state.tags.includes('exiled')) state.tags.push('exiled');
     }
   }
+  const vacancy = POLITICAL_OFFICES.find(o => !court.offices[o.id]);
+  if (vacancy) {
+    const aspirant = Object.values(state.world.characters).find(c => c.alive && c.age >= 18 && c.id !== state.playerCharacterId && c.id !== court.rulerId && c.id !== 'goose' && !Object.values(court.offices).includes(c.id) && c.personalityTraits?.includes('ambitious'));
+    if (aspirant && chance(0.2)) { court.offices[vacancy.id] = aspirant.id; aspirant.importance = 'core'; court.records.push({ year: state.world.currentYear, kind: 'appointment', actorId: aspirant.id, detail: `${aspirant.name} secured the vacant ${vacancy.name.toLowerCase()} office.` }); }
+  }
+  const claimant = royalCandidates(state)[0];
+  const backer = Object.values(court.offices).map(id => state.world.characters[id!]).find(c => c?.alive && c.id !== state.playerCharacterId && c.personalityTraits?.some(t => ['cunning','envious'].includes(t)));
+  if (claimant && backer && court.legitimacy < 40 && chance(0.12)) {
+    const claim = court.claims.find(c => c.characterId === claimant.id)!; claim.strength = Math.min(100, claim.strength + 3);
+    const id = `rel_${[backer.id, claimant.id].sort().join('_')}`;
+    const relation = state.world.relationships[id] ?? Object.values(state.world.relationships).find(r => (r.aId === backer.id && r.bId === claimant.id) || (r.aId === claimant.id && r.bId === backer.id));
+    if (backer.id !== claimant.id) {
+      const view = { affinity: 55, trust: 50, respect: 60, attraction: 0 };
+      state.world.relationships[relation?.id ?? id] = relation ?? { id, aId: backer.id, bId: claimant.id, aToB: { ...view }, bToA: { ...view }, flags: ['friend'], lastInteractionAge: state.age, interactionsThisYear: 0, sharedMemories: [] };
+      if (relation) { relation.aToB.trust = clamp(relation.aToB.trust + 3); relation.bToA.trust = clamp(relation.bToA.trust + 3); }
+    }
+    court.records.push({ year: state.world.currentYear, kind: 'claimant_backing', actorId: backer.id, targetId: claimant.id, detail: `${backer.name} backs ${claimant.name}'s competing claim.` });
+  }
   court.scandals = court.scandals.slice(-30);
+  court.records = court.records.slice(-150);
 }
 
 export function applyCourtScandal(state: GameState, decision: NonNullable<Effects['courtScandal']>): void {
@@ -225,4 +254,26 @@ export function applyCourtScandal(state: GameState, decision: NonNullable<Effect
     court.legitimacy = clamp(court.legitimacy - 12); state.world.factions.guilds.playerStanding = clamp(state.world.factions.guilds.playerStanding - 15,-100,100);
   } else { remove(); applyRelationshipShift(state, scandal.actorId, { trust: -12 }, { affinity: -20 }); court.legitimacy = clamp(court.legitimacy - 2); }
   recordCourt(state, `scandal_${decision}`, scandal.actorId, `${official?.name ?? 'The official'}: ${scandal.amount} treasury gold diverted; the crown chose ${decision}.`);
+}
+
+export function applyRoyalTransition(state: GameState, transition: 'claim' | 'abdicate' | 'depose' | 'name_heir'): void {
+  const court = state.world.court; if (!court) return;
+  if (transition === 'claim') {
+    const p = state.world.characters[state.playerCharacterId];
+    if (state.lifetimeUnlocked && state.age >= 16 && (p.factionInfluence ?? 0) >= 30 && state.world.factions.crown.playerStanding >= 15 && court.legitimacy <= 40 && court.claims.some(c => c.characterId === p.id && !c.disinherited)) recogniseRuler(state, p.id, 'recognition of a documented disputed claim');
+    return;
+  }
+  if (court.rulerId !== state.playerCharacterId) return;
+  refreshRoyalClaims(state);
+  const candidate = royalCandidates(state)[0];
+  if (transition === 'name_heir') { if (candidate) court.heirId = candidate.id; return; }
+  if (transition === 'abdicate' && (!state.lifetimeUnlocked || !candidate)) return;
+  const successor = candidate ?? Object.values(court.offices).map(id => state.world.characters[id!]).find(c => c?.alive && c.id !== state.playerCharacterId);
+  if (!successor) return;
+  addRoyalClaim(state, successor.id, court.rulerId, 'recognition', 50);
+  recogniseRuler(state, successor.id, transition === 'abdicate' ? 'voluntary abdication' : 'defeat in a council-backed rebellion');
+  if (transition === 'depose') {
+    const former = state.world.characters[state.playerCharacterId]; former.legalState!.status = 'exiled';
+    if (!state.tags.includes('exiled')) state.tags.push('exiled');
+  }
 }

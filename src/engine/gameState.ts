@@ -81,8 +81,8 @@ function person(
 
 function startingKin(): KinMember[] {
   const cast: KinMember[] = [
-    { ...person('mother', 'Maud', 'mother', 'Thy Mother', 44, 72, 'Stern but loving', 'tenant_farmer', 'woman', '👩‍🌾'), bio: 'Raised you on turnips and tough love. Bakes a rye loaf that could fell an ox.' },
-    { ...person('father', 'Old Cedric', 'father', 'Thy Father', 51, 55, 'Perpetually weary', 'farmhand', 'man', '👨‍🌾'), bio: 'A turnip farmer of forty years. Speaks mostly in grunts and weather complaints.' },
+    { ...person('mother', pick(namesForGender('woman')), 'mother', 'Thy Mother', 44, 72, 'Stern but loving', 'tenant_farmer', 'woman', '👩‍🌾'), bio: 'A guardian whose work and household duties shape your earliest years.' },
+    { ...person('father', pick(namesForGender('man')), 'father', 'Thy Father', 51, 55, 'Perpetually weary', 'farmhand', 'man', '👨‍🌾'), bio: 'A parent with obligations, ambitions and a household to maintain.' },
     { ...person('goose', 'Sir Quackbeard', 'friend', 'Goose & Best Friend', 3, 95, 'Fiercely loyal', null, 'man', '🪿'), attraction: 'none', bio: 'A goose of uncommon dignity. Has bitten three tax collectors and a bishop.' },
     { ...person('roderick', 'Sir Roderick', 'foe', 'The Apple Thief', 29, 8, 'Insufferably smug', 'guard', 'man', '⚔️'), bio: 'A knight who once called you peasant scum and stole your apple. You have not forgotten.' },
     person('elswyth', 'Elswyth', 'acquaintance', 'A Distant Cousin', 12, 63, 'Competitive', 'apprentice', 'woman', '🧑‍🌾'),
@@ -198,7 +198,7 @@ function createLifeFromWorldSeed(opts: FreshLifeOptions, worldSeed: number): Gam
   const inherit = opts.inherit ?? {};
   const gender = opts.gender ?? 'man';
   const pronouns = opts.pronouns ?? defaultPronouns(gender);
-  const inheritedRankIdx = Math.max(0, Math.min(RANKS.length - 1, inherit.rankIdx ?? 0));
+  const inheritedRankIdx = Math.max(0, Math.min(opts.lifetimeUnlocked ? RANKS.length - 1 : 3, inherit.rankIdx ?? 0));
   const holding: HoldingState = inherit.holding
     ? {
         stores: clamp(inherit.holding.stores),
@@ -237,7 +237,7 @@ function createLifeFromWorldSeed(opts: FreshLifeOptions, worldSeed: number): Gam
       tag: 'YEAR 0 · BORN',
       tagColor: '#a36a1f',
       tone: 'good',
-      text: `Born in muddy Swineford to a turnip farmer. They named you ${first} and called it a beautiful, screaming miracle.`,
+      text: `Born in Swineford. They named you ${first}; your household has begun a new account of your life.`,
     },
     {
       id: 2,
@@ -321,7 +321,7 @@ function createLifeFromWorldSeed(opts: FreshLifeOptions, worldSeed: number): Gam
     inheritedMemories: [],
   }]));
   const households = familyIds.map((familyId, index) => {
-    const memberIds = families[familyId].memberIds;
+    const memberIds = [...families[familyId].memberIds];
     return {
       id: index === 0 ? 'house_player' : `house_${index}`,
       headId: memberIds[0],

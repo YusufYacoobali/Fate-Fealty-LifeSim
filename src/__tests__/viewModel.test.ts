@@ -16,15 +16,17 @@ describe('viewModel', () => {
     expect(path.some((r) => r.locked)).toBe(false);
   });
 
+  const martialState = (overrides: Parameters<typeof makeState>[0]) => { const s = makeState(overrides); s.occupation.careerId = 'levy'; s.world.characters[s.playerCharacterId].education!.qualifications.push('martial_training'); return s; };
+
   it('shows Peasant progress toward Squire using every promotion requirement', () => {
-    const progressLed = selectRankClimb(makeState({
+    const progressLed = selectRankClimb(martialState({
       age: 17,
       rankProgress: 64,
       stats: { health: 60, charm: 50, wits: 60, faith: 50 },
     }));
     expect(progressLed).toMatchObject({ from: 'PEASANT', to: 'SQUIRE', progress: 64, locked: false });
 
-    const witsBlocked = selectRankClimb(makeState({
+    const witsBlocked = selectRankClimb(martialState({
       age: 17,
       rankProgress: 100,
       stats: { health: 60, charm: 50, wits: 24, faith: 50 },

@@ -26,11 +26,11 @@ export function recogniseRuler(state: GameState, characterId: string, reason: st
   if (!claim) return false;
   const former = state.world.characters[court.rulerId];
   if (former && former.id !== characterId) {
-    former.rankIdx = 3;
+    if (former.alive) former.rankIdx = 3;
     former.socialStatus ??= legacyStatus(3);
     former.socialStatus.estate = 'royal';
     former.socialStatus.titles = [...new Set([...former.socialStatus.titles.filter(t => t !== 'Monarch'), 'Former ruler'])];
-    if (former.id === state.playerCharacterId) state.rankIdx = 3;
+    if (former.id === state.playerCharacterId && !state.dead) state.rankIdx = 3;
   }
   court.rulerId = ruler.id;
   ruler.rankIdx = 5;

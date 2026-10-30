@@ -168,6 +168,8 @@ describe('professional life', () => {
   });
   it('retains a profession at high rank and allows independent professional promotion', () => {
     const s = ready(); s.age = 40; s.stats = { health: 90, charm: 90, wits: 90, faith: 90 };
+    s.world.characters[s.playerCharacterId].education!.qualifications.push('apprenticeship');
+    s.world.characters[s.playerCharacterId].professionalHistory!.craft = { reputation: 60, completedActions: ['commission', 'guild_petition'], milestones: ['masterpiece'], contactIds: [], matters: [], actionsYear: -1, actionsUsed: 0, lastWorkedYear: s.world.currentYear };
     s.rankIdx = 0; expect(careerAvailability(s, careerById('guildmaster')!)).toBeNull();
     s.rankIdx = 5; s.occupation.careerId = 'abbot'; expect(deriveLifeRole(s)).toBe('clergy');
     expect(storyEligibilityMet(s, { type: 'role', roles: ['monarch'] })).toBe(true);

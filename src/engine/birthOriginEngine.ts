@@ -1,6 +1,5 @@
 import type { BirthOriginId, GameState } from '@/types/game';
 import { BIRTH_ORIGINS, birthWeights } from '@/data/birthOrigins';
-import { namesForGender } from '@/data/names';
 import { pick, pickWeighted, rnd } from './random';
 import { legacyStatus } from './lifeDepthState';
 import { spawnKin } from './kinFactory';
@@ -14,9 +13,10 @@ export function initializeBirthOrigin(state: GameState, selected?: BirthOriginId
   const origin = chooseBirthOrigin(state.lifetimeUnlocked, selected, weights);
   const def = BIRTH_ORIGINS.find(o => o.id === origin)!;
   const player = state.world.characters[state.playerCharacterId];
+  const inheritedGold = Math.max(0, state.gold - 8);
+  const inheritedRank = state.rankIdx;
   const parents = ['mother', 'father'].map(id => state.world.characters[id]);
   parents.forEach((parent, index) => {
-    parent.name = pick(namesForGender(parent.gender));
     parent.age = rnd(index === 0 ? 22 : 26, index === 0 ? 36 : 42);
     parent.occupation.careerId = def.careers[index];
     parent.rankIdx = ['noble', 'royal'].includes(origin) ? 3 : 0;
@@ -28,12 +28,12 @@ export function initializeBirthOrigin(state: GameState, selected?: BirthOriginId
   });
   player.guardianIds = parents.map(p => p.id);
   player.background = { origin, familyId: player.birthFamilyId!, guardianIds: [...player.guardianIds], contactId: def.contactId, householdWealth: def.wealth, inherited: false };
-  player.socialStatus = legacyStatus(['noble', 'royal'].includes(origin) ? 3 : 0);
+  player.socialStatus = legacyStatus(Math.max(inheritedRank, ['noble', 'royal'].includes(origin) ? 3 : 0));
   if (origin === 'royal') { player.socialStatus.estate = 'royal'; player.socialStatus.titles = ['Royal kin']; }
   player.rankIdx = state.rankIdx = Math.max(state.rankIdx, ['noble', 'royal'].includes(origin) ? 3 : 0);
-  player.gold = state.gold = def.wealth;
+  player.gold = state.gold = def.wealth + inheritedGold;
   const household = state.world.households.find(h => h.id === player.householdId)!;
-  Object.assign(household, { wealth: def.wealth, foodSecurity: Math.min(90, 40 + def.standing / 2), storedFood: Math.min(90, 35 + def.standing / 2), status: def.standing, residenceQuality: Math.max(25, def.standing), headId: 'father' });
+  Object.assign(household, { wealth: state.gold, foodSecurity: Math.min(90, 40 + def.standing / 2), storedFood: Math.min(90, 35 + def.standing / 2), status: def.standing, residenceQuality: Math.max(25, def.standing), headId: 'father' });
   const family = state.world.families[player.birthFamilyId!];
   family.wealthTier = Math.min(4, Math.floor(def.wealth / 30));
   family.reputation = origin === 'royal' ? 40 : origin === 'noble' ? 25 : 0;

@@ -38,6 +38,6 @@ export const BIRTH_ORIGINS: readonly BirthOriginDef[] = [
 export function birthWeights(premium: boolean, weights: Partial<Record<BirthOriginId, number>> = {}): Record<BirthOriginId, number> {
   const result = Object.fromEntries(BIRTH_ORIGINS.map(o => [o.id, Math.max(0, Number.isFinite(weights[o.id]) ? weights[o.id]! : o.weight)])) as Record<BirthOriginId, number>;
   const total = BIRTH_ORIGINS.filter(o => o.id !== 'royal').reduce((sum, o) => sum + result[o.id], 0);
-  result.royal = premium ? Math.max(0, weights.royal ?? total * 0.005 / 0.995) : 0;
+  result.royal = premium ? Math.max(0, Number.isFinite(weights.royal) ? weights.royal! : total * 0.005 / 0.995) : 0;
   return result;
 }

@@ -50,6 +50,18 @@ export function worldIntegrityIssues(state: GameState): string[] {
     if (!state.world.households.some((household) => household.id === expected.householdId)) issues.push(`${expected.id} has missing household ${expected.householdId}`);
     if (!state.world.families[expected.familyId]) issues.push(`${expected.id} has missing family ${expected.familyId}`);
   }
+  const court = state.world.court;
+  if (court) {
+    if (!characters[court.rulerId]) issues.push('missing recognised ruler');
+    const occupants = Object.values(court.offices);
+    if (new Set(occupants).size !== occupants.length || occupants.includes(court.rulerId)) issues.push('incompatible council offices');
+    for (const id of occupants) if (!characters[id!]?.alive) issues.push(`invalid council holder ${id}`);
+    for (const claim of court.claims) if (!characters[claim.characterId] || !characters[claim.throughId]) issues.push('orphaned royal claim');
+  }
+  for (const c of Object.values(characters)) {
+    for (const id of [...(c.education?.classmateIds ?? []), ...(c.education?.mentorId ? [c.education.mentorId] : [])]) if (!characters[id]) issues.push(`orphaned education reference ${id}`);
+    for (const record of Object.values(c.professionalHistory ?? {})) for (const id of [...record.contactIds, ...(record.rivalId ? [record.rivalId] : []), ...record.matters.map(m => m.actorId)]) if (!characters[id]) issues.push(`orphaned professional reference ${id}`);
+  }
   return Array.from(new Set(issues));
 }
 

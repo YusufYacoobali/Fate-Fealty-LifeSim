@@ -141,6 +141,7 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
               {rankClimb.locked ? `${rankClimb.to} REQUIRES PREMIUM` : `${rankClimb.progress}% TO ${rankClimb.to}`}
             </PixelText>
           </View>
+          <PixelText font="body" size={14} color={C.textMuted} style={{ marginBottom: 4 }}>{rankClimb.route}</PixelText>
           <StatBar
             value={rankClimb.progress}
             color={rankClimb.locked ? '#9aa8b8' : C.charm}

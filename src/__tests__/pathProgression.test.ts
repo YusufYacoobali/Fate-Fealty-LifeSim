@@ -18,6 +18,8 @@ describe('pathProgression', () => {
 
   it('canPromote respects age, progress and stat gates', () => {
     const s = makeState({ age: 11, rankProgress: 100, stats: { health: 60, charm: 50, wits: 50, faith: 50 } });
+    s.occupation.careerId = 'levy';
+    s.world.characters[s.playerCharacterId].education!.qualifications.push('martial_training');
     // Squire needs age>=12 and wits>=48 and progress>=100.
     expect(canPromote(s)).toBe(false); // too young
     s.age = 12;
@@ -28,6 +30,8 @@ describe('pathProgression', () => {
 
   it('promote advances rank and resets progress; demote reverses', () => {
     const s = makeState({ age: 14, rankProgress: 100, stats: { health: 60, charm: 50, wits: 50, faith: 50 } });
+    s.occupation.careerId = 'levy';
+    s.world.characters[s.playerCharacterId].education!.qualifications.push('martial_training');
     expect(promote(s)).toBe(true);
     expect(s.rankIdx).toBe(1);
     expect(s.rankProgress).toBe(0);
@@ -50,7 +54,9 @@ describe('pathProgression', () => {
       stats: { health: 80, charm: 84, wits: 76, faith: 80 },
     };
     expect(canPromote(makeState({ ...ready, lifetimeUnlocked: false }))).toBe(false);
-    expect(canPromote(makeState({ ...ready, lifetimeUnlocked: true }))).toBe(true);
+    const entitled = makeState({ ...ready, lifetimeUnlocked: true });
+    expect(canPromote(entitled)).toBe(false); // A barony requires an explicit grant.
+    expect(promote(entitled, true)).toBe(true);
   });
 
   it('tickProgression nudges progress toward promotion for martial lives', () => {

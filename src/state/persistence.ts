@@ -36,7 +36,7 @@ export function saveGame(state: GameState): Promise<void> {
 async function writeGame(state: GameState): Promise<void> {
   try {
     const existing = await AsyncStorage.getItem(SAVE_KEY);
-    if (existing) {
+    if (existing !== null) {
       const envelope = JSON.parse(existing);
       if (![3, 4, 5, 6].includes(envelope.schemaVersion) || !envelope.game || ![3, 4, 5, 6].includes(envelope.game.schemaVersion) || envelope.game.world?.contentVersion > CURRENT_CONTENT_VERSION) return;
     }
@@ -64,9 +64,9 @@ export interface LoadGameResult {
 export async function loadGame(): Promise<LoadGameResult> {
   try {
     const currentRaw = await AsyncStorage.getItem(SAVE_KEY);
-    const legacyRaw = currentRaw ? null : (await AsyncStorage.getItem(LEGACY_SAVE_KEY) ?? await AsyncStorage.getItem(OLDER_SAVE_KEY));
+    const legacyRaw = currentRaw !== null ? null : (await AsyncStorage.getItem(LEGACY_SAVE_KEY) ?? await AsyncStorage.getItem(OLDER_SAVE_KEY));
     const raw = currentRaw ?? legacyRaw;
-    if (!raw) return { state: null, blockedByFutureVersion: false };
+    if (raw === null) return { state: null, blockedByFutureVersion: false };
     const envelope = JSON.parse(raw) as { schemaVersion: number; savedAt: number; game: GameState };
     if (![3, 4, 5, 6].includes(envelope.schemaVersion) || ![3, 4, 5, 6].includes(envelope.game.schemaVersion as number)) return { state: null, blockedByFutureVersion: true };
     const parsed = normalizeGameState(envelope.game);

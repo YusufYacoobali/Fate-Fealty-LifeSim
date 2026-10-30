@@ -66,3 +66,32 @@ export const ORIGIN_CHILDHOOD_EVENTS: GameEvent[] = ORIGIN_ENCOUNTERS.map(([orig
     { label: 'Sell your silence for three gold', outcome: { text: 'Three coins change hands. Your family’s standing pays the larger price.', effects: { gold: 3, familyReputation: { delta: -6 }, memory: { tag: `betrayed_house_${origin}`, weight: 4 } }, tone: 'bad' } },
   ],
 }));
+
+const COUNSEL: Record<EducationTrackId, readonly [string, string][]> = {
+  household: [ ['Ask the bailiff to produce his half', 'Your guardian brings both halves of the tally to the reeve. Neither can be altered without leaving a scar.'], ['Ask how seed should be stored', 'Your guardian shows you a dry bin with a stone lid. The lesson costs a pot, not a harvest.'], ['Ask your guardian to explain the letters', 'Your guardian reads a household name aloud. The neighbour recognises it and puts down the holy water.'], ['Ask the wool buyer for a dry weight', 'The buyer provides a dry standard. Your guardian teaches you to record it before accepting a fleece.'] ],
+  parish: [ ['Ask the canon to inspect the relic roll', 'The canon compares the old roll with yours. Saint Aelfric loses an elbow without further injury.'], ['Bring the damaged page to the priest', 'The priest borrows a second psalter. You learn how a missing passage is checked rather than invented.'], ['Ask the priest to cancel the duplicate burial', 'Your teacher strikes the second entry and explains why a clean correction beats a clever excuse.'], ['Fetch the teacher and a ladder', 'The teacher lowers your classmate safely. The lesson resumes beneath a very quiet bell.'] ],
+  guild: [ ['Show the crack to the inspector', 'The inspector refuses the shoe. Your master accepts the rebuke rather less gracefully than the inspection fee.'], ['Ask the master to order a public assay', 'Your master orders the assay in front of witnesses. You learn how a mark binds the maker to the metal.'], ['Call the master to open the vice', 'The master stops the job and releases the apprentice. You lose an hour and learn why a commission has no fingers.'], ['Ask the master to check your surviving measurements', 'The master helps reconstruct the burnt drawing. Each borrowed measurement is acknowledged in the margin.'] ],
+  cathedral: [ ['Ask the dean what the snail signifies', 'The dean invents an allegory with astonishing speed. Your mentor explains which parts can safely be repeated.'], ['Show the quotation to your teacher in private', 'Your teacher replaces the quotation before the lecture. You receive a lesson in translating before pontificating.'], ['Ask the cook to suspend judgement', 'The cook postpones the knife while your mentor checks the authorities. Theology briefly becomes useful to a goose.'], ['Fetch the infirmarer before the lancet', 'The infirmarer orders water and rest. Your teacher makes you record the observation beside the disputed gloss.'] ],
+  martial: [ ['Ask the sergeant to take the watch', 'The sergeant handles the visitor and explains when urgency is an excuse and when it is a medical fact.'], ['Ask the riding master to inspect the saddle', 'The master repairs the girth. You are made to inspect every buckle before the next ride.'], ['Bring the shaft to the armourer', 'The armourer replaces the split wood and teaches you where a painted crack will still show under pressure.'], ['Ask the quartermaster to recount the roll', 'The quartermaster removes four ghosts and one horse. Your tutor makes you copy the corrected ration order.'] ],
+  noble: [ ['Ask the herald to verify the disputed arms', 'The herald seats both cousins far from sharp cutlery. Your tutor explains the disputed descent.'], ['Ask the steward to reconcile the kitchen roll', 'The steward finds the goose receipt. You learn to audit the purchases before accusing the cook.'], ['Ask the chamberlain to change every seat', 'The chamberlain replaces the chairs. Your tutor notes that equal discomfort is a workable diplomatic settlement.'], ['Ask the tutor to examine the seed petition', 'Your tutor measures the household’s need against the stores. The petitioner receives an answer based on grain rather than manners.'] ],
+};
+for (const event of EDUCATION_EVENTS) {
+  const [, track, index] = event.id.split('_');
+  const [label, text] = COUNSEL[track as EducationTrackId][Number(index)];
+  event.choices[2].label = label;
+  event.choices[2].outcome!.text = text;
+}
+const ORIGIN_CHOICES: readonly [string, string, string][] = [
+  ['Compare the bailiff’s rent tally', 'Accept the bailiff’s hush money', 'The bailiff pays you three coins to hide his extra assessment. Your household loses more grain than those coins could buy.'],
+  ['Ask Edwin to check the guild exemption', 'Keep the noise penalty secret for three gold', 'You pocket three gold while the workshop pays the penalty. Edwin learns whose silence was purchased.'],
+  ['Ask Beatrice to witness the false measure', 'Take three gold from the short-measure seller', 'The seller buys your silence. Your household’s buyers discover the short grain and blame the family name.'],
+  ['Produce the household marriage entry', 'Sell the friar a rumour for three gold', 'The friar pays for a scandal about your own lay household. The correction will cost considerably more than three gold.'],
+  ['Ask Joan to cite the service oath', 'Take three gold to abandon the ration claim', 'The stores clerk buys your silence. Your family gives up a season of bread for your private handful of coins.'],
+  ['Ask Aldric to compare the boundary charter', 'Accept three gold to hide the cousin’s map', 'Your cousin buys your silence and presses the boundary claim. The household discovers your price was lower than the surveyor’s.'],
+  ['Ask the guardian to settle nursery precedence', 'Sell your sibling the secret nursery key', 'Your sibling pays three gold for the nursery key. The guards change the locks and your household’s opinion of you.'],
+];
+ORIGIN_CHILDHOOD_EVENTS.forEach((event, index) => {
+  event.choices[0].label = ORIGIN_CHOICES[index][0];
+  event.choices[1].label = ORIGIN_CHOICES[index][1];
+  event.choices[1].outcome!.text = ORIGIN_CHOICES[index][2];
+});

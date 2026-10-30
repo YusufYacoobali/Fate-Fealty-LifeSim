@@ -74,7 +74,7 @@ export function pickAnnualMessage(s: GameState, excludedIds: readonly string[] =
     && (years[m.id] == null || (!once.has(m.id) && s.world.currentYear - years[m.id] >= 6))
     && (!once.has(m.id) || !s.feed.some((entry) => entry.text === m.text))
     && (!m.text.includes('Your mother') || alive('mother'))
-    && (!m.text.includes('Cedric') || alive('father'))
+    && (!m.text.includes('Your father') || alive('father'))
     && (!m.text.includes('Quackbeard') || alive('goose'))
     && !recentText.has(m.text)
     && meetsCondition(s, m.requires));

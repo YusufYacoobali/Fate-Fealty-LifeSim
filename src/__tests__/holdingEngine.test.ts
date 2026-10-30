@@ -208,6 +208,7 @@ describe('holding succession and persistence', () => {
   it('inherits rank, upgrades, and 75% of resources', () => {
     const parent = makeState({
       rankIdx: 3,
+      dead: true,
       gold: 80,
       reputation: 40,
       holding: { stores: 80, security: 60, loyalty: 40, upgrades: ['fenced_field', 'watermill'], lastActionAge: 40, criticalYears: 1 },
@@ -234,9 +235,9 @@ describe('holding succession and persistence', () => {
       rankIdx: 3,
       holding: { stores: 90, security: 90, loyalty: 90, upgrades: ['watermill'], lastActionAge: 40, criticalYears: 1 },
     });
-    const fresh = gameReducer(old, { type: 'NEW_LIFE' });
+    const fresh = gameReducer(old, { type: 'NEW_LIFE', options: { birthOrigin: 'peasant' } });
     expect(fresh.rankIdx).toBe(0);
-    expect(fresh.holding.stores).toBe(60);
+    expect(fresh.holding.stores).toBe(43);
     expect(fresh.holding.upgrades).toEqual([]);
   });
 

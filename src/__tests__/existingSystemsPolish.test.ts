@@ -263,6 +263,8 @@ describe('existing-system polish', () => {
     s.holding = { ...s.holding, stores: 80, security: 80, loyalty: 80 };
     s.paths = { martial: 0, court: 20, church: 0, labour: 0, outlaw: 0 };
 
+    s.occupation.careerId = 'levy';
+    s.world.characters[s.playerCharacterId].education!.qualifications.push('martial_training');
     expect(promote(s)).toBe(true);
     const promotion = s.feed.at(-1);
     const memory = s.memories.at(-1);

@@ -1,4 +1,4 @@
-import { applyCourtScandal } from './courtEngine';
+import { applyCourtScandal, applyRoyalTransition } from './courtEngine';
 import { applyProfessionalEffect } from './careerSpecializationEngine';
 import { applyEducationEffect } from './educationEngine';
 /**
@@ -47,6 +47,8 @@ function rankProgressDelta(delta: number, fullStrength: boolean): number {
 
 export function applyEffects(s: GameState, eff?: Effects): GameState {
   if (!eff) return s;
+  if (eff.royalTransition) applyRoyalTransition(s, eff.royalTransition);
+  if (eff.royalTreasury != null && s.world.court?.rulerId === s.playerCharacterId) s.world.court.treasury = Math.max(0, Math.min(5000, s.world.court.treasury + eff.royalTreasury));
   if (eff.courtScandal) applyCourtScandal(s, eff.courtScandal);
   if (eff.professional) applyProfessionalEffect(s, eff.professional);
   if (eff.education) applyEducationEffect(s, eff.education);

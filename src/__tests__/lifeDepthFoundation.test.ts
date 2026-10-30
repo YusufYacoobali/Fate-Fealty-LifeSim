@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createLife, cloneState } from '@/engine/gameState';
 import { normalizeGameState } from '@/state/persistence';
 import { canPromote, promote } from '@/engine/pathProgression';
@@ -35,4 +36,18 @@ describe('life depth foundation', () => {
     expect(promote(state, true)).toBe(true);
     expect(promote(state, true)).toBe(false);
   });
+});
+
+it('preserves unreadable and future saves even if an autosave is attempted', async () => {
+  const { loadGame, saveGame } = require('@/state/persistence');
+  for (const raw of ['{broken', JSON.stringify({ schemaVersion: 99, game: { schemaVersion: 99 } })]) {
+    await AsyncStorage.clear();
+    await AsyncStorage.setItem('mls:world:v5', raw);
+    expect((await loadGame()).blockedByFutureVersion).toBe(true);
+    await saveGame(createLife({ worldSeed: 41 }));
+    expect(await AsyncStorage.getItem('mls:world:v5')).toBe(raw);
+  }
+  jest.mocked(AsyncStorage.getItem).mockResolvedValueOnce('');
+  expect((await loadGame()).blockedByFutureVersion).toBe(true);
+  await AsyncStorage.clear();
 });

@@ -1,3 +1,5 @@
+import { professionalRecord } from './careerSpecializationEngine';
+import { grantSkillXp } from './rpgProgress';
 import { GameState, KinMember, Relationship, RelationshipPerspective } from '@/types/game';
 import { CAREERS, careerById } from '@/data/careers';
 import { chance, clamp, pick, rnd } from './random';
@@ -70,6 +72,12 @@ function simulateNpcCareer(state: GameState, npc: KinMember, budget: { left: num
     }
   }
   if (!career) return;
+  const record = professionalRecord(npc, career.family);
+  if (record.lastWorkedYear !== state.world.currentYear) {
+    record.lastWorkedYear = state.world.currentYear; record.reputation = clamp(record.reputation + 1, -100, 100); record.shifts = (record.shifts ?? 0) + 1;
+    if (record.shifts >= 8 && !record.milestones.includes('field_training')) record.milestones.push('field_training');
+    grantSkillXp(state, career.family === 'martial' ? 'arms' : career.family === 'craft' ? 'craftsmanship' : career.family === 'agriculture' ? 'husbandry' : 'scholarship', 4, 'professional service', npc.id);
+  }
   const workActions = rnd(5, 12);
   npc.gold += workActions * career.wage;
   npc.gold = Math.max(0, npc.gold - Math.max(2, 1 + npc.rankIdx * 2 + Math.floor(npc.age / 25)));

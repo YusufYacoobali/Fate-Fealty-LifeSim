@@ -19,6 +19,7 @@ export function statusRank(character: WorldCharacter, rulerId?: string): number 
 export function initializeLifeDepth(state: GameState): void {
   for (const character of Object.values(state.world.characters)) {
     character.education ??= emptyEducation();
+    if (character.id === state.playerCharacterId && state.memories.some(m => m.tag === 'lettered') && !character.education.qualifications.includes('literacy')) character.education.qualifications.push('literacy');
     character.professionalHistory ??= {};
     character.socialStatus ??= legacyStatus(character.rankIdx);
     character.background ??= {

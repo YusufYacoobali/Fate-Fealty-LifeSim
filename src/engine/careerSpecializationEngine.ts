@@ -34,7 +34,8 @@ export function specializationAvailability(state: GameState, id: string): string
 function contactFor(state: GameState, def: CareerSpecialization, record: ProfessionalRecord): WorldCharacter {
   record.contactIds = record.contactIds.filter(id => !!state.world.characters[id]);
   const existing = record.contactIds.map(id => state.world.characters[id]).find(c => c.alive && c.id !== state.playerCharacterId);
-  const contact = existing ?? Object.values(state.world.characters).find(c => c.id !== state.playerCharacterId && c.alive && c.age >= 18 && c.occupation.careerId === def.contactCareer)
+  const noblePatient = def.id === 'noble_fever' ? Object.values(state.world.characters).find(c => c.alive && c.age >= 18 && c.rankIdx >= 3 && c.id !== state.playerCharacterId) : undefined;
+  const contact = noblePatient ?? existing ?? Object.values(state.world.characters).find(c => c.id !== state.playerCharacterId && c.alive && c.age >= 18 && c.occupation.careerId === def.contactCareer)
     ?? spawnKin(state, { kind: 'acquaintance', age: 30, role: `${def.family} client`, bio: 'A recurring professional contact with a household and a long memory.' });
   if (!record.contactIds.includes(contact.id)) record.contactIds.push(contact.id);
   return contact;
@@ -62,7 +63,6 @@ export function performSpecialization(state: GameState, id: string): GameState {
   }
   if (def.story) {
     if (['medicine'].includes(def.family)) { contact.stats.health = Math.min(contact.stats.health, 50); }
-    if (def.id === 'noble_fever') { contact.rankIdx = Math.max(3, contact.rankIdx); contact.socialStatus!.estate = 'noble'; }
     r.matters.push({ id, actorId: contact.id, stage: 0, openedYear: state.world.currentYear, resolved: false });
     state.pendingEvent = { eventId: `profession_${id}`, bindings: { client: contact.id, rival: r.rivalId } };
     pushFeed(state, 'PROFESSIONAL MATTER', '#7a4f9a', `${def.name}: ${contact.name} requests your decision.`, 'plain');
@@ -100,7 +100,7 @@ export function performSpecialization(state: GameState, id: string): GameState {
     case 'audit': if (state.world.court) state.world.court.treasury += 6; break;
     case 'diagnose': {
       const condition = contact.healthConditions?.[0]; if (condition) condition.diagnosed = true;
-      else if (contact.stats.health >= 65) { contact.stats.health = 55; contact.healthConditions!.push({ id: `ill_${state.nextId++}`, conditionId: 'fever', kind: 'illness', severity: 25, diagnosed: true, startedYear: state.world.currentYear, nextReviewYear: state.world.currentYear + 1 }); }
+      else if (contact.stats.health >= 65) { contact.stats.health = 55; contact.healthConditions!.push({ id: `ill_${state.nextId++}`, conditionId: 'winter_fever', kind: 'illness', severity: 25, diagnosed: true, startedYear: state.world.currentYear, nextReviewYear: state.world.currentYear + 1 }); }
       break;
     }
     case 'treat': {

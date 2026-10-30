@@ -12,7 +12,7 @@ export const CHILD_EVENTS: GameEvent[] = [
     ageMax: 11,
     once: true,
     choices: [
-      { label: 'Sit and learn diligently', outcome: { text: 'You learned your letters and the smell of old parchment. Knowledge!', effects: { wits: 8, path: { church: 1 }, memory: { tag: 'lettered', weight: 2 } }, tone: 'good' } },
+      { label: 'Sit and learn diligently', outcome: { text: 'You learned your letters and the smell of old parchment. Knowledge!', effects: { education: { qualifications: ['literacy'] }, wits: 8, path: { church: 1 }, memory: { tag: 'lettered', weight: 2 } }, tone: 'good' } },
       { label: 'Sneak off to play with the goose', outcome: { text: 'You and Sir Quackbeard had a glorious afternoon. Letters can wait forever, you decided.', effects: { health: 3, kinRel: { id: 'goose', delta: 6 }, charm: 2 }, tone: 'good' } },
       { label: 'Put a frog in the monk’s hood', outcome: { text: 'The monk shrieked. The village laughed. You are a legend among the under-tens.', effects: { charm: 5, faith: -4, path: { outlaw: 1 } }, tone: 'plain' } },
     ],
@@ -26,7 +26,7 @@ export const CHILD_EVENTS: GameEvent[] = [
     ageMin: 6,
     ageMax: 12,
     choices: [
-      { label: 'Work hard to please Father', outcome: { text: 'You toiled until dusk. Cedric grunted approvingly, which is the highest praise he owns.', effects: { health: -3, path: { labour: 2 }, kinRel: { id: 'father', delta: 8 } }, tone: 'good' } },
+      { label: 'Work hard to please Father', outcome: { text: 'You toiled until dusk. Your father grunted approvingly, which is the highest praise he owns.', effects: { health: -3, path: { labour: 2 }, kinRel: { id: 'father', delta: 8 } }, tone: 'good' } },
       { label: 'Do half, then nap in the hay', outcome: { text: 'You did just enough and napped magnificently. Refreshed, if unproductive.', effects: { health: 4, kinRel: { id: 'father', delta: -4 } }, tone: 'plain' } },
     ],
   },

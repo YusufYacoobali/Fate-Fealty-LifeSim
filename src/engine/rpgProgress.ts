@@ -25,8 +25,8 @@ export function grantSkillXp(s: GameState, id: SkillId, amount: number, reason: 
   skill.xp += Math.floor(amount);
   while (skill.level < 10 && skill.xp >= 20 * skill.level) { skill.xp -= 20 * skill.level; skill.level += 1; }
   if (skill.level === 10) skill.xp = 0;
-  for (const milestone of [3, 6, 10] as const) if (previousLevel < milestone && skill.level >= milestone) pushFeed(s, 'SKILL UNLOCK', '#387245', `${SKILL_NAMES[id]} ${milestone}: ${SKILL_MILESTONES[id][milestone]}.`, 'good');
-  pushFeed(s, 'SKILL', '#365f88', `${SKILL_NAMES[id]} +${Math.floor(amount)} XP · ${reason}. Level ${skill.level}${skill.level < 10 ? ` · ${skill.xp}/${20 * skill.level}` : ' · mastery commission available'}.`, 'good');
+  for (const milestone of [3, 6, 10] as const) if (characterId === s.playerCharacterId && previousLevel < milestone && skill.level >= milestone) pushFeed(s, 'SKILL UNLOCK', '#387245', `${SKILL_NAMES[id]} ${milestone}: ${SKILL_MILESTONES[id][milestone]}.`, 'good');
+  if (characterId === s.playerCharacterId) pushFeed(s, 'SKILL', '#365f88', `${SKILL_NAMES[id]} +${Math.floor(amount)} XP · ${reason}. Level ${skill.level}${skill.level < 10 ? ` · ${skill.xp}/${20 * skill.level}` : ' · mastery commission available'}.`, 'good');
 }
 export function qualityAtLevel(level: number): Quality { return level >= 10 ? 'masterwork' : level >= 6 ? 'fine' : 'ordinary'; }
 export function equipmentDefinition(key?: string): EquipmentDef | undefined {

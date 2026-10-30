@@ -392,7 +392,7 @@ export const BASE_EXPANSION_EVENTS: GameEvent[] = [
     ageMin: 12,
     requires: { custom: (s) => !!s.kin.find((k) => k.id === 'father' && k.alive) },
     choices: [
-      { label: 'Believe Father', outcome: { text: 'Cedric glows with pride and retells it as eight taxmen.', effects: { kinRel: { id: 'father', delta: 8 }, charm: 2 }, tone: 'good' } },
+      { label: 'Believe Father', outcome: { text: 'Your father glows with pride and retells it as eight taxmen.', effects: { kinRel: { id: 'father', delta: 8 }, charm: 2 }, tone: 'good' } },
       { label: 'Ask Your mother for truth', outcome: { text: 'Your mother describes the goose victory in brutal detail. Your father studies the floor.', effects: { wits: 4, kinRel: { id: 'mother', delta: 4 } }, tone: 'good' } },
     ],
   },

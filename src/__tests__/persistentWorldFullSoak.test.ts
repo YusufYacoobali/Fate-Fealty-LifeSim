@@ -1,3 +1,10 @@
+import { BIRTH_ORIGINS } from '@/data/birthOrigins';
+import { educationAvailability } from '@/engine/educationEngine';
+import { specializationAvailability } from '@/engine/careerSpecializationEngine';
+import { CAREER_SPECIALIZATIONS } from '@/data/careerSpecializations';
+import { ENTRY_CAREERS } from '@/data/careers';
+import { careerActionAvailability } from '@/engine/careerEngine';
+import { courtAvailability } from '@/engine/courtEngine';
 import { resolveRpgEncounter } from './rpgSoakHelpers';
 import { createLife } from '@/engine/gameState';
 import { gameReducer } from '@/state/gameReducer';
@@ -56,15 +63,42 @@ function configureRole(state: GameState, role: LifeRole): void {
 }
 
 function runLife(seed: number, difficulty: Difficulty, role?: LifeRole): GameState {
-  let state = createLife({ worldSeed: seed, settings: { autoScroll: false, difficulty, liveForever: false, haptics: false, soundEffects: false } });
+  const origin = BIRTH_ORIGINS[seed % BIRTH_ORIGINS.length].id;
+  let state = createLife({ worldSeed: seed, birthOrigin: origin, lifetimeUnlocked: seed % 3 !== 0, settings: { autoScroll: false, difficulty, liveForever: false, haptics: false, soundEffects: false } });
   if (role) configureRole(state, role);
   for (let year = 0; year < LIFE_GUARD && !state.dead; year++) {
+    state = resolvePending(state);
+    if (!state.dead && !state.pendingEvent) state = exerciseDepth(state, seed);
     state = resolvePending(state);
     if (!state.dead && !state.pendingEvent) state = gameReducer(state, { type: 'AGE_UP' });
   }
   state = resolvePending(state);
   assertBounds(state, `seed ${seed}, difficulty ${difficulty}, role ${role ?? 'natural'}`);
   expect(state.dead).toBe(true);
+  return state;
+}
+
+
+/** Exercise the new loops as well as the original annual simulation. */
+function exerciseDepth(state: GameState, seed: number): GameState {
+  const e = state.world.characters[state.playerCharacterId].education!;
+  const track = state.world.characters[state.playerCharacterId].background?.origin === 'military' ? 'martial' : state.world.characters[state.playerCharacterId].background?.origin === 'artisan' ? 'guild' : 'parish';
+  if (state.age >= 5 && state.age <= 18) {
+    if (!e.track && !e.qualifications.length && !educationAvailability(state, 'enrol', track)) state = gameReducer(state, { type: 'EDUCATION', action: 'enrol', track });
+    for (let i = 0; i < 2; i++) {
+      const action = !educationAvailability(state, 'graduate') ? 'graduate' : 'study';
+      if (!educationAvailability(state, action)) state = gameReducer(state, { type: 'EDUCATION', action });
+    }
+  }
+  if (state.age >= 8 && !state.occupation.careerId) {
+    const job = ENTRY_CAREERS[seed % ENTRY_CAREERS.length];
+    if (careerActionAvailability(state, 'apply', job.id).available) state = gameReducer(state, { type: 'CAREER_ACTION', action: 'apply', careerId: job.id });
+  }
+  if (careerActionAvailability(state, 'work').available) state = gameReducer(state, { type: 'CAREER_ACTION', action: 'work' });
+  const action = CAREER_SPECIALIZATIONS.find(a => !specializationAvailability(state, a.id) && (a.story || !(state.world.characters[state.playerCharacterId].professionalHistory?.[a.family]?.completedActions.includes(a.id))));
+  if (action) state = gameReducer(state, { type: 'CAREER_ACTION', action: 'specialize', careerId: action.id });
+  if (careerActionAvailability(state, 'promote').available) state = gameReducer(state, { type: 'CAREER_ACTION', action: 'promote' });
+  if (state.world.court?.rulerId === state.playerCharacterId && !courtAvailability(state, 'tax_relief')) state = gameReducer(state, { type: 'COURT', action: 'tax_relief' });
   return state;
 }
 
@@ -170,4 +204,30 @@ describe('persistent-world full soak matrix', () => {
     expect(reloaded.world.history).toEqual(uninterrupted.world.history);
     expect(buildLifeChronicle(reloaded)).toEqual(buildLifeChronicle(uninterrupted));
   });
+});
+
+describe('life depth deterministic checkpoints', () => {
+  it('matches uninterrupted education, career and court play after equivalent reloads', () => {
+    for (let seed = 600; seed < 621; seed++) {
+      const options = { worldSeed: seed, birthOrigin: BIRTH_ORIGINS[seed % 7].id, lifetimeUnlocked: seed % 3 !== 0 };
+      let a = createLife(options), b = createLife(options);
+      for (let step = 0; step < 35 && !a.dead; step++) {
+        a = resolvePending(a); b = resolvePending(b);
+        a = exerciseDepth(a, seed); b = exerciseDepth(b, seed);
+        if (step % 5 === 2) {
+          b = normalizeGameState(JSON.parse(JSON.stringify(b)));
+          b = gameReducer(b, { type: 'SET_LIFETIME_UNLOCKED', unlocked: options.lifetimeUnlocked });
+        }
+        a = resolvePending(a); b = resolvePending(b);
+        if (!a.dead && !a.pendingEvent) a = gameReducer(a, { type: 'AGE_UP' });
+        if (!b.dead && !b.pendingEvent) b = gameReducer(b, { type: 'AGE_UP' });
+        expect(b.world.rngState).toEqual(a.world.rngState);
+        expect(b.gold).toBe(a.gold);
+        expect(b.occupation).toEqual(a.occupation);
+        expect(b.world.characters[b.playerCharacterId].education).toEqual(a.world.characters[a.playerCharacterId].education);
+        expect(b.world.characters[b.playerCharacterId].professionalHistory).toEqual(a.world.characters[a.playerCharacterId].professionalHistory);
+        expect(b.world.court).toEqual(a.world.court);
+      }
+    }
+  }, 120000);
 });

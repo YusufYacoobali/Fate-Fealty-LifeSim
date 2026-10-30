@@ -13,13 +13,13 @@ export type EducationAction = 'enrol' | 'study' | 'practise' | 'mentor' | 'chall
 export function educationOf(character: WorldCharacter) { return character.education ??= emptyEducation(); }
 export function educationFee(state: GameState, track: EducationTrackId): number {
   const p = state.world.characters[state.playerCharacterId];
-  return educationOf(p).scholarship || educationTrack(track).origins.includes(p.background?.origin ?? 'peasant') ? 0 : educationTrack(track).fee;
+  return (p.education ?? emptyEducation()).scholarship || educationTrack(track).origins.includes(p.background?.origin ?? 'peasant') ? 0 : educationTrack(track).fee;
 }
 export function educationAvailability(state: GameState, action: EducationAction, track?: EducationTrackId): string | null {
   const time = timedActionAvailability(state);
   if (!time.available) return time.reason!;
   if (state.age < 5) return 'Learning begins at age 5';
-  const e = educationOf(state.world.characters[state.playerCharacterId]);
+  const e = state.world.characters[state.playerCharacterId].education ?? emptyEducation();
   if (e.actionsYear === state.world.currentYear && e.actionsUsed >= 3) return 'Three learning opportunities per year';
   if (action === 'scholarship') return e.scholarship ? 'Already sponsored' : null;
   if (action === 'enrol') {
@@ -28,11 +28,12 @@ export function educationAvailability(state: GameState, action: EducationAction,
     if (!def) return 'Unknown learning path';
     if (e.track) return 'Leave or complete your current learning first';
     if (state.age < def.minAge) return `Begins at age ${def.minAge}`;
-    if (def.qualifications.every(q => e.qualifications.includes(q))) return 'Already qualified';
+    if (e.history.some(h => h.track === track && h.outcome === 'completed') || (def.qualifications.length > 0 && def.qualifications.every(q => e.qualifications.includes(q)))) return 'Already qualified';
     if (state.gold < educationFee(state, track)) return `Needs ${educationFee(state, track)}g or a scholarship`;
     return null;
   }
   if (!e.track) return 'Choose a learning path first';
+  if (['study', 'practise'].includes(action) && e.progress >= 100) return 'Training mastered; complete at the track’s required age and service years';
   if (action === 'graduate') {
     const def = educationTrack(e.track);
     if (e.progress < 100) return 'Needs 100 learning progress';
@@ -61,6 +62,7 @@ function recoverEducationActors(state: GameState): void {
 }
 export function applyEducationEffect(state: GameState, effect: NonNullable<Effects['education']>): void {
   const p = state.world.characters[state.playerCharacterId], e = educationOf(p);
+  if (effect.qualifications) e.qualifications = [...new Set([...e.qualifications, ...effect.qualifications])];
   if (!e.track) return;
   recoverEducationActors(state);
   e.progress = clamp(e.progress + (effect.progress ?? 0));
@@ -112,7 +114,7 @@ export function performEducationAction(state: GameState, action: EducationAction
     e.history.push({ track: def.id, year: state.world.currentYear, outcome: 'completed' });
     e.track = null;
     if (def.id === 'martial') state.world.characters[state.playerCharacterId].socialStatus!.martialHonour = 'page';
-    pushFeed(state, 'QUALIFIED', '#387245', `${mentor.name} signs your record: ${def.qualifications.map(q => q.replaceAll('_', ' ')).join(', ')}. Employers may listen; none has promised a place.`, 'good');
+    pushFeed(state, 'QUALIFIED', '#387245', `${mentor.name} signs your record: ${def.qualifications.map(q => q.replaceAll('_', ' ')).join(', ') || 'household practice completed'}. Employers may listen; none has promised a place.`, 'good');
     return state;
   }
   if (action === 'leave') { e.history.push({ track: def.id, year: state.world.currentYear, outcome: 'left' }); e.track = null; return state; }

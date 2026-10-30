@@ -1,3 +1,4 @@
+import { reconcileCourt } from './courtEngine';
 import { emptyEducation, legacyStatus } from './lifeDepthState';
 /**
  * Kin factory — the single place new family members are minted. Content only
@@ -129,7 +130,7 @@ export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
   };
   const player = s.world.characters[s.playerCharacterId];
   const playerHousehold = player?.householdId ?? 'house_player';
-  const familyId = spec.kind === 'child' && player?.birthFamilyId
+  const familyId = ['child', 'sibling'].includes(spec.kind) && player?.birthFamilyId
     ? player.birthFamilyId
     : `family_${member.id}`;
   const spouse = Object.values(s.world.characters).find((character) => character.spouseId === s.playerCharacterId && character.alive);
@@ -141,7 +142,7 @@ export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
       ? [...(player?.parentIds ?? [])]
       : [];
   Object.assign(member, {
-    householdId: ['child', 'spouse'].includes(spec.kind) ? playerHousehold : `house_${member.id}`,
+    householdId: ['child', 'spouse', 'sibling'].includes(spec.kind) ? playerHousehold : `house_${member.id}`,
     birthFamilyId: familyId,
     parentIds,
     childIds: [],
@@ -219,5 +220,6 @@ export function killKin(s: GameState, selector: string): KinMember | null {
     worldTarget.alive = false;
     worldTarget.healthTags = Array.from(new Set([...worldTarget.healthTags, 'deceased']));
   }
+  if (s.world.court && (s.world.court.rulerId === target.id || Object.values(s.world.court.offices).includes(target.id))) reconcileCourt(s);
   return target;
 }

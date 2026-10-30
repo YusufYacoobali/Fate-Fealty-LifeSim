@@ -100,6 +100,7 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
 
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginTop: 9 }}>
         {career && specializationsFor(career.family).map(a => button('specialize', a.name.toUpperCase(), `${a.cost}g · professional milestone`, a.id))}
+        {career?.family === 'martial' && button('honour', 'PETITION FOR KNIGHTHOOD', 'Earn an honour through recognised service.')}
         {career && button('work', `WORK AS ${career.title.toUpperCase()}`, `Earn about ${career.wage}g and improve performance.`)}
         {career && button('train', 'TRAIN AT WORK', 'Gain experience and performance for promotion.')}
         {career?.promotesTo && button('promote', 'ASK PROMOTION', 'Advance to a better paid career tier.')}

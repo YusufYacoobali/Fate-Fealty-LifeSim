@@ -1,3 +1,4 @@
+import { reconcileCourt } from './courtEngine';
 import { GameState, WorldCharacter } from '@/types/game';
 import { HEALTH_CONDITION_BY_ID } from '@/content/healthConditions';
 import { chance, clamp, pick } from './random';
@@ -10,6 +11,7 @@ function killCharacter(state: GameState, character: WorldCharacter, cause: strin
   character.deathYear = state.world.currentYear;
   character.deathCause = cause;
   unlinkSpouse(state, character.id);
+  if (state.world.court && (state.world.court.rulerId === character.id || Object.values(state.world.court.offices).includes(character.id))) reconcileCourt(state);
   appendWorldHistory(state, { id: `history_health_death_${state.nextId++}`, year: state.world.currentYear, type: 'death', participantIds: [character.id], familyIds: [character.birthFamilyId ?? ''].filter(Boolean), causes: [cause], summary: `${character.name} died from ${cause}.`, salience: character.importance === 'core' ? 4 : 2 });
 }
 

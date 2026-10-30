@@ -103,18 +103,18 @@ describe('gameReducer', () => {
     expect(s.first.length).toBeGreaterThan(0);
   });
 
-  it('CONTINUE_AS_HEIR carries forward half the gold and hereditary rank', () => {
-    const original = makeState({ age: 50, gold: 80, rankIdx: 2 });
+  it('CONTINUE_AS_HEIR carries forward half the gold while leaving martial honours personal', () => {
+    const original = makeState({ age: 50, gold: 80, rankIdx: 2, dead: true });
     const child = spawnKin(original, { kind: 'child', age: 0, isHeir: true });
     child.gold = 8;
     const s = gameReducer(original, { type: 'CONTINUE_AS_HEIR', heirId: child.id });
     expect(s.age).toBe(0);
     expect(s.gold).toBe(8 + 40); // base starting gold + inherited half
-    expect(s.rankIdx).toBe(2);
+    expect(s.rankIdx).toBe(0); // Martial honours are earned rather than inherited.
   });
 
   it('continues as a legacy child whose family relationship survived missing genealogy ids', () => {
-    const original = makeState({ age: 50, gold: 80 });
+    const original = makeState({ age: 50, gold: 80, dead: true });
     const child = spawnKin(original, { kind: 'child', age: 12, isHeir: true });
     child.parentIds = [];
     original.world.characters[original.playerCharacterId].childIds = [];
@@ -127,7 +127,7 @@ describe('gameReducer', () => {
   });
 
   it('does not manufacture an heir when no living child exists', () => {
-    const original = makeState({ age: 50, gold: 80 });
+    const original = makeState({ age: 50, gold: 80, dead: true });
     const s = gameReducer(original, { type: 'CONTINUE_AS_HEIR' });
     expect(s.playerCharacterId).toBe(original.playerCharacterId);
     expect(Object.values(s.world.characters).filter((character) => character.parentIds?.includes(original.playerCharacterId))).toHaveLength(0);

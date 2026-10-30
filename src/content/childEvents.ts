@@ -21,7 +21,8 @@ export const CHILD_EVENTS: GameEvent[] = [
     id: 'child_chores',
     category: 'child',
     title: 'A MOUNTAIN OF TURNIPS',
-    text: 'Old Cedric points at the fields. "Work builds character," he grunts. The turnips are endless.',
+    text: 'Your father points at the fields. "Work builds character," he grunts. The turnips are endless.',
+    requires: { birthOrigins: ['peasant'] },
     ageMin: 6,
     ageMax: 12,
     choices: [

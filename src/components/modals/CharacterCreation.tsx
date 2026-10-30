@@ -1,3 +1,5 @@
+import { BIRTH_ORIGINS } from '@/data/birthOrigins';
+import type { BirthOriginId } from '@/types/game';
 import React, { useState } from 'react';
 import { Image, ScrollView, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -32,7 +34,7 @@ export function characterCreationBottomPadding(safeBottom: number, minimumGuard 
 }
 
 /**
- * First-run / new-life character creation. The player names their peasant,
+ * First-run / new-life character creation. The player names their character,
  * picks (or leaves to fate) a birth trait, and sets the difficulty before the
  * life begins. Confirming dispatches NEW_LIFE with these options.
  */
@@ -40,6 +42,8 @@ export function CharacterCreation({ initialDifficulty, premiumUnlocked, onBegin,
   const insets = useSafeAreaInsets();
   const bottomPadding = characterCreationBottomPadding(insets.bottom);
   const [name, setName] = useState(() => pick(namesForGender(DEFAULT_CHARACTER_GENDER)));
+  const [birthOrigin, setBirthOrigin] = useState<BirthOriginId | undefined>();
+  const [customBirth, setCustomBirth] = useState(false);
   const [traitId, setTraitId] = useState<string>(SURPRISE);
   const [difficulty, setDifficulty] = useState<Difficulty>(initialDifficulty);
   const [gender, setGender] = useState<GenderIdentity>(DEFAULT_CHARACTER_GENDER);
@@ -50,6 +54,7 @@ export function CharacterCreation({ initialDifficulty, premiumUnlocked, onBegin,
 
   const begin = () =>
     onBegin({
+      birthOrigin: customBirth ? birthOrigin : undefined,
       firstName: name.trim() || undefined,
       birthTraitId: traitId === SURPRISE ? undefined : traitId,
       difficulty,
@@ -114,6 +119,15 @@ export function CharacterCreation({ initialDifficulty, premiumUnlocked, onBegin,
             </PixelButton>
           ))}
         </View>
+        <PixelText font="pixel" size={8} color={C.charm} style={{ marginVertical: 9 }}>THY HOUSEHOLD</PixelText>
+        <View style={{ flexDirection: 'row', gap: 7, marginBottom: 8 }}>
+          <PixelButton bg={!customBirth ? C.charm : C.lightFill} shadow={C.charmDark} onPress={() => setCustomBirth(false)} style={{ flex: 1 }} innerStyle={{ padding: 9 }}><PixelText font="pixel" size={7}>RANDOM BIRTH</PixelText></PixelButton>
+          <PixelButton bg={customBirth ? C.charm : C.lightFill} shadow={C.charmDark} onPress={() => { setCustomBirth(true); setBirthOrigin(birthOrigin ?? 'peasant'); }} style={{ flex: 1 }} innerStyle={{ padding: 9 }}><PixelText font="pixel" size={7}>CUSTOM BIRTH</PixelText></PixelButton>
+        </View>
+        {customBirth && <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+          {BIRTH_ORIGINS.map(origin => <TraitChip key={origin.id} selected={birthOrigin === origin.id} emoji={origin.icon} name={origin.name} premium={origin.id === 'royal'} locked={origin.id === 'royal' && !premiumUnlocked} onPress={origin.id === 'royal' && !premiumUnlocked ? onLockedTraitPress : () => setBirthOrigin(origin.id)} />)}
+        </View>}
+        <PixelText font="body" size={15} color={C.creamBlue} style={{ marginBottom: 10 }}>{customBirth ? BIRTH_ORIGINS.find(o => o.id === birthOrigin)?.advantage : 'Let fate choose your family. Most begin with little; every household carries obligations.'}</PixelText>
         {/* BIRTH TRAIT */}
         <PixelText font="pixel" size={8} color={C.charm} style={{ marginTop: 8, marginBottom: 7 }}>
           BORN AS...

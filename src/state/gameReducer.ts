@@ -78,6 +78,7 @@ export type GameAction =
 
 /** Choices captured by the character-creation screen. */
 export interface NewLifeOptions {
+  birthOrigin?: import('@/types/game').BirthOriginId;
   firstName?: string;
   birthTraitId?: string;
   difficulty?: GameSettings['difficulty'];
@@ -362,6 +363,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         settings: proLockedSettings(settings, unlocked),
         lifeNo: state.lifeNo + 1,
         firstName: opts.firstName,
+        birthOrigin: opts.birthOrigin,
         birthTraitId: opts.birthTraitId,
         gender: opts.gender,
         pronouns: opts.pronouns,

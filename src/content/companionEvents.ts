@@ -18,7 +18,7 @@ export const COMPANION_EVENTS: GameEvent[] = [
     id: 'family_sibling_born',
     category: 'family',
     title: 'A SQUALLING ARRIVAL',
-    text: 'Maud sits you down with a strange smile. By harvest, you will not be the only small person in this cottage.',
+    text: 'Your mother sits you down with a strange smile. By harvest, you will not be the only small person in this cottage.',
     ageMin: 2,
     ageMax: 9,
     once: true,

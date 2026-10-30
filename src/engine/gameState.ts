@@ -1,3 +1,4 @@
+import { initializeBirthOrigin } from './birthOriginEngine';
 import { initializeLifeDepth } from './lifeDepthState';
 import { freshRpg, freshSkills } from '@/data/rpg';
 /**
@@ -124,6 +125,8 @@ function initialRelationship(playerId: string, kin: KinMember): Relationship {
 }
 
 export interface FreshLifeOptions {
+  birthOrigin?: import('@/types/game').BirthOriginId;
+  birthWeights?: Partial<Record<import('@/types/game').BirthOriginId, number>>;
   settings?: GameSettings;
   lifeNo?: number;
   /** Player-chosen name (character creation); falls back to a random name. */
@@ -149,7 +152,7 @@ export interface FreshLifeOptions {
 
 export function createLife(opts: FreshLifeOptions = {}): GameState {
   const worldSeed = (opts.worldSeed ?? rnd(0, 0xffffffff)) >>> 0;
-  const created = runWithPersistedRng(initialRngState(worldSeed), () => createLifeFromWorldSeed(opts, worldSeed));
+  const created = runWithPersistedRng(initialRngState(worldSeed), () => { const state = createLifeFromWorldSeed(opts, worldSeed); initializeBirthOrigin(state, opts.birthOrigin, opts.birthWeights); return state; });
   created.value.world.rngState = created.rngState;
   for (const person of Object.values(created.value.world.characters)) person.skills ??= freshSkills();
   initializeLifeDepth(created.value);

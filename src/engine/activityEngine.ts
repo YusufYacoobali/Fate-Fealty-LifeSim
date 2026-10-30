@@ -469,7 +469,7 @@ export function doActivity(s: GameState, id: string): GameState {
   const def = ACTIVITY_DEFS.find((a) => a.id === id);
   if (def?.minAge != null && s.age < def.minAge) {
     pushFeed(s, 'TOO YOUNG', C.amber, one([
-      `At ${s.age}, you are firmly informed that ${def.name.toLowerCase()} is not for children. Maud marches you home by the ear.`,
+      `At ${s.age}, you are firmly informed that ${def.name.toLowerCase()} is not for children. Your mother marches you home by the ear.`,
       `You toddle hopefully toward the ${def.name.toLowerCase()}, and are returned to the cottage by a passing neighbour. Again.`,
       `The village agrees: no ${def.name.toLowerCase()} until you are at least ${def.minAge} winters old.`,
     ]), 'plain');

@@ -22,9 +22,9 @@ export interface AnnualMessage {
 
 export const ANNUAL_MESSAGES: AnnualMessage[] = [
   { id: 'baby_first_steps', tag: 'INFANCY', tagColor: C.good, tone: 'good', text: 'You took your first steps and immediately fell into a basket of turnips. The village applauded both events.', effects: { health: 2 }, requires: { maxAge: 3 } },
-  { id: 'baby_first_word', tag: 'INFANCY', tagColor: C.amber, tone: 'good', text: "Your first word was 'turnip'. Maud wept with pride; Old Cedric nodded as if this settled something.", effects: { charm: 2, kinRel: { id: 'mother', delta: 3 } }, requires: { maxAge: 3 } },
+  { id: 'baby_first_word', tag: 'INFANCY', tagColor: C.amber, tone: 'good', text: "Your first word was 'turnip'. Your mother wept with pride; Your father nodded as if this settled something.", effects: { charm: 2, kinRel: { id: 'mother', delta: 3 } }, requires: { maxAge: 3 } },
   { id: 'baby_goose_guard', tag: 'INFANCY', tagColor: C.good, tone: 'good', text: 'Sir Quackbeard has appointed himself guardian of your cradle. Visitors are now inspected, and occasionally bitten.', effects: { kinRel: { id: 'goose', delta: 5 } }, requires: { maxAge: 3 } },
-  { id: 'baby_winter_fever', tag: 'INFANCY', tagColor: C.bad, tone: 'bad', text: 'A winter fever swept the cottage. Maud sat up three long nights with you until it broke.', effects: { health: -5, kinRel: { id: 'mother', delta: 3 } }, requires: { maxAge: 3 } },
+  { id: 'baby_winter_fever', tag: 'INFANCY', tagColor: C.bad, tone: 'bad', text: 'A winter fever swept the cottage. Your mother sat up three long nights with you until it broke.', effects: { health: -5, kinRel: { id: 'mother', delta: 3 } }, requires: { maxAge: 3 } },
   { id: 'mishap_trough', tag: 'MISHAP', tagColor: C.bad, tone: 'bad', text: 'You slipped in the pig trough before half the village. They are still laughing.', effects: { charm: -4 }, requires: { minAge: 3 } },
   { id: 'fortune_coin', tag: 'FORTUNE', tagColor: C.good, tone: 'good', text: 'Found a shiny coin in the mud. It is mostly mud, but it spends.', effects: { gold: 3 }, requires: { minAge: 4 } },
   { id: 'gossip_bard', tag: 'GOSSIP', tagColor: C.amber, tone: 'plain', text: "A bard sang a song about you. It rhymed your name with 'garlic'.", effects: { charm: -2 }, requires: { minAge: 6 } },
@@ -52,13 +52,13 @@ export const ANNUAL_MESSAGES: AnnualMessage[] = [
   { id: 'turnip_giant', tag: 'HARVEST', tagColor: C.good, tone: 'good', text: 'A turnip grew as large as a helmet. The village called it a sign and then ate it.', effects: { health: 4, faith: 1 } },
   { id: 'tailor_loose_thread', tag: 'MISHAP', tagColor: C.bad, tone: 'bad', text: 'A loose thread undid half your tunic in the market. The tailor called it ventilation.', effects: { charm: -4 }, requires: { minAge: 10 } },
   { id: 'monk_bad_sum', tag: 'WISDOM', tagColor: C.blue, tone: 'plain', text: 'A monk proved two chickens make three by hiding one in his sleeve.', effects: { wits: 4, faith: -1 }, requires: { minAge: 8 } },
-  { id: 'old_oath_found', tag: 'FAMILY', tagColor: C.purpleDark, tone: 'good', text: 'Maud found an old family oath: "Never trust a smiling miller." Sensible ancestors.', effects: { wits: 3, kinRel: { id: 'mother', delta: 2 } }, requires: { minAge: 8 } },
+  { id: 'old_oath_found', tag: 'FAMILY', tagColor: C.purpleDark, tone: 'good', text: 'Your mother found an old family oath: "Never trust a smiling miller." Sensible ancestors.', effects: { wits: 3, kinRel: { id: 'mother', delta: 2 } }, requires: { minAge: 8 } },
   { id: 'market_goat_hat', tag: 'MARKET', tagColor: C.amber, tone: 'plain', text: 'Someone sold hats for goats. No one agreed whether the hats were for goats or from goats.', effects: { charm: 2, wits: 1 }, requires: { minAge: 8 } },
   { id: 'knight_dented_pride', tag: 'MARTIAL', tagColor: C.blue, tone: 'good', text: 'A passing knight polished a dent in his helm and called it character.', effects: { rankProgress: 4, charm: 2 }, requires: { minAge: 12 } },
   { id: 'noble_bad_poem', tag: 'STATION', tagColor: C.purpleDark, tone: 'plain', text: 'A poet praised your noble bearing and rhymed it with herring.', effects: { charm: 2, reputation: 1 }, requires: { rankAtLeast: 2 } },
   { id: 'plague_crowded_prayer', tag: 'PLAGUE', tagColor: C.bad, tone: 'bad', text: 'A sickness scare packed the chapel. The coughs harmonized terribly.', effects: { health: -5, faith: 3 }, requires: { minAge: 14 } },
   { id: 'dice_under_pew', tag: 'VICE', tagColor: C.amber, tone: 'plain', text: 'You found dice under a chapel pew. Someone has been praying for sixes.', effects: { gold: 2, faith: -1 }, requires: { minAge: 10 } },
-  { id: 'father_weather_knee', tag: 'WEATHER', tagColor: C.good, tone: 'plain', text: "Old Cedric's knee predicted rain. It also predicted stew, but only one came true.", effects: { wits: 2, kinRel: { id: 'father', delta: 2 } }, requires: { minAge: 6 } },
+  { id: 'father_weather_knee', tag: 'WEATHER', tagColor: C.good, tone: 'plain', text: "Your father's knee predicted rain. It also predicted stew, but only one came true.", effects: { wits: 2, kinRel: { id: 'father', delta: 2 } }, requires: { minAge: 6 } },
 ];
 
 const RECENT_ANNUAL_REPEAT_WINDOW = 8;
@@ -73,7 +73,7 @@ export function pickAnnualMessage(s: GameState, excludedIds: readonly string[] =
     !excluded.has(m.id)
     && (years[m.id] == null || (!once.has(m.id) && s.world.currentYear - years[m.id] >= 6))
     && (!once.has(m.id) || !s.feed.some((entry) => entry.text === m.text))
-    && (!m.text.includes('Maud') || alive('mother'))
+    && (!m.text.includes('Your mother') || alive('mother'))
     && (!m.text.includes('Cedric') || alive('father'))
     && (!m.text.includes('Quackbeard') || alive('goose'))
     && !recentText.has(m.text)

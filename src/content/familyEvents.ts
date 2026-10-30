@@ -9,13 +9,13 @@ export const FAMILY_EVENTS: GameEvent[] = [
     id: 'family_mother_ill',
     category: 'family',
     title: 'MAUD TAKES ILL',
-    text: 'Your mother Maud has caught a wasting fever. The herb-wife says the cure is dear, but possible.',
+    text: 'Your mother has caught a wasting fever. The herb-wife says the cure is dear, but possible.',
     ageMin: 16,
     requires: { custom: (s) => !!s.kin.find((k) => k.id === 'mother' && k.alive) },
     once: true,
     choices: [
-      { label: 'Spend all you can on her cure (15g)', costGold: 15, successChance: 0.7, success: { text: 'The cure worked. Maud recovers, scolds you for spending so much, and bakes you a fortifying loaf.', effects: { gold: -15, faith: 6, kinRel: { id: 'mother', delta: 25 }, memory: { tag: 'devoted_child', weight: 3 } }, tone: 'good' }, failure: { text: 'You spared no expense, but the fever took her anyway. You hold her hand at the end.', effects: { gold: -15, health: -6, faith: 4, killKin: 'mother', memory: { tag: 'mother_died', weight: 4 } }, tone: 'bad' } },
-      { label: 'Pray and hope (free)', successChance: 0.4, success: { text: 'Whether by prayer or luck, the fever broke. Maud lives, and credits the Almighty entirely.', effects: { faith: 8, kinRel: { id: 'mother', delta: 8 } }, tone: 'good' }, failure: { text: 'Prayer was not enough. Maud passed in the night. The cottage feels impossibly empty.', effects: { faith: -4, health: -4, killKin: 'mother', memory: { tag: 'mother_died', weight: 4 } }, tone: 'bad' } },
+      { label: 'Spend all you can on her cure (15g)', costGold: 15, successChance: 0.7, success: { text: 'The cure worked. Your mother recovers, scolds you for spending so much, and bakes you a fortifying loaf.', effects: { gold: -15, faith: 6, kinRel: { id: 'mother', delta: 25 }, memory: { tag: 'devoted_child', weight: 3 } }, tone: 'good' }, failure: { text: 'You spared no expense, but the fever took her anyway. You hold her hand at the end.', effects: { gold: -15, health: -6, faith: 4, killKin: 'mother', memory: { tag: 'mother_died', weight: 4 } }, tone: 'bad' } },
+      { label: 'Pray and hope (free)', successChance: 0.4, success: { text: 'Whether by prayer or luck, the fever broke. Your mother lives, and credits the Almighty entirely.', effects: { faith: 8, kinRel: { id: 'mother', delta: 8 } }, tone: 'good' }, failure: { text: 'Prayer was not enough. Your mother passed in the night. The cottage feels impossibly empty.', effects: { faith: -4, health: -4, killKin: 'mother', memory: { tag: 'mother_died', weight: 4 } }, tone: 'bad' } },
     ],
   },
   {

@@ -18,6 +18,12 @@ import { MaterialId, SkillId } from '@/types/rpg';
 
 export function meetsCondition(s: GameState, c?: Condition): boolean {
   if (!c) return true;
+  const character = s.world.characters[s.playerCharacterId];
+  if (c.birthOrigins && (!character.background || !c.birthOrigins.includes(character.background.origin))) return false;
+  if (c.educationTracks && (!character.education?.track || !c.educationTracks.includes(character.education.track))) return false;
+  if (c.qualifications?.some(q => !character.education?.qualifications.includes(q))) return false;
+  if (c.offices && !c.offices.some(o => s.world.court?.offices[o] === character.id)) return false;
+  if (c.hasRoyalClaim != null && c.hasRoyalClaim !== Boolean(s.world.court?.claims.some(claim => claim.characterId === character.id && !claim.disinherited))) return false;
   if (Object.entries(c.skillAtLeast ?? {}).some(([id, level]) => skillLevel(s, id as SkillId) < level)) return false;
   if (Object.entries(c.materialsAtLeast ?? {}).some(([id, count]) => s.rpg.materials[id as MaterialId] < count)) return false;
   if (c.equipped?.some((id) => !Object.values(s.rpg.equipment).some((key) => key?.split(':')[0] === id))) return false;

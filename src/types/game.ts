@@ -648,6 +648,11 @@ export interface Effects {
 }
 
 export interface Condition {
+  birthOrigins?: import('./lifeDepth').BirthOriginId[];
+  educationTracks?: import('./lifeDepth').EducationTrackId[];
+  qualifications?: import('./lifeDepth').Qualification[];
+  offices?: import('./lifeDepth').CourtOffice[];
+  hasRoyalClaim?: boolean;
   skillAtLeast?: Partial<Record<import('./rpg').SkillId, number>>;
   materialsAtLeast?: Partial<Record<import('./rpg').MaterialId, number>>;
   equipped?: string[];

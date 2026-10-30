@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { AppState } from 'react-native';
 import { setAudioModeAsync, useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import { GameState } from '@/types/game';
 import { shouldPlayMoneySuccess } from '@/services/audioLogic';
@@ -18,16 +19,40 @@ export function useGameAudio(state: GameState, loaded: boolean): void {
   const previousPendingId = useRef(state.pendingEvent?.eventId);
   const previousHistoryId = useRef(state.world.history.at(-1)?.id);
   const effectsReady = useRef(false);
+  const [appState, setAppState] = useState(AppState.currentState);
+  const [audioModeReady, setAudioModeReady] = useState(false);
 
   useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextState) => {
+      if (nextState !== 'active') setAudioModeReady(false);
+      setAppState(nextState);
+    });
+
+    return () => subscription.remove();
+  }, []);
+
+  useEffect(() => {
+    if (appState !== 'active') return undefined;
+
+    let cancelled = false;
     void setAudioModeAsync({
       playsInSilentMode: false,
       interruptionMode: 'mixWithOthers',
       allowsRecording: false,
       shouldPlayInBackground: false,
       shouldRouteThroughEarpiece: false,
-    }).catch((error) => console.warn('[audio] mode setup failed', error));
-  }, []);
+    })
+      .then(() => {
+        if (!cancelled) setAudioModeReady(true);
+      })
+      .catch((error) => {
+        if (!cancelled) console.warn('[audio] mode setup failed', error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [appState]);
 
   useEffect(() => {
     successPlayer.volume = 0.85;
@@ -72,13 +97,18 @@ export function useGameAudio(state: GameState, loaded: boolean): void {
     previousPlayerId.current = state.playerCharacterId;
     previousPendingId.current = pendingId;
     previousHistoryId.current = latestHistory?.id;
-    if ((!shouldPlay && !milestone) || !successStatus.isLoaded) return;
+    if (
+      (!shouldPlay && !milestone)
+      || !successStatus.isLoaded
+      || appState !== 'active'
+      || !audioModeReady
+    ) return;
 
     void successPlayer
       .seekTo(0)
       .then(() => successPlayer.play())
       .catch((error) => console.warn('[audio] success sound failed', error));
-  }, [loaded, state.gold, state.rankIdx, state.playerCharacterId, state.pendingEvent?.eventId, state.pendingEvent?.storyInstanceId, state.world.activeStories, state.world.history, state.settings.soundEffects, successPlayer, successStatus.isLoaded]);
+  }, [appState, audioModeReady, loaded, state.gold, state.rankIdx, state.playerCharacterId, state.pendingEvent?.eventId, state.pendingEvent?.storyInstanceId, state.world.activeStories, state.world.history, state.settings.soundEffects, successPlayer, successStatus.isLoaded]);
 }
 
 /** Keeps frequent audio status updates inside a null child component. */

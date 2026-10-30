@@ -1,3 +1,4 @@
+import { careerById } from '@/data/careers';
 import { GameState, LifeRole, StoryScale, WorldConditionKey } from '@/types/game';
 
 export interface ActorSelector {
@@ -238,20 +239,21 @@ export function storyEligibilityMet(state: GameState, eligibility: StoryEligibil
       const family = player?.birthFamilyId ? state.world.families[player.birthFamilyId] : undefined;
       return (family?.memberIds.length ?? 0) >= eligibility.minimum;
     }
-    case 'role': return (eligibility.minAge == null || age >= eligibility.minAge) && eligibility.roles.includes(deriveLifeRole(state));
+    case 'role': return (eligibility.minAge == null || age >= eligibility.minAge) && (eligibility.roles.includes(deriveLifeRole(state)) || state.rankIdx >= 5 && eligibility.roles.includes('monarch') || state.rankIdx >= 3 && eligibility.roles.includes('landed_noble'));
     case 'kin_kind': return (eligibility.minAge == null || age >= eligibility.minAge) && Object.values(state.world.characters).some((kin) => kin.id !== state.playerCharacterId && kin.alive && eligibility.kinds.includes(kin.kind));
   }
 }
 
 export function deriveLifeRole(state: GameState): LifeRole {
-  const player = state.world.characters[state.playerCharacterId];
-  const career = player?.occupation.careerId ?? state.occupation.careerId ?? '';
-  if (career.includes('poacher') || career.includes('cutpurse') || career.includes('bandit') || state.paths.outlaw > 20) return 'outlaw';
+  const family = careerById(state.occupation.careerId)?.family;
+  if (family === 'outlaw') return 'outlaw';
+  if (family === 'church') return 'clergy';
+  if (family === 'martial') return 'martial';
+  if (['craft', 'trade', 'medicine', 'law', 'entertainment'].includes(family ?? '')) return 'artisan_merchant';
+  if (family === 'agriculture') return 'commoner';
   if (state.rankIdx >= 5) return 'monarch';
   if (state.rankIdx >= 3) return 'landed_noble';
-  if (['acolyte', 'cleric', 'prior'].includes(career)) return 'clergy';
-  if (['levy', 'guard', 'marshal'].includes(career) || state.rankIdx >= 1) return 'martial';
-  if (['apprentice', 'artisan', 'master_artisan', 'hawker', 'trader', 'merchant'].includes(career)) return 'artisan_merchant';
-  if (['herb_gatherer', 'barber_surgeon', 'physician', 'copyist', 'advocate', 'justice'].includes(career)) return 'artisan_merchant';
+  if (state.paths.outlaw > 20) return 'outlaw';
+  if (state.rankIdx >= 1) return 'martial';
   return 'commoner';
 }

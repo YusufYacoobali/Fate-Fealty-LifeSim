@@ -1,14 +1,15 @@
 import React from 'react';
+import { GestureDetector } from 'react-native-gesture-handler';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MIN_ANDROID_BOTTOM_NAV_GUARD } from '../systemLayout';
 
 /** Dim full-screen backdrop that centres its modal child, matching the mockup. */
-export function ModalBackdrop({ children, zIndex = 50, onTouchStart }: { children: React.ReactNode; zIndex?: number; onTouchStart?: () => void }) {
+export function ModalBackdrop({ children, zIndex = 50, onTouchStart, gesture }: { gesture?: React.ComponentProps<typeof GestureDetector>['gesture']; children: React.ReactNode; zIndex?: number; onTouchStart?: () => void }) {
   const insets = useSafeAreaInsets();
   const bottomInset = Math.max(insets.bottom, MIN_ANDROID_BOTTOM_NAV_GUARD);
 
-  return (
+  const content = (
     <View
       onTouchStart={onTouchStart}
       style={{
@@ -29,4 +30,5 @@ export function ModalBackdrop({ children, zIndex = 50, onTouchStart }: { childre
       <View style={{ width: '100%' }}>{children}</View>
     </View>
   );
+  return gesture ? <GestureDetector gesture={gesture}>{content}</GestureDetector> : content;
 }

@@ -46,8 +46,8 @@ export const PREMIUM_PLANS: Record<PlanId, PremiumPlan> = {
   },
 };
 
-/** End-of-onboarding paywall: subscriptions only, yearly preselected. */
-export const PAYWALL_PLAN_IDS: PlanId[] = ['annual', 'monthly'];
+/** End-of-onboarding paywall: yearly preselected, lifetime in the middle. */
+export const PAYWALL_PLAN_IDS: PlanId[] = ['annual', 'lifetime', 'monthly'];
 
 /**
  * The premium shop: yearly first as the recommendation, lifetime in the middle
@@ -81,10 +81,15 @@ export const PREMIUM_BENEFIT_DETAILS = [
     title: 'TAKE 50 ACTIONS A YEAR',
     body: 'Raise the yearly action limit from 24 to 50 for longer, more flexible lives.',
   },
+  {
+    title: 'ADVANCED CRAFTING',
+    body: 'Unlock advanced recipes and commissioned forge work. Practice mini-games and basic crafting are free.',
+  },
 ] as const;
 
 /** Short enough to keep the onboarding paywall on one screen. */
 export const PREMIUM_BENEFIT_LINES = [
+  'Advanced recipes and commissioned forge work',
   'Baron and Monarch ranks',
   'Royal Holding orders and buildings',
   'Premium events and story arcs',

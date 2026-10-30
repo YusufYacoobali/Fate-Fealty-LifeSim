@@ -21,6 +21,62 @@ export const PLAN_IDS: PlanId[] = ['monthly', 'annual', 'lifetime'];
 /** Minimal shape of RevenueCat's CustomerInfo that we rely on. */
 export interface CustomerInfoLike {
   entitlements: { active: Record<string, unknown> };
+  activeSubscriptions?: readonly string[];
+}
+
+export interface PremiumOwnership {
+  kind: 'subscription' | 'lifetime' | 'unknown';
+  productIdentifier: string | null;
+  productPlanIdentifier: string | null;
+  store: string | null;
+  hasActiveSubscription: boolean;
+}
+
+export interface PremiumAccess {
+  unlocked: boolean;
+  ownership: PremiumOwnership | null;
+}
+
+/** Store-confirmed ownership only; the local unlock flag cannot identify a plan. */
+export function premiumAccess(info: CustomerInfoLike | null | undefined): PremiumAccess {
+  const entitlement = info?.entitlements?.active?.[ENTITLEMENT_ID] as {
+    productIdentifier?: string; productPlanIdentifier?: string | null; expirationDate?: string | null; store?: string;
+  } | undefined;
+  if (!entitlement) return { unlocked: false, ownership: null };
+  const kind = entitlement.expirationDate === null ? 'lifetime' : typeof entitlement.expirationDate === 'string' ? 'subscription' : 'unknown';
+  return {
+    unlocked: true,
+    ownership: {
+      kind,
+      productIdentifier: entitlement.productIdentifier ?? null,
+      productPlanIdentifier: entitlement.productPlanIdentifier ?? null,
+      store: entitlement.store ?? null,
+      hasActiveSubscription: kind === 'subscription' || !!info?.activeSubscriptions?.length,
+    },
+  };
+}
+
+/** Android base plans must be compared as product:basePlan, not product alone. */
+export function ownedProductIdentifier(ownership: PremiumOwnership): string | null {
+  const id = ownership.productIdentifier;
+  return id && ownership.productPlanIdentifier && !id.includes(':') ? `${id}:${ownership.productPlanIdentifier}` : id;
+}
+
+export function ownedPlan(
+  ownership: PremiumOwnership | null | undefined,
+  products: Partial<Record<PlanId, { productIdentifier?: string | null }>> | null | undefined,
+): PlanId | 'unknown' | null {
+  if (!ownership) return null;
+  if (ownership.kind === 'lifetime') return 'lifetime';
+  const identifier = ownedProductIdentifier(ownership);
+  if (!identifier) return 'unknown';
+  return PLAN_IDS.find((plan) => products?.[plan]?.productIdentifier === identifier) ?? 'unknown';
+}
+
+export function upgradePlans(ownership: PremiumOwnership | null | undefined, plan: ReturnType<typeof ownedPlan>): PlanId[] {
+  if (!ownership || ownership.kind !== 'subscription' || plan === 'lifetime') return [];
+  // An old subscription absent from today's offering can still buy Lifetime.
+  return plan === 'monthly' ? ['annual', 'lifetime'] : ['lifetime'];
 }
 
 /** Whether the Pro entitlement is currently active. */

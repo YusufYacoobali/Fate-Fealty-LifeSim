@@ -7,6 +7,8 @@ import { buildDeathSummary } from '@/engine/deathEngine';
 import { currentRank } from '@/state/viewModel';
 import { C } from '@/theme/theme';
 import { eligibleHeirs } from '@/engine/successionEngine';
+import { careerById } from '@/data/careers';
+import { tradeProgress, TRADE_ENDINGS } from '@/engine/tradeJourney';
 
 interface Props {
   state: GameState;
@@ -32,6 +34,8 @@ export function DeathScreen({ state, onNewLife, onContinueHeir }: Props) {
   const summary = buildDeathSummary(state, rank.key);
   const heirs = eligibleHeirs(state);
   const canContinue = heirs.length > 0;
+  const profession = careerById(state.occupation.careerId)?.title;
+  const professionalLegacy = tradeProgress(state).ending;
 
   return (
     <ScrollView
@@ -49,12 +53,15 @@ export function DeathScreen({ state, onNewLife, onContinueHeir }: Props) {
       <PixelText font="body" size={19} color={C.creamBlue} style={{ marginTop: 12, textAlign: 'center' }}>
         {summary.name}
         {'\n'}
-        {rank.key}-born · died at {summary.age}
+        {rank.key} · died at {summary.age}
         {'\n'}
         <PixelText font="body" size={17} color="#9fc4e8">
           {summary.cause}
         </PixelText>
       </PixelText>
+
+      {profession && <PixelText font="body" size={18} color={C.creamBlue} style={{ marginTop: 8 }}>{profession}</PixelText>}
+      {professionalLegacy && <PixelText font="body" size={18} color={C.charm} style={{ marginTop: 6 }}>Remembered as a {TRADE_ENDINGS[professionalLegacy]}</PixelText>}
 
       {/* legacy ledger */}
       <View style={{ marginTop: 16, paddingTop: 12, borderTopWidth: 2, borderTopColor: '#2b3a52', alignItems: 'center' }}>

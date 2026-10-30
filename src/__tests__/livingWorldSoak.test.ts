@@ -1,16 +1,20 @@
+import { resolveRpgEncounter } from './rpgSoakHelpers';
 import { createLife, cloneState } from '@/engine/gameState';
 import { gameReducer } from '@/state/gameReducer';
 import { applyChoice } from '@/engine/storyGraph';
-import { eventById, isChoiceAvailable } from '@/engine/eventPicker';
+import { eventById, isChoiceEnabled } from '@/engine/eventPicker';
 import { resetRandomSource, seededSource, setRandomSource } from '@/engine/random';
 
 describe('living-world seeded soak', () => {
   afterEach(resetRandomSource);
 
   function resolveEvents(state: ReturnType<typeof createLife>) {
+    resolveRpgEncounter(state);
+    let decisions = 0;
     while (state.pendingEvent && !state.dead) {
+      if (++decisions > 20) throw new Error('Story resolution did not advance');
       const event = eventById(state.pendingEvent.eventId)!;
-      const choice = event.choices.find((candidate) => isChoiceAvailable(state, candidate));
+      const choice = event.choices.find((candidate) => isChoiceEnabled(state, candidate));
       if (!choice) break;
       state = cloneState(state);
       applyChoice(state, event, choice);
@@ -22,7 +26,7 @@ describe('living-world seeded soak', () => {
     setRandomSource(seededSource(99173));
     let years = 0;
     for (let life = 0; life < 30; life++) {
-      let state = createLife({ settings: { autoScroll: true, difficulty: 'Normal', liveForever: false, haptics: false, music: false, soundEffects: false } });
+      let state = createLife({ settings: { autoScroll: true, difficulty: 'Normal', liveForever: false, haptics: false, soundEffects: false } });
       for (let guard = 0; guard < 120 && !state.dead; guard++) {
         state = resolveEvents(state);
         if (state.dead || state.pendingEvent) break;

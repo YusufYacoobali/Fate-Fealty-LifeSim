@@ -104,13 +104,13 @@ describe('fighting it out', () => {
     expect(s.duel!.round).toBeLessThanOrEqual(DUEL_MAX_ROUNDS + 1);
   });
 
-  it('only allows yielding once the fight has been joined', () => {
+  it('allows yielding between exchanges without forcing further injury', () => {
     const s = readyToFight();
     startDuel(s, 'roderick', 'duel');
-    expect(canYield(s)).toBe(false);
+    expect(canYield(s)).toBe(true);
 
     respondToDuel(s, 'yield');
-    expect(s.duel?.outcome).toBeUndefined();
+    expect(s.duel?.outcome).toBe('yielded');
   });
 
   it('ends immediately on a yield once it is allowed', () => {
@@ -219,13 +219,11 @@ describe('duels through the reducer', () => {
     expect(s.duel).toBeNull();
   });
 
-  it('never restores a half-fought duel from a save', () => {
+  it('restores a half-fought duel from a save without rerolling it', () => {
     const s = readyToFight();
     startDuel(s, 'roderick', 'duel');
     expect(s.duel).not.toBeNull();
 
-    // Reloading mid-exchange would drop the player into a fight they have no
-    // memory of starting, so hydration discards it.
-    expect(normalizeGameState(s).duel).toBeNull();
+    expect(normalizeGameState(s).duel).toEqual(s.duel);
   });
 });

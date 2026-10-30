@@ -20,10 +20,10 @@ export const ROLE_STORY_COPY: Record<string, StoryCopy> = {
     },
     2: {
       title: 'THE COMMON ROUND · THE HAYWARD TAKES AGAINST A HOUSEHOLD',
-      text: 'The hayward has presented one household five times this year for things everybody does. {{contact.name}} says it is because of an argument over a gate in 1341.',
+      text: 'The hayward has presented one household five times this year for things everybody does. {{contact.name}} says it is because of an old argument over a gate.',
       choices: [
         { id: 'commons', label: 'Get the presentments read out together', text: 'Five presentments against one household and none against anybody else, read one after another. The steward sees it instantly and the hayward is replaced at Michaelmas.', effects: { wits: 6, reputation: 4, worldConditions: { publicOrder: 2 }, faction: { factionId: 'commons', playerStanding: 4 } }, tone: 'good' },
-        { id: 'independence', label: 'Pay their amercements and keep out of it', text: 'Fourpence four times. The household is grateful, the hayward is undisturbed, and you have solved this year and not the next one.', effects: { gold: -2, faith: 4, charm: 3, holding: { stores: 2 } }, tone: 'plain' },
+        { id: 'independence', label: 'Pay their amercements and keep out of it', costGold: 2, text: 'Fourpence four times. The household is grateful, the hayward is undisturbed, and you have solved this year and not the next one.', effects: { gold: -2, faith: 4, charm: 3, holding: { stores: 2 } }, tone: 'plain' },
       ],
     },
     3: {
@@ -38,15 +38,15 @@ export const ROLE_STORY_COPY: Record<string, StoryCopy> = {
       title: 'THE COMMON ROUND · THE ARREARS OF A NEIGHBOUR',
       text: 'One household is six shillings behind and cannot pay. {{contact.name}} points out that the arrears are recoverable from the village as a whole, or from that household’s beasts, and the choice of which is being left to you.',
       choices: [
-        { id: 'duty', label: 'Spread it across the whole village', text: 'Elevenpence a household and a very cold reception at four doors. The family keeps its beasts and stays on its land, which was the entire point.', effects: { faith: 6, charm: 4, gold: -3, faction: { factionId: 'commons', playerStanding: 5 }, worldConditions: { publicOrder: 2 }, storyVariables: { resolution: 'duty' } }, tone: 'good' },
+        { id: 'duty', label: 'Spread it across the whole village', costGold: 3, text: 'Elevenpence a household and a very cold reception at four doors. The family keeps its beasts and stays on its land, which was the entire point.', effects: { faith: 6, charm: 4, gold: -3, faction: { factionId: 'commons', playerStanding: 5 }, worldConditions: { publicOrder: 2 }, storyVariables: { resolution: 'duty' } }, tone: 'good' },
         { id: 'ambition', label: 'Take the beasts', text: 'Two oxen distrained and sold. The books balance perfectly, the steward is impressed, and the household is cottars by Lady Day.', effects: { gold: 12, rankProgress: 10, faction: { factionId: 'crown', playerStanding: 4 }, faith: -5, storyVariables: { resolution: 'ambition' } }, tone: 'bad' },
       ],
     },
     '5_duty': {
       title: 'THE COMMON ROUND · THE VILLAGE THAT COVERS ITSELF',
-      text: 'Swineford spreads arrears across itself as a matter of course from that year on. It is nobody’s policy and everybody’s habit, and it keeps four families on their land over the next decade.',
+      text: 'Swineford agrees to share the unpaid dues of four struggling families. The collections cover this year’s arrears and keep those households on their land.',
       choices: [
-        { id: 'accept_ending', label: 'Let it become the custom', text: 'It is doing it still in 1390, and by then everybody believes it has always been done and nobody can name the year it started.', effects: { faith: 5, reputation: 4, familyReputation: { delta: 3 }, worldConditions: { publicOrder: 2 }, memory: { tag: 'the_village_covers_itself', weight: 5 } }, tone: 'good' },
+        { id: 'accept_ending', label: 'Let it become the custom', text: 'The village agrees to keep the arrangement. For now, neighbours have a custom they can call on when the harvest fails.', effects: { faith: 5, reputation: 4, familyReputation: { delta: 3 }, worldConditions: { publicOrder: 2 }, memory: { tag: 'the_village_covers_itself', weight: 5 } }, tone: 'good' },
       ],
     },
     '5_ambition': {
@@ -79,8 +79,8 @@ export const ROLE_STORY_COPY: Record<string, StoryCopy> = {
       title: 'THE CONTESTED TRADE · A BAD BATCH UNDER YOUR MARK',
       text: 'Seven pieces have gone out under your mark with a fault in them that will show in five winters or so. {{contact.name}} noticed before the buyers did.',
       choices: [
-        { id: 'quality', label: 'Recall all seven and replace them', text: 'You go to seven doors, admit it, and replace the lot at your own cost. It is ruinous this year and within five your mark is worth more than the whole batch cost.', effects: { gold: -22, reputation: 7, faction: { factionId: 'guilds', playerStanding: 4 }, worldConditions: { prosperity: 1 } }, tone: 'good' },
-        { id: 'monopoly', label: 'Say nothing and improve the next batch', text: 'Seven pieces fail in 1359 and by then nobody connects them. You are quite right that nobody connects them and you know which seven doors they are behind.', effects: { gold: 10, faith: -3, createSecret: { type: 'stolen_property', severity: 30, knownByIds: [] } }, tone: 'plain' },
+        { id: 'quality', label: 'Recall all seven and replace them', costGold: 22, text: 'You go to seven doors, admit it, and replace the lot at your own cost. The expense hurts, but the buyers praise your honesty and the guild takes notice.', effects: { gold: -22, reputation: 7, faction: { factionId: 'guilds', playerStanding: 4 }, worldConditions: { prosperity: 1 } }, tone: 'good' },
+        { id: 'monopoly', label: 'Say nothing and improve the next batch', text: 'You leave the suspect pieces in circulation and improve the next batch. Nobody has connected the faults yet; you keep the list of buyers to yourself.', effects: { gold: 10, faith: -3, createSecret: { type: 'stolen_property', severity: 30, knownByIds: [] } }, tone: 'plain' },
       ],
     },
     4: {
@@ -88,21 +88,21 @@ export const ROLE_STORY_COPY: Record<string, StoryCopy> = {
       text: 'The wardens offer you the searchership: you inspect every shop in the trade, condemn what fails, and set the standard for the town. It is power, and it is unpaid, and it makes you responsible for other men’s livelihoods.',
       choices: [
         { id: 'duty', label: 'Take it and search honestly', text: 'You condemn work belonging to two men who have fed you and one who is owed money by you. Nobody ever accuses you of favour and nobody ever thanks you either.', effects: { faith: 5, wits: 5, reputation: 6, faction: { factionId: 'guilds', playerStanding: 5 }, worldConditions: { prosperity: 3 }, storyVariables: { resolution: 'duty' } }, tone: 'good' },
-        { id: 'ambition', label: 'Take it and search selectively', text: 'Your competitors are searched thoroughly and your friends are searched on a Friday afternoon. Within six years you have the largest shop in the trade.', effects: { gold: 24, householdState: { wealth: 6, status: 3 }, faction: { factionId: 'guilds', playerStanding: 2 }, faith: -5, storyVariables: { resolution: 'ambition' } }, tone: 'plain' },
+        { id: 'ambition', label: 'Take it and search selectively', text: 'Your competitors are searched thoroughly and your friends are searched on a Friday afternoon. Orders move to your shop, bringing profit and uncomfortable questions.', effects: { gold: 24, householdState: { wealth: 6, status: 3 }, faction: { factionId: 'guilds', playerStanding: 2 }, faith: -5, storyVariables: { resolution: 'ambition' } }, tone: 'plain' },
       ],
     },
     '5_duty': {
       title: 'THE CONTESTED TRADE · A MARK THAT MEANS SOMETHING',
       text: 'The standard holds because it was applied to everybody including you. Buyers three counties off ask for Swineford work by name, which has never happened before.',
       choices: [
-        { id: 'accept_ending', label: 'Keep searching honestly', text: 'You do it for nineteen years. The town’s trade doubles and your own shop stays the third largest, which is exactly what honest searching costs.', effects: { reputation: 6, gold: 14, worldConditions: { prosperity: 4 }, familyReputation: { delta: 4 }, memory: { tag: 'the_honest_search', weight: 5 } }, tone: 'good' },
+        { id: 'accept_ending', label: 'Keep searching honestly', text: 'You record the faults honestly and settle the outstanding orders. Your fair dealing earns both payment and the guild’s respect.', effects: { reputation: 6, gold: 14, worldConditions: { prosperity: 4 }, familyReputation: { delta: 4 }, memory: { tag: 'the_honest_search', weight: 5 } }, tone: 'good' },
       ],
     },
     '5_ambition': {
       title: 'THE CONTESTED TRADE · THE LARGEST SHOP IN THE TOWN',
       text: 'Yours is the biggest shop in the trade and the trade knows precisely how it got that way. Nobody says it, because you are also the searcher.',
       choices: [
-        { id: 'accept_ending', label: 'Keep the search and the shop', text: 'Both, for the rest of your working life. Your son inherits a fortune and a reputation, and only one of them is transferable.', effects: { gold: 30, householdState: { wealth: 8, status: 4 }, familyReputation: { delta: -2 }, faction: { factionId: 'guilds', playerStanding: -3 }, memory: { tag: 'the_searchers_shop', weight: 5 } }, tone: 'plain' },
+        { id: 'accept_ending', label: 'Keep the search and the shop', text: 'You keep the appointment and the profit from this order. Your household grows richer, but the guild questions whose interests your inspections serve.', effects: { gold: 30, householdState: { wealth: 8, status: 4 }, familyReputation: { delta: -2 }, faction: { factionId: 'guilds', playerStanding: -3 }, memory: { tag: 'the_searchers_shop', weight: 5 } }, tone: 'plain' },
       ],
     },
   },
@@ -133,25 +133,25 @@ export const ROLE_STORY_COPY: Record<string, StoryCopy> = {
       ],
     },
     4: {
-      title: 'THE CURE OF SOULS · A BETTER LIVING OFFERED',
-      text: 'A living worth four times this one is offered, in a town, with a house. Taking it means leaving a parish that has three families in genuine trouble and one priest.',
+      title: 'THE CURE OF SOULS · A PATRON’S OFFER',
+      text: 'A wealthy church patron offers a paid commission. Taking it means less time this season for three local families in genuine trouble.',
       choices: [
-        { id: 'duty', label: 'Refuse it and stay', text: 'You write a short, polite refusal and put it in the fire twice before sending it. You are in Swineford for the rest of your life and the three families survive.', effects: { faith: 8, reputation: 5, faction: { factionId: 'commons', playerStanding: 6 }, worldConditions: { religiousTension: -3, publicOrder: 2 }, storyVariables: { resolution: 'duty' } }, tone: 'good' },
-        { id: 'ambition', label: 'Take it', text: 'It is a better living, a larger cure, and a great many more souls. All of that is true and so is the fact that you left in November.', effects: { gold: 26, rankProgress: 14, faction: { factionId: 'church', playerStanding: 5 }, storyVariables: { resolution: 'ambition' } }, tone: 'plain' },
+        { id: 'duty', label: 'Refuse it and stay', text: 'You write a short, polite refusal and put it in the fire twice before sending it. You make time for the three families and help them through the immediate trouble.', effects: { faith: 8, reputation: 5, faction: { factionId: 'commons', playerStanding: 6 }, worldConditions: { religiousTension: -3, publicOrder: 2 }, storyVariables: { resolution: 'duty' } }, tone: 'good' },
+        { id: 'ambition', label: 'Take it', text: 'You accept the commission and its payment. The patron commends your work; the three families must wait for your attention.', effects: { gold: 26, rankProgress: 14, faction: { factionId: 'church', playerStanding: 5 }, storyVariables: { resolution: 'ambition' } }, tone: 'plain' },
       ],
     },
     '5_duty': {
-      title: 'THE CURE OF SOULS · FORTY YEARS IN ONE PARISH',
-      text: 'You baptise, marry and bury three generations of the same families. It is the smallest possible career and there are five people alive because of it.',
+      title: 'THE CURE OF SOULS · A PARISH THAT TRUSTS YOU',
+      text: 'The families you helped thank you after the service. Their trust was earned through small duties that could easily have been neglected.',
       choices: [
-        { id: 'accept_ending', label: 'Stay to the end', text: 'You are buried in the chancel by people you christened. The parish pays for the stone itself, which it has never done for anybody before or since.', effects: { faith: 8, reputation: 6, familyReputation: { delta: 5 }, worldConditions: { religiousTension: -2 }, memory: { tag: 'forty_years_in_one_parish', weight: 5 } }, tone: 'good' },
+        { id: 'accept_ending', label: 'Renew your commitment', text: 'The parish records its thanks and promises help with your work. You return to your duties with stronger support and a name people trust.', effects: { faith: 8, reputation: 6, familyReputation: { delta: 5 }, worldConditions: { religiousTension: -2 }, memory: { tag: 'forty_years_in_one_parish', weight: 5 } }, tone: 'good' },
       ],
     },
     '5_ambition': {
-      title: 'THE CURE OF SOULS · THE TOWN LIVING',
-      text: 'The town living is everything it was described as. You are a better-placed and considerably busier priest, and you do not go back to Swineford, not once, for any reason.',
+      title: 'THE CURE OF SOULS · THE PATRON’S FAVOUR',
+      text: 'The commission brings money and influence within the church. Your patron offers further support, while local families still need your time.',
       choices: [
-        { id: 'accept_ending', label: 'Get on with the work', text: 'You do a great deal of good in a place that needed less of it. Nobody there ever knows the three families, and neither, after a while, do you.', effects: { rankProgress: 12, gold: 18, householdState: { status: 4 }, faction: { factionId: 'church', playerStanding: 4 }, memory: { tag: 'took_the_town_living', weight: 5 } }, tone: 'plain' },
+        { id: 'accept_ending', label: 'Get on with the work', text: 'You accept the patron’s support and complete the agreed work. Your household benefits, and the demands on your attention remain.', effects: { rankProgress: 12, gold: 18, householdState: { status: 4 }, faction: { factionId: 'church', playerStanding: 4 }, memory: { tag: 'took_the_town_living', weight: 5 } }, tone: 'plain' },
       ],
     },
   },
@@ -185,22 +185,22 @@ export const ROLE_STORY_COPY: Record<string, StoryCopy> = {
       title: 'THE SOLDIER’S ROAD · THE CAPTAINCY AND THE GARRISON',
       text: 'You are offered a captaincy on a campaign that will make a name, or the command of the shire garrison, which is dull, permanent, and the only thing standing between the coast road and the villages behind it.',
       choices: [
-        { id: 'duty', label: 'Take the garrison', text: 'Seventeen years of patrols, drills and paperwork on a road where nothing much ever happens, because you are on it.', effects: { faith: 5, rankProgress: 8, worldConditions: { publicOrder: 4, warThreat: -3 }, faction: { factionId: 'commons', playerStanding: 5 }, storyVariables: { resolution: 'duty' } }, tone: 'good' },
-        { id: 'ambition', label: 'Take the captaincy', text: 'Two campaigns, one very good day, and a name that travels further than you do. The coast road is somebody else’s problem and, for two summers, nobody’s.', effects: { rankProgress: 20, gold: 24, reputation: 8, health: -8, worldConditions: { publicOrder: -2 }, storyVariables: { resolution: 'ambition' } }, tone: 'plain' },
+        { id: 'duty', label: 'Take the garrison', text: 'You organise patrols, drills and watch rotations. Merchants report a quieter road, and the nearby villages welcome the extra protection.', effects: { faith: 5, rankProgress: 8, worldConditions: { publicOrder: 4, warThreat: -3 }, faction: { factionId: 'commons', playerStanding: 5 }, storyVariables: { resolution: 'duty' } }, tone: 'good' },
+        { id: 'ambition', label: 'Take the captaincy', text: 'You lead a hard-fought sortie and return with wounds, pay and a growing reputation. While the retinue is away, patrols on the coast road are stretched thin.', effects: { rankProgress: 20, gold: 24, reputation: 8, health: -8, worldConditions: { publicOrder: -2 }, storyVariables: { resolution: 'ambition' } }, tone: 'plain' },
       ],
     },
     '5_duty': {
       title: 'THE SOLDIER’S ROAD · THE ROAD WHERE NOTHING HAPPENED',
-      text: 'Twelve years and no engagement worth a chronicler. Four villages behind that road were never burned and not one of them ever knows to be grateful.',
+      text: 'The patrol reports record a quiet season. Four villages behind the road have brought their goods safely to market, with no great battle for a chronicler to celebrate.',
       choices: [
-        { id: 'accept_ending', label: 'Keep the road', text: 'You hold it until you are too old to sit a horse, then hand it to somebody competent. No chronicler writes down a road that nothing happened on.', effects: { rankProgress: 10, faith: 5, familyReputation: { delta: 4 }, worldConditions: { publicOrder: 3 }, memory: { tag: 'the_road_where_nothing_happened', weight: 5 } }, tone: 'good' },
+        { id: 'accept_ending', label: 'Keep the road', text: 'You renew the watch and train a capable deputy. The garrison recognises your steady command, even if a safe road makes a poor tale at a feast.', effects: { rankProgress: 10, faith: 5, familyReputation: { delta: 4 }, worldConditions: { publicOrder: 3 }, memory: { tag: 'the_road_where_nothing_happened', weight: 5 } }, tone: 'good' },
       ],
     },
     '5_ambition': {
       title: 'THE SOLDIER’S ROAD · A NAME THAT TRAVELS',
       text: 'The name goes further than you ever did and comes home ahead of you. It is worth a great deal in every hall in the shire and nothing at all on the coast road.',
       choices: [
-        { id: 'accept_ending', label: 'Live on the name', text: 'You do, comfortably, for the rest of your life, and you are asked about the same six minutes at every feast until you would rather not be asked at all.', effects: { rankProgress: 16, gold: 20, reputation: 8, householdState: { status: 5 }, memory: { tag: 'the_name_that_travelled', weight: 5 } }, tone: 'plain' },
+        { id: 'accept_ending', label: 'Live on the name', text: 'Your name brings invitations, gifts and a comfortable seat at the next feast. Everyone wants to hear about those same six minutes.', effects: { rankProgress: 16, gold: 20, reputation: 8, householdState: { status: 5 }, memory: { tag: 'the_name_that_travelled', weight: 5 } }, tone: 'plain' },
       ],
     },
   },
@@ -208,7 +208,7 @@ export const ROLE_STORY_COPY: Record<string, StoryCopy> = {
   landed_noble: {
     1: {
       title: 'A MATTER OF JUSTICE · THE FIRST COURT YOU HOLD',
-      text: '{{contact.name}} sets the first roll in front of you. Fourteen presentments, four of them against people who cannot read the charge, and every judgement you give today becomes the precedent for the next forty years.',
+      text: '{{contact.name}} sets the first roll in front of you. Fourteen presentments, four of them against people who cannot read the charge, and every judgement you give today could become a precedent for later hearings.',
       choices: [
         { id: 'justice', label: 'Have every charge read out in English first', text: 'It doubles the length of the court and it means every man amerced knows what for. The steward finds it eccentric and it becomes the custom of the manor.', effects: { wits: 5, reputation: 5, holding: { loyalty: 6 }, worldConditions: { publicOrder: 3 } }, tone: 'good' },
         { id: 'privilege', label: 'Get through the roll efficiently', text: 'Sixteen presentments in ninety minutes and four shillings in amercements. It is a well-run court and four men leave it without knowing why they were fined.', effects: { gold: 8, holding: { loyalty: -4 }, wits: 3 }, tone: 'plain' },
@@ -234,22 +234,22 @@ export const ROLE_STORY_COPY: Record<string, StoryCopy> = {
       title: 'A MATTER OF JUSTICE · THE COMMISSION OF THE PEACE',
       text: 'You are offered a place on the commission of the peace for the whole shire: real jurisdiction, real work, and every gentleman in the county watching how you use it.',
       choices: [
-        { id: 'duty', label: 'Take it and sit at every session', text: 'You sit at every quarter session for eighteen years, including the ones nobody else attends. The shire’s gaol delivery is the least corrupt in the region and nobody ever writes that down.', effects: { faith: 5, wits: 6, reputation: 6, worldConditions: { publicOrder: 5 }, faction: { factionId: 'crown', playerStanding: 4 }, storyVariables: { resolution: 'duty' } }, tone: 'good' },
-        { id: 'ambition', label: 'Take it and use it', text: 'The commission is a lever and you use it as one. Within six years three neighbouring manors have changed hands and two of them are yours.', effects: { gold: 40, holding: { stores: 12, security: 6 }, householdState: { wealth: 8, status: 5 }, worldConditions: { publicOrder: -3 }, storyVariables: { resolution: 'ambition' } }, tone: 'plain' },
+        { id: 'duty', label: 'Take it and sit at every session', text: 'You attend the session, question doubtful charges and insist that the clerk records each ruling. Prisoners receive a fairer hearing and the shire notices your diligence.', effects: { faith: 5, wits: 6, reputation: 6, worldConditions: { publicOrder: 5 }, faction: { factionId: 'crown', playerStanding: 4 }, storyVariables: { resolution: 'duty' } }, tone: 'good' },
+        { id: 'ambition', label: 'Take it and use it', text: 'The commission is a lever and you use it as one. Favourable settlements enrich your household and strengthen your holding, while the shire questions your impartiality.', effects: { gold: 40, holding: { stores: 12, security: 6 }, householdState: { wealth: 8, status: 5 }, worldConditions: { publicOrder: -3 }, storyVariables: { resolution: 'ambition' } }, tone: 'plain' },
       ],
     },
     '5_duty': {
       title: 'A MATTER OF JUSTICE · THE CUSTOM OF THE MANOR',
       text: 'The court roll of your honour is quoted in three neighbouring shires as the way it ought to be done. Your lands are worth less than they might be and they are extremely quiet.',
       choices: [
-        { id: 'accept_ending', label: 'Keep sitting', text: 'You sit until you cannot, and your heir inherits a manor where the tenants expect to be told what they are charged with. That expectation outlasts your family.', effects: { reputation: 6, holding: { loyalty: 10 }, familyReputation: { delta: 5 }, worldConditions: { publicOrder: 3 }, memory: { tag: 'the_custom_of_the_manor', weight: 5 } }, tone: 'good' },
+        { id: 'accept_ending', label: 'Keep sitting', text: 'You enter the procedure in the court roll: tenants must hear the charge and be allowed to answer. They leave with greater confidence in your court.', effects: { reputation: 6, holding: { loyalty: 10 }, familyReputation: { delta: 5 }, worldConditions: { publicOrder: 3 }, memory: { tag: 'the_custom_of_the_manor', weight: 5 } }, tone: 'good' },
       ],
     },
     '5_ambition': {
-      title: 'A MATTER OF JUSTICE · THREE MANORS AND A REPUTATION',
-      text: 'You hold three manors where you held one and the shire is entirely clear about how. Nobody says it at your table and everybody says it at their own.',
+      title: 'A MATTER OF JUSTICE · PROFIT AND A REPUTATION',
+      text: 'Your household has grown richer through the commission and the shire is entirely clear about how. Nobody says it at your table and everybody says it at their own.',
       choices: [
-        { id: 'accept_ending', label: 'Hold what you have taken', text: 'You hold it all, comfortably, and your heir spends the first nine years of his tenure in litigation with people who remember.', effects: { gold: 30, holding: { stores: 10, loyalty: -6 }, householdState: { wealth: 8, status: 5 }, familyReputation: { delta: -2 }, memory: { tag: 'three_manors_and_a_reputation', weight: 5 } }, tone: 'plain' },
+        { id: 'accept_ending', label: 'Hold what you have taken', text: 'You keep the proceeds and secure your holding. The losing parties lodge their objections, and your tenants are less willing to trust the court.', effects: { gold: 30, holding: { stores: 10, loyalty: -6 }, householdState: { wealth: 8, status: 5 }, familyReputation: { delta: -2 }, memory: { tag: 'three_manors_and_a_reputation', weight: 5 } }, tone: 'plain' },
       ],
     },
   },
@@ -259,15 +259,15 @@ export const ROLE_STORY_COPY: Record<string, StoryCopy> = {
       title: 'THE WEIGHT OF THE CROWN · THE FIRST GREAT COUNCIL',
       text: '{{contact.name}} sets the order of business. Twenty items, and the one about the coinage is placed eleventh, where the council will be tired and will pass it without argument.',
       choices: [
-        { id: 'counsel', label: 'Move the coinage to the front', text: 'Four hours of argument about the coinage with everybody awake. It is passed in a form that is worse for the treasury and holds for thirty years.', effects: { wits: 6, worldConditions: { prosperity: 3, publicOrder: 2 }, gold: -12 }, tone: 'good' },
-        { id: 'decree', label: 'Leave it eleventh', text: 'It passes at dusk in four minutes with nobody attending. It is exactly what you wanted and it is repealed by a hostile parliament in nine years.', effects: { gold: 26, worldConditions: { prosperity: -2, publicOrder: -2 }, wits: 3 }, tone: 'plain' },
+        { id: 'counsel', label: 'Move the coinage to the front', costGold: 12, text: 'Four hours of argument about the coinage with everybody awake. The council agrees on a sounder coinage, at a cost to the treasury.', effects: { wits: 6, worldConditions: { prosperity: 3, publicOrder: 2 }, gold: -12 }, tone: 'good' },
+        { id: 'decree', label: 'Leave it eleventh', text: 'It passes at dusk in four minutes with nobody attending. It is exactly what you wanted, but merchants question its value and the Commons record their objections.', effects: { gold: 26, worldConditions: { prosperity: -2, publicOrder: -2 }, wits: 3 }, tone: 'plain' },
       ],
     },
     2: {
       title: 'THE WEIGHT OF THE CROWN · A FAVOURITE AND A FAMINE',
       text: 'The grain is short in four counties and the man you have raised highest is the one holding the export licences. Everybody in the room knows both facts.',
       choices: [
-        { id: 'counsel', label: 'Revoke the licences yourself, in council', text: 'You do it in front of him, giving the reason plainly. He never trusts you again and forty thousand people eat through the winter.', effects: { faith: 6, reputation: 5, worldConditions: { foodSecurity: 5, publicOrder: 3 }, charm: -4 }, tone: 'good' },
+        { id: 'counsel', label: 'Revoke the licences yourself, in council', text: 'You do it in front of him, giving the reason plainly. His manner turns cold. With the licences revoked, grain reaches the markets and food supplies improve.', effects: { faith: 6, reputation: 5, worldConditions: { foodSecurity: 5, publicOrder: 3 }, charm: -4 }, tone: 'good' },
         { id: 'decree', label: 'Let the licences stand', text: 'They stand. He is loyal beyond anything money could buy and there are bread riots in two counties by Lent.', effects: { gold: 20, worldConditions: { foodSecurity: -5, publicOrder: -5 }, faction: { factionId: 'crown', playerStanding: 3 } }, tone: 'bad' },
       ],
     },
@@ -275,7 +275,7 @@ export const ROLE_STORY_COPY: Record<string, StoryCopy> = {
       title: 'THE WEIGHT OF THE CROWN · PARLIAMENT WANTS REDRESS BEFORE SUPPLY',
       text: 'The Commons will vote the subsidy only after their petitions are answered. {{contact.name}} points out that no king has ever conceded that order and that you need the money by Whitsun.',
       choices: [
-        { id: 'counsel', label: 'Concede the order', text: 'Redress before supply, conceded in writing. You get your subsidy and every parliament for two hundred years cites the day you gave way.', effects: { wits: 5, faith: 4, gold: 30, worldConditions: { publicOrder: 4 }, faction: { factionId: 'commons', playerStanding: 6 } }, tone: 'good' },
+        { id: 'counsel', label: 'Concede the order', text: 'Redress before supply, conceded in writing. You get your subsidy, and the Commons enter the concession in the roll as a precedent.', effects: { wits: 5, faith: 4, gold: 30, worldConditions: { publicOrder: 4 }, faction: { factionId: 'commons', playerStanding: 6 } }, tone: 'good' },
         { id: 'decree', label: 'Dissolve them and raise it another way', text: 'Forced loans, a benevolence, and the sale of thirteen offices. You get more than the subsidy would have been and you have taught the Commons what you think of them.', effects: { gold: 40, worldConditions: { publicOrder: -5, prosperity: -2 }, faction: { factionId: 'commons', playerStanding: -6 } }, tone: 'plain' },
       ],
     },
@@ -284,21 +284,21 @@ export const ROLE_STORY_COPY: Record<string, StoryCopy> = {
       text: 'The claim abroad is genuinely good and pressing it will take every penny raised for a decade. {{contact.name}} has the two accounts side by side and will not say which one to choose.',
       choices: [
         { id: 'duty', label: 'Abandon the claim and spend it at home', text: 'You give up a legitimate claim and are called a coward in three chronicles. The roads are repaired, the coinage is sound, and nobody writes about that at all.', effects: { faith: 6, wits: 6, worldConditions: { prosperity: 6, publicOrder: 4, warThreat: -5 }, reputation: -4, storyVariables: { resolution: 'duty' } }, tone: 'good' },
-        { id: 'ambition', label: 'Press the claim', text: 'Ten years, four campaigns and a chronicle entry that will outlast the dynasty. The realm pays for all of it and one county is still paying in 1420.', effects: { reputation: 12, rankProgress: 10, worldConditions: { warThreat: 6, prosperity: -6, foodSecurity: -3 }, storyVariables: { resolution: 'ambition' } }, tone: 'plain' },
+        { id: 'ambition', label: 'Press the claim', text: 'You summon the retinue and fund the opening campaign. The court applauds your resolve, while levies and requisitions leave the realm poorer and food supplies strained.', effects: { reputation: 12, rankProgress: 10, worldConditions: { warThreat: 6, prosperity: -6, foodSecurity: -3 }, storyVariables: { resolution: 'ambition' } }, tone: 'plain' },
       ],
     },
     '5_duty': {
       title: 'THE WEIGHT OF THE CROWN · A DULL AND SOLVENT REIGN',
       text: 'The chronicles give your reign four lines and none of them are interesting. The realm is solvent, quiet, and rather better off than it was, which is not a thing chroniclers count.',
       choices: [
-        { id: 'accept_ending', label: 'Take the four lines', text: 'Four lines, a sound coinage, and a successor who inherits no war. Two hundred years later an antiquary works out what you did and is the only person who ever does.', effects: { faith: 6, wits: 5, familyReputation: { delta: 5 }, worldConditions: { prosperity: 4, publicOrder: 4 }, memory: { tag: 'the_dull_solvent_reign', weight: 5 } }, tone: 'good' },
+        { id: 'accept_ending', label: 'Take the four lines', text: 'You accept the short account and return to the council’s work. Sound coinage and repaired roads have brought the realm more benefit than a flattering chronicle.', effects: { faith: 6, wits: 5, familyReputation: { delta: 5 }, worldConditions: { prosperity: 4, publicOrder: 4 }, memory: { tag: 'the_dull_solvent_reign', weight: 5 } }, tone: 'good' },
       ],
     },
     '5_ambition': {
       title: 'THE WEIGHT OF THE CROWN · THE CHRONICLE ENTRY',
-      text: 'The chronicles give your reign nineteen pages and a woodcut. The realm gives it a debt that outlives three of your successors.',
+      text: 'A chronicler offers nineteen pages and a woodcut celebrating your rule. Outside the court, the cost of those campaigns weighs on the realm.',
       choices: [
-        { id: 'accept_ending', label: 'Take the nineteen pages', text: 'They are magnificent pages. The county that is still paying in 1420 does not own a copy of the chronicle and would not read it if it did.', effects: { reputation: 12, rankProgress: 8, worldConditions: { prosperity: -3, warThreat: 3 }, familyReputation: { delta: 2 }, memory: { tag: 'the_chronicle_entry', weight: 5 } }, tone: 'plain' },
+        { id: 'accept_ending', label: 'Take the nineteen pages', text: 'They are magnificent pages. The county paying for the campaigns owns no copy of the chronicle, and its hardship continues.', effects: { reputation: 12, rankProgress: 8, worldConditions: { prosperity: -3, warThreat: 3 }, familyReputation: { delta: 2 }, memory: { tag: 'the_chronicle_entry', weight: 5 } }, tone: 'plain' },
       ],
     },
   },
@@ -316,7 +316,7 @@ export const ROLE_STORY_COPY: Record<string, StoryCopy> = {
       title: 'HONOUR AMONG THIEVES · THE MAN WHO CANNOT KEEP QUIET',
       text: 'One of the band talks in alehouses. Everybody knows it, nobody has raised it, and {{contact.name}} raises it in front of all of them and then looks at you.',
       choices: [
-        { id: 'code', label: 'Put him out of the band and see him settled', text: 'He is out, with a share and a place found for him forty miles off. It costs money and it means nobody in the band ever fears being killed by it.', effects: { gold: -14, charm: 6, faction: { factionId: 'outlaws', playerStanding: 4 }, legal: { suspicion: 3 } }, tone: 'good' },
+        { id: 'code', label: 'Put him out of the band and see him settled', costGold: 14, text: 'He is out, with a share and a place found for him forty miles off. It costs money and it means nobody in the band ever fears being killed by it.', effects: { gold: -14, charm: 6, faction: { factionId: 'outlaws', playerStanding: 4 }, legal: { suspicion: 3 } }, tone: 'good' },
         { id: 'terror', label: 'Make an example of him', text: 'It is done in front of the band and it is entirely effective. Nobody talks in an alehouse again and three men leave inside a month.', effects: { legal: { suspicion: 8, notoriety: 4 }, faith: -7, charm: -3, worldConditions: { publicOrder: -3 } }, tone: 'bad' },
       ],
     },
@@ -332,22 +332,22 @@ export const ROLE_STORY_COPY: Record<string, StoryCopy> = {
       title: 'HONOUR AMONG THIEVES · THE SHERIFF OFFERS TERMS',
       text: 'The sheriff offers you personally a pardon, a small office and a quiet life, on condition you deliver the band. {{contact.name}} does not know the offer has been made.',
       choices: [
-        { id: 'duty', label: 'Refuse, and tell the band it was offered', text: 'You tell them what was offered and what you said. Some of them do not believe you until they are dying, years later, and one of them says so.', effects: { faith: 6, charm: 6, faction: { factionId: 'outlaws', playerStanding: 6 }, legal: { notoriety: 2 }, storyVariables: { resolution: 'duty' } }, tone: 'good' },
+        { id: 'duty', label: 'Refuse, and tell the band it was offered', text: 'You tell them what was offered and what you said. Some remain doubtful, but showing them the terms earns a measure of trust.', effects: { faith: 6, charm: 6, faction: { factionId: 'outlaws', playerStanding: 6 }, legal: { notoriety: 2 }, storyVariables: { resolution: 'duty' } }, tone: 'good' },
         { id: 'ambition', label: 'Take the terms', text: 'Five men taken in one night on your word, a pardon under seal, and an office worth four pounds a year. Every part of it is honoured exactly as agreed.', effects: { gold: 30, rankProgress: 12, legal: { suspicion: -10, status: 'free' }, faction: { factionId: 'crown', playerStanding: 6 }, faith: -8, storyVariables: { resolution: 'ambition' } }, tone: 'bad' },
       ],
     },
     '5_duty': {
       title: 'HONOUR AMONG THIEVES · THE BAND THAT HELD',
-      text: 'The band holds together for nine more years and ends the way these things end, but it ends with nobody having sold anybody. Not one band in the shire can say the same',
+      text: 'The band meets again with its members still free and its agreement intact. Your refusal has given them a reason to trust one another.',
       choices: [
-        { id: 'accept_ending', label: 'Hold it to the end', text: 'Four of them die free, three are pardoned, and two live to be old men who will not discuss any of it with their grandchildren.', effects: { charm: 6, faith: 5, faction: { factionId: 'outlaws', playerStanding: 5 }, familyReputation: { delta: 2 }, memory: { tag: 'the_band_that_held', weight: 5 } }, tone: 'good' },
+        { id: 'accept_ending', label: 'Renew the agreement', text: 'The band renews its agreement: nobody is to be sold for a pardon. They share supplies and information, giving one another a better chance of staying free.', effects: { charm: 6, faith: 5, faction: { factionId: 'outlaws', playerStanding: 5 }, familyReputation: { delta: 2 }, memory: { tag: 'the_band_that_held', weight: 5 } }, tone: 'good' },
       ],
     },
     '5_ambition': {
       title: 'HONOUR AMONG THIEVES · THE OFFICE AND THE QUIET LIFE',
       text: 'The pardon is honoured, the office is real, and the quiet life is exactly as promised. It is a good outcome by every measure that can be written in a roll.',
       choices: [
-        { id: 'accept_ending', label: 'Take up the office', text: 'You hold it for nineteen years, competently. Nobody in the shire refuses you anything and nobody in the shire drinks with you either.', effects: { gold: 24, rankProgress: 10, householdState: { wealth: 5, status: 3 }, faction: { factionId: 'outlaws', playerStanding: -8 }, memory: { tag: 'the_office_and_the_quiet_life', weight: 5 } }, tone: 'plain' },
+        { id: 'accept_ending', label: 'Accept the official settlement', text: 'The authorities pay the agreed settlement and publicly accept your cooperation. Your household benefits; your former companions keep their distance.', effects: { gold: 24, rankProgress: 10, householdState: { wealth: 5, status: 3 }, faction: { factionId: 'outlaws', playerStanding: -8 }, memory: { tag: 'the_office_and_the_quiet_life', weight: 5 } }, tone: 'plain' },
       ],
     },
   },

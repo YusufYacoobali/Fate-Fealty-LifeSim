@@ -51,7 +51,7 @@ export function NavBar({
             accessibilityRole="button"
             accessibilityLabel={locked ? `${n.label} locked. Opens Royal Shop.` : n.label}
             accessibilityState={{ disabled: false }}
-            style={{ flex: 1, alignItems: 'center', paddingHorizontal: 1, paddingVertical: 4 }}
+            style={{ flex: 1, alignItems: 'center', paddingHorizontal: 1, paddingVertical: 4, minHeight: 48 }}
           >
             <View
               style={{

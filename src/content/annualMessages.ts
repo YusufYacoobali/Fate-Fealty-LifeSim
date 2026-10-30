@@ -66,8 +66,16 @@ const RECENT_ANNUAL_REPEAT_WINDOW = 8;
 export function pickAnnualMessage(s: GameState, excludedIds: readonly string[] = []): AnnualMessage | null {
   const excluded = new Set(excludedIds);
   const recentText = new Set(s.feed.slice(-RECENT_ANNUAL_REPEAT_WINDOW).map((entry) => entry.text));
+  const years = s.world.characters[s.playerCharacterId]?.annualNarrativeYears ?? {};
+  const once = new Set(['baby_first_steps', 'baby_first_word', 'baby_goose_guard', 'child_goose']);
+  const alive = (id: string) => s.world.characters[id]?.alive === true;
   const eligible = ANNUAL_MESSAGES.filter((m) =>
     !excluded.has(m.id)
+    && (years[m.id] == null || (!once.has(m.id) && s.world.currentYear - years[m.id] >= 6))
+    && (!once.has(m.id) || !s.feed.some((entry) => entry.text === m.text))
+    && (!m.text.includes('Maud') || alive('mother'))
+    && (!m.text.includes('Cedric') || alive('father'))
+    && (!m.text.includes('Quackbeard') || alive('goose'))
     && !recentText.has(m.text)
     && meetsCondition(s, m.requires));
   if (eligible.length === 0) return null;

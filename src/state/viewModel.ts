@@ -26,6 +26,8 @@ export function selectFeed(s: GameState) {
     // filtered, so an index-based stripe would reshuffle as entries age out.
     return {
       id: e.id,
+      age: e.age,
+      changes: e.changes,
       tag: e.tag,
       tagColor: e.tagColor ?? ts.tagColor,
       text: e.traitId ? e.text.replace(/^.*?(From the cradle|You are now)/, '$1') : e.text,

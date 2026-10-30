@@ -4,17 +4,14 @@ import { setAudioModeAsync, useAudioPlayer, useAudioPlayerStatus } from 'expo-au
 import { GameState } from '@/types/game';
 import { shouldPlayMoneySuccess } from '@/services/audioLogic';
 
-const BACKGROUND_MUSIC = require('../../../assets/audio/bg.mp3');
 const MONEY_SUCCESS_SOUND = require('../../../assets/audio/success.mp3');
 
-/** Owns looping music and state-driven sound effects for the active game. */
+/** Owns state-driven sound effects for the active game. */
 export function useGameAudio(state: GameState, loaded: boolean): void {
-  const musicPlayer = useAudioPlayer(BACKGROUND_MUSIC, { downloadFirst: true });
   const successPlayer = useAudioPlayer(MONEY_SUCCESS_SOUND, {
     downloadFirst: true,
     keepAudioSessionActive: true,
   });
-  const musicStatus = useAudioPlayerStatus(musicPlayer);
   const successStatus = useAudioPlayerStatus(successPlayer);
   const previousGold = useRef(state.gold);
   const previousRank = useRef(state.rankIdx);
@@ -56,33 +53,6 @@ export function useGameAudio(state: GameState, loaded: boolean): void {
       cancelled = true;
     };
   }, [appState]);
-
-  useEffect(() => {
-    musicPlayer.loop = true;
-    musicPlayer.volume = 0.3;
-    const shouldPlayMusic = loaded
-      && state.settings.music
-      && appState === 'active'
-      && audioModeReady;
-
-    if (!shouldPlayMusic) {
-      if (musicStatus.playing) {
-        try {
-          musicPlayer.pause();
-        } catch (error) {
-          console.warn('[audio] music pause failed', error);
-        }
-      }
-      return;
-    }
-    if (musicStatus.isLoaded && !musicStatus.playing) {
-      try {
-        musicPlayer.play();
-      } catch (error) {
-        console.warn('[audio] music playback failed', error);
-      }
-    }
-  }, [appState, audioModeReady, loaded, musicPlayer, musicStatus.isLoaded, musicStatus.playing, state.settings.music]);
 
   useEffect(() => {
     successPlayer.volume = 0.85;

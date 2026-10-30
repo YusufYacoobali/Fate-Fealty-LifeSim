@@ -5,11 +5,12 @@ import { PixelText } from '@/components/ui/PixelText';
 import { FullScreenPage } from '@/components/premium/FullScreenPage';
 import { RoyalShopOfferPanel } from '@/components/premium/onboarding-paywall-panel';
 import { PlanId } from '@/data/premiumPlans';
-import { PurchaseOutcome } from '@/services/purchases';
+import { PurchaseOutcome, PremiumOwnership } from '@/services/purchases';
 import type { PremiumAccessState } from '@/state/hooks/usePremium';
 
 interface Props {
   unlocked: boolean;
+  ownership: PremiumOwnership | null;
   accessState: PremiumAccessState;
   onPurchase: (plan: PlanId) => Promise<PurchaseOutcome>;
   onRestore: () => Promise<boolean>;
@@ -17,7 +18,7 @@ interface Props {
 }
 
 /** Full-screen premium storefront, reachable any time from the game. */
-export function PremiumShopScreen({ unlocked, accessState, onPurchase, onRestore, onClose }: Props) {
+export function PremiumShopScreen({ unlocked, ownership, accessState, onPurchase, onRestore, onClose }: Props) {
   const { width, height } = useWindowDimensions();
   const compact = width < 390 || height < 720;
 
@@ -41,6 +42,7 @@ export function PremiumShopScreen({ unlocked, accessState, onPurchase, onRestore
       <RoyalShopOfferPanel
         compact={compact}
         unlocked={unlocked}
+        ownership={ownership}
         accessState={accessState}
         onPurchase={onPurchase}
         onRestore={onRestore}

@@ -1,3 +1,4 @@
+import { resolveRpgEncounter } from '../src/__tests__/rpgSoakHelpers';
 /**
  * Balance report. Runs a *skilled* agent (heals when low, builds toward the next
  * rank's requirements, makes reasonable event choices) across many lives and
@@ -9,7 +10,7 @@ import { createLife, cloneState } from '../src/engine/gameState';
 import { ageUp } from '../src/engine/lifeDirector';
 import { applyChoice } from '../src/engine/storyGraph';
 import { doActivity } from '../src/engine/activityEngine';
-import { eventById, isChoiceAvailable } from '../src/engine/eventPicker';
+import { eventById, isChoiceEnabled } from '../src/engine/eventPicker';
 import { canPromote } from '../src/engine/pathProgression';
 import { RANKS } from '../src/data/ranks';
 import { GameState, Choice, Difficulty } from '../src/types/game';
@@ -52,14 +53,15 @@ function chooseOption(s: GameState, choices: Choice[]): Choice {
 }
 
 function runLife(difficulty: Difficulty, useHolding: boolean): GameState {
-  let s = createLife({ settings: { autoScroll: true, difficulty, liveForever: false, haptics: false, music: false, soundEffects: false } });
+  let s = createLife({ settings: { autoScroll: true, difficulty, liveForever: false, haptics: false, soundEffects: false } });
   s.lifetimeUnlocked = true;
   let guard = 0;
   while (!s.dead && guard < 400) {
     guard++;
+    resolveRpgEncounter(s);
     if (s.pendingEvent) {
       const ev = eventById(s.pendingEvent.eventId)!;
-      const choices = ev.choices.filter((c) => isChoiceAvailable(s, c));
+      const choices = ev.choices.filter((c) => isChoiceEnabled(s, c));
       s = cloneState(s);
       applyChoice(s, ev, chooseOption(s, choices));
       continue;

@@ -1,16 +1,18 @@
+import { resolveRpgEncounter } from './rpgSoakHelpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createLife } from '@/engine/gameState';
 import { gameReducer } from '@/state/gameReducer';
-import { eventById, isChoiceAvailable } from '@/engine/eventPicker';
+import { eventById, isChoiceEnabled } from '@/engine/eventPicker';
 import { spawnKin } from '@/engine/kinFactory';
 import { loadGame, saveGame } from '@/state/persistence';
 import { GameState } from '@/types/game';
 
 function resolvePending(state: GameState): GameState {
+  resolveRpgEncounter(state);
   let guard = 0;
   while (state.pendingEvent && !state.dead && guard++ < 4) {
     const event = eventById(state.pendingEvent.eventId)!;
-    const choice = event.choices.find((candidate) => isChoiceAvailable(state, candidate))!;
+    const choice = event.choices.find((candidate) => isChoiceEnabled(state, candidate))!;
     state = gameReducer(state, { type: 'CHOOSE', choice });
   }
   return state;
@@ -47,7 +49,7 @@ describe('persistent world performance budgets', () => {
       state = gameReducer(state, { type: 'CONTINUE_AS_HEIR', heirId: heir.id });
     }
     await saveGame(state);
-    const raw = await AsyncStorage.getItem('mls:world:v4');
+    const raw = await AsyncStorage.getItem('mls:world:v5');
     expect(new TextEncoder().encode(raw ?? '').byteLength).toBeLessThan(2 * 1024 * 1024);
     const started = performance.now();
     const loaded = await loadGame();

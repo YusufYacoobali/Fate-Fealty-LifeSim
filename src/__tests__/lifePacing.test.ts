@@ -1,3 +1,4 @@
+import { resolveRpgEncounter } from './rpgSoakHelpers';
 import { ageUp } from '@/engine/lifeDirector';
 import { createLife } from '@/engine/gameState';
 import { MAX_LIFESPAN, DECLINE_AGE, agingDamage } from '@/engine/deathEngine';
@@ -16,6 +17,7 @@ function liveOut(mutate: (s: ReturnType<typeof createLife>) => void = () => {}) 
   while (!s.dead && s.age < 200) {
     const before = s.feed.length;
     s.pendingEvent = null;
+    resolveRpgEncounter(s);
     s = ageUp(s);
     if (s.pendingEvent) {
       const event = EVENTS_BY_ID[s.pendingEvent.eventId];

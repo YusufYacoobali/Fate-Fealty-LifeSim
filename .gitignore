@@ -1,6 +1,7 @@
 android/local.properties
 node_modules/
 .expo/
+.cache/
 dist/
 web-build/
 *.log
@@ -10,3 +11,8 @@ web-build/
 
 /android
 /ios
+/modules/**/android/.gradle/
+/modules/**/android/build/
+/tmp/meta-native-audit/
+/tmp/meta-*-autolinking.json
+/tmp/release-*.json

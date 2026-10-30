@@ -1,0 +1,14 @@
+{
+  "tool": "image_gen.imagegen",
+  "reference": "assets/generated/activity-blacksmith.png",
+  "assets": [
+    {
+      "key": "forge-pixel",
+      "prompt": "Create a production game background in the SAME crisp chunky pixel-art style as the attached existing blacksmith icon. Keep that pixel-art design, NOT realistic, NOT painterly, no smooth gradients or antialiasing. Landscape 3:2, like a detailed SNES scene with visible square pixel clusters, limited palette matching navy #0d2a4a, warm parchment #f6e9c8, amber #ffce3a, rusty brown, blue-grey steel. Cosy medieval blacksmith workshop: blocky brick furnace glowing orange on left, hanging tongs, oak beams, strong central anvil with glowing orange billet. Anvil strike surface centered at x50% y62%. Empty dark space above anvil for separately animated pixel hammer. No hammer, no person, no text, no UI. High-quality intentional pixel shading, dark outlines and clean silhouettes, readable on mobile. Full bleed background, polished retro pixel art matching reference."
+    },
+    {
+      "key": "gazette-pixel",
+      "prompt": "Create a wide 3:1 panoramic medieval village illustration in the SAME chunky pixel-art aesthetic as attached game icon. Production masthead art for a pixel-art game's village newspaper. Charming timber cottages, small church tower, rolling hills, geese, simple pixel clouds. Strict visible square pixel grid, crisp stepped silhouettes, no antialiasing, no realistic texture, no painterly rendering. Limited warm parchment #f6e9c8, dark navy #0d2a4a, ochre #c9921f and muted brown palette: looks like a tiny old village scene printed in pixel ink on parchment. No text, letters, masthead, frame or UI. Preserve the game's retro pixel-art design."
+    }
+  ]
+}

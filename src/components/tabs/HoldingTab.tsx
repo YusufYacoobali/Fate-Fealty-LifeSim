@@ -1,3 +1,4 @@
+import { HoldingExpansionPanel } from '../rpg/RpgPanels';
 import React from 'react';
 import { Image, ScrollView, View } from 'react-native';
 import { GameState, HoldingResource } from '@/types/game';
@@ -252,6 +253,7 @@ export function HoldingTab({ state, onAction, onUpgrade, onToggleVillage }: Prop
           );
         })}
       </View>
+    <HoldingExpansionPanel />
     </ScrollView>
   );
 }

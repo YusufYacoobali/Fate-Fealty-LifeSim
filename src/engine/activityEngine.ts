@@ -16,9 +16,11 @@ import { spawnKin } from './kinFactory';
 import { applyRelationshipShift, isRomanceEligible } from './relationshipEngine';
 import { chance, pick, rnd } from './random';
 import { C } from '@/theme/theme';
+import { performRpgCommand } from './rpgEngine';
 import { isIncapacitated } from './lifecycleEngine';
 import { deriveLifeRole } from '@/content/persistentStories';
 import { handleContextualActivity } from './contextualActivityEngine';
+import { awardActivitySkill } from './rpgProgress';
 
 function crimeCharge(s: GameState, offence: string, severity: number, evidence: number) {
   const victims = Object.values(s.world.characters).filter((character) => character.alive && character.id !== s.playerCharacterId);
@@ -448,7 +450,6 @@ const ROLE_HANDLERS: Record<string, Handler> = {
   scout_target: (s) => { applyEffects(s, { wits: 4, path: { outlaw: 1 }, addTags: ['crime_prepared'], legal: { suspicion: 2 } }); pushFeed(s, 'SCOUT TARGET', C.purpleDark, 'You learn the locks, habits, witnesses and exits before deciding whether to become foolish.', 'plain'); },
   study_trade: (s) => { s.occupation.experience += 8; s.occupation.performance = Math.min(100, s.occupation.performance + 3); applyEffects(s, { wits: 3, rankProgress: 3, path: { labour: 1 } }); pushFeed(s, 'STUDY TRADE', C.blue, 'You study accounts, tools and the expensive mistakes of older professionals.', 'good'); },
   seek_patron: (s) => { const success = chance(0.35 + s.stats.charm / 220 + s.reputation / 400); if (success) { const patrons = s.kin.filter((kin) => kin.alive && (kin.rankIdx >= 2 || kin.kind === 'liege')); s.occupation.patronId = patrons.length ? pick(patrons).id : 'aldric'; } applyEffects(s, success ? { charm: 2, rankProgress: 6, faction: { factionId: 'crown', playerStanding: 3 }, addTags: ['has_patron'] } : { charm: 1, reputation: -1 }); pushFeed(s, 'SEEK PATRON', success ? C.charmDark : C.amber, success ? 'An influential household agrees to speak thy name where advancement is decided.' : 'Thy request receives courtesy, watered ale and no promise.', success ? 'good' : 'plain'); },
-  run_caravan: (s) => { const success = chance(0.45 + s.stats.wits / 350 + s.stats.charm / 400); applyEffects(s, success ? { gold: 20, rankProgress: 3, path: { labour: 2 }, worldConditions: { prosperity: 2 }, faction: { factionId: 'guilds', playerStanding: 3 } } : { gold: -8, health: -4, worldConditions: { prosperity: -1 } }); pushFeed(s, 'CARAVAN', success ? C.good : C.healthDark, success ? 'The caravan returns with foreign cloth, local gossip and a respectable profit.' : 'Mud, tolls and thieves consume the venture before Swineford sees a profit.', success ? 'good' : 'bad'); },
   gather_intelligence: (s) => { const secretOwner = s.kin.find((kin) => kin.alive && (kin.secrets?.length ?? 0) > 0 && !kin.secretRevealed); if (secretOwner && chance(0.45 + s.stats.wits / 300)) { secretOwner.secretRevealed = true; secretOwner.secrets!.forEach((secret) => { secret.knownByIds = Array.from(new Set([...secret.knownByIds, s.playerCharacterId])); }); } applyEffects(s, { wits: 3, faction: { factionId: 'crown', playerStanding: 1 } }); pushFeed(s, 'INTELLIGENCE', C.purpleDark, secretOwner?.secretRevealed ? `Patient listening reveals something ${secretOwner.name} meant to keep hidden.` : 'You collect rumours, compare contradictions and learn where questions make people nervous.', 'plain'); },
   negotiate_levy: (s) => { const success = chance(0.4 + s.stats.charm / 250 + s.reputation / 500); applyEffects(s, success ? { charm: 3, rankProgress: 4, path: { court: 1 }, worldConditions: { warThreat: -2, publicOrder: 2 }, faction: { factionId: 'commons', playerStanding: 4 } } : { reputation: -2, faction: { factionId: 'crown', playerStanding: -3 } }); pushFeed(s, 'LEVY BARGAIN', success ? C.good : C.healthDark, success ? 'The levy is reduced and the poorest households keep both grain and sons.' : 'The collector rejects thy argument and marks Swineford as reluctant.', success ? 'good' : 'bad'); },
   repair_household: (s) => { applyEffects(s, { gold: -5, householdState: { quality: 10, capacity: 1 } }); pushFeed(s, 'REPAIR HOME', C.amber, 'Fresh timber, patched thatch and five vanished gold make the household safer.', 'good'); },
@@ -456,6 +457,7 @@ const ROLE_HANDLERS: Record<string, Handler> = {
 };
 
 export function doActivity(s: GameState, id: string): GameState {
+  if (id === 'run_caravan') return performRpgCommand(s, { kind: 'caravan' });
   if (s.dead || s.pendingEvent) return s;
   s.tab = 'life';
   s.selectedKinId = null;
@@ -477,6 +479,8 @@ export function doActivity(s: GameState, id: string): GameState {
   const handledContextually = handleContextualActivity(s, id);
   if (handler || handledContextually) {
     if (handler && !handledContextually) handler(s);
+    // Capture the action's result before role/goal celebrations add feed entries.
+    awardActivitySkill(s, id, s.feed[s.feed.length - 1]?.tone !== 'bad');
     const role = def?.roles?.[0];
     if (role) {
       const previous = s.playerRun.roleProgress[role] ?? 0;

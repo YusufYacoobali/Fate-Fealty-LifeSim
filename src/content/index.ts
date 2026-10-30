@@ -1,3 +1,4 @@
+import { COMBAT_EVENTS } from './combatEvents';
 /**
  * Content registry. Aggregates every event bank into a single list and a
  * by-id lookup map (used by the story graph to resolve `next` pointers).
@@ -24,6 +25,7 @@ import { ACTIVITY_CONSEQUENCE_EVENTS } from './activityConsequenceEvents';
 import { LEGAL_SYSTEM_EVENTS } from '@/engine/legalEngine';
 
 const RAW_EVENTS: GameEvent[] = [
+  ...COMBAT_EVENTS,
   ...CHILD_EVENTS,
   ...PEASANT_EVENTS,
   ...COURTIER_EVENTS,

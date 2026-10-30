@@ -1,3 +1,5 @@
+import { TrainingPanel } from '../rpg/RpgPanels';
+import { QuestsTab } from './QuestsTab';
 import React from 'react';
 import { Image, ScrollView, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
@@ -9,6 +11,7 @@ import { ACTIVITY_ICONS } from '@/assets/generatedAssets';
 import { CareerPanel } from './career-panel';
 import { CareerAction } from '@/engine/careerEngine';
 import { deriveLifeRole } from '@/content/persistentStories';
+import { MAX_ROUTINE_ACTIVITY_USES, routineActivityUseCount } from '@/engine/activityVariety';
 
 interface Props {
   cat: ActivityCategory | 'all';
@@ -29,8 +32,8 @@ export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        style={{ flexGrow: 0, borderBottomWidth: 3, borderBottomColor: C.paleEdge }}
-        contentContainerStyle={{ gap: 5, paddingHorizontal: 11, paddingTop: 10, paddingBottom: 8 }}
+        style={{ flexGrow: 0, flexShrink: 0, borderBottomWidth: 3, borderBottomColor: C.paleEdge }}
+        contentContainerStyle={{ alignItems: 'center', gap: 5, padding: 9 }}
       >
         {CATEGORIES.map((c) => {
           const on = cat === c.id;
@@ -42,7 +45,7 @@ export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
               onPress={() => onCat(c.id)}
               innerStyle={{ paddingHorizontal: 8, paddingVertical: 6 }}
             >
-              <PixelText font="pixel" size={8} color={on ? c.fg : '#3a5d8a'}>
+              <PixelText font="pixel" size={7} color={on ? c.fg : '#3a5d8a'}>
                 {c.label}
               </PixelText>
             </PixelButton>
@@ -51,13 +54,15 @@ export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
       </ScrollView>
 
       {/* activity grid */}
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 11, paddingBottom: 7 }}>
+      {cat === 'quests' ? <QuestsTab /> : <ScrollView key={cat} style={{ flex: 1 }} contentContainerStyle={{ padding: 11, paddingBottom: 7 }}>
+        {cat === 'practice' && <TrainingPanel /> }
         {(cat === 'all' || cat === 'work') && <CareerPanel state={state} onAction={onCareer} />}
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
           {activities.map((a) => {
             const ageLocked = a.minAge != null && age < a.minAge;
             const timeLocked = state.actionClock.used >= state.actionClock.cap;
-            const locked = ageLocked || timeLocked;
+            const routineLocked = routineActivityUseCount(state, a.id) >= MAX_ROUTINE_ACTIVITY_USES;
+            const locked = ageLocked || timeLocked || routineLocked;
             return (
               <PixelButton
                 key={a.id}
@@ -88,13 +93,19 @@ export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
                   {a.name}
                 </PixelText>
                 <PixelText font="body" size={13} color={locked ? C.bad : '#6a5a38'} style={{ marginTop: 4 }}>
-                  {timeLocked ? 'No actions remain — age up.' : ageLocked ? `🔒 Age ${a.minAge}+` : a.desc}
+                  {timeLocked
+                    ? 'No actions remain — age up.'
+                    : ageLocked
+                      ? `🔒 Age ${a.minAge}+`
+                      : routineLocked
+                        ? 'Enough for one year — try another pursuit.'
+                        : a.desc}
                 </PixelText>
               </PixelButton>
             );
           })}
         </View>
-      </ScrollView>
+      </ScrollView>}
     </View>
   );
 }

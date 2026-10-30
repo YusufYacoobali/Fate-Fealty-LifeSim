@@ -4,8 +4,8 @@ import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
 import { GameState, KinMember, RelationFilter } from '@/types/game';
 import { KinAction } from '@/engine/kinEngine';
-import { contextualActions, isAffairWith, isPlayerSpouse, perspectives, readRelationship } from '@/engine/relationshipEngine';
-import { isFamilyTie, KinshipTie, kinshipGeneration, kinshipLabel, kinshipMap } from '@/engine/kinship';
+import { contextualActions, courtshipUnavailableReason, isAffairWith, isPlayerSpouse, perspectives, readRelationship } from '@/engine/relationshipEngine';
+import { isCloseBlood, isFamilyTie, KinshipTie, kinshipGeneration, kinshipLabel, kinshipMap, kinshipTo } from '@/engine/kinship';
 import { careerById } from '@/data/careers';
 import { relColor, relLabel } from '@/state/viewModel';
 import { C, PANEL } from '@/theme/theme';
@@ -143,7 +143,7 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
           </View>
         </View>
 
-        {detail.alive && <ActionBoard state={state} actions={actions} kin={detail} onInteract={(action) => onInteract(detail.id, action)} />}
+        {detail.alive && <ActionBoard key={detail.id} state={state} actions={actions} kin={detail} onInteract={(action) => onInteract(detail.id, action)} />}
         <View style={PANEL.parchCard}>
           <PixelText font="pixel" size={7} color={C.amber}>MUTUAL RELATIONSHIP</PixelText>
           <Dimension label="YOUR AFFINITY" value={views.player.affinity} />
@@ -173,7 +173,7 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
 
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0, borderBottomWidth: 3, borderBottomColor: C.paleEdge }} contentContainerStyle={{ gap: 5, padding: 9 }}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0, flexShrink: 0, borderBottomWidth: 3, borderBottomColor: C.paleEdge }} contentContainerStyle={{ alignItems: 'center', gap: 5, padding: 9 }}>
         {FILTERS.map((item) => <PixelButton key={item.id} bg={filter === item.id ? C.faith : C.lightFill} shadow={filter === item.id ? C.faithDark : C.paleEdge} onPress={() => onFilter(item.id)} innerStyle={{ paddingHorizontal: 8, paddingVertical: 6 }}>
           <PixelText font="pixel" size={7} color={C.blueDark}>{item.label}</PixelText>
         </PixelButton>)}
@@ -221,12 +221,12 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
 }
 
 /**
- * Contextual actions, one intent at a time. Only groups that actually have
- * something available are offered, so the board stays honest about what this
- * particular relationship allows.
+ * Contextual actions, one intent at a time. Romance remains discoverable for
+ * non-relatives, with an explanation when courtship is unavailable.
  */
 function ActionBoard({ state, actions, kin, onInteract }: { state: GameState; actions: KinAction[]; kin: KinMember; onInteract: (action: KinAction) => void }) {
-  const available = ACTION_GROUPS.filter((group) => actions.some((action) => ACTION_META[action].group === group.id));
+  const showRomance = kin.id !== 'goose' && kin.id !== state.playerCharacterId && !isCloseBlood(kinshipTo(state, kin.id));
+  const available = ACTION_GROUPS.filter((group) => (group.id === 'romance' && showRomance) || actions.some((action) => ACTION_META[action].group === group.id));
   // The board used to open on KINDNESS for everybody, which hid TRY FOR A CHILD
   // behind an unpressed tab on the one screen a player goes looking for it.
   // Open where this particular relationship's business actually is.
@@ -241,6 +241,7 @@ function ActionBoard({ state, actions, kin, onInteract }: { state: GameState; ac
   const shown = actions.filter((action) => ACTION_META[action].group === active);
   const noTime = state.actionClock.used >= state.actionClock.cap;
   const dangerous = active === 'violent' || active === 'cruel';
+  const views = perspectives(state, readRelationship(state, kin));
 
   return (
     <>
@@ -258,6 +259,13 @@ function ActionBoard({ state, actions, kin, onInteract }: { state: GameState; ac
           </PixelButton>
         ))}
       </View>
+      {active === 'romance' && <View style={PANEL.parchCard}>
+        {shown.length === 0 ? <PixelText font="body" size={17} color={C.textBrown}>{courtshipUnavailableReason(state, kin) ?? 'No romantic actions are available in this relationship.'}</PixelText> : !isPlayerSpouse(state, kin) && !isAffairWith(state, kin.id) && <PixelText font="body" size={16} color={C.textBrown}>{actions.includes('seduce') ? 'One of you is married. Seduction begins a secret affair, with a risk of discovery.' : 'Flirt and court to build attraction. High affinity means friendship; a proposal also depends on trust and attraction.'}</PixelText>}
+        {state.age >= 18 && kin.age >= 18 && <>
+          <Dimension label="YOUR ATTRACTION" value={views.player.attraction} />
+          <Dimension label="THEIR ATTRACTION" value={views.other.attraction} />
+        </>}
+      </View>}
       {dangerous && (
         <PixelText font="body" size={14} color={C.bad}>
           {active === 'violent'

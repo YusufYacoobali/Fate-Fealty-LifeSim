@@ -1,9 +1,10 @@
+import { resolveRpgEncounter } from '../src/__tests__/rpgSoakHelpers';
 /** Focused-play sim: train toward knighthood, earn gold, manage health. */
 import { createLife, cloneState } from '../src/engine/gameState';
 import { ageUp } from '../src/engine/lifeDirector';
 import { applyChoice } from '../src/engine/storyGraph';
 import { doActivity } from '../src/engine/activityEngine';
-import { eventById, isChoiceAvailable } from '../src/engine/eventPicker';
+import { eventById, isChoiceEnabled } from '../src/engine/eventPicker';
 import { RANKS } from '../src/data/ranks';
 
 let reachedNoble = 0;
@@ -14,14 +15,15 @@ const LIVES = 300;
 let bestRank = 0;
 
 for (let i = 0; i < LIVES; i++) {
-  let s = createLife({ settings: { autoScroll: true, difficulty: 'Normal', liveForever: false, haptics: false, music: false, soundEffects: false } });
+  let s = createLife({ settings: { autoScroll: true, difficulty: 'Normal', liveForever: false, haptics: false, soundEffects: false } });
   s.lifetimeUnlocked = true;
   let guard = 0;
   while (!s.dead && guard < 400) {
     guard++;
+    resolveRpgEncounter(s);
     if (s.pendingEvent) {
       const ev = eventById(s.pendingEvent.eventId)!;
-      const choices = ev.choices.filter((c) => isChoiceAvailable(s, c));
+      const choices = ev.choices.filter((c) => isChoiceEnabled(s, c));
       // Prefer the first choice (usually the "engage" path).
       s = cloneState(s);
       applyChoice(s, ev, choices[0]);

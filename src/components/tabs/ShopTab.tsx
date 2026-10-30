@@ -1,3 +1,4 @@
+import { MaterialsShopPanel } from '../rpg/RpgPanels';
 import React from 'react';
 import { Image, ScrollView, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
@@ -97,6 +98,7 @@ export function ShopTab({ state, gold, income, expenses, inventory, onBuy }: Pro
           ))
           : <ItemGrid state={state} items={shown} inventory={inventory} onBuy={onBuy} />}
 
+        <MaterialsShopPanel />
         {owned.length > 0 && (
           <>
             <PixelText font="pixel" size={8} color={C.blueDeep} style={{ marginTop: 13, marginBottom: 7 }}>

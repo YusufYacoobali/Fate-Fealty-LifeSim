@@ -1,6 +1,7 @@
 import { ageUp } from '@/engine/lifeDirector';
+import { resolveRpgEncounter } from './rpgSoakHelpers';
 import { applyChoice } from '@/engine/storyGraph';
-import { eventById, isChoiceAvailable } from '@/engine/eventPicker';
+import { eventById, isChoiceEnabled } from '@/engine/eventPicker';
 import { cloneState } from '@/engine/gameState';
 import { makeState } from './helpers';
 
@@ -44,10 +45,11 @@ describe('lifeDirector.ageUp', () => {
     let s = makeState({ age: 0 });
     let guard = 0;
     while (!s.dead && guard < 500) {
+      resolveRpgEncounter(s);
       guard++;
       if (s.pendingEvent) {
         const ev = eventById(s.pendingEvent.eventId)!;
-        const choices = ev.choices.filter((c) => isChoiceAvailable(s, c));
+        const choices = ev.choices.filter((c) => isChoiceEnabled(s, c));
         s = cloneState(s);
         applyChoice(s, ev, choices[0]);
       } else {

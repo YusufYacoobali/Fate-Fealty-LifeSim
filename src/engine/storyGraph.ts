@@ -1,3 +1,4 @@
+import { startDuel } from './duelEngine';
 /**
  * Story graph + choice resolution.
  *
@@ -10,10 +11,11 @@
  * Director, so a story always continues before a fresh random event fires.
  */
 
+import { feedbackSnapshot, feedbackChanges } from './choiceFeedback';
 import { Choice, GameEvent, GameState, Outcome } from '@/types/game';
 import { applyEffects } from './consequenceEngine';
 import { pushFeed } from './gameState';
-import { eventById, recordEventResolution } from './eventPicker';
+import { eventById, isChoiceEnabled, recordEventResolution } from './eventPicker';
 import { chance } from './random';
 import { rollBonusFromTraits, grantAcquiredTraits } from './traitEngine';
 import { checkLifeGoal } from './goalEngine';
@@ -22,6 +24,8 @@ import { checkDeath } from './deathEngine';
 import { onPersistentStoryChoiceResolved } from './persistentStoryEngine';
 import { appendCharacterMemory, appendWorldHistory } from './worldJournal';
 import { renderBoundText } from '@/content/persistentWorldEvents';
+import { equipmentCheckBonus, skillLevel } from './rpgProgress';
+import { SkillId } from '@/types/rpg';
 
 function rollChance(s: GameState, ch: Choice): boolean {
   if (ch.successChance == null) return true;
@@ -29,7 +33,9 @@ function rollChance(s: GameState, ch: Choice): boolean {
   // Scripted extremes stay deterministic; traits only nudge genuine odds.
   if (base <= 0) return false;
   if (base >= 1) return true;
-  const p = Math.max(0, Math.min(1, base + rollBonusFromTraits(s)));
+  const skill = Object.keys(ch.requires?.skillAtLeast ?? {})[0] as SkillId | undefined;
+  const expertise = skill ? (skillLevel(s, skill) - 1) * 0.015 + equipmentCheckBonus(s, skill) : 0;
+  const p = Math.max(0, Math.min(1, base + rollBonusFromTraits(s) + expertise));
   return chance(p);
 }
 
@@ -52,16 +58,19 @@ export interface ChoiceResult {
  * open immediately (multi-popup story continuing in the same turn).
  */
 export function applyChoice(s: GameState, event: GameEvent, ch: Choice): ChoiceResult {
+  if (!isChoiceEnabled(s, ch)) return { openNow: null };
   // Mark the parent event as fired-once if applicable.
   if (event.once && !s.firedOnce.includes(event.id)) {
     s.firedOnce = [...s.firedOnce, event.id];
   }
 
+  const challengeOpponent = ch.challenge ? s.pendingEvent?.bindings?.[ch.challenge.role] : undefined;
   const outcome = resolveOutcome(ch, s);
   recordEventResolution(s, event, ch.id ?? ch.label);
   let openNow: GameEvent | null = null;
 
   if (outcome) {
+    const before = feedbackSnapshot(s);
     applyEffects(s, outcome.effects);
     if (s.dead || s.stats.health <= 0) {
       checkDeath(s);
@@ -74,6 +83,7 @@ export function applyChoice(s: GameState, event: GameEvent, ch: Choice): ChoiceR
       outcome.tagColor ?? C.purpleDark,
       outcome.text,
       outcome.tone ?? 'plain',
+      { changes: feedbackChanges(before, s) },
     );
     const participantIds = [s.playerCharacterId, ...Object.values(s.pendingEvent?.bindings ?? {})];
     appendWorldHistory(s, {
@@ -129,6 +139,7 @@ export function applyChoice(s: GameState, event: GameEvent, ch: Choice): ChoiceR
   // Definitions remain static content; only the follow-up id enters state.
   if (openNow) s.pendingEvent = { eventId: openNow.id };
   else s.pendingEvent = null;
+  if (ch.challenge && challengeOpponent && !openNow && !s.dead) startDuel(s, challengeOpponent, 'duel', false, ch.challenge.stakes);
   return { openNow };
 }
 

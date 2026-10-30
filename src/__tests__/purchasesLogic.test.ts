@@ -7,7 +7,53 @@ import {
   mergeEntitlement,
   PLAN_IDS,
   pickPackage,
+  premiumAccess,
+  ownedPlan,
+  upgradePlans,
 } from '@/services/purchasesLogic';
+
+describe('premium plan ownership and upgrades', () => {
+  const subscription = (productIdentifier: string, productPlanIdentifier: string | null = null) => premiumAccess({
+    entitlements: { active: { pro: { productIdentifier, productPlanIdentifier, expirationDate: '2027-10-04' } } },
+  }).ownership!;
+
+  it('matches the actual Apple product and offers only the appropriate upgrades', () => {
+    const products = { monthly: { productIdentifier: 'month' }, annual: { productIdentifier: 'year' } };
+    const monthly = subscription('month');
+    const yearly = subscription('year');
+    expect(upgradePlans(monthly, ownedPlan(monthly, products))).toEqual(['annual', 'lifetime']);
+    expect(upgradePlans(yearly, ownedPlan(yearly, products))).toEqual(['lifetime']);
+  });
+
+  it('distinguishes Google base plans on the same subscription product', () => {
+    const products = { monthly: { productIdentifier: 'premium:month' }, annual: { productIdentifier: 'premium:year' } };
+    expect(ownedPlan(subscription('premium', 'month'), products)).toBe('monthly');
+    expect(ownedPlan(subscription('premium', 'year'), products)).toBe('annual');
+    expect(ownedPlan(subscription('premium:year', 'year'), products)).toBe('annual');
+  });
+
+  it('does not mistake cancelled-but-unexpired subscriptions or missing metadata for Lifetime', () => {
+    const cancelled = premiumAccess({ entitlements: { active: { pro: {
+      productIdentifier: 'year', expirationDate: '2027-10-04', willRenew: false,
+    } } } });
+    expect(cancelled.ownership?.kind).toBe('subscription');
+    expect(premiumAccess({ entitlements: { active: { pro: {} } } }).ownership?.kind).toBe('unknown');
+  });
+
+  it('Lifetime blocks repeat purchases but preserves an active subscription reminder', () => {
+    const access = premiumAccess({ entitlements: { active: { pro: { productIdentifier: 'life', expirationDate: null } } }, activeSubscriptions: ['year'] });
+    expect(access.ownership?.hasActiveSubscription).toBe(true);
+    expect(ownedPlan(access.ownership, null)).toBe('lifetime');
+    expect(upgradePlans(access.ownership, 'lifetime')).toEqual([]);
+  });
+
+  it('old subscriptions absent from the offering can buy Lifetime without guessing their billing period', () => {
+    const old = subscription('legacy');
+    expect(ownedPlan(old, {})).toBe('unknown');
+    expect(upgradePlans(old, 'unknown')).toEqual(['lifetime']);
+    expect(upgradePlans(null, null)).toEqual([]);
+  });
+});
 
 describe('annualSubscriptionValue', () => {
   it('calculates the monthly equivalent and saving against twelve monthly payments', () => {

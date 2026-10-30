@@ -70,10 +70,8 @@ describe('content integrity', () => {
     expect(PREMIUM_BENEFITS.some((benefit) => benefit.includes('HOLD'))).toBe(true);
   });
 
-  it('keeps onboarding subscriptions separate from the complete Royal Shop', () => {
-    expect(PAYWALL_PLAN_IDS).toEqual(['annual', 'monthly']);
-    expect(PAYWALL_PLAN_IDS).not.toContain('lifetime');
-    // Lifetime sits in the middle and monthly last: see SHOP_PLAN_IDS.
+  it('offers lifetime between yearly and monthly on both purchase surfaces', () => {
+    expect(PAYWALL_PLAN_IDS).toEqual(['annual', 'lifetime', 'monthly']);
     expect(SHOP_PLAN_IDS).toEqual(['annual', 'lifetime', 'monthly']);
   });
 

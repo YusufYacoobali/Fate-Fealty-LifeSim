@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
 import { TypewriterText } from '../ui/TypewriterText';
+import { choiceStakes, choiceHint } from '@/engine/choiceFeedback';
 import { Choice, GameEvent, GameState } from '@/types/game';
 import { isChoiceAvailable, isChoiceEnabled } from '@/engine/eventPicker';
 import { C, PANEL } from '@/theme/theme';
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export function EventModal({ state, event, onChoose }: Props) {
+  const { height } = useWindowDimensions();
   const rawText = typeof event.text === 'function' ? event.text(state) : event.text;
   const text = renderBoundText(state, rawText);
   const title = renderBoundText(state, event.title);
@@ -42,7 +44,7 @@ export function EventModal({ state, event, onChoose }: Props) {
 
   return (
     <ModalBackdrop zIndex={50} onTouchStart={skipWriting}>
-      <View style={PANEL.parchModal}>
+      <ScrollView style={[PANEL.parchModal, { maxHeight: height - 100 }]} contentContainerStyle={{ paddingBottom: 8 }}>
         <View style={{ backgroundColor: C.health, borderWidth: 3, borderColor: C.inkSoft, borderBottomColor: C.healthDark, borderRightColor: C.healthDark, paddingHorizontal: 8, paddingVertical: 6 }}>
           <PixelText font="pixel" size={10} color={C.white} style={{ textAlign: 'center' }}>
             {title}
@@ -101,16 +103,18 @@ export function EventModal({ state, event, onChoose }: Props) {
                 <PixelText font="body" size={17} color={C.blueDark}>
                   {renderBoundText(state, c.label)}
                 </PixelText>
-                {c.hint ? (
+                {choiceHint(c) ? (
                   <PixelText font="body" size={14} color={C.blue} style={{ marginTop: 2 }}>
-                    {c.hint}
+                    {choiceHint(c)}
                   </PixelText>
                 ) : null}
+                {choiceStakes(c).map((line) => <PixelText key={line} font="body" size={14} color={C.textBrown} style={{ marginTop: 3 }}>{line}</PixelText>)}
+                {(c.disabledReason || (c.costGold != null && state.gold < c.costGold)) && <PixelText font="body" size={14} color={C.bad}>{c.costGold != null && state.gold < c.costGold ? `You have ${state.gold}g` : c.disabledReason}</PixelText>}
               </PixelButton>
             );
           })}
         </View>
-      </View>
+      </ScrollView>
     </ModalBackdrop>
   );
 }

@@ -1,3 +1,4 @@
+import { ForgePlayButton } from '../rpg/Workshop';
 import React from 'react';
 import { Image, View } from 'react-native';
 import { GameState } from '@/types/game';
@@ -7,6 +8,13 @@ import { CAREER_ACTION_ART, CAREER_FAMILY_ART, FEATURE_ART } from '@/assets/gene
 import { PixelButton } from '../ui/PixelButton';
 import { PixelText } from '../ui/PixelText';
 import { C, PANEL } from '@/theme/theme';
+import { MAX_ROUTINE_ACTIVITY_USES, routineActivityUseCount } from '@/engine/activityVariety';
+
+function careerRoutineId(action: CareerAction): string | null {
+  if (action === 'train') return 'career_train';
+  if (action === 'rank_duty') return 'rank_duty';
+  return null;
+}
 
 export function CareerPanel({ state, onAction }: { state: GameState; onAction: (action: CareerAction, careerId?: string) => void }) {
   const career = careerById(state.occupation.careerId);
@@ -16,7 +24,16 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
   const currentArt = career ? careerArt(career.family) : null;
 
   const button = (action: CareerAction, label: string, hint: string, careerId?: string) => {
-    const available = careerActionAvailability(state, action, careerId);
+    const baseAvailability = careerActionAvailability(state, action, careerId);
+    const routineId = careerRoutineId(action);
+    const routineExhausted = Boolean(
+      baseAvailability.available
+      && routineId
+      && routineActivityUseCount(state, routineId) >= MAX_ROUTINE_ACTIVITY_USES,
+    );
+    const available = routineExhausted
+      ? { available: false, reason: 'Enough for one year — try another pursuit.' }
+      : baseAvailability;
     const actionArt = CAREER_ACTION_ART[action as keyof typeof CAREER_ACTION_ART];
     return (
       <PixelButton
@@ -46,7 +63,7 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
         <View style={{ padding: 10, borderTopWidth: 3, borderTopColor: C.parchSd }}>
           <PixelText font="pixel" size={9} color={C.blueDeep}>WORK BUILDS A LIFE</PixelText>
           <PixelText font="body" size={15} color={C.textDark} style={{ marginTop: 5 }}>
-            Take a job, work shifts for gold, then train for experience and better performance. Higher career tiers pay more and help shape your reputation and story path.
+            Take a job, work shifts for gold, then train for experience and better performance. Higher career tiers pay more and shape your story. Professional promotion is separate from social station.
           </PixelText>
           <PixelText font="body" size={14} color={C.textMuted} style={{ marginTop: 5 }}>
             Work at least once each year. Ignoring your job lowers performance and can get you dismissed.
@@ -88,9 +105,10 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
         {button('rank_duty', 'RANK DUTY', 'Earn rewards tied to your social station.')}
         {button(debt ? 'repay' : 'borrow', debt ? 'REPAY DEBT' : 'BORROW 20G', debt ? 'Pay up to 10g.' : 'Debt gains 10% interest each year.')}
         {button('odd_job', 'ODD WORK', 'Small dependable pay without taking a job.')}
-        {button('craft', 'CRAFT TO SELL', 'Spend 2g. Wits decides whether it profits.')}
         {button('trade', 'TRADE GOODS', 'Spend 3g. Charm decides whether it profits.')}
       </View>
+
+      {career?.family === 'craft' && <ForgePlayButton task={{ kind: 'work' }} label="WORK AT THE ANVIL · 1 ACTION" />}
 
       {!career && (
         <>

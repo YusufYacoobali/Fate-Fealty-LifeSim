@@ -3,26 +3,41 @@
  * `offers === null` after loading means the store is unreachable.
  */
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { AppState } from 'react-native';
 import { getPremiumOffers, PlanOffers } from '@/services/purchases';
 
 export function usePremiumOffers(enabled: boolean) {
   const [offers, setOffers] = useState<PlanOffers | null>(null);
   const [loading, setLoading] = useState(enabled);
+  const [reload, setReload] = useState(0);
+  const retryOffers = useCallback(() => {
+    setLoading(true);
+    setReload((previous) => previous + 1);
+  }, []);
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) {
+      setLoading(false);
+      return;
+    }
     let active = true;
     setLoading(true);
-    getPremiumOffers().then((fresh) => {
+    const load = async () => {
+      const fresh = await getPremiumOffers();
       if (!active) return;
       setOffers(fresh);
       setLoading(false);
+    };
+    void load();
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active') retryOffers();
     });
     return () => {
       active = false;
+      subscription.remove();
     };
-  }, [enabled]);
+  }, [enabled, reload, retryOffers]);
 
-  return { offers, offersLoading: loading, storeUnavailable: !loading && enabled && offers === null };
+  return { offers, offersLoading: loading, retryOffers, storeUnavailable: !loading && enabled && offers === null };
 }

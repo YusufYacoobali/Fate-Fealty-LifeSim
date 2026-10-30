@@ -117,6 +117,8 @@ export function checkDeath(s: GameState): GameState {
 }
 
 function finalise(s: GameState): GameState {
+  s.rpg.mission = null;
+  s.rpg.expedition = null;
   if (!s.epitaph) s.epitaph = pick(EPITAPHS);
   if (!s.world.history.some((entry) => entry.type === 'death' && entry.participantIds.includes(s.playerCharacterId))) {
     appendWorldHistory(s, { id: `history_death_${s.nextId++}`, year: s.world.currentYear, type: 'death', participantIds: [s.playerCharacterId], familyIds: [s.world.characters[s.playerCharacterId]?.birthFamilyId ?? ''].filter(Boolean), causes: [s.deathCause], summary: `${s.first} died at ${s.age}. ${s.deathCause}`, salience: 5 });

@@ -27,6 +27,8 @@ export interface DuelMove {
   kinds: DuelKind[];
   /** What the opponent is visibly about to do. */
   telegraph: string;
+  /** Sword-combat warning for the animated timing game; legacy exchanges keep their own prose. */
+  combatTelegraph: string;
   responses: DuelResponse[];
 }
 
@@ -42,6 +44,7 @@ export const DUEL_MOVES: DuelMove[] = [
     id: 'high_swing',
     kinds: ['duel', 'brawl'],
     telegraph: '{name} raises high and steps in. The blow is coming down hard and slow.',
+    combatTelegraph: '{name} winds up a heavy sword swing. A block will only soften this blow.',
     responses: [
       {
         id: 'duck_inside', label: 'DUCK INSIDE', hint: 'wits · slip under and punish', stat: 'wits',
@@ -67,6 +70,7 @@ export const DUEL_MOVES: DuelMove[] = [
     id: 'low_cut',
     kinds: ['duel'],
     telegraph: '{name} drops the point and cuts low at thy legs.',
+    combatTelegraph: '{name} steps in with a quick slash. Time your defence as the marker reaches gold.',
     responses: [
       {
         id: 'stamp_the_blade', label: 'STAMP THE BLADE', hint: 'strength · pin it down', stat: 'health',
@@ -92,6 +96,7 @@ export const DUEL_MOVES: DuelMove[] = [
     id: 'feint',
     kinds: ['duel', 'brawl'],
     telegraph: '{name} shows thee an opening. It is far too generous to be real.',
+    combatTelegraph: '{name} fakes a swing, then commits to the cut. Hold your nerve and time your defence.',
     responses: [
       {
         id: 'refuse_bait', label: 'REFUSE THE BAIT', hint: 'wits · make {him} commit', stat: 'wits',
@@ -117,6 +122,8 @@ export const DUEL_MOVES: DuelMove[] = [
     id: 'grapple',
     kinds: ['duel', 'brawl'],
     telegraph: '{name} closes to grappling range and reaches for thy collar.',
+    // Keep the saved move ID and its no-parry rule; the animated move is a guard breaker.
+    combatTelegraph: '{name} commits to a guard-breaking strike. You cannot parry it. Dodge clear or block to soften the hit.',
     responses: [
       {
         id: 'throw_him', label: 'THROW {HIM}', hint: 'strength · end it now', stat: 'health',
@@ -142,6 +149,7 @@ export const DUEL_MOVES: DuelMove[] = [
     id: 'shield_press',
     kinds: ['duel'],
     telegraph: '{name} hides behind the shield and drives forward, trying to walk thee down.',
+    combatTelegraph: '{name} advances behind a raised guard, then swings. Ready your defence.',
     responses: [
       {
         id: 'hook_the_rim', label: 'HOOK THE RIM', hint: 'wits · pull it open', stat: 'wits',
@@ -167,6 +175,7 @@ export const DUEL_MOVES: DuelMove[] = [
     id: 'wild_flurry',
     kinds: ['duel', 'brawl'],
     telegraph: '{name} abandons all form and comes at thee in a flurry.',
+    combatTelegraph: '{name} lunges into a wild sword swing. Blocking will still let some damage through.',
     responses: [
       {
         id: 'weather_it', label: 'WEATHER IT', hint: 'resolve · outlast the storm', stat: 'faith',
@@ -192,6 +201,7 @@ export const DUEL_MOVES: DuelMove[] = [
     id: 'crowd_play',
     kinds: ['duel', 'brawl'],
     telegraph: '{name} pauses to play to the crowd, arms wide, entirely certain of {him}self.',
+    combatTelegraph: '{name} flourishes the blade, then strikes. Watch your timing, not the showing off.',
     responses: [
       {
         id: 'strike_now', label: 'STRIKE NOW', hint: 'wits · no honour, all effect', stat: 'wits',

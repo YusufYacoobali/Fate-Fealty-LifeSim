@@ -32,6 +32,9 @@ export function PixelButton({
 }: Props) {
   return (
     <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ disabled }}
+      disabled={disabled}
       onPress={disabled ? undefined : onPress}
       style={({ pressed }) => [
         {

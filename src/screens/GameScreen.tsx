@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useGame } from '@/state/GameContext';
@@ -37,6 +37,7 @@ import { AchievementToast } from '@/components/modals/AchievementToast';
 import { ChronicleScreen } from '@/components/modals/ChronicleScreen';
 import { OnboardingScreen } from '@/screens/OnboardingScreen';
 import { PremiumShopScreen } from '@/screens/PremiumShopScreen';
+import { PremiumShopContext } from '@/components/premium/PremiumShopContext';
 import { MIN_ANDROID_BOTTOM_NAV_GUARD } from '@/components/systemLayout';
 import { useGameFeedback } from '@/state/hooks/useGameFeedback';
 import { GameAudioController } from '@/state/hooks/useGameAudio';
@@ -47,10 +48,13 @@ import { DailyRewardModal } from '@/components/modals/DailyRewardModal';
 import { ProTrialEndedPrompt } from '@/components/modals/ProTrialEndedPrompt';
 import { PromotionScreen } from '@/components/modals/PromotionScreen';
 import { GoalAchievedScreen } from '@/components/modals/GoalAchievedScreen';
-import { DuelModal } from '@/components/modals/DuelModal';
+import { DuelModal } from '@/components/modals/InteractiveDuelModal';
 import { usePromotionCelebration } from '@/state/hooks/usePromotionCelebration';
 import { useGoalCelebration } from '@/state/hooks/useGoalCelebration';
 import { ReturnRumourModal } from '@/components/modals/ReturnRumourModal';
+import { ForgeModal } from '@/components/rpg/Workshop';
+import { careerById } from '@/data/careers';
+import { missionEvent } from '@/engine/rpgEngine';
 
 export function GameScreen() {
   const {
@@ -63,6 +67,8 @@ export function GameScreen() {
     shopPromoVisible,
     shopPromoMessageIndex,
     resolveShopPromo,
+    launchPaywallVisible,
+    resolveLaunchPaywall,
     creating,
     requestNewLife,
     createCharacter,
@@ -76,6 +82,7 @@ export function GameScreen() {
     premiumEntitled,
     premiumForNextLife,
     premiumAccessState,
+    premiumOwnership,
     purchasePlan,
     restorePremium,
     proTrialActive,
@@ -97,12 +104,18 @@ export function GameScreen() {
   const insets = useSafeAreaInsets();
   const bottomNavInset = Math.max(insets.bottom, MIN_ANDROID_BOTTOM_NAV_GUARD);
   const currentEvent = state.pendingEvent ? eventById(state.pendingEvent.eventId) : undefined;
+  const currentMission = missionEvent(state);
   const { promotedTo, dismissPromotion } = usePromotionCelebration(state, loaded);
+  const promotionReason = promotedTo == null
+    ? undefined
+    : [...state.memories].reverse().find((memory) => memory.tag === `promoted_${rank.key.toLowerCase()}`)?.note;
   const { achievedGoalId, dismissGoal } = useGoalCelebration(state, loaded);
   const passivePromptsAllowed =
     !state.dead &&
     !state.pendingEvent &&
     !state.duel &&
+    !state.rpg.mission &&
+    !state.rpg.forge &&
     !state.settingsOpen &&
     !creating &&
     !onboardingVisible &&
@@ -127,6 +140,15 @@ export function GameScreen() {
               ? 'shop'
               : null;
 
+  // The fifth-launch paywall is lower priority than gameplay, onboarding, and
+  // existing return/review prompts. Once the screen is clear, consume the cue
+  // and open the same Royal Shop the player can reach manually.
+  useEffect(() => {
+    if (!launchPaywallVisible || !passivePromptsAllowed || passivePrompt !== null) return;
+    resolveLaunchPaywall();
+    setCartOpen(true);
+  }, [launchPaywallVisible, passivePromptsAllowed, passivePrompt, resolveLaunchPaywall]);
+
   // Promotion/death haptics ride on engine transitions.
   useGameFeedback(state);
 
@@ -134,6 +156,7 @@ export function GameScreen() {
   const meStats = stats.map((s) => ({ ...s, label: STAT_STYLES[s.key].label }));
 
   return (
+    <PremiumShopContext.Provider value={() => setCartOpen(true)}>
     <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: C.blue }}>
       <GameAudioController state={state} loaded={loaded} />
       <View style={{ flex: 1, backgroundColor: C.sky }}>
@@ -142,6 +165,7 @@ export function GameScreen() {
           fullName={fullName(state)}
           age={state.age}
           classRank={rank.key}
+          profession={careerById(state.occupation.careerId)?.title}
           gold={state.gold}
           onOpenShop={() => setCartOpen(true)}
           onOpenSettings={() => dispatch({ type: 'OPEN_SETTINGS' })}
@@ -153,7 +177,7 @@ export function GameScreen() {
         <View style={{ flex: 1, position: 'relative' }}>
           {state.tab === 'life' && <View style={{ flex: 1 }}>
             <WorldNotices recoveryNotice={state.world.recoveryNotice} saveCompatibilityBlocked={saveCompatibilityBlocked} />
-            <LifeFeed feed={selectFeed(state)} autoScroll={state.settings.autoScroll} filter={state.world.feedFilter} onFilter={(filter) => dispatch({ type: 'SET_FEED_FILTER', filter })} />
+            <LifeFeed bornYear={state.bornYear} reducedMotion={!!state.settings.reducedMotion} feed={selectFeed(state)} autoScroll={state.settings.autoScroll} resultKey={state.rpg.mission?.id ?? state.rpg.forge?.id ?? 'life'} filter={state.world.feedFilter} onFilter={(filter) => dispatch({ type: 'SET_FEED_FILTER', filter })} />
           </View>}
           {state.tab === 'do' && (
             <DoTab
@@ -234,7 +258,7 @@ export function GameScreen() {
             haptic('light', buzz);
             dispatch({ type: 'AGE_UP' });
           }}
-          disabled={state.dead || !!state.pendingEvent || !!state.duel}
+          disabled={state.dead || !!state.pendingEvent || !!state.duel || !!state.rpg.mission || !!state.rpg.forge}
           actionsUsed={state.actionClock.used}
           actionCap={state.actionClock.cap}
         />
@@ -249,6 +273,8 @@ export function GameScreen() {
         </View>
 
         {/* overlays */}
+        {state.rpg.forge && !state.dead && <ForgeModal />}
+        {currentMission && !state.dead && !state.duel && <EventModal key={currentMission.id} state={state} event={currentMission} onChoose={(choice) => dispatch({ type: 'MISSION_CHOOSE', missionId: currentMission.id, optionId: choice.id! })} />}
         {currentEvent && !state.dead && (
           <EventModal
             state={state}
@@ -334,9 +360,10 @@ export function GameScreen() {
             onClose={() => dispatch({ type: 'DUEL_CLOSE' })}
           />
         )}
-        {promotedTo != null && !state.dead && (
+        {promotedTo != null && !state.rpg.forge && !state.dead && (
           <PromotionScreen
             rankIdx={promotedTo}
+            reason={promotionReason}
             reducedMotion={!!state.settings.reducedMotion}
             onDone={() => {
               haptic('success', buzz);
@@ -344,7 +371,7 @@ export function GameScreen() {
             }}
           />
         )}
-        {achievedGoalId && promotedTo == null && !state.dead && (
+        {achievedGoalId && promotedTo == null && !state.rpg.forge && !state.dead && (
           <GoalAchievedScreen
             goalId={achievedGoalId}
             reducedMotion={!!state.settings.reducedMotion}
@@ -359,6 +386,7 @@ export function GameScreen() {
           <PremiumShopScreen
             // The storefront reflects what was actually bought, never the sample.
             unlocked={premiumEntitled}
+            ownership={premiumOwnership}
             accessState={premiumAccessState}
             onPurchase={purchasePlan}
             onRestore={restorePremium}
@@ -392,7 +420,7 @@ export function GameScreen() {
           />
         )}
         <AchievementToast
-          id={newAchievements[0] ?? null}
+          id={state.rpg.forge ? null : newAchievements[0] ?? null}
           onDone={() => {
             haptic('success', buzz);
             dismissAchievement();
@@ -400,5 +428,6 @@ export function GameScreen() {
         />
       </View>
     </SafeAreaView>
+    </PremiumShopContext.Provider>
   );
 }

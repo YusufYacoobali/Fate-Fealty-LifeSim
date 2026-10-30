@@ -1,3 +1,4 @@
+export * from './lifeDepth';
 import type { Thread } from '@/engine/director/threads';
 
 /**
@@ -143,6 +144,10 @@ export interface Debt {
 }
 
 export interface CharacterCore {
+  background?: import('./lifeDepth').BirthBackground;
+  education?: import('./lifeDepth').EducationState;
+  socialStatus?: import('./lifeDepth').SocialStatus;
+  professionalHistory?: import('./lifeDepth').ProfessionalHistory;
   tradeJourney?: import('./rpg').TradeJourney;
   annualNarrativeYears?: Record<string, number>;
   skills?: import('./rpg').Skills;
@@ -493,6 +498,7 @@ export interface PendingEvent {
 export type RelationFilter = 'all' | 'family' | 'romance' | 'friends' | 'acquaintances' | 'rivals' | 'authority' | 'deceased';
 
 export interface WorldState {
+  court?: import('./lifeDepth').CourtState;
   relationships: Record<string, Relationship>;
   households: Household[];
   relationFilter: RelationFilter;
@@ -922,7 +928,7 @@ export interface DuelState {
 }
 
 export interface GameState {
-  schemaVersion: 5;
+  schemaVersion: 6;
   rpg: import('./rpg').RpgState;
   playerCharacterId: string;
   playerRun: PlayerRunState;

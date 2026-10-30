@@ -3,6 +3,10 @@ import { GameState, WorldCharacter } from '@/types/game';
 export function cloneWorldCharacter(character: WorldCharacter): WorldCharacter {
   return {
     ...character,
+    background: character.background ? { ...character.background, guardianIds: [...character.background.guardianIds] } : undefined,
+    education: character.education ? JSON.parse(JSON.stringify(character.education)) : undefined,
+    socialStatus: character.socialStatus ? { ...character.socialStatus, titles: [...character.socialStatus.titles], grants: [...character.socialStatus.grants] } : undefined,
+    professionalHistory: character.professionalHistory ? JSON.parse(JSON.stringify(character.professionalHistory)) : undefined,
     tradeJourney: character.tradeJourney ? { ...character.tradeJourney, choices: [...character.tradeJourney.choices] } : undefined,
     annualNarrativeYears: character.annualNarrativeYears ? { ...character.annualNarrativeYears } : undefined,
     skills: character.skills ? Object.fromEntries(Object.entries(character.skills).map(([id, value]) => [id, { ...value }])) as typeof character.skills : undefined,

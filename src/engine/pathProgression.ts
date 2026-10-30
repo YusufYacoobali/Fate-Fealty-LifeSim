@@ -1,3 +1,5 @@
+import { careerById } from '@/data/careers';
+import { legacyStatus } from './lifeDepthState';
 /**
  * Path & rank progression.
  *
@@ -32,6 +34,10 @@ export function canPromote(s: GameState): boolean {
   const next = RANKS[s.rankIdx + 1];
   if (!next) return false;
   if (next.premium && !s.lifetimeUnlocked) return false;
+  // Wealth and general standing cannot confer a hereditary title or crown.
+  if (s.rankIdx >= 2) return false;
+  const education = s.world.characters[s.playerCharacterId]?.education;
+  if (careerById(s.occupation.careerId)?.family !== 'martial' || !education?.qualifications.includes('martial_training')) return false;
   const req = next.promote;
   if (s.age < req.minAge) return false;
   if (req.minGold != null && s.gold < req.minGold) return false;
@@ -84,7 +90,16 @@ export function promotionRationale(s: GameState): string {
 export function promote(s: GameState, force = false): boolean {
   const next = RANKS[s.rankIdx + 1];
   if (!next) return false;
+  if (next.premium && !s.lifetimeUnlocked) return false;
+  if (s.rankIdx >= 4) return false; // The crown is resolved only by court succession.
   if (!force && !canPromote(s)) return false;
+  const player = s.world.characters[s.playerCharacterId];
+  const status = player.socialStatus ??= legacyStatus(s.rankIdx);
+  if (s.rankIdx === 0) status.martialHonour = 'squire';
+  if (s.rankIdx === 1) status.martialHonour = 'knight';
+  if (s.rankIdx === 2) { status.estate = 'noble'; status.titles.push('Noble'); }
+  if (s.rankIdx === 3) { status.estate = 'baronial'; status.titles.push('Baron'); }
+  status.grants.push(force ? `formal_grant_${s.world.currentYear}` : `martial_service_${s.world.currentYear}`);
   const reason = force
     ? 'Fortune, favour, or somebody important has moved the ladder beneath thy feet.'
     : promotionRationale(s);
@@ -105,6 +120,8 @@ export function demote(s: GameState): boolean {
   if (s.rankIdx <= 0) return false;
   const lost = RANKS[s.rankIdx];
   s.rankIdx -= 1;
+  const player = s.world.characters[s.playerCharacterId];
+  if (player) player.socialStatus = legacyStatus(s.rankIdx);
   s.rankProgress = 40;
   addMemory(s, `demoted_from_${lost.key.toLowerCase()}`, 3);
   pushFeed(

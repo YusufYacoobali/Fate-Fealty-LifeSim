@@ -1,3 +1,4 @@
+import { initializeLifeDepth } from './lifeDepthState';
 import { freshRpg, freshSkills } from '@/data/rpg';
 /**
  * State primitives: creating a fresh life, immutable-ish cloning, and the small
@@ -151,6 +152,7 @@ export function createLife(opts: FreshLifeOptions = {}): GameState {
   const created = runWithPersistedRng(initialRngState(worldSeed), () => createLifeFromWorldSeed(opts, worldSeed));
   created.value.world.rngState = created.rngState;
   for (const person of Object.values(created.value.world.characters)) person.skills ??= freshSkills();
+  initializeLifeDepth(created.value);
   return created.value;
 }
 
@@ -329,7 +331,7 @@ function createLifeFromWorldSeed(opts: FreshLifeOptions, worldSeed: number): Gam
   });
   for (const household of households) for (const id of household.memberIds) characters[id].householdId = household.id;
   return {
-    schemaVersion: 5,
+    schemaVersion: 6,
     rpg: freshRpg(),
     playerCharacterId: playerId,
     playerRun: { startedYear: 1320, generation: opts.lifeNo ?? 1, roleProgress: {} },
@@ -443,6 +445,7 @@ export function cloneState(s: GameState): GameState {
     kin: Object.values(characters).filter((character) => character.id !== s.playerCharacterId),
     world: {
       ...s.world,
+      court: s.world.court ? JSON.parse(JSON.stringify(s.world.court)) : undefined,
       rngState: { ...s.world.rngState },
       conditions: { ...s.world.conditions },
       relationships: Object.fromEntries(Object.entries(s.world.relationships).map(([id, r]) => [id, ({ ...r, aToB: { ...r.aToB }, bToA: { ...r.bToA }, flags: [...r.flags], sharedMemories: [...r.sharedMemories] })])),

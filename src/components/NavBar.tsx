@@ -32,7 +32,8 @@ export function NavBar({
   return (
     <View
       style={{
-        height: 58,
+        minHeight: 58,
+        flexShrink: 0,
         backgroundColor: C.blueDeep,
         flexDirection: 'row',
         alignItems: 'center',
@@ -51,7 +52,7 @@ export function NavBar({
             accessibilityRole="button"
             accessibilityLabel={locked ? `${n.label} locked. Opens Royal Shop.` : n.label}
             accessibilityState={{ disabled: false }}
-            style={{ flex: 1, alignItems: 'center', paddingHorizontal: 1, paddingVertical: 4, minHeight: 48 }}
+            style={{ flex: 1, minWidth: 0, alignSelf: 'stretch', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 1, paddingVertical: 4, minHeight: 48 }}
           >
             <View
               style={{
@@ -72,7 +73,7 @@ export function NavBar({
             >
               {locked && <PixelText font="pixel" size={7} color={C.charm}>P</PixelText>}
             </View>
-            <PixelText font="pixel" size={7} color={locked ? C.charm : on ? C.white : '#7fa8d0'} style={{ marginTop: 5 }}>
+            <PixelText font="pixel" size={7} color={locked ? C.charm : on ? C.white : '#7fa8d0'} style={{ marginTop: 5, maxWidth: '100%', textAlign: 'center' }}>
               {n.label}
             </PixelText>
           </Pressable>

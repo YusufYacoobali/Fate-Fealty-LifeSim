@@ -1,4 +1,4 @@
-import { CourtPanel } from './CourtPanel';
+import { CourtEntry } from './CourtPanel';
 import { careerById } from '@/data/careers';
 import { EducationPanel } from './EducationPanel';
 import { TrainingPanel } from '../rpg/RpgPanels';
@@ -57,8 +57,8 @@ export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
       </ScrollView>
 
       {/* activity grid */}
-      {cat === 'quests' ? <QuestsTab /> : <ScrollView key={cat} style={{ flex: 1 }} contentContainerStyle={{ padding: 11, paddingBottom: 7 }}>
-        {(cat === 'all' || cat === 'work') && state.age >= 16 && (careerById(state.occupation.careerId)?.family === 'court' || state.world.court?.rulerId === state.playerCharacterId) && <CourtPanel state={state} />}
+      {cat === 'quests' ? <QuestsTab /> : <ScrollView keyboardShouldPersistTaps="handled" key={cat} style={{ flex: 1 }} contentContainerStyle={{ padding: 11, paddingBottom: 7 }}>
+        {(cat === 'all' || cat === 'work') && state.age >= 16 && (careerById(state.occupation.careerId)?.family === 'court' || state.world.court?.rulerId === state.playerCharacterId) && <CourtEntry state={state} />}
         {(cat === 'all' || cat === 'practice') && <EducationPanel state={state} />}
         {cat === 'practice' && <TrainingPanel /> }
         {(cat === 'all' || cat === 'work') && <CareerPanel state={state} onAction={onCareer} />}

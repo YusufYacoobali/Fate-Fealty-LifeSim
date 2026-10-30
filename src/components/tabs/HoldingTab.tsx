@@ -87,6 +87,7 @@ export function HoldingTab({ state, onAction, onUpgrade, onToggleVillage }: Prop
     <ScrollView
       style={{ flex: 1 }}
       contentInsetAdjustmentBehavior="automatic"
+      keyboardShouldPersistTaps="handled"
       contentContainerStyle={{ padding: 11, paddingBottom: 18 }}
     >
       <CourtPanel state={state} />

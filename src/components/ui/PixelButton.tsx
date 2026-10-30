@@ -11,6 +11,7 @@ interface Props {
   light?: string;
   outline?: string;
   disabled?: boolean;
+  selected?: boolean;
   style?: StyleProp<ViewStyle>;
   innerStyle?: StyleProp<ViewStyle>;
 }
@@ -27,13 +28,14 @@ export function PixelButton({
   light,
   outline = '#1a2e4a',
   disabled = false,
+  selected,
   style,
   innerStyle,
 }: Props) {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityState={{ disabled }}
+      accessibilityState={{ disabled, selected }}
       disabled={disabled}
       onPress={disabled ? undefined : onPress}
       style={({ pressed }) => [

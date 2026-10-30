@@ -1,0 +1,18 @@
+{
+  "normal_states": 91,
+  "large_text_states": 15,
+  "client_states": 42,
+  "total_states": 148,
+  "widths": [
+    280,
+    320,
+    390,
+    430,
+    768,
+    1024
+  ],
+  "javascript_errors": 0,
+  "page_overflows": 0,
+  "enlarged_navigation_targets": 90,
+  "source_commit": "fb682875a336e63f25696f33d721abe92f7a34eb"
+}

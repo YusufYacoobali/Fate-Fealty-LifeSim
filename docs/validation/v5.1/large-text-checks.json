@@ -497,7 +497,7 @@
   },
   {
     "screen": "court",
-    "scaled": 160,
+    "scaled": 159,
     "width": 390,
     "scrollWidth": 390,
     "nav": [
@@ -683,7 +683,7 @@
   },
   {
     "screen": "court",
-    "scaled": 159,
+    "scaled": 160,
     "width": 768,
     "scrollWidth": 768,
     "nav": [
@@ -807,7 +807,7 @@
   },
   {
     "screen": "career",
-    "scaled": 66,
+    "scaled": 65,
     "width": 1024,
     "scrollWidth": 1024,
     "nav": [

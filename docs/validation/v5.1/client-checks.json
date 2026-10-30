@@ -1,0 +1,296 @@
+[
+  {
+    "scene": "patient",
+    "stage": "before",
+    "width": 280,
+    "scrollWidth": 280,
+    "errors": []
+  },
+  {
+    "scene": "patient",
+    "stage": "selected",
+    "width": 280,
+    "scrollWidth": 280,
+    "errors": []
+  },
+  {
+    "scene": "patient",
+    "stage": "resolved",
+    "width": 280,
+    "scrollWidth": 280,
+    "errors": []
+  },
+  {
+    "scene": "partner",
+    "stage": "before",
+    "width": 280,
+    "scrollWidth": 280,
+    "errors": []
+  },
+  {
+    "scene": "partner",
+    "stage": "selected",
+    "width": 280,
+    "scrollWidth": 280,
+    "errors": []
+  },
+  {
+    "scene": "partner",
+    "stage": "resolved",
+    "width": 280,
+    "scrollWidth": 280,
+    "errors": []
+  },
+  {
+    "scene": "followup",
+    "stage": "records",
+    "width": 280,
+    "scrollWidth": 280,
+    "errors": []
+  },
+  {
+    "scene": "patient",
+    "stage": "before",
+    "width": 320,
+    "scrollWidth": 320,
+    "errors": []
+  },
+  {
+    "scene": "patient",
+    "stage": "selected",
+    "width": 320,
+    "scrollWidth": 320,
+    "errors": []
+  },
+  {
+    "scene": "patient",
+    "stage": "resolved",
+    "width": 320,
+    "scrollWidth": 320,
+    "errors": []
+  },
+  {
+    "scene": "partner",
+    "stage": "before",
+    "width": 320,
+    "scrollWidth": 320,
+    "errors": []
+  },
+  {
+    "scene": "partner",
+    "stage": "selected",
+    "width": 320,
+    "scrollWidth": 320,
+    "errors": []
+  },
+  {
+    "scene": "partner",
+    "stage": "resolved",
+    "width": 320,
+    "scrollWidth": 320,
+    "errors": []
+  },
+  {
+    "scene": "followup",
+    "stage": "records",
+    "width": 320,
+    "scrollWidth": 320,
+    "errors": []
+  },
+  {
+    "scene": "patient",
+    "stage": "before",
+    "width": 390,
+    "scrollWidth": 390,
+    "errors": []
+  },
+  {
+    "scene": "patient",
+    "stage": "selected",
+    "width": 390,
+    "scrollWidth": 390,
+    "errors": []
+  },
+  {
+    "scene": "patient",
+    "stage": "resolved",
+    "width": 390,
+    "scrollWidth": 390,
+    "errors": []
+  },
+  {
+    "scene": "partner",
+    "stage": "before",
+    "width": 390,
+    "scrollWidth": 390,
+    "errors": []
+  },
+  {
+    "scene": "partner",
+    "stage": "selected",
+    "width": 390,
+    "scrollWidth": 390,
+    "errors": []
+  },
+  {
+    "scene": "partner",
+    "stage": "resolved",
+    "width": 390,
+    "scrollWidth": 390,
+    "errors": []
+  },
+  {
+    "scene": "followup",
+    "stage": "records",
+    "width": 390,
+    "scrollWidth": 390,
+    "errors": []
+  },
+  {
+    "scene": "patient",
+    "stage": "before",
+    "width": 430,
+    "scrollWidth": 430,
+    "errors": []
+  },
+  {
+    "scene": "patient",
+    "stage": "selected",
+    "width": 430,
+    "scrollWidth": 430,
+    "errors": []
+  },
+  {
+    "scene": "patient",
+    "stage": "resolved",
+    "width": 430,
+    "scrollWidth": 430,
+    "errors": []
+  },
+  {
+    "scene": "partner",
+    "stage": "before",
+    "width": 430,
+    "scrollWidth": 430,
+    "errors": []
+  },
+  {
+    "scene": "partner",
+    "stage": "selected",
+    "width": 430,
+    "scrollWidth": 430,
+    "errors": []
+  },
+  {
+    "scene": "partner",
+    "stage": "resolved",
+    "width": 430,
+    "scrollWidth": 430,
+    "errors": []
+  },
+  {
+    "scene": "followup",
+    "stage": "records",
+    "width": 430,
+    "scrollWidth": 430,
+    "errors": []
+  },
+  {
+    "scene": "patient",
+    "stage": "before",
+    "width": 768,
+    "scrollWidth": 768,
+    "errors": []
+  },
+  {
+    "scene": "patient",
+    "stage": "selected",
+    "width": 768,
+    "scrollWidth": 768,
+    "errors": []
+  },
+  {
+    "scene": "patient",
+    "stage": "resolved",
+    "width": 768,
+    "scrollWidth": 768,
+    "errors": []
+  },
+  {
+    "scene": "partner",
+    "stage": "before",
+    "width": 768,
+    "scrollWidth": 768,
+    "errors": []
+  },
+  {
+    "scene": "partner",
+    "stage": "selected",
+    "width": 768,
+    "scrollWidth": 768,
+    "errors": []
+  },
+  {
+    "scene": "partner",
+    "stage": "resolved",
+    "width": 768,
+    "scrollWidth": 768,
+    "errors": []
+  },
+  {
+    "scene": "followup",
+    "stage": "records",
+    "width": 768,
+    "scrollWidth": 768,
+    "errors": []
+  },
+  {
+    "scene": "patient",
+    "stage": "before",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "errors": []
+  },
+  {
+    "scene": "patient",
+    "stage": "selected",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "errors": []
+  },
+  {
+    "scene": "patient",
+    "stage": "resolved",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "errors": []
+  },
+  {
+    "scene": "partner",
+    "stage": "before",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "errors": []
+  },
+  {
+    "scene": "partner",
+    "stage": "selected",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "errors": []
+  },
+  {
+    "scene": "partner",
+    "stage": "resolved",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "errors": []
+  },
+  {
+    "scene": "followup",
+    "stage": "records",
+    "width": 1024,
+    "scrollWidth": 1024,
+    "errors": []
+  }
+]

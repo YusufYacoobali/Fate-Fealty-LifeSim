@@ -1,3 +1,4 @@
+import { performSpecialization, specializationAvailability, recordProfessionalWork, tickProfessionalStanding } from './careerSpecializationEngine';
 import { recordTradeWork } from './tradeJourney';
 import { CareerDef, GameState } from '@/types/game';
 import { CAREERS, careerAvailability, careerById } from '@/data/careers';
@@ -8,7 +9,7 @@ import { C } from '@/theme/theme';
 import { pickNarrative } from './narrativeEngine';
 import { equipmentCheckBonus, grantSkillXp, skillLevel } from './rpgProgress';
 
-export type CareerAction = 'apply' | 'work' | 'train' | 'promote' | 'resign' | 'borrow' | 'repay' | 'rank_duty' | 'odd_job' | 'craft' | 'trade';
+export type CareerAction = 'specialize' | 'apply' | 'work' | 'train' | 'promote' | 'resign' | 'borrow' | 'repay' | 'rank_duty' | 'odd_job' | 'craft' | 'trade';
 
 export interface CareerActionAvailability {
   available: boolean;
@@ -18,6 +19,7 @@ export interface CareerActionAvailability {
 export function careerActionAvailability(state: GameState, action: CareerAction, careerId?: string): CareerActionAvailability {
   if (state.dead || state.pendingEvent) return { available: false, reason: 'Unavailable just now' };
   if (state.actionClock.used >= state.actionClock.cap) return { available: false, reason: 'No actions remain this year' };
+  if (action === 'specialize') { const reason = specializationAvailability(state, careerId ?? ''); return reason ? { available: false, reason } : { available: true }; }
   const current = careerById(state.occupation.careerId);
   if (action === 'apply') {
     const target = careerById(careerId ?? null);
@@ -78,6 +80,7 @@ export function performCareerAction(state: GameState, action: CareerAction, care
   const current = careerById(state.occupation.careerId);
 
   switch (action) {
+    case 'specialize': return performSpecialization(state, careerId ?? '');
     case 'apply': {
       const career = careerById(careerId ?? null)!;
       state.occupation = { careerId: career.id, experience: 0, performance: 50, workedThisYear: 0, apprenticeshipYears: career.tier === 0 ? 0 : undefined, guildStanding: ['craft', 'trade', 'medicine', 'entertainment', 'law'].includes(career.family) ? 5 : 0 };
@@ -115,6 +118,7 @@ export function performCareerAction(state: GameState, action: CareerAction, care
       state.occupation.performance = Math.min(100, state.occupation.performance + rnd(1, 4) - illnessPenalty - (badDay ? 2 : 0));
       state.occupation.workedThisYear += 1;
       recordTradeWork(state);
+      recordProfessionalWork(state);
       if (career.tier === 0) state.occupation.apprenticeshipYears = (state.occupation.apprenticeshipYears ?? 0) + 1;
       if (['craft', 'trade', 'medicine', 'entertainment', 'law'].includes(career.family)) state.occupation.guildStanding = Math.min(100, (state.occupation.guildStanding ?? 0) + 1);
       if (career.healthRisk) applyEffects(state, { health: -career.healthRisk });
@@ -218,6 +222,7 @@ function performRankDuty(state: GameState): void {
 }
 
 export function tickCareerAndEconomy(state: GameState): GameState {
+  tickProfessionalStanding(state);
   const current = careerById(state.occupation.careerId);
   if (current) {
     if (state.occupation.workedThisYear === 0) {

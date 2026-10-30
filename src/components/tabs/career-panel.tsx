@@ -1,3 +1,4 @@
+import { specializationsFor } from '@/data/careerSpecializations';
 import { ForgePlayButton } from '../rpg/Workshop';
 import React from 'react';
 import { Image, View } from 'react-native';
@@ -86,7 +87,7 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
           </View>
         </View>
         <PixelText font="body" size={14} color={C.textMuted} style={{ marginTop: 6 }}>
-          Experience {state.occupation.experience}. Performance {state.occupation.performance}. Debt {debt}g. Actions left {actionsRemaining}.
+          Professional standing {career ? state.world.characters[state.playerCharacterId].professionalHistory?.[career.family]?.reputation ?? 0 : 0}. Experience {state.occupation.experience}. Performance {state.occupation.performance}. Debt {debt}g. Actions left {actionsRemaining}.
         </PixelText>
       </View>
 
@@ -98,6 +99,7 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
       )}
 
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginTop: 9 }}>
+        {career && specializationsFor(career.family).map(a => button('specialize', a.name.toUpperCase(), `${a.cost}g · professional milestone`, a.id))}
         {career && button('work', `WORK AS ${career.title.toUpperCase()}`, `Earn about ${career.wage}g and improve performance.`)}
         {career && button('train', 'TRAIN AT WORK', 'Gain experience and performance for promotion.')}
         {career?.promotesTo && button('promote', 'ASK PROMOTION', 'Advance to a better paid career tier.')}

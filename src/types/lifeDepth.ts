@@ -34,6 +34,9 @@ export interface SocialStatus {
   grants: string[];
 }
 export interface ProfessionalRecord {
+  actionYears?: Record<string, number>;
+  shifts?: number;
+  apprenticeId?: string;
   reputation: number;
   completedActions: string[];
   milestones: string[];

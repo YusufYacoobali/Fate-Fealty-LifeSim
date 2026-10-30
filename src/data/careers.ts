@@ -55,6 +55,7 @@ export function careerAvailability(state: GameState, career: CareerDef): string 
   const history = state.world.characters[state.playerCharacterId]?.professionalHistory?.[career.family];
   // Existing jobs stay valid; new appointments accept formal learning or a
   // longer, documented route through practical service and mentorship.
+  if (career.tier > 0 && (history?.completedActions.length ?? 0) < Math.min(2, career.tier)) return `Needs ${Math.min(2, career.tier)} distinct professional milestones`;
   if (career.tier > 0 && qualification && !education?.qualifications.includes(qualification) && !(history?.milestones.includes('field_training') && (state.occupation.experience >= 100 || history.reputation >= 35))) return `Needs ${qualification.replaceAll('_', ' ')} or practical mentorship`;
   if (career.minReputation != null && state.reputation < career.minReputation) return 'Thy reputation is too low';
   for (const [key, value] of Object.entries(career.minStats ?? {})) {

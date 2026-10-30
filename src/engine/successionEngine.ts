@@ -1,3 +1,8 @@
+import { initializeLifeDepth, legacyStatus } from './lifeDepthState';
+import { reconcileCourt } from './courtEngine';
+import { settleRoyalSuccession } from './royalSuccessionEngine';
+import { professionalRecord } from './careerSpecializationEngine';
+import { careerById } from '@/data/careers';
 import { GameState, WorldCharacter } from '@/types/game';
 import { appendWorldHistory, pushFeed, syncKinToWorld } from './gameState';
 import { C } from '@/theme/theme';
@@ -25,7 +30,9 @@ export function eligibleHeirs(state: GameState): WorldCharacter[] {
     .sort((a, b) => Number(Boolean(b.isHeir)) - Number(Boolean(a.isHeir)) || b.age - a.age || a.id.localeCompare(b.id));
 }
 
-export function continueAsHeir(state: GameState, requestedHeirId?: string): GameState {
+export function continueAsHeir(state: GameState, requestedHeirId?: string, lifetimeUnlocked = state.lifetimeUnlocked): GameState {
+  if (!state.dead) return state;
+  initializeLifeDepth(state);
   const heirs = eligibleHeirs(state);
   if (!heirs.length) return state;
   const heir = heirs.find((candidate) => candidate.id === requestedHeirId) ?? heirs[0];
@@ -41,7 +48,22 @@ export function continueAsHeir(state: GameState, requestedHeirId?: string): Game
 
   const inheritedGold = Math.floor(state.gold / 2);
   heir.gold += inheritedGold;
-  heir.rankIdx = Math.max(heir.rankIdx, state.rankIdx);
+  const parentStatus = formerPlayer?.socialStatus ?? legacyStatus(state.rankIdx);
+  if (['noble', 'baronial', 'royal'].includes(parentStatus.estate)) {
+    heir.socialStatus!.estate = parentStatus.estate === 'baronial' && !lifetimeUnlocked ? 'noble' : parentStatus.estate;
+    heir.socialStatus!.grants = [...new Set([...heir.socialStatus!.grants, 'inheritance'])];
+    heir.rankIdx = heir.socialStatus!.estate === 'baronial' && lifetimeUnlocked ? 4 : 3;
+  }
+  // A profession leaves household credit and unfinished matters, not a free job.
+  for (const [family, inherited] of Object.entries(formerPlayer?.professionalHistory ?? {})) {
+    const record = professionalRecord(heir, family as import('@/types/game').CareerFamily);
+    record.reputation = Math.max(record.reputation, Math.floor(inherited.reputation / 2));
+    record.contactIds = [...new Set([...record.contactIds, ...inherited.contactIds])];
+    record.rivalId ??= inherited.rivalId;
+    for (const matter of inherited.matters.filter(m => !m.resolved)) if (!record.matters.some(m => m.id === matter.id)) record.matters.push({ ...matter });
+  }
+  state.lifetimeUnlocked = lifetimeUnlocked;
+  if (state.world.court?.rulerId === heir.id && !lifetimeUnlocked) settleRoyalSuccession(state, [heir.id]);
   heir.isHeir = true;
   state.playerCharacterId = heir.id;
   if (state.rpg.stewardId === heir.id) state.rpg.stewardId = null;
@@ -66,6 +88,8 @@ export function continueAsHeir(state: GameState, requestedHeirId?: string): Game
   state.occupation = { ...heir.occupation };
   state.debts = heir.debts.map((debt) => ({ ...debt }));
   state.rankIdx = heir.rankIdx;
+  if (!lifetimeUnlocked && state.rankIdx >= 4) state.rankIdx = heir.rankIdx = 3;
+  if (!lifetimeUnlocked && careerById(heir.occupation.careerId)?.premium) { heir.occupation = { careerId: null, experience: 0, performance: 50, workedThisYear: 0 }; state.occupation = { ...heir.occupation }; }
   state.rankProgress = 0;
   state.reputation = Math.floor(state.reputation / 2);
   state.paths = { martial: 0, court: 0, church: 0, labour: 0, outlaw: 0 };
@@ -97,6 +121,7 @@ export function continueAsHeir(state: GameState, requestedHeirId?: string): Game
     criticalYears: 0,
   };
 
+  reconcileCourt(state);
   syncKinToWorld(state);
   state.world.proposalFromId = null;
   state.world.pacing = { lastMajorYear: null, lastImportantYear: null, quietYearsSinceStory: 0, majorEventsThisLife: 0, mediumStoriesStarted: 0, immediateChainDepth: 0 };

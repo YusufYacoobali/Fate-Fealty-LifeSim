@@ -319,7 +319,7 @@ export function GameScreen() {
           <DeathScreen
             state={state}
             onNewLife={requestNewLife}
-            onContinueHeir={(heirId) => dispatch({ type: 'CONTINUE_AS_HEIR', heirId })}
+            onContinueHeir={(heirId) => dispatch({ type: 'CONTINUE_AS_HEIR', heirId, lifetimeUnlocked: premiumForNextLife })}
           />
         )}
         {passivePrompt === 'trialEnded' && (

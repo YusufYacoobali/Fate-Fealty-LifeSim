@@ -1,3 +1,4 @@
+import { ROYAL_COURT_EVENTS } from './royalCourtEvents';
 import { CAREER_SPECIALIZATION_EVENTS } from './careerSpecializationEvents';
 import { EDUCATION_EVENTS, ORIGIN_CHILDHOOD_EVENTS } from './educationEvents';
 import { COMBAT_EVENTS } from './combatEvents';
@@ -27,6 +28,7 @@ import { ACTIVITY_CONSEQUENCE_EVENTS } from './activityConsequenceEvents';
 import { LEGAL_SYSTEM_EVENTS } from '@/engine/legalEngine';
 
 const RAW_EVENTS: GameEvent[] = [
+  ...ROYAL_COURT_EVENTS,
   ...CAREER_SPECIALIZATION_EVENTS,
   ...EDUCATION_EVENTS, ...ORIGIN_CHILDHOOD_EVENTS,
   ...COMBAT_EVENTS,

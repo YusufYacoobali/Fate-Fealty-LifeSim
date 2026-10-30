@@ -71,6 +71,11 @@ export function directYear(state: GameState): DirectedYear {
     return { event: professionalEvent, kind: 'thread', isLegal: false };
   }
 
+  if (state.lifetimeUnlocked && state.world.court?.rulerId === state.playerCharacterId && state.world.court.scandals.some(s => !s.resolved)) {
+    recordBeat(state, 'thread');
+    return { event: eventById('royal_creative_accounts')!, kind: 'thread', isLegal: false };
+  }
+
   const closing = nearingEnd(state);
   if (closing) hastenThreads(state);
 

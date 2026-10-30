@@ -27,6 +27,7 @@ interface RankVM {
 }
 
 interface RankClimbVM {
+  route?: string;
   from: string;
   to: string;
   progress: number;

@@ -1,3 +1,5 @@
+import { CourtAction, courtAvailability, performCourtAction, reconcileCourt } from '@/engine/courtEngine';
+import type { CourtOffice } from '@/types/game';
 import { EducationAction, educationAvailability, performEducationAction } from '@/engine/educationEngine';
 import type { EducationTrackId } from '@/types/game';
 /**
@@ -38,6 +40,7 @@ import { beginForge, closeForge, finishForge, startForge, strikeForge } from '@/
 import { resolveTradeChoice } from '@/engine/tradeJourney';
 
 export type GameAction =
+  | { type: 'COURT'; action: CourtAction; targetId?: string; office?: CourtOffice }
   | { type: 'EDUCATION'; action: EducationAction; track?: EducationTrackId }
   | { type: 'FORGE_START'; task: ForgeTask; revision: number }
   | { type: 'FORGE_BEGIN'; id: string }
@@ -72,12 +75,12 @@ export type GameAction =
   | { type: 'CLOSE_SETTINGS' }
   | { type: 'TOGGLE_AUTOSCROLL' }
   | { type: 'SET_SETTINGS'; settings: Partial<GameSettings> }
-  | { type: 'SET_LIFETIME_UNLOCKED'; unlocked: boolean }
+  | { type: 'SET_LIFETIME_UNLOCKED'; unlocked: boolean; nextLifeUnlocked?: boolean }
   | { type: 'CLAIM_DAILY_REWARD'; gold: number; streak: number; bonus?: DailyRewardBonus; bonusAmount?: number; itemId?: string }
   | { type: 'DUEL_RESPOND'; responseId: string }
   | { type: 'DUEL_CLOSE' }
   | { type: 'NEW_LIFE'; options?: NewLifeOptions }
-  | { type: 'CONTINUE_AS_HEIR'; heirId?: string };
+  | { type: 'CONTINUE_AS_HEIR'; heirId?: string; lifetimeUnlocked?: boolean };
 
 /** Choices captured by the character-creation screen. */
 export interface NewLifeOptions {
@@ -113,6 +116,8 @@ function timed(
 
 function finishEngineTransaction(state: GameState): GameState {
   if (state.dead) { state.rpg.forge = null; state.rpg.mission = null; state.rpg.expedition = null; }
+  syncPlayerToWorld(state);
+  reconcileCourt(state);
   refreshWorkBoard(state);
   syncKinToWorld(state);
   return syncPlayerToWorld(state);
@@ -232,6 +237,8 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       );
     }
 
+    case 'COURT': return timed(state, s => courtAvailability(s, action.action, action.targetId, action.office) === null, s => performCourtAction(s, action.action, action.targetId, action.office));
+
     case 'EDUCATION': return timed(state, s => educationAvailability(s, action.action, action.track) === null, s => performEducationAction(s, action.action, action.track));
 
     case 'BUY': {
@@ -313,6 +320,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     case 'SET_LIFETIME_UNLOCKED': {
       const s = cloneState(state);
       s.lifetimeUnlocked = action.unlocked;
+      s.nextLifePremiumAccess = action.nextLifeUnlocked ?? action.unlocked;
       s.settings = proLockedSettings(s.settings, action.unlocked);
       return syncActionLimit(s);
     }
@@ -379,7 +387,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
     case 'CONTINUE_AS_HEIR': {
       const s = cloneState(state);
-      return runWithWorldRng(s.world, () => continueAsHeir(s, action.heirId));
+      return runWithWorldRng(s.world, () => continueAsHeir(s, action.heirId, action.lifetimeUnlocked ?? s.nextLifePremiumAccess ?? s.lifetimeUnlocked));
     }
 
     default:

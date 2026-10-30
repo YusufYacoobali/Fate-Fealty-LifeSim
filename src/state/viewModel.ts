@@ -1,3 +1,4 @@
+import { BIRTH_ORIGINS } from '@/data/birthOrigins';
 /**
  * Pure selectors that turn GameState into the small, display-ready shapes the
  * UI components consume. Keeping this logic here keeps components dumb.
@@ -77,6 +78,8 @@ export function selectRankClimb(s: GameState) {
   const next = RANKS[s.rankIdx + 1];
   if (!current || !next) return null;
 
+  const player = s.world.characters[s.playerCharacterId];
+  const requiredRoute = s.rankIdx >= 4 ? 'Succession or council recognition' : s.rankIdx >= 2 ? 'Formal royal grant' : 'Martial training and service';
   const req = next.promote;
   const readiness = [req.progress > 0 ? s.rankProgress / req.progress : 1];
   if (req.minAge > 0) readiness.push(s.age / req.minAge);
@@ -89,21 +92,29 @@ export function selectRankClimb(s: GameState) {
 
   return {
     from: current.short,
+    route: requiredRoute,
     to: next.short,
-    progress: Math.round(Math.max(0, Math.min(1, ...readiness)) * 100),
+    progress: s.rankIdx >= 2 || !player.education?.qualifications.includes('martial_training') || careerById(s.occupation.careerId)?.family !== 'martial' ? 0 : Math.round(Math.max(0, Math.min(1, ...readiness)) * 100),
     locked: !!next.premium && !s.lifetimeUnlocked,
   };
 }
 
 export function currentRank(s: GameState) {
-  return RANKS[s.rankIdx];
+  const rank = RANKS[s.rankIdx];
+  const player = s.world.characters[s.playerCharacterId];
+  if (s.rankIdx === 0 && player?.socialStatus?.estate === 'commoner') return { ...rank, short: 'COMMONER', key: 'Commoner' as typeof rank.key };
+  if (s.rankIdx === 3 && player?.socialStatus?.estate === 'royal') return { ...rank, short: 'ROYAL KIN', key: 'Royal kin' as typeof rank.key };
+  return rank;
 }
 
 export function selectBio(s: GameState): string {
   const rank = currentRank(s);
   const career = careerById(s.occupation.careerId)?.title ?? 'unemployed wanderer';
   const debt = s.debts.reduce((sum, item) => sum + item.principal, 0);
-  return `${s.first} ${s.epithet}, a ${rank.key.toLowerCase()} of Swineford and ${career}, ${s.age} winters old. Owns ${s.gold} gold${debt ? ` and owes ${debt}` : ''}, one goose, and a complicated history with apples.`;
+  const player = s.world.characters[s.playerCharacterId];
+  const origin = BIRTH_ORIGINS.find(o => o.id === player.background?.origin)?.name ?? 'Unknown';
+  const office = Object.entries(s.world.court?.offices ?? {}).find(([, id]) => id === player.id)?.[0];
+  return `${s.first} ${s.epithet}, a ${rank.key.toLowerCase()} of Swineford and ${career}, ${s.age} winters old. Born to a ${origin.toLowerCase()} household${office ? `; appointed ${office.replaceAll('_', ' ')}` : ''}. Owns ${s.gold} gold${debt ? ` and owes ${debt}` : ''}. ${player.education?.qualifications.length ? `Learning: ${player.education.qualifications.map(q => q.replaceAll('_', ' ')).join(', ')}.` : 'No formal qualifications; later study remains open.'}`;
 }
 
 export function fullName(s: GameState): string {

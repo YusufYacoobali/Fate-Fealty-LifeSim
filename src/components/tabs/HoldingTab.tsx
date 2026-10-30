@@ -1,3 +1,4 @@
+import { CourtPanel } from './CourtPanel';
 import { HoldingExpansionPanel } from '../rpg/RpgPanels';
 import React from 'react';
 import { Image, ScrollView, View } from 'react-native';
@@ -87,6 +88,7 @@ export function HoldingTab({ state, onAction, onUpgrade, onToggleVillage }: Prop
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={{ padding: 11, paddingBottom: 18 }}
     >
+      <CourtPanel state={state} />
       {/* Swineford leads: the estate below only makes sense against the village
           it sits in. Collapsible, because most years it needs no attention. */}
       <View style={{ marginBottom: 12 }}>

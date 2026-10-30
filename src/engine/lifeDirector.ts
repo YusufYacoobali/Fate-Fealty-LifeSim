@@ -1,3 +1,4 @@
+import { tickCourt } from './courtEngine';
 import { tickEducation } from './educationEngine';
 /**
  * The Life Director — the heartbeat of the game. Each call to `ageUp` advances
@@ -89,6 +90,7 @@ export function ageUp(s: GameState): GameState {
   tickPersistentSociety(s);
   tickWorldConditions(s);
   tickFactions(s);
+  tickCourt(s);
   tickEducation(s);
   tickLegalSystem(s);
   resolveScheduledConsequences(s);

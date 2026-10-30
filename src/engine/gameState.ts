@@ -1,3 +1,4 @@
+import { initializeCourt } from './courtEngine';
 import { initializeBirthOrigin } from './birthOriginEngine';
 import { initializeLifeDepth } from './lifeDepthState';
 import { freshRpg, freshSkills } from '@/data/rpg';
@@ -156,6 +157,7 @@ export function createLife(opts: FreshLifeOptions = {}): GameState {
   created.value.world.rngState = created.rngState;
   for (const person of Object.values(created.value.world.characters)) person.skills ??= freshSkills();
   initializeLifeDepth(created.value);
+  initializeCourt(created.value);
   return created.value;
 }
 

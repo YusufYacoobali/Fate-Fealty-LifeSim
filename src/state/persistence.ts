@@ -1,3 +1,4 @@
+import { initializeCourt } from '@/engine/courtEngine';
 import { initializeLifeDepth } from '@/engine/lifeDepthState';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GameSettings, GameState, KinMember, Relationship } from '@/types/game';
@@ -79,6 +80,7 @@ export async function loadGame(): Promise<LoadGameResult> {
     parsed.settingsOpen = false;
     parsed.selectedKinId = null;
     parsed.lifetimeUnlocked = false;
+    parsed.nextLifePremiumAccess = false;
     return { state: parsed, blockedByFutureVersion: false };
   } catch (e) {
     console.warn('[persistence] load failed; preserving unreadable save', e);
@@ -279,6 +281,7 @@ export function normalizeGameState(parsed: GameState): GameState {
     },
   };
   initializeLifeDepth(normalized);
+  initializeCourt(normalized);
   normalizeRpg(normalized);
   upgradeDuel(normalized);
   if (normalized.rpg.mission?.phase === 'combat' && !normalized.duel) {

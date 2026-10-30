@@ -594,6 +594,7 @@ export interface HoldingUpgradeDef {
 // ---------------------------------------------------------------------------
 
 export interface Effects {
+  courtScandal?: 'investigate' | 'cover' | 'scapegoat' | 'dismiss';
   professional?: { family: CareerFamily; caseId: string; stage: 'approach' | 'finish'; choice: number };
   education?: { progress?: number; misconduct?: number; mentorBond?: number; peerBond?: number; scholarship?: boolean; dismiss?: boolean };
   skillXp?: Partial<Record<import('./rpg').SkillId, number>>;
@@ -1004,6 +1005,8 @@ export interface GameState {
   // --- premium entitlement (field name kept for save compatibility; granted
   // by a subscription or the Lifetime Pass) ---
   lifetimeUnlocked: boolean;
+  /** Access for a continuation; the first-life sample is not hereditary. */
+  nextLifePremiumAccess?: boolean;
 
   // --- meta ---
   doCat: ActivityCategory | 'all';

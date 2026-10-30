@@ -57,6 +57,8 @@ export interface RoyalClaim {
   disinherited: boolean;
 }
 export interface CourtState {
+  formerRegentId?: string;
+  lastActionYears?: Record<string, number>;
   rulerId: string;
   heirId?: string;
   regentId?: string;
@@ -68,5 +70,5 @@ export interface CourtState {
   actionsYear: number;
   actionsUsed: number;
   records: { year: number; kind: string; actorId: string; targetId?: string; detail: string }[];
-  scandals: { office: CourtOffice; actorId: string; amount: number; exposed: boolean }[];
+  scandals: { office: CourtOffice; actorId: string; amount: number; exposed: boolean; resolved?: boolean }[];
 }

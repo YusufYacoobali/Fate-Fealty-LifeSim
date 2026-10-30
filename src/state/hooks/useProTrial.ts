@@ -55,10 +55,11 @@ export function useProTrial(
 
     // The game state mirrors the combined answer; every content gate reads it.
     const unlocked = entitled || resolution.active;
-    if (state.lifetimeUnlocked !== unlocked) {
-      dispatch({ type: 'SET_LIFETIME_UNLOCKED', unlocked });
+    const nextLifeUnlocked = entitled || (!resolution.active && !metaRef.current.proTrialUsed);
+    if (state.lifetimeUnlocked !== unlocked || state.nextLifePremiumAccess !== nextLifeUnlocked) {
+      dispatch({ type: 'SET_LIFETIME_UNLOCKED', unlocked, nextLifeUnlocked });
     }
-  }, [state.lifeNo, state.lifetimeUnlocked, loaded, ready, entitled, metaRef, update, dispatch]);
+  }, [state.lifeNo, state.lifetimeUnlocked, state.nextLifePremiumAccess, loaded, ready, entitled, metaRef, update, dispatch]);
 
   const premiumUnlocked = entitled || trialActive;
 

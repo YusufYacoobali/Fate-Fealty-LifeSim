@@ -65,3 +65,40 @@ it('seeded households vary without losing genealogy, and every origin has three 
   expect([...seen]).toEqual(expect.arrayContaining(['struggling_trade', 'thriving_workshop', 'cash_poor_estate', 'disgraced_service', 'divided_palace', 'surviving_parent', 'relative_guardians']));
   expect(careers.size).toBeGreaterThan(8);
 });
+
+it('relative guardians are actual aunts or uncles in the family tree, with reciprocal genealogy and romance protection', () => {
+  const { kinshipTo } = require('@/engine/kinship');
+  const { courtshipUnavailableReason } = require('@/engine/relationshipEngine');
+  const { worldIntegrityIssues } = require('@/engine/worldIntegrity');
+  const { normalizeGameState } = require('@/state/persistence');
+  let checked = 0;
+  for (let seed = 1; seed <= 250; seed++) {
+    const s = createLife({ worldSeed: seed,birthOrigin: 'peasant' });
+    const p = s.world.characters[s.playerCharacterId];
+    if (p.background!.circumstance !== 'relative_guardians') continue;
+    const relativeId = p.guardianIds!.find(id => !p.parentIds!.includes(id))!, relative = s.world.characters[relativeId];
+    const parent = p.parentIds!.map(id => s.world.characters[id]).find(c => c.alive)!;
+    const grandparentId = relative.parentIds!.find(id => parent.parentIds!.includes(id))!;
+    expect(s.world.characters[grandparentId].childIds).toEqual(expect.arrayContaining([relative.id,parent.id]));
+    const grandparent = s.world.characters[grandparentId], bornYear = (grandparent.deathYear ?? s.world.currentYear) - grandparent.age;
+    for (const child of [parent,relative]) { const ageAtBirth = s.world.currentYear - child.age - bornYear; expect(ageAtBirth).toBeGreaterThanOrEqual(16); expect(ageAtBirth).toBeLessThanOrEqual(45); }
+    expect(relative.birthFamilyId).toBe(parent.birthFamilyId); expect(relative.householdId).toBe(p.householdId);
+    expect(kinshipTo(s,relativeId)).toMatch(/aunt|uncle/);
+    s.age = 20; expect(courtshipUnavailableReason(s,relative)).toMatch(/close relative/);
+    expect(worldIntegrityIssues(s)).toEqual([]);
+    const loaded = normalizeGameState(JSON.parse(JSON.stringify(s)));
+    expect(kinshipTo(loaded,relativeId)).toBe(kinshipTo(s,relativeId));
+    expect(loaded.world.rngState).toEqual(s.world.rngState);
+    checked++;
+  }
+  expect(checked).toBeGreaterThan(0);
+});
+it('early childhood narration never has a deceased guardian perform present-day care', () => {
+  const { eventById } = require('@/engine/eventPicker');
+  const s = createLife({ worldSeed: 301,birthOrigin: 'peasant' }); s.age = 2;
+  s.world.characters.mother.name = 'Deceased Mother'; s.world.characters.mother.alive = false;
+  s.world.characters.father.name = 'Deceased Father'; s.world.characters.father.alive = false;
+  s.world.characters[s.playerCharacterId].guardianIds = ['mother','father'];
+  const event = eventById('household_first_words')!;
+  expect(event.text(s)).not.toMatch(/Deceased Mother|Deceased Father/);
+});

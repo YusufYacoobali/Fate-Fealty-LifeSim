@@ -200,7 +200,7 @@ ORIGIN_CHILDHOOD_EVENTS.filter(e => e.id.includes('_extra_')).forEach((event,i) 
 // A bereaved or unusual household still has ordinary early childhood years.
 ORIGIN_CHILDHOOD_EVENTS.push(
   { id: 'household_first_words', title: 'THE FIRST HOUSEHOLD WORDS', category: 'child', domain: 'family', ageMin: 1, ageMax: 4, once: true,
-    text: s => `${s.world.characters[s.world.characters[s.playerCharacterId].guardianIds?.find(id => s.world.characters[id]?.alive) ?? 'mother']?.name ?? 'Your guardian'} counts cups at supper. You repeat the word for cup with greater confidence than accuracy.`,
+    text: s => { const id = s.world.characters[s.playerCharacterId].guardianIds?.find(id => s.world.characters[id]?.alive); const guardian = id ? s.world.characters[id] : undefined; return `${guardian?.name ?? 'Someone caring for you'} counts cups at supper. You repeat the word for cup with greater confidence than accuracy.`; },
     choices: [
       { label: 'Count the cups together', outcome: { text: 'Your household gains a small voice in its nightly accounting. The cups remain easier to count than the debts.', effects: { wits: 1, householdLesson: { contactBond: 2 } }, tone: 'good' } },
       { label: 'Insist the cat is also a cup', outcome: { text: 'The cat refuses to join the crockery. Your household repeats the word more slowly.', effects: { charm: 1 }, tone: 'plain' } },

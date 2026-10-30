@@ -1,10 +1,40 @@
 import { unlinkSpouse } from './characterState';
-import type { Effects, GameState, NpcAmbition } from '@/types/game';
+import type { Effects, GameState, NpcAmbition, WorldCharacter } from '@/types/game';
 import { chance, clamp, pick, rnd } from './random';
 import { spawnKin } from './kinFactory';
 import { applyRelationshipShift } from './relationshipState';
 import { CAREERS } from '@/data/careers';
 import { appendFamilyMemory } from './worldJournal';
+
+/** Link a newly created guardian into the actual maternal/paternal family tree. */
+function linkRelativeGuardian(state: GameState, parent: WorldCharacter, guardian: WorldCharacter): void {
+  const family = state.world.families[parent.birthFamilyId!];
+  const household = state.world.households.find(h => h.id === parent.householdId)!;
+  let grandparent = (parent.parentIds ?? []).map(id => state.world.characters[id]).find(Boolean);
+  if (!grandparent) {
+    const yearsDeceased = rnd(3,8);
+    grandparent = spawnKin(state,{ kind: 'acquaintance',age: Math.max(parent.age,guardian.age) + rnd(20,30) - yearsDeceased,role: 'Late grandparent',bio: `The late parent of ${parent.name} and ${guardian.name}.` });
+    grandparent.alive = false; grandparent.deathYear = state.world.currentYear - yearsDeceased; grandparent.deathCause = 'natural causes before your birth';
+    parent.parentIds = [...(parent.parentIds ?? []),grandparent.id];
+  }
+  guardian.parentIds = [...new Set([...(guardian.parentIds ?? []),grandparent.id])];
+  grandparent.childIds = [...new Set([...(grandparent.childIds ?? []),parent.id,guardian.id])];
+  for (const person of [guardian,grandparent]) {
+    const former = state.world.families[person.birthFamilyId ?? ''];
+    if (former && former.id !== family.id) { former.memberIds = former.memberIds.filter(id => id !== person.id); if (!former.memberIds.length) delete state.world.families[former.id]; }
+    person.birthFamilyId = family.id; family.memberIds = [...new Set([...family.memberIds,person.id])];
+    if (person.background) person.background.familyId = family.id;
+    const oldHouse = state.world.households.find(h => h.id === person.householdId);
+    if (oldHouse && oldHouse.id !== household.id) { oldHouse.memberIds = oldHouse.memberIds.filter(id => id !== person.id); if (!oldHouse.memberIds.length) state.world.households = state.world.households.filter(h => h.id !== oldHouse.id); }
+    person.householdId = household.id; household.memberIds = [...new Set([...household.memberIds,person.id])];
+    if (parent.socialStatus?.estate === 'noble') { person.rankIdx = 3; person.socialStatus = { estate: 'noble',martialHonour: 'none',titles: ['Noble kin'],grants: ['birthright'] }; }
+    const relation = applyRelationshipShift(state,person.id,{ affinity: 5 },{ affinity: 5 });
+    relation.flags = [...new Set([...relation.flags,'family' as const])];
+  }
+  guardian.role = `${guardian.gender === 'woman' ? 'Aunt' : guardian.gender === 'man' ? 'Uncle' : 'Relative'} · household guardian`;
+  guardian.ambition = 'protect_family';
+  guardian.bio = `${guardian.name} is ${parent.name}'s sibling and shares the care of their child. Their family relationship is recorded through ${grandparent.name}.`;
+}
 
 /** Called only inside seeded birth creation, never migration. */
 export function varyBirthHousehold(state: GameState, inheritedGold = 0): void {
@@ -40,11 +70,8 @@ export function varyBirthHousehold(state: GameState, inheritedGold = 0): void {
     p.guardianIds = [survivor.id]; household.headId = survivor.id;
     circumstance = 'surviving_parent';
     if (chance(0.35)) {
-      const guardian = spawnKin(state, { kind: 'acquaintance', age: rnd(28, 52), role: 'Aunt or uncle · household guardian', bio: `A relative sharing the care of ${p.name} with ${survivor.name}.` });
-      // The relative joins the existing household, preserving canonical birth parents.
-      const old = state.world.households.find(h => h.id === guardian.householdId);
-      if (old) old.memberIds = old.memberIds.filter(id => id !== guardian.id);
-      guardian.householdId = household.id; household.memberIds.push(guardian.id);
+      const guardian = spawnKin(state, { kind: 'acquaintance', age: rnd(Math.max(18,survivor.age - 6),survivor.age + 10), role: 'Aunt or uncle · household guardian', bio: `A relative sharing the care of ${p.name} with ${survivor.name}.` });
+      linkRelativeGuardian(state,survivor,guardian);
       p.guardianIds.push(guardian.id); circumstance = 'relative_guardians';
     }
   }
@@ -72,16 +99,17 @@ export function varyBirthHousehold(state: GameState, inheritedGold = 0): void {
   for (const relation of Object.values(state.world.relationships)) relation.interactionsThisYear = 0;
   p.bio = state.feed[0].text;
 }
-export function birthBindings(state: GameState): Record<string, string> {
+export function birthBindings(state: GameState, householdLesson = false): Record<string, string> {
   const p = state.world.characters[state.playerCharacterId];
-  const guardian = p.guardianIds?.find(id => state.world.characters[id]?.alive) ?? 'mother';
-  const contact = p.background?.contactId ?? guardian;
-  return { guardian, contact, mother: 'mother', father: 'father' };
+  const adult = (id: string) => state.world.characters[id]?.alive && state.world.characters[id].age >= 18;
+  const guardian = p.guardianIds?.find(adult) ?? state.world.households.find(h => h.id === p.householdId)?.memberIds.find(id => id !== p.id && adult(id));
+  const contact = householdLesson ? guardian : p.background?.contactId && adult(p.background.contactId) ? p.background.contactId : guardian;
+  return { ...(guardian ? { guardian } : {}), ...(contact ? { contact } : {}), mother: 'mother', father: 'father' };
 }
 export function applyHouseholdLesson(state: GameState, effect: NonNullable<Effects['householdLesson']>): void {
   const p = state.world.characters[state.playerCharacterId], household = state.world.households.find(h => h.id === p.householdId);
   if (household) household.wealth = Math.max(0, household.wealth + (effect.wealth ?? 0));
-  const contactId = p.background?.contactId;
+  const contactId = state.pendingEvent?.bindings?.contact ?? p.background?.contactId;
   if (contactId && state.world.characters[contactId]?.alive && effect.contactBond) applyRelationshipShift(state, contactId, { trust: effect.contactBond }, { trust: effect.contactBond, affinity: effect.contactBond });
   if (effect.progress && p.education?.track) p.education.progress = clamp(p.education.progress + effect.progress);
 }

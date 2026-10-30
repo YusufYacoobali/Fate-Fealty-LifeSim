@@ -142,6 +142,7 @@ export function directYear(state: GameState): DirectedYear {
 
 /** Bind actors for the chosen event, reusing a thread's existing cast. */
 export function bindDirectedEvent(state: GameState, directed: DirectedYear): Record<string, string> | undefined {
+  if (directed.event && ['household_first_words','household_rainy_roof'].includes(directed.event.id)) return birthBindings(state,true);
   if (directed.event?.id.startsWith('origin_child_')) return birthBindings(state);
   if (directed.event?.id.startsWith('profession_') || directed.event?.id.startsWith('practice_')) return bindProfessionalEvent(state, directed.event.id);
   if (directed.event?.id.startsWith('education_')) {

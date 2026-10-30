@@ -19,12 +19,12 @@ import { ROLE_STORY_COPY } from './stories/roles';
 import { RELATIONSHIP_STORY_COPY } from './stories/relationships';
 import { DOMAIN_STORY_COPY } from './stories/domains';
 
-/** Substitutes `{{role.name}}` for whoever is bound to that story role. */
+/** Both `{{role}}` and `{{role.name}}` name the saved actor; `.role` reads their role. */
 export function renderBoundText(state: GameState, source: string): string {
   const bindings = state.pendingEvent?.bindings ?? {};
-  return source.replace(/\{\{(\w+)\.(name|role)\}\}/g, (_match, role: string, field: 'name' | 'role') => {
-    const character = state.world.characters[bindings[role]];
-    return character?.[field] ?? 'someone once known in Swineford';
+  return source.replace(/\{\{(\w+)(?:\.(name|role))?\}\}/g, (_match, role: string, field?: 'name' | 'role') => {
+    const character = state.world.characters[role === 'player' ? state.playerCharacterId : bindings[role]];
+    return character?.[field ?? 'name'] ?? 'someone once known in Swineford';
   });
 }
 

@@ -1,0 +1,932 @@
+[
+  {
+    "screen": "education",
+    "scaled": 67,
+    "width": 280,
+    "scrollWidth": 280,
+    "nav": [
+      {
+        "label": "LIFE",
+        "width": 45.328125,
+        "height": 63.40625,
+        "textLeft": 5.0625,
+        "textRight": 48.25,
+        "left": 4,
+        "right": 49.328125
+      },
+      {
+        "label": "DO",
+        "width": 45.34375,
+        "height": 63.40625,
+        "textLeft": 61.203125,
+        "textRight": 82.796875,
+        "left": 49.328125,
+        "right": 94.671875
+      },
+      {
+        "label": "PEOPLE",
+        "width": 45.328125,
+        "height": 63.40625,
+        "textLeft": 95.671875,
+        "textRight": 139,
+        "left": 94.671875,
+        "right": 140
+      },
+      {
+        "label": "HOLD",
+        "width": 45.34375,
+        "height": 63.40625,
+        "textLeft": 141.078125,
+        "textRight": 184.265625,
+        "left": 140,
+        "right": 185.34375
+      },
+      {
+        "label": "SHOP",
+        "width": 45.328125,
+        "height": 63.40625,
+        "textLeft": 186.40625,
+        "textRight": 229.59375,
+        "left": 185.34375,
+        "right": 230.671875
+      },
+      {
+        "label": "ME",
+        "width": 45.328125,
+        "height": 63.40625,
+        "textLeft": 242.53125,
+        "textRight": 264.125,
+        "left": 230.671875,
+        "right": 276
+      }
+    ]
+  },
+  {
+    "screen": "career",
+    "scaled": 67,
+    "width": 280,
+    "scrollWidth": 280,
+    "nav": [
+      {
+        "label": "LIFE",
+        "width": 45.328125,
+        "height": 63.40625,
+        "textLeft": 5.0625,
+        "textRight": 48.25,
+        "left": 4,
+        "right": 49.328125
+      },
+      {
+        "label": "DO",
+        "width": 45.34375,
+        "height": 63.40625,
+        "textLeft": 61.203125,
+        "textRight": 82.796875,
+        "left": 49.328125,
+        "right": 94.671875
+      },
+      {
+        "label": "PEOPLE",
+        "width": 45.328125,
+        "height": 63.40625,
+        "textLeft": 95.671875,
+        "textRight": 139,
+        "left": 94.671875,
+        "right": 140
+      },
+      {
+        "label": "HOLD",
+        "width": 45.34375,
+        "height": 63.40625,
+        "textLeft": 141.078125,
+        "textRight": 184.265625,
+        "left": 140,
+        "right": 185.34375
+      },
+      {
+        "label": "SHOP",
+        "width": 45.328125,
+        "height": 63.40625,
+        "textLeft": 186.40625,
+        "textRight": 229.59375,
+        "left": 185.34375,
+        "right": 230.671875
+      },
+      {
+        "label": "ME",
+        "width": 45.328125,
+        "height": 63.40625,
+        "textLeft": 242.53125,
+        "textRight": 264.125,
+        "left": 230.671875,
+        "right": 276
+      }
+    ]
+  },
+  {
+    "screen": "court",
+    "scaled": 160,
+    "width": 280,
+    "scrollWidth": 280,
+    "nav": [
+      {
+        "label": "LIFE",
+        "width": 45.328125,
+        "height": 63.40625,
+        "textLeft": 5.0625,
+        "textRight": 48.25,
+        "left": 4,
+        "right": 49.328125
+      },
+      {
+        "label": "DO",
+        "width": 45.34375,
+        "height": 63.40625,
+        "textLeft": 61.203125,
+        "textRight": 82.796875,
+        "left": 49.328125,
+        "right": 94.671875
+      },
+      {
+        "label": "PEOPLE",
+        "width": 45.328125,
+        "height": 63.40625,
+        "textLeft": 95.671875,
+        "textRight": 139,
+        "left": 94.671875,
+        "right": 140
+      },
+      {
+        "label": "HOLD",
+        "width": 45.34375,
+        "height": 63.40625,
+        "textLeft": 141.078125,
+        "textRight": 184.265625,
+        "left": 140,
+        "right": 185.34375
+      },
+      {
+        "label": "SHOP",
+        "width": 45.328125,
+        "height": 63.40625,
+        "textLeft": 186.40625,
+        "textRight": 229.59375,
+        "left": 185.34375,
+        "right": 230.671875
+      },
+      {
+        "label": "ME",
+        "width": 45.328125,
+        "height": 63.40625,
+        "textLeft": 242.53125,
+        "textRight": 264.125,
+        "left": 230.671875,
+        "right": 276
+      }
+    ]
+  },
+  {
+    "screen": "education",
+    "scaled": 66,
+    "width": 320,
+    "scrollWidth": 320,
+    "nav": [
+      {
+        "label": "LIFE",
+        "width": 52,
+        "height": 63.40625,
+        "textLeft": 8.40625,
+        "textRight": 51.59375,
+        "left": 4,
+        "right": 56
+      },
+      {
+        "label": "DO",
+        "width": 52,
+        "height": 63.40625,
+        "textLeft": 71.203125,
+        "textRight": 92.796875,
+        "left": 56,
+        "right": 108
+      },
+      {
+        "label": "PEOPLE",
+        "width": 52,
+        "height": 63.40625,
+        "textLeft": 109,
+        "textRight": 159,
+        "left": 108,
+        "right": 160
+      },
+      {
+        "label": "HOLD",
+        "width": 52,
+        "height": 63.40625,
+        "textLeft": 164.40625,
+        "textRight": 207.59375,
+        "left": 160,
+        "right": 212
+      },
+      {
+        "label": "SHOP",
+        "width": 52,
+        "height": 63.40625,
+        "textLeft": 216.40625,
+        "textRight": 259.59375,
+        "left": 212,
+        "right": 264
+      },
+      {
+        "label": "ME",
+        "width": 52,
+        "height": 63.40625,
+        "textLeft": 279.203125,
+        "textRight": 300.796875,
+        "left": 264,
+        "right": 316
+      }
+    ]
+  },
+  {
+    "screen": "career",
+    "scaled": 67,
+    "width": 320,
+    "scrollWidth": 320,
+    "nav": [
+      {
+        "label": "LIFE",
+        "width": 52,
+        "height": 63.40625,
+        "textLeft": 8.40625,
+        "textRight": 51.59375,
+        "left": 4,
+        "right": 56
+      },
+      {
+        "label": "DO",
+        "width": 52,
+        "height": 63.40625,
+        "textLeft": 71.203125,
+        "textRight": 92.796875,
+        "left": 56,
+        "right": 108
+      },
+      {
+        "label": "PEOPLE",
+        "width": 52,
+        "height": 63.40625,
+        "textLeft": 109,
+        "textRight": 159,
+        "left": 108,
+        "right": 160
+      },
+      {
+        "label": "HOLD",
+        "width": 52,
+        "height": 63.40625,
+        "textLeft": 164.40625,
+        "textRight": 207.59375,
+        "left": 160,
+        "right": 212
+      },
+      {
+        "label": "SHOP",
+        "width": 52,
+        "height": 63.40625,
+        "textLeft": 216.40625,
+        "textRight": 259.59375,
+        "left": 212,
+        "right": 264
+      },
+      {
+        "label": "ME",
+        "width": 52,
+        "height": 63.40625,
+        "textLeft": 279.203125,
+        "textRight": 300.796875,
+        "left": 264,
+        "right": 316
+      }
+    ]
+  },
+  {
+    "screen": "court",
+    "scaled": 160,
+    "width": 320,
+    "scrollWidth": 320,
+    "nav": [
+      {
+        "label": "LIFE",
+        "width": 52,
+        "height": 63.40625,
+        "textLeft": 8.40625,
+        "textRight": 51.59375,
+        "left": 4,
+        "right": 56
+      },
+      {
+        "label": "DO",
+        "width": 52,
+        "height": 63.40625,
+        "textLeft": 71.203125,
+        "textRight": 92.796875,
+        "left": 56,
+        "right": 108
+      },
+      {
+        "label": "PEOPLE",
+        "width": 52,
+        "height": 63.40625,
+        "textLeft": 109,
+        "textRight": 159,
+        "left": 108,
+        "right": 160
+      },
+      {
+        "label": "HOLD",
+        "width": 52,
+        "height": 63.40625,
+        "textLeft": 164.40625,
+        "textRight": 207.59375,
+        "left": 160,
+        "right": 212
+      },
+      {
+        "label": "SHOP",
+        "width": 52,
+        "height": 63.40625,
+        "textLeft": 216.40625,
+        "textRight": 259.59375,
+        "left": 212,
+        "right": 264
+      },
+      {
+        "label": "ME",
+        "width": 52,
+        "height": 63.40625,
+        "textLeft": 279.203125,
+        "textRight": 300.796875,
+        "left": 264,
+        "right": 316
+      }
+    ]
+  },
+  {
+    "screen": "education",
+    "scaled": 67,
+    "width": 390,
+    "scrollWidth": 390,
+    "nav": [
+      {
+        "label": "LIFE",
+        "width": 63.65625,
+        "height": 63.40625,
+        "textLeft": 14.234375,
+        "textRight": 57.421875,
+        "left": 4,
+        "right": 67.65625
+      },
+      {
+        "label": "DO",
+        "width": 63.671875,
+        "height": 63.40625,
+        "textLeft": 88.6875,
+        "textRight": 110.28125,
+        "left": 67.65625,
+        "right": 131.328125
+      },
+      {
+        "label": "PEOPLE",
+        "width": 63.65625,
+        "height": 63.40625,
+        "textLeft": 132.328125,
+        "textRight": 193.984375,
+        "left": 131.328125,
+        "right": 194.984375
+      },
+      {
+        "label": "HOLD",
+        "width": 63.671875,
+        "height": 63.40625,
+        "textLeft": 205.21875,
+        "textRight": 248.40625,
+        "left": 194.984375,
+        "right": 258.65625
+      },
+      {
+        "label": "SHOP",
+        "width": 63.671875,
+        "height": 63.40625,
+        "textLeft": 268.890625,
+        "textRight": 312.078125,
+        "left": 258.65625,
+        "right": 322.328125
+      },
+      {
+        "label": "ME",
+        "width": 63.671875,
+        "height": 63.40625,
+        "textLeft": 343.359375,
+        "textRight": 364.953125,
+        "left": 322.328125,
+        "right": 386
+      }
+    ]
+  },
+  {
+    "screen": "career",
+    "scaled": 67,
+    "width": 390,
+    "scrollWidth": 390,
+    "nav": [
+      {
+        "label": "LIFE",
+        "width": 63.65625,
+        "height": 63.40625,
+        "textLeft": 14.234375,
+        "textRight": 57.421875,
+        "left": 4,
+        "right": 67.65625
+      },
+      {
+        "label": "DO",
+        "width": 63.671875,
+        "height": 63.40625,
+        "textLeft": 88.6875,
+        "textRight": 110.28125,
+        "left": 67.65625,
+        "right": 131.328125
+      },
+      {
+        "label": "PEOPLE",
+        "width": 63.65625,
+        "height": 63.40625,
+        "textLeft": 132.328125,
+        "textRight": 193.984375,
+        "left": 131.328125,
+        "right": 194.984375
+      },
+      {
+        "label": "HOLD",
+        "width": 63.671875,
+        "height": 63.40625,
+        "textLeft": 205.21875,
+        "textRight": 248.40625,
+        "left": 194.984375,
+        "right": 258.65625
+      },
+      {
+        "label": "SHOP",
+        "width": 63.671875,
+        "height": 63.40625,
+        "textLeft": 268.890625,
+        "textRight": 312.078125,
+        "left": 258.65625,
+        "right": 322.328125
+      },
+      {
+        "label": "ME",
+        "width": 63.671875,
+        "height": 63.40625,
+        "textLeft": 343.359375,
+        "textRight": 364.953125,
+        "left": 322.328125,
+        "right": 386
+      }
+    ]
+  },
+  {
+    "screen": "court",
+    "scaled": 160,
+    "width": 390,
+    "scrollWidth": 390,
+    "nav": [
+      {
+        "label": "LIFE",
+        "width": 63.65625,
+        "height": 63.40625,
+        "textLeft": 14.234375,
+        "textRight": 57.421875,
+        "left": 4,
+        "right": 67.65625
+      },
+      {
+        "label": "DO",
+        "width": 63.671875,
+        "height": 63.40625,
+        "textLeft": 88.6875,
+        "textRight": 110.28125,
+        "left": 67.65625,
+        "right": 131.328125
+      },
+      {
+        "label": "PEOPLE",
+        "width": 63.65625,
+        "height": 63.40625,
+        "textLeft": 132.328125,
+        "textRight": 193.984375,
+        "left": 131.328125,
+        "right": 194.984375
+      },
+      {
+        "label": "HOLD",
+        "width": 63.671875,
+        "height": 63.40625,
+        "textLeft": 205.21875,
+        "textRight": 248.40625,
+        "left": 194.984375,
+        "right": 258.65625
+      },
+      {
+        "label": "SHOP",
+        "width": 63.671875,
+        "height": 63.40625,
+        "textLeft": 268.890625,
+        "textRight": 312.078125,
+        "left": 258.65625,
+        "right": 322.328125
+      },
+      {
+        "label": "ME",
+        "width": 63.671875,
+        "height": 63.40625,
+        "textLeft": 343.359375,
+        "textRight": 364.953125,
+        "left": 322.328125,
+        "right": 386
+      }
+    ]
+  },
+  {
+    "screen": "education",
+    "scaled": 67,
+    "width": 768,
+    "scrollWidth": 768,
+    "nav": [
+      {
+        "label": "LIFE",
+        "width": 126.65625,
+        "height": 52,
+        "textLeft": 45.734375,
+        "textRight": 88.921875,
+        "left": 4,
+        "right": 130.65625
+      },
+      {
+        "label": "DO",
+        "width": 126.671875,
+        "height": 52,
+        "textLeft": 183.1875,
+        "textRight": 204.78125,
+        "left": 130.65625,
+        "right": 257.328125
+      },
+      {
+        "label": "PEOPLE",
+        "width": 126.65625,
+        "height": 52,
+        "textLeft": 288.265625,
+        "textRight": 353.046875,
+        "left": 257.328125,
+        "right": 383.984375
+      },
+      {
+        "label": "HOLD",
+        "width": 126.671875,
+        "height": 52,
+        "textLeft": 425.71875,
+        "textRight": 468.90625,
+        "left": 383.984375,
+        "right": 510.65625
+      },
+      {
+        "label": "SHOP",
+        "width": 126.671875,
+        "height": 52,
+        "textLeft": 552.390625,
+        "textRight": 595.578125,
+        "left": 510.65625,
+        "right": 637.328125
+      },
+      {
+        "label": "ME",
+        "width": 126.671875,
+        "height": 52,
+        "textLeft": 689.859375,
+        "textRight": 711.453125,
+        "left": 637.328125,
+        "right": 764
+      }
+    ]
+  },
+  {
+    "screen": "career",
+    "scaled": 67,
+    "width": 768,
+    "scrollWidth": 768,
+    "nav": [
+      {
+        "label": "LIFE",
+        "width": 126.65625,
+        "height": 52,
+        "textLeft": 45.734375,
+        "textRight": 88.921875,
+        "left": 4,
+        "right": 130.65625
+      },
+      {
+        "label": "DO",
+        "width": 126.671875,
+        "height": 52,
+        "textLeft": 183.1875,
+        "textRight": 204.78125,
+        "left": 130.65625,
+        "right": 257.328125
+      },
+      {
+        "label": "PEOPLE",
+        "width": 126.65625,
+        "height": 52,
+        "textLeft": 288.265625,
+        "textRight": 353.046875,
+        "left": 257.328125,
+        "right": 383.984375
+      },
+      {
+        "label": "HOLD",
+        "width": 126.671875,
+        "height": 52,
+        "textLeft": 425.71875,
+        "textRight": 468.90625,
+        "left": 383.984375,
+        "right": 510.65625
+      },
+      {
+        "label": "SHOP",
+        "width": 126.671875,
+        "height": 52,
+        "textLeft": 552.390625,
+        "textRight": 595.578125,
+        "left": 510.65625,
+        "right": 637.328125
+      },
+      {
+        "label": "ME",
+        "width": 126.671875,
+        "height": 52,
+        "textLeft": 689.859375,
+        "textRight": 711.453125,
+        "left": 637.328125,
+        "right": 764
+      }
+    ]
+  },
+  {
+    "screen": "court",
+    "scaled": 159,
+    "width": 768,
+    "scrollWidth": 768,
+    "nav": [
+      {
+        "label": "LIFE",
+        "width": 126.65625,
+        "height": 52,
+        "textLeft": 45.734375,
+        "textRight": 88.921875,
+        "left": 4,
+        "right": 130.65625
+      },
+      {
+        "label": "DO",
+        "width": 126.671875,
+        "height": 52,
+        "textLeft": 183.1875,
+        "textRight": 204.78125,
+        "left": 130.65625,
+        "right": 257.328125
+      },
+      {
+        "label": "PEOPLE",
+        "width": 126.65625,
+        "height": 52,
+        "textLeft": 288.265625,
+        "textRight": 353.046875,
+        "left": 257.328125,
+        "right": 383.984375
+      },
+      {
+        "label": "HOLD",
+        "width": 126.671875,
+        "height": 52,
+        "textLeft": 425.71875,
+        "textRight": 468.90625,
+        "left": 383.984375,
+        "right": 510.65625
+      },
+      {
+        "label": "SHOP",
+        "width": 126.671875,
+        "height": 52,
+        "textLeft": 552.390625,
+        "textRight": 595.578125,
+        "left": 510.65625,
+        "right": 637.328125
+      },
+      {
+        "label": "ME",
+        "width": 126.671875,
+        "height": 52,
+        "textLeft": 689.859375,
+        "textRight": 711.453125,
+        "left": 637.328125,
+        "right": 764
+      }
+    ]
+  },
+  {
+    "screen": "education",
+    "scaled": 67,
+    "width": 1024,
+    "scrollWidth": 1024,
+    "nav": [
+      {
+        "label": "LIFE",
+        "width": 169.328125,
+        "height": 52,
+        "textLeft": 67.0625,
+        "textRight": 110.25,
+        "left": 4,
+        "right": 173.328125
+      },
+      {
+        "label": "DO",
+        "width": 169.34375,
+        "height": 52,
+        "textLeft": 247.203125,
+        "textRight": 268.796875,
+        "left": 173.328125,
+        "right": 342.671875
+      },
+      {
+        "label": "PEOPLE",
+        "width": 169.328125,
+        "height": 52,
+        "textLeft": 394.9375,
+        "textRight": 459.71875,
+        "left": 342.671875,
+        "right": 512
+      },
+      {
+        "label": "HOLD",
+        "width": 169.34375,
+        "height": 52,
+        "textLeft": 575.078125,
+        "textRight": 618.265625,
+        "left": 512,
+        "right": 681.34375
+      },
+      {
+        "label": "SHOP",
+        "width": 169.328125,
+        "height": 52,
+        "textLeft": 744.40625,
+        "textRight": 787.59375,
+        "left": 681.34375,
+        "right": 850.671875
+      },
+      {
+        "label": "ME",
+        "width": 169.328125,
+        "height": 52,
+        "textLeft": 924.53125,
+        "textRight": 946.125,
+        "left": 850.671875,
+        "right": 1020
+      }
+    ]
+  },
+  {
+    "screen": "career",
+    "scaled": 66,
+    "width": 1024,
+    "scrollWidth": 1024,
+    "nav": [
+      {
+        "label": "LIFE",
+        "width": 169.328125,
+        "height": 52,
+        "textLeft": 67.0625,
+        "textRight": 110.25,
+        "left": 4,
+        "right": 173.328125
+      },
+      {
+        "label": "DO",
+        "width": 169.34375,
+        "height": 52,
+        "textLeft": 247.203125,
+        "textRight": 268.796875,
+        "left": 173.328125,
+        "right": 342.671875
+      },
+      {
+        "label": "PEOPLE",
+        "width": 169.328125,
+        "height": 52,
+        "textLeft": 394.9375,
+        "textRight": 459.71875,
+        "left": 342.671875,
+        "right": 512
+      },
+      {
+        "label": "HOLD",
+        "width": 169.34375,
+        "height": 52,
+        "textLeft": 575.078125,
+        "textRight": 618.265625,
+        "left": 512,
+        "right": 681.34375
+      },
+      {
+        "label": "SHOP",
+        "width": 169.328125,
+        "height": 52,
+        "textLeft": 744.40625,
+        "textRight": 787.59375,
+        "left": 681.34375,
+        "right": 850.671875
+      },
+      {
+        "label": "ME",
+        "width": 169.328125,
+        "height": 52,
+        "textLeft": 924.53125,
+        "textRight": 946.125,
+        "left": 850.671875,
+        "right": 1020
+      }
+    ]
+  },
+  {
+    "screen": "court",
+    "scaled": 160,
+    "width": 1024,
+    "scrollWidth": 1024,
+    "nav": [
+      {
+        "label": "LIFE",
+        "width": 169.328125,
+        "height": 52,
+        "textLeft": 67.0625,
+        "textRight": 110.25,
+        "left": 4,
+        "right": 173.328125
+      },
+      {
+        "label": "DO",
+        "width": 169.34375,
+        "height": 52,
+        "textLeft": 247.203125,
+        "textRight": 268.796875,
+        "left": 173.328125,
+        "right": 342.671875
+      },
+      {
+        "label": "PEOPLE",
+        "width": 169.328125,
+        "height": 52,
+        "textLeft": 394.9375,
+        "textRight": 459.71875,
+        "left": 342.671875,
+        "right": 512
+      },
+      {
+        "label": "HOLD",
+        "width": 169.34375,
+        "height": 52,
+        "textLeft": 575.078125,
+        "textRight": 618.265625,
+        "left": 512,
+        "right": 681.34375
+      },
+      {
+        "label": "SHOP",
+        "width": 169.328125,
+        "height": 52,
+        "textLeft": 744.40625,
+        "textRight": 787.59375,
+        "left": 681.34375,
+        "right": 850.671875
+      },
+      {
+        "label": "ME",
+        "width": 169.328125,
+        "height": 52,
+        "textLeft": 924.53125,
+        "textRight": 946.125,
+        "left": 850.671875,
+        "right": 1020
+      }
+    ]
+  }
+]

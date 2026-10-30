@@ -60,7 +60,7 @@ export function continueAsHeir(state: GameState, requestedHeirId?: string, lifet
     record.reputation = Math.max(record.reputation, Math.floor(inherited.reputation / 2));
     record.contactIds = [...new Set([...record.contactIds, ...inherited.contactIds])];
     record.rivalId ??= inherited.rivalId;
-    for (const matter of inherited.matters.filter(m => !m.resolved)) if (!record.matters.some(m => m.id === matter.id)) record.matters.push({ ...matter });
+    for (const matter of inherited.matters.filter(m => !m.resolved)) if (!record.matters.some(m => m.id === matter.id)) record.matters.push({ ...matter, ...(matter.kind === 'practice' ? { ownerId: heir.id } : {}) });
   }
   state.lifetimeUnlocked = lifetimeUnlocked;
   if (state.world.court?.rulerId === heir.id && !lifetimeUnlocked) settleRoyalSuccession(state, [heir.id]);

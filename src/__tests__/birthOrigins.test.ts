@@ -8,7 +8,8 @@ describe('birth origins', () => {
     const s = createLife({ birthOrigin: origin, lifetimeUnlocked: true, worldSeed: 77 });
     const p = s.world.characters[s.playerCharacterId];
     expect(p.background?.origin).toBe(origin);
-    expect(s.gold).toBe(wealth);
+    expect(s.gold).toBeGreaterThan(0);
+    expect(s.gold).toBe(p.background!.householdWealth);
     expect(p.parentIds).toEqual(['mother', 'father']);
     for (const id of p.parentIds!) {
       const parent = s.world.characters[id];
@@ -42,4 +43,25 @@ describe('birth origins', () => {
     expect(createLife(opts)).toEqual(createLife(opts));
     expect(createLife(opts).world.characters.player_1.background?.origin).toBe('merchant');
   });
+});
+
+it('seeded households vary without losing genealogy, and every origin has three childhood encounters', () => {
+  const { ORIGIN_CHILDHOOD_EVENTS } = require('@/content/educationEvents');
+  const { worldIntegrityIssues } = require('@/engine/worldIntegrity');
+  const seen = new Set<string>();
+  const careers = new Set<string>();
+  for (const origin of BIRTH_ORIGINS) {
+    expect(ORIGIN_CHILDHOOD_EVENTS.filter((e: any) => e.requires?.birthOrigins?.includes(origin.id))).toHaveLength(3);
+    for (let seed = 1; seed <= 100; seed++) {
+      const s = createLife({ worldSeed: seed, birthOrigin: origin.id, lifetimeUnlocked: true });
+      const p = s.world.characters[s.playerCharacterId];
+      seen.add(p.background!.circumstance!); careers.add(s.world.characters.mother.occupation.careerId!);
+      expect(p.parentIds).toEqual(['mother', 'father']);
+      expect(p.guardianIds!.every(id => s.world.characters[id].alive)).toBe(true);
+      expect(worldIntegrityIssues(s)).toEqual([]);
+      if (origin.id === 'royal') expect(s.world.court!.rulerId).toBe('father');
+    }
+  }
+  expect([...seen]).toEqual(expect.arrayContaining(['struggling_trade', 'thriving_workshop', 'cash_poor_estate', 'disgraced_service', 'divided_palace', 'surviving_parent', 'relative_guardians']));
+  expect(careers.size).toBeGreaterThan(8);
 });

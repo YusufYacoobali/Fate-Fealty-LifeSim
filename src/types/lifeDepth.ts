@@ -2,6 +2,7 @@ import type { CareerFamily } from './game';
 
 export type BirthOriginId = 'peasant' | 'artisan' | 'merchant' | 'church' | 'military' | 'noble' | 'royal';
 export interface BirthBackground {
+  circumstance?: string;
   origin: BirthOriginId;
   familyId: string;
   guardianIds: string[];
@@ -11,7 +12,18 @@ export interface BirthBackground {
 }
 export type EducationTrackId = 'household' | 'parish' | 'guild' | 'cathedral' | 'martial' | 'noble';
 export type Qualification = 'literacy' | 'apprenticeship' | 'guild_recommendation' | 'clerical_learning' | 'martial_training' | 'court_education';
+export type SponsorshipKind = 'parish_charity' | 'merit' | 'patron' | 'household';
+export interface EducationSponsorship {
+  id: string; kind: SponsorshipKind | 'legacy'; track: EducationTrackId | 'all'; sponsorId?: string;
+  status: 'awarded' | 'spent'; year: number; covered: number | null; remaining: number | null;
+}
 export interface EducationState {
+  sponsorships?: EducationSponsorship[];
+  applications?: { kind: SponsorshipKind; track: EducationTrackId; year: number; approved: boolean; reason: string }[];
+  activeClassmateIds?: string[];
+  formerMentorIds?: string[];
+  mode?: 'childhood' | 'adult';
+  fraudulentCredentials?: { qualification: Qualification; mentorId?: string; reviewYear: number; resolved: boolean }[];
   track: EducationTrackId | null;
   mentorId?: string;
   startedYear?: number;
@@ -35,6 +47,7 @@ export interface SocialStatus {
 }
 export interface ProfessionalRecord {
   actionYears?: Record<string, number>;
+  rivalryYear?: number;
   shifts?: number;
   apprenticeId?: string;
   reputation: number;
@@ -45,7 +58,7 @@ export interface ProfessionalRecord {
   actionsYear: number;
   actionsUsed: number;
   lastWorkedYear: number;
-  matters: { id: string; actorId: string; stage: number; openedYear?: number; decision?: string; resolved: boolean }[];
+  matters: { kind?: 'practice'; ownerId?: string; success?: boolean; id: string; actorId: string; stage: number; openedYear?: number; decision?: string; resolved: boolean }[];
 }
 export type ProfessionalHistory = Partial<Record<CareerFamily, ProfessionalRecord>>;
 export type CourtOffice = 'chancellor' | 'treasurer' | 'marshal' | 'religious_adviser';
@@ -57,6 +70,9 @@ export interface RoyalClaim {
   disinherited: boolean;
 }
 export interface CourtState {
+  petition?: { applicantId: string; rulerId: string; office: CourtOffice; incumbentId?: string; rivalId?: string; year: number; resolved: boolean; outcome?: 'appointed' | 'rejected' | 'conditional' | 'withdrawn' | 'retained'; requiredStanding?: number };
+  coalitions?: { leaderId: string; memberIds: string[]; claimantId?: string; strength: number; lastMoveYear: number; lastAudienceYear?: number }[];
+
   formerRegentId?: string;
   lastActionYears?: Record<string, number>;
   rulerId: string;

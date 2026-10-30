@@ -336,7 +336,7 @@ function createLifeFromWorldSeed(opts: FreshLifeOptions, worldSeed: number): Gam
   });
   for (const household of households) for (const id of household.memberIds) characters[id].householdId = household.id;
   return {
-    schemaVersion: 6,
+    schemaVersion: 7,
     rpg: freshRpg(),
     playerCharacterId: playerId,
     playerRun: { startedYear: 1320, generation: opts.lifeNo ?? 1, roleProgress: {} },

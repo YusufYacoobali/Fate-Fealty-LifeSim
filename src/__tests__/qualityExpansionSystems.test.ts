@@ -89,7 +89,7 @@ describe('quality expansion simulation slices', () => {
     await AsyncStorage.setItem('mls:world:v3', legacyEnvelope);
     const result = await loadGame();
     expect(result.blockedByFutureVersion).toBe(false);
-    expect(result.state?.schemaVersion).toBe(6);
+    expect(result.state?.schemaVersion).toBe(7);
     expect(result.state?.world.contentVersion).toBe(CURRENT_CONTENT_VERSION);
     expect(result.state?.world.rngState).toEqual(savedRng);
     expect(['woman', 'man']).toContain(result.state?.gender);
@@ -99,7 +99,7 @@ describe('quality expansion simulation slices', () => {
 
   it('rejects a future save without overwriting it', async () => {
     const state = createLife({ worldSeed: 4106 });
-    const future = JSON.stringify({ schemaVersion: 7, savedAt: 1, game: { ...state, schemaVersion: 7 } });
+    const future = JSON.stringify({ schemaVersion: 8, savedAt: 1, game: { ...state, schemaVersion: 8 } });
     await AsyncStorage.setItem('mls:world:v4', future);
     const result = await loadGame();
     expect(result).toEqual({ state: null, blockedByFutureVersion: true });

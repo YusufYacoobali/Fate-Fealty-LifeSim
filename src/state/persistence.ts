@@ -9,7 +9,6 @@ import { recoverSavedContent } from '@/engine/contentRecovery';
 import { CURRENT_CONTENT_VERSION } from '@/content/contentVersion';
 import { syncPlayerFromWorld } from '@/engine/gameState';
 import { createStateDefaults } from '@/engine/stateDefaults';
-import { correctedNpcName } from '@/data/names';
 import { normalizeRpg } from '@/engine/rpgEngine';
 import { upgradeDuel } from '@/engine/duelEngine';
 
@@ -18,8 +17,8 @@ const SAVE_KEY = 'mls:world:v5';
 const LEGACY_SAVE_KEY = 'mls:world:v4';
 const OLDER_SAVE_KEY = 'mls:world:v3';
 
-interface SaveEnvelopeV6 {
-  schemaVersion: 6;
+interface SaveEnvelopeV7 {
+  schemaVersion: 7;
   savedAt: number;
   game: GameState;
 }
@@ -39,7 +38,7 @@ async function writeGame(state: GameState): Promise<void> {
     const existing = await AsyncStorage.getItem(SAVE_KEY);
     if (existing !== null) {
       const envelope = JSON.parse(existing);
-      if (![3, 4, 5, 6].includes(envelope.schemaVersion) || !envelope.game || ![3, 4, 5, 6].includes(envelope.game.schemaVersion) || envelope.game.world?.contentVersion > CURRENT_CONTENT_VERSION) return;
+      if (![3, 4, 5, 6, 7].includes(envelope.schemaVersion) || !envelope.game || ![3, 4, 5, 6, 7].includes(envelope.game.schemaVersion) || envelope.game.world?.contentVersion > CURRENT_CONTENT_VERSION) return;
     }
     const toSave: GameState = {
       ...state,
@@ -49,7 +48,7 @@ async function writeGame(state: GameState): Promise<void> {
       kin: [],
       pendingEvent: state.pendingEvent,
     };
-    const envelope: SaveEnvelopeV6 = { schemaVersion: 6, savedAt: Date.now(), game: toSave };
+    const envelope: SaveEnvelopeV7 = { schemaVersion: 7, savedAt: Date.now(), game: toSave };
     await AsyncStorage.setItem(SAVE_KEY, JSON.stringify(envelope));
   } catch (e) {
     // Saving is best-effort; never crash the game over it.
@@ -69,7 +68,7 @@ export async function loadGame(): Promise<LoadGameResult> {
     const raw = currentRaw ?? legacyRaw;
     if (raw === null) return { state: null, blockedByFutureVersion: false };
     const envelope = JSON.parse(raw) as { schemaVersion: number; savedAt: number; game: GameState };
-    if (![3, 4, 5, 6].includes(envelope.schemaVersion) || ![3, 4, 5, 6].includes(envelope.game.schemaVersion as number)) return { state: null, blockedByFutureVersion: true };
+    if (![3, 4, 5, 6, 7].includes(envelope.schemaVersion) || ![3, 4, 5, 6, 7].includes(envelope.game.schemaVersion as number)) return { state: null, blockedByFutureVersion: true };
     const parsed = normalizeGameState(envelope.game);
     if (parsed.world.contentVersion > CURRENT_CONTENT_VERSION) {
       console.warn('[persistence] save belongs to a newer content version; leaving it untouched');
@@ -197,9 +196,7 @@ export function normalizeGameState(parsed: GameState): GameState {
     character.lineageStatus ??= 'marital';
     character.childDevelopment ??= { completedMilestones: [], education: 'none', investment: 0, favour: 0 };
     character.factionInfluence ??= 0;
-    if (character.id !== playerCharacterId) {
-      character.name = correctedNpcName(character.name, character.gender, character.id, character.age < 14);
-    }
+
   }
   const canonicalKin = Object.values(characters).filter((character) => character.id !== playerCharacterId);
 
@@ -208,7 +205,7 @@ export function normalizeGameState(parsed: GameState): GameState {
     // Older saves used Quests as a main tab. Keep the same section inside Do.
     tab: (parsed.tab as string) === 'quests' ? 'do' : parsed.tab,
     doCat: (parsed.tab as string) === 'quests' ? 'quests' : parsed.doCat,
-    schemaVersion: 6,
+    schemaVersion: 7,
     playerCharacterId,
     playerRun: parsed.playerRun
       ? { ...parsed.playerRun, roleProgress: { ...(parsed.playerRun.roleProgress ?? {}) } }
@@ -282,6 +279,18 @@ export function normalizeGameState(parsed: GameState): GameState {
     },
   };
   initializeLifeDepth(normalized);
+  // A v6 save may have served a childhood lesson to an adult. Recover its
+  // decision into the same route's adult seminar without RNG or renaming anyone.
+  if (normalized.age >= 18 && /^education_(?!adult_)/.test(normalized.pendingEvent?.eventId ?? '')) {
+    const learning = characters[playerCharacterId].education!;
+    if (learning.track) {
+      const peer = Object.values(characters).find(c => c.alive && c.age >= 18 && c.id !== playerCharacterId && c.id !== learning.mentorId && c.id !== 'goose');
+      const index = Number(normalized.pendingEvent!.eventId.split('_').at(-1)) || 0;
+      normalized.pendingEvent = { eventId: `education_adult_${learning.track}_${index % 2}`, bindings: { ...(learning.mentorId ? { mentor: learning.mentorId } : {}), ...(peer ? { classmate: peer.id } : {}) } };
+      learning.mode = 'adult';
+      if (peer) { learning.activeClassmateIds = [peer.id]; learning.classmateIds = [...new Set([...learning.classmateIds,peer.id])]; }
+    } else normalized.pendingEvent = null;
+  }
   initializeCourt(normalized);
   normalizeRpg(normalized);
   upgradeDuel(normalized);

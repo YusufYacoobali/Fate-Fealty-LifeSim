@@ -10,7 +10,7 @@ describe('life depth foundation', () => {
     delete state.world.characters[state.playerCharacterId].socialStatus;
     const rng = JSON.stringify(state.world.rngState);
     const normalized = normalizeGameState(state);
-    expect(normalized.schemaVersion).toBe(6);
+    expect(normalized.schemaVersion).toBe(7);
     expect(normalized.rankIdx).toBe(4);
     expect(normalized.world.characters[state.playerCharacterId].socialStatus?.estate).toBe('baronial');
     expect(JSON.stringify(normalized.world.rngState)).toBe(rng);

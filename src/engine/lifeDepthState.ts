@@ -20,6 +20,10 @@ export function initializeLifeDepth(state: GameState): void {
   for (const character of Object.values(state.world.characters)) {
     character.education ??= emptyEducation();
     if (character.id === state.playerCharacterId && state.memories.some(m => m.tag === 'lettered') && !character.education.qualifications.includes('literacy')) character.education.qualifications.push('literacy');
+    const education = character.education;
+    if (education.scholarship && !education.sponsorships?.length) education.sponsorships = [{ id: `legacy_tuition_${character.id}`, kind: 'legacy', track: 'all', status: 'awarded', year: state.world.currentYear, covered: null, remaining: null }];
+    education.mode ??= character.age >= 18 ? 'adult' : 'childhood';
+    education.activeClassmateIds ??= [...education.classmateIds];
     character.professionalHistory ??= {};
     const needsStatus = !character.socialStatus;
     character.socialStatus ??= legacyStatus(character.rankIdx);

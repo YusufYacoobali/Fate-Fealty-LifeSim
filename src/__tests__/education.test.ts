@@ -11,7 +11,7 @@ describe('playable education', () => {
   it.each(EDUCATION_TRACKS)('$id has a complete, saved learning loop and persistent actors', track => {
     let s = createLife({ worldSeed: 33, birthOrigin: 'peasant' });
     s.age = 20;
-    s = gameReducer(s, { type: 'EDUCATION', action: 'scholarship' });
+    s.gold = 200;
     s = gameReducer(s, { type: 'EDUCATION', action: 'enrol', track: track.id });
     const e = s.world.characters[s.playerCharacterId].education!;
     const mentor = e.mentorId!, peer = e.classmateIds[0];

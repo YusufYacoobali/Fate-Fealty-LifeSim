@@ -89,9 +89,9 @@ function directAncestors(state: GameState): Set<string> {
 function archiveOldBackgroundCharacters(state: GameState): void {
   const retained = directAncestors(state);
   const court = state.world.court;
-  if (court) for (const id of [court.rulerId, court.heirId, court.regentId, ...Object.values(court.offices), ...court.claims.flatMap(c => [c.characterId, c.throughId]), ...court.scandals.map(s => s.actorId)]) if (id) retained.add(id);
+  if (court) for (const id of [court.rulerId, court.heirId, court.regentId, ...Object.values(court.offices), ...court.claims.flatMap(c => [c.characterId, c.throughId]), ...court.scandals.map(s => s.actorId), ...[court.petition?.applicantId, court.petition?.rulerId, court.petition?.incumbentId, court.petition?.rivalId], ...(court.coalitions ?? []).flatMap(c => [c.leaderId, ...c.memberIds, c.claimantId])]) if (id) retained.add(id);
   for (const person of Object.values(state.world.characters)) {
-    for (const id of [...(person.background?.guardianIds ?? []), ...(person.background?.contactId ? [person.background.contactId] : []), ...(person.education?.classmateIds ?? []), ...(person.education?.mentorId ? [person.education.mentorId] : [])]) retained.add(id);
+    for (const id of [...(person.background?.guardianIds ?? []), ...(person.background?.contactId ? [person.background.contactId] : []), ...(person.education?.classmateIds ?? []), ...(person.education?.formerMentorIds ?? []), ...(person.education?.sponsorships ?? []).map(s => s.sponsorId).filter((id): id is string => !!id), ...(person.education?.mentorId ? [person.education.mentorId] : [])]) retained.add(id);
     for (const record of Object.values(person.professionalHistory ?? {})) for (const id of [...record.contactIds, ...(record.rivalId ? [record.rivalId] : []), ...(record.apprenticeId ? [record.apprenticeId] : []), ...record.matters.map(m => m.actorId)]) retained.add(id);
   }
   const bound = new Set(state.world.activeStories.filter((story) => ['active', 'paused'].includes(story.status)).flatMap((story) => Object.values(story.bindings)));

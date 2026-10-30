@@ -40,8 +40,8 @@ import { beginForge, closeForge, finishForge, startForge, strikeForge } from '@/
 import { resolveTradeChoice } from '@/engine/tradeJourney';
 
 export type GameAction =
-  | { type: 'COURT'; action: CourtAction; targetId?: string; office?: CourtOffice }
-  | { type: 'EDUCATION'; action: EducationAction; track?: EducationTrackId }
+  | { type: 'COURT'; counsel?: 'consult' | 'override'; action: CourtAction; targetId?: string; office?: CourtOffice }
+  | { type: 'EDUCATION'; action: EducationAction; track?: EducationTrackId; funding?: import('@/types/game').SponsorshipKind; sponsorId?: string }
   | { type: 'FORGE_START'; task: ForgeTask; revision: number }
   | { type: 'FORGE_BEGIN'; id: string }
   | { type: 'FORGE_STRIKE'; id: string; sequence: number; position: number }
@@ -237,9 +237,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       );
     }
 
-    case 'COURT': return timed(state, s => courtAvailability(s, action.action, action.targetId, action.office) === null, s => performCourtAction(s, action.action, action.targetId, action.office));
+    case 'COURT': return timed(state, s => courtAvailability(s, action.action, action.targetId, action.office) === null, s => performCourtAction(s, action.action, action.targetId, action.office, action.counsel));
 
-    case 'EDUCATION': return timed(state, s => educationAvailability(s, action.action, action.track) === null, s => performEducationAction(s, action.action, action.track));
+    case 'EDUCATION': return timed(state, s => educationAvailability(s, action.action, action.track, action.funding, action.sponsorId) === null, s => performEducationAction(s, action.action, action.track, action.funding, action.sponsorId));
 
     case 'BUY': {
       return timed(state, (s) => shopAvailability(s, action.item).available, (s) => buyItem(s, action.item));

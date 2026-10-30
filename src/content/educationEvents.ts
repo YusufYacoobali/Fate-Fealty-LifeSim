@@ -41,7 +41,7 @@ const LESSONS: Record<EducationTrackId, readonly [string, string, string, string
 };
 export const EDUCATION_EVENTS: GameEvent[] = Object.entries(LESSONS).flatMap(([track, rows]) => rows.map((row, index) => ({
   id: `education_${track}_${index}`, title: row[0], text: row[1], category: 'child', domain: 'career',
-  ageMin: 5, once: true, arcNodeOnly: true, actorRoles: {},
+  ageMin: 5, ageMax: 17, once: true, arcNodeOnly: true, actorRoles: {},
   requires: { educationTracks: [track as EducationTrackId] },
   choices: [
     { id: 'repair', label: row[2], outcome: { text: row[3], effects: { education: { progress: 15, mentorBond: 7, peerBond: 6 }, reputation: 2 }, tone: 'good' } },
@@ -83,11 +83,11 @@ for (const event of EDUCATION_EVENTS) {
 }
 const ORIGIN_CHOICES: readonly [string, string, string][] = [
   ['Compare the bailiff’s rent tally', 'Accept the bailiff’s hush money', 'The bailiff pays you three coins to hide his extra assessment. Your household loses more grain than those coins could buy.'],
-  ['Ask Edwin to check the guild exemption', 'Keep the noise penalty secret for three gold', 'You pocket three gold while the workshop pays the penalty. Edwin learns whose silence was purchased.'],
-  ['Ask Beatrice to witness the false measure', 'Take three gold from the short-measure seller', 'The seller buys your silence. Your household’s buyers discover the short grain and blame the family name.'],
+  ['Ask {{contact}} to check the guild exemption', 'Keep the noise penalty secret for three gold', 'You pocket three gold while the workshop pays the penalty. {{contact}} learns whose silence was purchased.'],
+  ['Ask {{contact}} to witness the false measure', 'Take three gold from the short-measure seller', 'The seller buys your silence. Your household’s buyers discover the short grain and blame the family name.'],
   ['Produce the household marriage entry', 'Sell the friar a rumour for three gold', 'The friar pays for a scandal about your own lay household. The correction will cost considerably more than three gold.'],
-  ['Ask Joan to cite the service oath', 'Take three gold to abandon the ration claim', 'The stores clerk buys your silence. Your family gives up a season of bread for your private handful of coins.'],
-  ['Ask Aldric to compare the boundary charter', 'Accept three gold to hide the cousin’s map', 'Your cousin buys your silence and presses the boundary claim. The household discovers your price was lower than the surveyor’s.'],
+  ['Ask {{contact}} to cite the service oath', 'Take three gold to abandon the ration claim', 'The stores clerk buys your silence. Your family gives up a season of bread for your private handful of coins.'],
+  ['Ask {{contact}} to compare the boundary charter', 'Accept three gold to hide the cousin’s map', 'Your cousin buys your silence and presses the boundary claim. The household discovers your price was lower than the surveyor’s.'],
   ['Ask the guardian to settle nursery precedence', 'Sell your sibling the secret nursery key', 'Your sibling pays three gold for the nursery key. The guards change the locks and your household’s opinion of you.'],
 ];
 ORIGIN_CHILDHOOD_EVENTS.forEach((event, index) => {
@@ -95,3 +95,122 @@ ORIGIN_CHILDHOOD_EVENTS.forEach((event, index) => {
   event.choices[1].label = ORIGIN_CHOICES[index][1];
   event.choices[1].outcome!.text = ORIGIN_CHOICES[index][2];
 });
+
+// Adult routes share qualifications and progress, with work, household and institutional stakes.
+const ADULT_LESSONS: Record<EducationTrackId, readonly [string, string, string, string, string, string][]> = {
+  household: [
+    ['THE WINTER ACCOUNT', '{{mentor}} brings your household ledger. Winter grain and a creditor fall due together.', 'Plan the stores with {{classmate}}', 'The plan protects seed and supper.', 'Hide the arrears in the seed account', 'Your colleague finds the missing debt beside their signature.'],
+    ['AN EVENING OF LETTERS', 'After work, {{classmate}} asks you to read a tenancy clause neither of you understood as children.', 'Read it against the old agreement', 'Your shared study finds the changed rent.', 'Pretend the clause favours you', 'Your colleague carries your interpretation to the landlord.'],
+  ],
+  parish: [
+    ['THE LATE READER', '{{mentor}} reserves an evening for adults learning their letters. {{classmate}} brings a contract rather than a psalter.', 'Read the contract together', 'You separate the obligations from the ornament.', 'Copy a fluent reader’s exercise', 'The copied hand wins praise that belongs to someone else.'],
+    ['A LETTER HOME', '{{classmate}} needs a letter to a relative who has left for work. The parish desk is finally quiet.', 'Help compose an honest letter', 'Your colleague entrusts you with the reply.', 'Read the private lines aloud for a laugh', 'The laughter travels; so does the betrayal.'],
+  ],
+  guild: [
+    ['THE LATE APPRENTICE', 'An older apprentice is assigned the heaviest work. {{mentor}} asks whether your previous experience changes the arrangement.', 'Propose a trial piece and fair rotation', 'Your work earns an adult place at the bench.', 'Claim {{classmate}} made the flawed trial piece', 'The commission carries an innocent maker’s mark.'],
+    ['THE EVENING MASTERPIECE', 'Your paying work leaves one evening to finish the apprenticeship sample. {{classmate}} offers measurements.', 'Credit their help and submit your own work', 'The master tests the work and acknowledges both hands.', 'Submit their sample under your mark', 'Your colleague keeps the original drawing.'],
+  ],
+  cathedral: [
+    ['THE INFERMARER’S COMMENTARY', '{{mentor}} asks your adult seminar to compare a fever diary with an old authority. The patient’s actual course contradicts the gloss.', 'Record the observations honestly', 'The seminar adopts a more careful account of care.', 'Alter the diary to flatter the authority', 'Your colleague retains the unaltered observations.'],
+    ['THE VISITING EXAMINER', 'A visiting examiner asks how your learning was acquired while you worked. {{mentor}} can certify the hours actually completed.', 'Submit the honest record', 'Your remaining requirements are written clearly.', 'Borrow a completed clerical certificate', 'The borrowed certificate passes today. A later review may compare the signatures.'],
+  ],
+  martial: [
+    ['THE VETERAN AT DRILL', '{{classmate}} has seen a siege; you are learning formations after years in another trade. {{mentor}} asks for a plan.', 'Combine practical experience with the drill', 'The exercise gives both adult learners useful work.', 'Claim their campaign experience as yours', 'The sergeant begins asking which company remembers you.'],
+    ['THE CONTRACTED WATCH', 'Your training company must cover a night watch while keeping time for its adult recruits’ paid work.', 'Draw a fair rotation', 'The company trusts the rota because you serve it too.', 'Put your colleague on every cold watch', 'The rota is copied, along with its author’s name.'],
+  ],
+  noble: [
+    ['THE PRIVATE TUTOR’S TABLE', '{{mentor}} teaches court practice to adults. {{classmate}} brings a petition from their own household.', 'Draft advice from the actual accounts', 'Your tutor commends a useful answer rather than a fine bow.', 'Trade their private grievance for influence', 'The petition returns to its author with your name attached.'],
+    ['THE ADULT AUDIENCE', 'An envoy questions why your household can afford tutoring while tenants petition for seed.', 'Explain the accounts and propose affordable relief', 'Your reasoning survives questions from your colleague.', 'Produce a borrowed court certificate', 'The document opens a door. The seal may be checked later.'],
+  ],
+};
+for (const [track, rows] of Object.entries(ADULT_LESSONS)) rows.forEach((row, index) => {
+  const credential = index === 1 && track === 'cathedral' ? 'clerical_learning' as const : index === 1 && track === 'noble' ? 'court_education' as const : undefined;
+  EDUCATION_EVENTS.push({
+    id: `education_adult_${track}_${index}`, title: row[0], text: row[1], category: 'peasant', domain: 'career', ageMin: 18,
+    once: true, arcNodeOnly: true, actorRoles: {}, requires: { educationTracks: [track as EducationTrackId] },
+    choices: [
+      { id: 'repair', label: row[2], outcome: { text: row[3], effects: { education: { progress: 12, mentorBond: 6, peerBond: 7 }, reputation: 2 }, tone: 'good' } },
+      { id: 'deceive', label: row[4], outcome: { text: row[5], effects: { education: { progress: 6, misconduct: 25, peerBond: -18, disputedCredential: credential } }, tone: 'bad' } },
+      { id: 'review', label: 'Arrange a private review with {{mentor}}', outcome: { text: 'Your tutor records what remains to be learned and sets a manageable programme alongside your other duties.', effects: { education: { progress: 6, misconduct: -15, mentorBond: 5 } }, tone: 'plain' } },
+    ],
+  });
+});
+
+const EXTRA_CHILDHOOD: [BirthOriginId, string, string, string, string][] = [
+  ['peasant', 'THE FLOODED STRIP', '{{guardian}} finds seed floating across a neighbour’s boundary. {{contact}} remembers where the old ditch ran.', 'Reopen the ditch together', 'Charge the neighbour for your own lost seed'],
+  ['peasant', 'THE WINTER WOOD', '{{contact}} offers fallen wood if your household helps mend the common gate before winter.', 'Help {{guardian}} mend the gate', 'Sell the gate timber secretly'],
+  ['artisan', 'THE CUSTOMER’S SEAL', '{{guardian}} has a commission without a deposit. {{contact}} recognises the customer’s disputed seal.', 'Ask for a witnessed deposit', 'Copy the seal onto another order'],
+  ['artisan', 'THE GUILD FEAST', '{{contact}} invites your household to show a trial piece. The entry fee will buy a week’s supper.', 'Help {{guardian}} prepare a modest sample', 'Pass off another workshop’s piece'],
+  ['merchant', 'THE SHIPMENT AT THE FORD', '{{guardian}} must choose between a safe crossing fee and a cheap flooded ford. {{contact}} has a wagon there too.', 'Share the safe crossing cost', 'Send {{contact}} toward the flooded ford'],
+  ['merchant', 'THE LEDGER’S SECOND HAND', 'A rival disputes {{guardian}}’s ledger. {{contact}} offers to witness a recount in the market.', 'Carry both copies to the recount', 'Remove the page that favours the rival'],
+  ['church', 'THE BORROWED MANUSCRIPT', '{{guardian}} owes the priory a manuscript. {{contact}} finds rain beneath the reading-room window.', 'Help dry and recopy the damaged leaves', 'Blame a visiting lay household'],
+  ['church', 'THE CHARITY BREAD', '{{contact}} asks your household to record bread for hungry neighbours. One loaf remains after the tally.', 'Ask {{guardian}} to check the names', 'Sell the extra loaf and alter the list'],
+  ['military', 'THE OLD CAMPAIGN CLOAK', '{{guardian}} offers a service cloak for your first training. {{contact}} notices an unpaid campaign receipt in its lining.', 'Return the receipt to the pay clerk', 'Forge an extra ration claim'],
+  ['military', 'THE GARRISON’S HORSE', '{{contact}} needs someone to hold a nervous horse while {{guardian}} checks its harness.', 'Help check the girth and stay beside it', 'Tell the quartermaster another child lost it'],
+  ['noble', 'THE EMPTY TUTOR’S PURSE', '{{guardian}} must meet a tutor’s fee and a tenant’s request for seed. {{contact}} has the household accounts.', 'Read the accounts before asking for more', 'Hide the tenant’s petition'],
+  ['noble', 'THE COUSIN AT TABLE', '{{contact}} brings a cousin’s challenge to your household’s precedence. {{guardian}} asks you to carry the family record.', 'Present the record without insults', 'Alter the cousin’s place in the record'],
+  ['royal', 'THE TWO NURSERY SEALS', '{{guardian}} finds rival nursery orders signed by different palace factions. {{contact}} asks which order you carried.', 'Show both seals to the guardian', 'Tell each faction the other threatened you'],
+  ['royal', 'THE HEIR’S LESSON', '{{guardian}} arranges a lesson beside your elder sibling. {{contact}} says guards have begun wagering on which of you will rule.', 'Share the lesson and refuse the wager', 'Buy a guard’s rumour about your sibling'],
+];
+EXTRA_CHILDHOOD.forEach(([origin, title, text, honest, deceive], index) => ORIGIN_CHILDHOOD_EVENTS.push({
+  id: `origin_child_${origin}_extra_${index}`, title, text, category: 'child', domain: 'family', ageMin: 5, ageMax: 16, once: true, actorRoles: {},
+  requires: { birthOrigins: [origin] }, choices: [
+    { label: honest, outcome: { text: '{{guardian}} and {{contact}} remember your help. The household keeps resources and a more reliable connection.', effects: { householdLesson: { wealth: 4, contactBond: 6, progress: 4 }, familyReputation: { delta: 2 } }, tone: 'good' } },
+    { label: deceive, outcome: { text: 'You pocket the proceeds. {{contact}} records the disputed account; the loss falls on your own household.', effects: { gold: 3, householdLesson: { wealth: -6, contactBond: -12 }, familyReputation: { delta: -4 } }, tone: 'bad' } },
+  ],
+}));
+
+const ADULT_COUNSEL: [string,string][] = [
+  ['Ask {{mentor}} to review the winter stores', 'Your tutor separates the seed reserve from the debt payment and sets a practical accounting exercise.'],
+  ['Read the disputed tenancy clause with {{mentor}}', 'Your tutor compares both agreements and asks you to explain each changed obligation.'],
+  ['Ask for an evening reading exercise', 'Your teacher sets a short contract passage that can be studied after paid work.'],
+  ['Ask how to write a private reply', 'Your teacher helps form a respectful letter while preserving your colleague’s confidence.'],
+  ['Ask for an assessment of your previous craft work', 'Your master tests your existing skills and records what the late apprenticeship still requires.'],
+  ['Show {{mentor}} your unfinished masterpiece', 'The master checks the surviving measurements and sets a smaller, honest trial piece.'],
+  ['Compare the fever diary with {{mentor}}', 'Your teacher asks you to distinguish an observed symptom from an authority’s assumption.'],
+  ['Ask for the actual examination requirements', 'The examiner writes down the hours and arguments still required for a legitimate certificate.'],
+  ['Review the drill with the veteran and {{mentor}}', 'Your trainer sets an exercise that tests the veteran’s experience and your understanding together.'],
+  ['Ask the captain to review the watch rotation', 'The captain checks the recruits’ paid work and makes you explain a fair allocation of cold watches.'],
+  ['Ask {{mentor}} to examine the household petition', 'The tutor checks the figures and asks you to justify each proposed relief payment.'],
+  ['Ask for a witnessed court examination', 'Your tutor offers a legitimate assessment instead of a borrowed seal; the remaining preparation is recorded.'],
+];
+EDUCATION_EVENTS.filter(e => e.id.startsWith('education_adult_')).forEach((event,i) => {
+  event.choices[2].label = ADULT_COUNSEL[i][0]; event.choices[2].outcome!.text = ADULT_COUNSEL[i][1];
+});
+const HOUSEHOLD_RESULTS: [string,string][] = [
+  ['The reopened ditch saves seed on both strips. {{contact}} records your household’s share of the labour.', 'Your false claim wins a few coins and leaves {{guardian}} to repair the damaged neighbourly agreement.'],
+  ['The common gate stands through winter. {{contact}} delivers the promised fallen wood.', 'The missing timber leaves the common gate open. {{contact}} charges your household for its replacement.'],
+  ['The witnessed deposit pays for material before the customer can dispute the order.', 'The copied seal is discovered on the second order. {{contact}} keeps it as evidence against your household.'],
+  ['The modest sample gives the workshop a place at the feast without emptying its supper pot.', 'The borrowed trial piece is recognised. Your workshop pays the entry fee and loses the guild’s trust.'],
+  ['Both wagons share the safe crossing and split the fee. The shipment arrives with its partners intact.', '{{contact}} finds the dangerous ford and learns who gave the directions. Your household loses a trading partner.'],
+  ['The recount establishes what was delivered. The rival must challenge a witnessed account.', 'The missing ledger page becomes the rival’s strongest evidence. Your household bears the cost of your bargain.'],
+  ['The dried leaves and careful copies satisfy the priory. Your lay household retains its access to the books.', 'The visiting household produces witnesses. Your own household pays for the damaged manuscript.'],
+  ['The checked names reveal a hungry neighbour missed from the tally. The last loaf reaches them.', 'The altered bread list is traced to your hand. Your household must replace what the charity lost.'],
+  ['The pay clerk acknowledges the old receipt and credits the service household.', 'The extra ration is refused when {{contact}} checks the muster. Your household’s genuine claim is delayed.'],
+  ['The checked girth holds and the garrison records your household’s help.', 'The quartermaster finds your false account beside the harness. Your household loses standing with the stores.'],
+  ['The accounts show what can be spent on tutors after seed is reserved. Your guardian trusts you with the next petition.', 'The hidden petition is found. The tenants blame your household for a refusal it never openly made.'],
+  ['The family record settles precedence without an insult. Your cousin has less reason to press another grievance.', 'The altered genealogy reaches {{contact}}. The cousin keeps a copy and begins a more serious challenge.'],
+  ['Both nursery seals reach the guardian. Conflicting orders are corrected before the guards choose sides.', 'The two palace factions compare your stories. Both now have grounds to distrust your household’s word.'],
+  ['The shared lesson gives the guards no wager to collect. Your guardian records a rare quiet agreement between heirs.', 'The purchased rumour reaches your sibling. A nursery quarrel acquires a guard willing to repeat it.'],
+];
+ORIGIN_CHILDHOOD_EVENTS.filter(e => e.id.includes('_extra_')).forEach((event,i) => {
+  event.choices[0].outcome!.text = HOUSEHOLD_RESULTS[i][0]; event.choices[1].outcome!.text = HOUSEHOLD_RESULTS[i][1];
+});
+
+// A bereaved or unusual household still has ordinary early childhood years.
+ORIGIN_CHILDHOOD_EVENTS.push(
+  { id: 'household_first_words', title: 'THE FIRST HOUSEHOLD WORDS', category: 'child', domain: 'family', ageMin: 1, ageMax: 4, once: true,
+    text: s => `${s.world.characters[s.world.characters[s.playerCharacterId].guardianIds?.find(id => s.world.characters[id]?.alive) ?? 'mother']?.name ?? 'Your guardian'} counts cups at supper. You repeat the word for cup with greater confidence than accuracy.`,
+    choices: [
+      { label: 'Count the cups together', outcome: { text: 'Your household gains a small voice in its nightly accounting. The cups remain easier to count than the debts.', effects: { wits: 1, householdLesson: { contactBond: 2 } }, tone: 'good' } },
+      { label: 'Insist the cat is also a cup', outcome: { text: 'The cat refuses to join the crockery. Your household repeats the word more slowly.', effects: { charm: 1 }, tone: 'plain' } },
+    ],
+  },
+  { id: 'household_rainy_roof', title: 'RAIN OVER THE CRADLE', category: 'child', domain: 'family', ageMin: 1, ageMax: 4, once: true,
+    text: 'Rain finds a gap over your bedding. The household has one dry blanket and several strong opinions about the roof.',
+    choices: [
+      { label: 'Carry a small bowl to catch the rain', outcome: { text: 'The bowl catches a little water. Your guardian praises the help and moves your bedding somewhere dry.', effects: { wits: 1, householdLesson: { wealth: 1 } }, tone: 'good' } },
+      { label: 'Ask to share the dry blanket', outcome: { text: 'Your guardian folds the dry blanket around you. The roof will require a less comfortable remedy.', effects: { health: 1 }, tone: 'plain' } },
+    ],
+  },
+);

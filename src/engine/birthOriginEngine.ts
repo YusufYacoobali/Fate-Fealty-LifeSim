@@ -1,3 +1,4 @@
+import { varyBirthHousehold } from './birthCircumstances';
 import type { BirthOriginId, GameState } from '@/types/game';
 import { BIRTH_ORIGINS, birthWeights } from '@/data/birthOrigins';
 import { pick, pickWeighted, rnd } from './random';
@@ -57,5 +58,6 @@ export function initializeBirthOrigin(state: GameState, selected?: BirthOriginId
     state.world.characters.father.role = 'King · Thy Father';
   }
   state.feed[0].text = pick(def.introductions).replaceAll('{mother}', parents[0].name).replaceAll('{father}', parents[1].name).replaceAll('{player}', state.first);
+  varyBirthHousehold(state,inheritedGold);
   player.bio = state.feed[0].text;
 }

@@ -1,5 +1,7 @@
+import { CAREER_SPECIALIZATIONS } from '@/data/careerSpecializations';
+import { PRACTICE_DECISIONS, PRACTICE_PROBLEMS, PRACTICE_RESPONSES } from '@/data/practiceDecisions';
 import type { GameEvent } from '@/types/game';
-import { PROFESSIONAL_STORIES } from '@/data/professionalStories';
+import { PROFESSIONAL_STORIES, immediateProfessionalBranch } from '@/data/professionalStories';
 export const CAREER_SPECIALIZATION_EVENTS: GameEvent[] = PROFESSIONAL_STORIES.flatMap(story => [
   {
     id: `profession_${story.id}`, title: story.title, text: story.text, category: 'peasant', domain: 'career', arcNodeOnly: true, actorRoles: {},
@@ -35,9 +37,20 @@ const ACCOUNTS: Record<string, [string, string, string, string, string]> = {
 for (const story of PROFESSIONAL_STORIES) {
   const texts = ACCOUNTS[story.id];
   const opening = CAREER_SPECIALIZATION_EVENTS.find(e => e.id === `profession_${story.id}`)!;
-  opening.choices.forEach((choice, i) => { choice.outcome!.text = texts[i]; });
+  opening.choices.forEach((choice, i) => { choice.outcome!.text = texts[i]; if (immediateProfessionalBranch(story.id, i)) { delete choice.outcome!.next; delete choice.outcome!.nextWhen; } });
   const verdict = CAREER_SPECIALIZATION_EVENTS.find(e => e.id === `profession_${story.id}_verdict`)!;
   verdict.choices[0].label = texts[3]; verdict.choices[1].label = `${texts[4]} (6g)`;
   verdict.choices[0].outcome!.text = `Your account enters the record: ${story.title.toLowerCase()}. The recorded agreement determines who pays and who is believed.`;
   verdict.choices[1].outcome!.text = `You pay six gold in restitution over ${story.title.toLowerCase()}. The record includes the correction.`;
 }
+
+for (const action of CAREER_SPECIALIZATIONS.filter(a => !a.story)) CAREER_SPECIALIZATION_EVENTS.push({
+  id: `practice_${action.id}`, title: action.name.toUpperCase(),
+  text: action.id === 'find_patron' ? '{{client}} is considering a place for a performer at their table. Supper, a deposit and the patron’s right to request encores all remain negotiable.' : PRACTICE_PROBLEMS[action.mechanism],
+  category: 'peasant', domain: 'career', arcNodeOnly: true, actorRoles: {},
+  choices: PRACTICE_DECISIONS[action.mechanism].map((label, choice) => ({
+    id: `method_${choice}`, label, forecast: { risk: choice === 1 ? 'high' : 'medium', positive: ['Professional progress and standing'], negative: ['Preparation costs', 'Setbacks or client complaints'] }, costGold: choice === 2 ? 2 : undefined,
+    outcome: { text: PRACTICE_RESPONSES[action.mechanism][choice],
+      effects: { professionalPractice: { id: action.id, choice } }, tone: 'plain' },
+  })),
+});

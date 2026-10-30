@@ -135,7 +135,7 @@ describe('v5 saves', () => {
   it.each([3, 4])('migrates v%s additively and leaves its source intact', async (version) => {
     const s = ready(); const raw = { ...s, schemaVersion: version, rpg: undefined }; const key = `mls:world:v${version}`;
     await AsyncStorage.setItem(key, JSON.stringify({ schemaVersion: version, game: raw }));
-    const loaded = await loadGame(); expect(loaded.state?.schemaVersion).toBe(6); expect(loaded.state?.gold).toBe(s.gold); expect(loaded.state?.rpg.materials.iron).toBe(0); expect(await AsyncStorage.getItem(key)).not.toBeNull();
+    const loaded = await loadGame(); expect(loaded.state?.schemaVersion).toBe(7); expect(loaded.state?.gold).toBe(s.gold); expect(loaded.state?.rpg.materials.iron).toBe(0); expect(await AsyncStorage.getItem(key)).not.toBeNull();
   });
   it('serializes multiple saves so the newest snapshot wins', async () => {
     const first = ready(), second = cloneState(first); second.gold = 123;

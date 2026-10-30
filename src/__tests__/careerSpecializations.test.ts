@@ -1,3 +1,4 @@
+import { eventById } from '@/engine/eventPicker';
 import { createLife } from '@/engine/gameState';
 import { gameReducer } from '@/state/gameReducer';
 import { CAREER_SPECIALIZATIONS } from '@/data/careerSpecializations';
@@ -16,8 +17,10 @@ describe('professional gameplay', () => {
       const used = s.actionClock.used;
       s = gameReducer(s, { type: 'CAREER_ACTION', action: 'specialize', careerId: a.id });
       expect(s.actionClock.used).toBe(used + 1);
+      s = gameReducer(s, { type: 'CHOOSE', choice: eventById(s.pendingEvent!.eventId)!.choices[0] });
+      expect(s.actionClock.used).toBe(used + 1);
       const record = s.world.characters[s.playerCharacterId].professionalHistory![career.family]!;
-      expect(record.completedActions).toContain(a.id);
+      expect(record.matters.find(m => m.id === a.id)?.resolved).toBe(true);
       expect(record.contactIds.every(id => !!s.world.characters[id])).toBe(true);
       expect(record.rivalId).toBeDefined();
       const repeated = gameReducer(s, { type: 'CAREER_ACTION', action: 'specialize', careerId: a.id });
@@ -35,6 +38,8 @@ describe('professional gameplay', () => {
     s.world.characters[s.playerCharacterId].education!.qualifications.push('literacy');
     expect(careerAvailability(s, careerById('barber_surgeon')!)).toMatch(/milestone/);
     s = gameReducer(s, { type: 'CAREER_ACTION', action: 'specialize', careerId: 'diagnose_patient' });
+    s = gameReducer(s, { type: 'CHOOSE', choice: eventById(s.pendingEvent!.eventId)!.choices[0] });
+    for (let retry = 0; retry < 8 && careerAvailability(s, careerById('barber_surgeon')!); retry++) { s.world.currentYear++; s.actionClock.used = 0; s = gameReducer(s, { type: 'CAREER_ACTION', action: 'specialize', careerId: 'diagnose_patient' }); s = gameReducer(s, { type: 'CHOOSE', choice: eventById(s.pendingEvent!.eventId)!.choices[0] }); }
     expect(careerAvailability(s, careerById('barber_surgeon')!)).toBeNull();
     s = gameReducer(s, { type: 'CAREER_ACTION', action: 'promote' });
     expect(s.occupation.careerId).toBe('barber_surgeon');
@@ -44,13 +49,18 @@ describe('professional gameplay', () => {
     let s = createLife({ worldSeed: 4, birthOrigin: 'peasant' });
     s.age = 30; s.gold = 100; s.occupation.careerId = 'herb_gatherer';
     s = gameReducer(s, { type: 'CAREER_ACTION', action: 'specialize', careerId: 'diagnose_patient' });
+    s = gameReducer(s, { type: 'CHOOSE', choice: eventById(s.pendingEvent!.eventId)!.choices[0] });
     const id = s.world.characters[s.playerCharacterId].professionalHistory!.medicine!.contactIds[0];
     const health = s.world.characters[id].stats.health;
     s = gameReducer(s, { type: 'CAREER_ACTION', action: 'specialize', careerId: 'treat_household' });
-    expect(s.world.characters[id].stats.health).toBeGreaterThan(health);
+    s = gameReducer(s, { type: 'CHOOSE', choice: eventById(s.pendingEvent!.eventId)!.choices[0] });
+    expect(s.world.characters[id].healthConditions?.some(c => c.conditionId === 'winter_fever')).toBe(false);
     s.occupation.careerId = 'apprentice';
     s = gameReducer(s, { type: 'CAREER_ACTION', action: 'specialize', careerId: 'train_apprentice' });
+    s = gameReducer(s, { type: 'CHOOSE', choice: eventById(s.pendingEvent!.eventId)!.choices[0] });
     const apprentice = s.world.characters[s.playerCharacterId].professionalHistory!.craft!.apprenticeId!;
-    expect(s.world.characters[apprentice].education!.mentorId).toBe(s.playerCharacterId);
+    const matter = s.world.characters[s.playerCharacterId].professionalHistory!.craft!.matters.find(m => m.id === 'train_apprentice')!;
+    if (matter.success) expect(s.world.characters[apprentice].education!.mentorId).toBe(s.playerCharacterId);
+    else expect(apprentice).toBeUndefined();
   });
 });

@@ -1,3 +1,5 @@
+import { dueCourtEvent } from '../courtPolitics';
+import { birthBindings } from '../birthCircumstances';
 import { dueProfessionalEventId, bindProfessionalEvent } from '../careerSpecializationEngine';
 import { eventById } from '../eventPicker';
 import { EDUCATION_EVENTS } from '@/content/educationEvents';
@@ -63,6 +65,8 @@ export function directYear(state: GameState): DirectedYear {
     return { event: legal, kind: 'thread', isLegal: true };
   }
 
+  const courtEvent = dueCourtEvent(state);
+  if (courtEvent) { recordBeat(state,'thread'); return { event: eventById(courtEvent)!, kind: 'thread', isLegal: false }; }
   const professionalId = dueProfessionalEventId(state);
   const professionalEvent = professionalId ? eventById(professionalId) : undefined;
   if (professionalEvent) {
@@ -103,7 +107,7 @@ export function directYear(state: GameState): DirectedYear {
 
   const education = state.world.characters[state.playerCharacterId].education;
   if (kind !== 'thread' && education?.track && state.world.currentYear % 3 === 0) {
-    const lesson = EDUCATION_EVENTS.find(event => event.id.startsWith(`education_${education.track}_`) && isEventPlayable(state, event));
+    const lesson = EDUCATION_EVENTS.find(event => event.id.startsWith(`education_${state.age >= 18 ? 'adult_' : ''}${education.track}_`) && isEventPlayable(state, event));
     if (lesson) return serve(lesson, 'standalone');
   }
 
@@ -138,10 +142,11 @@ export function directYear(state: GameState): DirectedYear {
 
 /** Bind actors for the chosen event, reusing a thread's existing cast. */
 export function bindDirectedEvent(state: GameState, directed: DirectedYear): Record<string, string> | undefined {
-  if (directed.event?.id.startsWith('profession_')) return bindProfessionalEvent(state, directed.event.id);
+  if (directed.event?.id.startsWith('origin_child_')) return birthBindings(state);
+  if (directed.event?.id.startsWith('profession_') || directed.event?.id.startsWith('practice_')) return bindProfessionalEvent(state, directed.event.id);
   if (directed.event?.id.startsWith('education_')) {
     const e = state.world.characters[state.playerCharacterId].education;
-    return e?.mentorId && e.classmateIds[0] ? { mentor: e.mentorId, classmate: e.classmateIds[0] } : undefined;
+    return e?.mentorId && (e.activeClassmateIds?.[0] ?? e.classmateIds[0]) ? { mentor: e.mentorId, classmate: (e.activeClassmateIds?.[0] ?? e.classmateIds[0]) } : undefined;
   }
   const thread = directed.threadId ? openThreads(state).find((item) => item.id === directed.threadId) : undefined;
   // A chain that changes its cast halfway through is not one story any more.

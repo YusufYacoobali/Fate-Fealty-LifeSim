@@ -597,8 +597,12 @@ export interface Effects {
   royalTransition?: 'claim' | 'abdicate' | 'depose' | 'name_heir';
   royalTreasury?: number;
   courtScandal?: 'investigate' | 'cover' | 'scapegoat' | 'dismiss';
+  courtPetition?: 'merit' | 'patron' | 'conditional' | 'withdraw';
+  courtOpposition?: 'negotiate' | 'assert' | 'hear';
+  professionalPractice?: { id: string; choice: number };
   professional?: { family: CareerFamily; caseId: string; stage: 'approach' | 'finish'; choice: number };
-  education?: { qualifications?: import('./lifeDepth').Qualification[]; progress?: number; misconduct?: number; mentorBond?: number; peerBond?: number; scholarship?: boolean; dismiss?: boolean };
+  householdLesson?: { wealth?: number; contactBond?: number; progress?: number };
+  education?: { disputedCredential?: import('./lifeDepth').Qualification; qualifications?: import('./lifeDepth').Qualification[]; progress?: number; misconduct?: number; mentorBond?: number; peerBond?: number; scholarship?: boolean; dismiss?: boolean };
   skillXp?: Partial<Record<import('./rpg').SkillId, number>>;
   debt?: { principal: number; lenderId?: string; interestRate?: number };
   materials?: Partial<Record<import('./rpg').MaterialId, number>>;
@@ -938,7 +942,7 @@ export interface DuelState {
 }
 
 export interface GameState {
-  schemaVersion: 6;
+  schemaVersion: 7;
   rpg: import('./rpg').RpgState;
   playerCharacterId: string;
   playerRun: PlayerRunState;

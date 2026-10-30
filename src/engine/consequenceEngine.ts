@@ -1,5 +1,7 @@
+import { resolveOfficePetition, resolveCourtOpposition } from './courtPolitics';
+import { applyHouseholdLesson } from './birthCircumstances';
 import { applyCourtScandal, applyRoyalTransition } from './courtEngine';
-import { applyProfessionalEffect } from './careerSpecializationEngine';
+import { applyProfessionalEffect, resolveProfessionalPractice } from './careerSpecializationEngine';
 import { applyEducationEffect } from './educationEngine';
 /**
  * The consequence engine turns a declarative `Effects` object into mutations on
@@ -49,8 +51,12 @@ export function applyEffects(s: GameState, eff?: Effects): GameState {
   if (!eff) return s;
   if (eff.royalTransition) applyRoyalTransition(s, eff.royalTransition);
   if (eff.royalTreasury != null && s.world.court?.rulerId === s.playerCharacterId) s.world.court.treasury = Math.max(0, Math.min(5000, s.world.court.treasury + eff.royalTreasury));
+  if (eff.courtPetition) resolveOfficePetition(s,eff.courtPetition);
+  if (eff.courtOpposition) resolveCourtOpposition(s,eff.courtOpposition);
   if (eff.courtScandal) applyCourtScandal(s, eff.courtScandal);
+  if (eff.professionalPractice) resolveProfessionalPractice(s, eff.professionalPractice.id, eff.professionalPractice.choice);
   if (eff.professional) applyProfessionalEffect(s, eff.professional);
+  if (eff.householdLesson) applyHouseholdLesson(s, eff.householdLesson);
   if (eff.education) applyEducationEffect(s, eff.education);
   for (const [id, amount] of Object.entries(eff.materials ?? {})) s.rpg.materials[id as MaterialId] = Math.max(0, (s.rpg.materials[id as MaterialId] ?? 0) + amount);
   for (const [id, amount] of Object.entries(eff.goods ?? {})) s.rpg.goods[id] = Math.max(0, (s.rpg.goods[id] ?? 0) + amount);
@@ -278,7 +284,7 @@ export function killPlayer(s: GameState, cause: string): GameState {
 /** Convenience used by the death screen / legacy summary. */
 export function legacyScore(s: GameState): number {
   const statSum = s.stats.health + s.stats.charm + s.stats.wits + s.stats.faith;
-  const professionalLegacy = Math.max(0, ...Object.values(s.world.characters[s.playerCharacterId].professionalHistory ?? {}).map(r => Math.max(0, r.reputation) * 4 + Math.min(8, r.milestones.length) * 35 + r.matters.filter(m => m.resolved).length * 40));
+  const professionalLegacy = Math.max(0, ...Object.values(s.world.characters[s.playerCharacterId].professionalHistory ?? {}).map(r => Math.max(0, r.reputation) * 4 + Math.min(8, r.milestones.length) * 35 + r.matters.filter(m => m.resolved && (m.kind !== 'practice' || m.success)).length * 40));
   return Math.round(professionalLegacy + s.rankIdx * 120 + s.gold * 2 + statSum + s.reputation + s.memories.length * 4);
 }
 

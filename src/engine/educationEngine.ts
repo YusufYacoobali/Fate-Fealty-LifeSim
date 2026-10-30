@@ -1,3 +1,5 @@
+import { applyForSponsorship, sponsorshipEligibility, spendTuitionCoverage, tuitionDue } from './educationFunding';
+import type { SponsorshipKind } from '@/types/game';
 import type { EducationTrackId, Effects, GameState, WorldCharacter } from '@/types/game';
 import { educationTrack } from '@/data/education';
 import { emptyEducation } from './lifeDepthState';
@@ -7,21 +9,20 @@ import { grantSkillXp, skillLevel } from './rpgProgress';
 import { applyRelationshipShift } from './relationshipState';
 import { appendCharacterMemory } from './worldJournal';
 import { timedActionAvailability } from './actionClock';
-import { clamp } from './random';
+import { clamp, chance } from './random';
 
 export type EducationAction = 'enrol' | 'study' | 'practise' | 'mentor' | 'challenge' | 'bully' | 'cheat' | 'skip' | 'scholarship' | 'graduate' | 'leave';
 export function educationOf(character: WorldCharacter) { return character.education ??= emptyEducation(); }
 export function educationFee(state: GameState, track: EducationTrackId): number {
-  const p = state.world.characters[state.playerCharacterId];
-  return (p.education ?? emptyEducation()).scholarship || educationTrack(track).origins.includes(p.background?.origin ?? 'peasant') ? 0 : educationTrack(track).fee;
+  return tuitionDue(state, track);
 }
-export function educationAvailability(state: GameState, action: EducationAction, track?: EducationTrackId): string | null {
+export function educationAvailability(state: GameState, action: EducationAction, track?: EducationTrackId, funding: SponsorshipKind = 'parish_charity', sponsorId?: string): string | null {
   const time = timedActionAvailability(state);
   if (!time.available) return time.reason!;
   if (state.age < 5) return 'Learning begins at age 5';
   const e = state.world.characters[state.playerCharacterId].education ?? emptyEducation();
   if (e.actionsYear === state.world.currentYear && e.actionsUsed >= 3) return 'Three learning opportunities per year';
-  if (action === 'scholarship') return e.scholarship ? 'Already sponsored' : null;
+  if (action === 'scholarship') return sponsorshipEligibility(state, funding, track ?? e.track ?? 'parish', sponsorId);
   if (action === 'enrol') {
     if (!track) return 'Choose a learning path';
     const def = educationTrack(track);
@@ -43,21 +44,23 @@ export function educationAvailability(state: GameState, action: EducationAction,
   }
   return null;
 }
-function recoverEducationActors(state: GameState): void {
+export function recoverEducationActors(state: GameState): void {
   const p = state.world.characters[state.playerCharacterId], e = educationOf(p);
   if (!e.track) return;
   const def = educationTrack(e.track);
   if (!e.mentorId || !state.world.characters[e.mentorId]?.alive) {
-    const mentor = Object.values(state.world.characters).find(c => c.id !== p.id && c.alive && c.age >= 20 && c.id !== e.classmateIds[0] && c.occupation.careerId === def.mentorCareer)
+    const mentor = Object.values(state.world.characters).find(c => c.id !== p.id && c.alive && c.age >= 20 && c.id !== (e.activeClassmateIds?.[0] ?? e.classmateIds[0]) && c.occupation.careerId === def.mentorCareer)
       ?? spawnKin(state, { kind: 'acquaintance', age: 35, role: `${def.name} mentor`, bio: 'A patient teacher whose fees include the right to complain.' });
     mentor.occupation.careerId = def.mentorCareer;
     e.mentorId = mentor.id;
   }
-  e.classmateIds = e.classmateIds.filter(id => state.world.characters[id]?.alive);
-  if (!e.classmateIds.length) {
-    const peer = Object.values(state.world.characters).find(c => c.id !== p.id && c.id !== e.mentorId && c.alive && Math.abs(c.age - state.age) <= 3 && c.id !== 'goose')
-      ?? spawnKin(state, { kind: 'acquaintance', age: state.age, role: 'Fellow learner', bio: 'Your fellow learner keeps careful count of every slight and every favour.' });
-    e.classmateIds.push(peer.id);
+  e.activeClassmateIds ??= [...e.classmateIds];
+  e.activeClassmateIds = e.activeClassmateIds.filter(id => state.world.characters[id]?.alive && (state.world.characters[id].age >= 18) === (state.age >= 18));
+  if (!e.activeClassmateIds.length) {
+    const peer = Object.values(state.world.characters).find(c => c.id !== p.id && c.id !== e.mentorId && c.alive && Math.abs(c.age - state.age) <= 3 && (c.age >= 18) === (state.age >= 18) && (!c.education?.track || c.education.track === e.track) && c.id !== 'goose')
+      ?? spawnKin(state, { kind: 'acquaintance', age: state.age, role: state.age >= 18 ? 'Adult study colleague' : 'Fellow learner', bio: 'Your fellow learner keeps careful count of every slight and every favour.' });
+    e.classmateIds = [...new Set([...e.classmateIds, peer.id])];
+    e.activeClassmateIds.push(peer.id);
     const peerLearning = educationOf(peer);
     if (!peerLearning.track) { peerLearning.track = def.id; peerLearning.startedYear = state.world.currentYear; }
     if (peerLearning.track === def.id) {
@@ -69,6 +72,10 @@ function recoverEducationActors(state: GameState): void {
 }
 export function applyEducationEffect(state: GameState, effect: NonNullable<Effects['education']>): void {
   const p = state.world.characters[state.playerCharacterId], e = educationOf(p);
+  if (effect.disputedCredential && e.track && educationTrack(e.track).qualifications.includes(effect.disputedCredential)) {
+    e.qualifications = [...new Set([...e.qualifications, effect.disputedCredential])];
+    (e.fraudulentCredentials ??= []).push({ qualification: effect.disputedCredential, mentorId: e.mentorId, reviewYear: state.world.currentYear + 2, resolved: false });
+  }
   if (effect.qualifications) e.qualifications = [...new Set([...e.qualifications, ...effect.qualifications])];
   if (!e.track) return;
   recoverEducationActors(state);
@@ -76,7 +83,7 @@ export function applyEducationEffect(state: GameState, effect: NonNullable<Effec
   e.misconduct = clamp(e.misconduct + (effect.misconduct ?? 0));
   if (effect.scholarship) e.scholarship = true;
   if (e.mentorId && effect.mentorBond) applyRelationshipShift(state, e.mentorId, { affinity: effect.mentorBond }, { affinity: effect.mentorBond, trust: effect.mentorBond });
-  const peerId = e.classmateIds[0];
+  const peerId = e.activeClassmateIds?.[0] ?? e.classmateIds[0];
   if (peerId && effect.peerBond) {
     applyRelationshipShift(state, peerId, { affinity: effect.peerBond }, { affinity: effect.peerBond, trust: effect.peerBond });
     const peer = state.world.characters[peerId];
@@ -94,23 +101,22 @@ export function applyEducationEffect(state: GameState, effect: NonNullable<Effec
     pushFeed(state, 'EDUCATION · DISMISSED', '#ab3939', 'Your mentor returns your belongings in a sack. The sack is the only recommendation enclosed.', 'bad');
   }
 }
-export function performEducationAction(state: GameState, action: EducationAction, track?: EducationTrackId): GameState {
-  if (educationAvailability(state, action, track)) return state;
+export function performEducationAction(state: GameState, action: EducationAction, track?: EducationTrackId, funding: SponsorshipKind = 'parish_charity', sponsorId?: string): GameState {
+  if (educationAvailability(state, action, track, funding, sponsorId)) return state;
   const e = educationOf(state.world.characters[state.playerCharacterId]);
   if (e.actionsYear !== state.world.currentYear) { e.actionsYear = state.world.currentYear; e.actionsUsed = 0; }
   e.actionsUsed++;
   if (action === 'scholarship') {
-    e.scholarship = true;
-    state.world.factions.church.playerStanding = clamp(state.world.factions.church.playerStanding + 2, -100, 100);
-    pushFeed(state, 'PATRONAGE', '#365f88', 'You earn a bursary by carrying parchment and tending the parish lamps. Tuition is now covered, including later study.', 'good');
+    applyForSponsorship(state, funding, track ?? e.track ?? 'parish', sponsorId);
     return state;
   }
   if (action === 'enrol') {
-    addMoney(state, -educationFee(state, track!));
-    Object.assign(e, { track: track!, progress: 0, misconduct: 0, startedYear: state.world.currentYear, classmateIds: [] });
+    addMoney(state, -spendTuitionCoverage(state, track!));
+    if (e.mentorId) e.formerMentorIds = [...new Set([...(e.formerMentorIds ?? []), e.mentorId])];
+    Object.assign(e, { track: track!, progress: 0, misconduct: 0, startedYear: state.world.currentYear, activeClassmateIds: [], mentorId: undefined, mode: state.age >= 18 ? 'adult' : 'childhood' });
     recoverEducationActors(state);
     const mentor = state.world.characters[e.mentorId!];
-    pushFeed(state, 'LEARNING', '#365f88', `You begin ${educationTrack(track!).name.toLowerCase()} with ${mentor.name}. Your fellow learner is ${state.world.characters[e.classmateIds[0]].name}.`, 'good');
+    pushFeed(state, 'LEARNING', '#365f88', `You begin ${educationTrack(track!).name.toLowerCase()} with ${mentor.name}. Your fellow learner is ${state.world.characters[(e.activeClassmateIds?.[0] ?? e.classmateIds[0])].name}.`, 'good');
     return state;
   }
   recoverEducationActors(state);
@@ -120,27 +126,34 @@ export function performEducationAction(state: GameState, action: EducationAction
     e.qualifications = [...new Set([...e.qualifications, ...def.qualifications])];
     e.history.push({ track: def.id, year: state.world.currentYear, outcome: 'completed' });
     e.track = null;
-    if (def.id === 'martial') state.world.characters[state.playerCharacterId].socialStatus!.martialHonour = 'page';
+    if (def.id === 'martial' && state.world.characters[state.playerCharacterId].socialStatus!.martialHonour === 'none') state.world.characters[state.playerCharacterId].socialStatus!.martialHonour = 'page';
     pushFeed(state, 'QUALIFIED', '#387245', `${mentor.name} signs your record: ${def.qualifications.map(q => q.replaceAll('_', ' ')).join(', ') || 'household practice completed'}. Employers may listen; none has promised a place.`, 'good');
     return state;
   }
   if (action === 'leave') { e.history.push({ track: def.id, year: state.world.currentYear, outcome: 'left' }); e.track = null; return state; }
-  const gain = 12 + skillLevel(state, def.skill) + Math.floor(mentor.rel / 20);
+  const expertise = (mentor.skills?.[def.skill]?.level ?? 1) + mentor.stats.wits / 15 + mentor.occupation.performance / 25;
+  const gain = Math.max(3, Math.round(5 + skillLevel(state, def.skill) + expertise / 2 + mentor.rel / 25 - e.misconduct / 25));
+  const attentive = chance(Math.max(0.35, Math.min(0.95, 0.45 + expertise / 35 + state.stats.wits / 500)));
+  const discovered = action === 'cheat' && chance(Math.min(0.9, 0.12 + mentor.stats.wits / 160 + e.misconduct / 250));
   const effects: Partial<Record<EducationAction, NonNullable<Effects['education']>>> = {
-    study: { progress: gain, mentorBond: 2 }, practise: { progress: gain + 3 }, mentor: { progress: 9, misconduct: -20, mentorBond: 8 },
+    study: { progress: attentive ? gain : 3, mentorBond: attentive ? 2 : 0 }, practise: { progress: attentive ? gain + 3 : 4 }, mentor: { progress: 9, misconduct: -20, mentorBond: 8 },
     challenge: { progress: 10, peerBond: mentor.rel >= 50 ? 4 : -5 }, bully: { progress: 2, misconduct: 25, peerBond: -25, mentorBond: -10 },
-    cheat: { progress: 18, misconduct: 30, peerBond: -15, mentorBond: -12 }, skip: { progress: -6, misconduct: 15, mentorBond: -8 },
+    cheat: discovered ? { progress: -4, misconduct: 35, peerBond: -15, mentorBond: -15 } : { progress: 16, misconduct: 2 }, skip: { progress: -6, misconduct: 15, mentorBond: -8 },
   };
   applyEducationEffect(state, effects[action]!);
-  if (action !== 'skip' && action !== 'bully' && action !== 'cheat') grantSkillXp(state, def.skill, 8, def.name.toLowerCase());
+  if (action !== 'skip' && action !== 'bully' && action !== 'cheat') grantSkillXp(state, def.skill, attentive ? 7 : 2, def.name.toLowerCase());
   const lines: Partial<Record<EducationAction, string>> = {
     study: `You work through ${mentor.name}'s examples. The margins contain three corrections and a small drawing of your execution.`,
     practise: 'You repeat the difficult work until your hands understand what your head has been pretending to know.',
     mentor: `${mentor.name} explains the error privately. You repair your conduct as well as your work.`,
-    challenge: `You test your work against ${state.world.characters[e.classmateIds[0]].name}. The result becomes a topic of conversation for years.`,
-    bully: `You humiliate ${state.world.characters[e.classmateIds[0]].name} before the class. Their silence is not forgiveness.`,
-    cheat: `You pass off ${state.world.characters[e.classmateIds[0]].name}'s work as yours. Your mentor recognises the handwriting.`,
+    challenge: `You test your work against ${state.world.characters[(e.activeClassmateIds?.[0] ?? e.classmateIds[0])].name}. The result becomes a topic of conversation for years.`,
+    bully: `You humiliate ${state.world.characters[(e.activeClassmateIds?.[0] ?? e.classmateIds[0])].name} before the class. Their silence is not forgiveness.`,
+    cheat: `You pass off ${state.world.characters[(e.activeClassmateIds?.[0] ?? e.classmateIds[0])].name}'s work as yours. ${discovered ? 'Your mentor recognises the handwriting; the accusation is recorded.' : 'The borrowed work passes for yours, this time.'}`,
     skip: 'You spend the lesson by the river. Your mentor adds your absence to a much less pleasant lesson.' };
+  if (state.age >= 18) {
+    lines.study = `${mentor.name} reviews your adult study. ${attentive ? 'The commentary clears up a difficult passage.' : 'The explanation leaves you with corrections and work still to do.'}`;
+    lines.challenge = `You debate ${state.world.characters[(e.activeClassmateIds?.[0] ?? e.classmateIds[0])].name} as a fellow adult learner. Your argument will travel beyond the lesson.`;
+  }
   pushFeed(state, 'LEARNING', '#365f88', lines[action]!, ['bully', 'cheat', 'skip'].includes(action) ? 'bad' : 'good');
   return state;
 }
@@ -149,10 +162,22 @@ export function tickEducation(state: GameState): void {
     if (!c.alive) continue;
     const e = educationOf(c);
     if (c.id === state.playerCharacterId) {
-      if (e.track) { recoverEducationActors(state); e.progress = clamp(e.progress + (e.misconduct < 50 ? 5 : 0)); }
+      for (const credential of e.fraudulentCredentials ?? []) {
+        if (credential.resolved || credential.reviewYear > state.world.currentYear) continue;
+        credential.resolved = true;
+        const mentor = state.world.characters[credential.mentorId ?? ''];
+        if (chance(Math.min(0.95, 0.4 + (mentor?.stats.wits ?? 40) / 200 + e.misconduct / 300))) {
+          const legitimatelyEarned = e.history.some(h => h.outcome === 'completed' && educationTrack(h.track).qualifications.includes(credential.qualification));
+          if (!legitimatelyEarned) e.qualifications = e.qualifications.filter(q => q !== credential.qualification);
+          e.misconduct = clamp(e.misconduct + 30); state.reputation -= 8;
+          if (mentor?.alive) applyRelationshipShift(state, mentor.id, { trust: -20 }, { trust: -25, respect: -15 });
+          pushFeed(state, 'CREDENTIAL REVIEW', '#ab3939', `${mentor?.name ?? 'The examiner'} challenges your borrowed ${credential.qualification.replaceAll('_', ' ')} certificate. ${legitimatelyEarned ? 'Your later honest examination stands, but the deception is recorded.' : 'The false credential is withdrawn; honest training remains open.'}`, 'bad');
+        }
+      }
+      if (e.track) { e.mode = state.age >= 18 ? 'adult' : 'childhood'; recoverEducationActors(state); e.progress = clamp(e.progress + (e.misconduct < 50 ? 5 : 0)); }
       if (state.age >= 18 && !e.comingOfAge) {
         e.comingOfAge = true;
-        pushFeed(state, 'COMING OF AGE', '#7a4f9a', `You enter adulthood with ${e.qualifications.length ? e.qualifications.map(q => q.replaceAll('_', ' ')).join(', ') : 'no formal qualification'}. ${e.classmateIds.map(id => state.world.characters[id]?.name).filter(Boolean).join(' and ') || 'The people of your household'} will remember how you got here. Later study remains open.`, 'plain');
+        pushFeed(state, 'COMING OF AGE', '#7a4f9a', `${state.age === 18 ? 'You enter adulthood with' : 'Your learning record contains'} ${e.qualifications.length ? e.qualifications.map(q => q.replaceAll('_', ' ')).join(', ') : 'no formal qualification'}. ${e.classmateIds.map(id => state.world.characters[id]?.name).filter(Boolean).join(' and ') || 'The people of your household'} will remember how you got here. Later study remains open.`, 'plain');
       }
     } else {
       const investment = c.childDevelopment?.investment ?? 0;

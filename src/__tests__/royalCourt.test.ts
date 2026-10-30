@@ -54,13 +54,16 @@ describe('persistent royal court', () => {
     expect(addRoyalClaim(s, 'joan', 'father', 'birth', 100)).toBe(false);
     expect(addRoyalClaim(s, 'joan', 'father', 'marriage', 100)).toBe(false);
   });
-  it('allows a free courtier to gain office without a title', () => {
+  it('allows a free courtier to contest an office without a title', () => {
     let s = createLife({ birthOrigin: 'peasant', worldSeed: 42 }); s.age = 30;
     const p = s.world.characters[s.playerCharacterId];
     p.education!.qualifications.push('court_education'); p.factionInfluence = 30;
     s.world.factions.crown.playerStanding = 15;
     s = gameReducer(s, { type: 'COURT', action: 'petition', office: 'chancellor' });
-    expect(s.world.court!.offices.chancellor).toBe(s.playerCharacterId);
+    expect(s.world.court!.offices.chancellor).not.toBe(s.playerCharacterId);
+    const { eventById } = require('@/engine/eventPicker');
+    s = gameReducer(s, { type: 'CHOOSE',choice: eventById(s.pendingEvent!.eventId).choices[0] });
+    expect(s.world.court!.petition!.resolved).toBe(true);
     expect(s.rankIdx).toBe(0);
     expect(courtAvailability(s, 'tax_raise')).toMatch(/entitled adult ruler/);
   });

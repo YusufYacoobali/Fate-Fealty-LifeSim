@@ -45,7 +45,7 @@ function legacyChainTitleMap(): Record<string, string> {
 }
 
 /** Increment whenever persisted story/event identifiers or semantics change. */
-export const CURRENT_CONTENT_VERSION = 6;
+export const CURRENT_CONTENT_VERSION = 7;
 
 export interface ContentAliases {
   templates: Record<string, string>;
@@ -74,6 +74,7 @@ export type ContentMigration = (world: WorldState) => ContentMigrationResult;
 
 /** Sequential migrations are registered at the version being migrated FROM. */
 export const CONTENT_MIGRATIONS: Record<number, ContentMigration> = {
+  6: (world) => ({ world, notices: [] }),
   // Character-level depth fields are migrated by normalizeGameState.
   5: (world) => ({ world, notices: [] }),
   4: (world) => ({ world, notices: [] }),

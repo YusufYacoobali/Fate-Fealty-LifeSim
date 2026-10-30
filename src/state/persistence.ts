@@ -13,11 +13,12 @@ import { correctedNpcName } from '@/data/names';
 import { normalizeRpg } from '@/engine/rpgEngine';
 import { upgradeDuel } from '@/engine/duelEngine';
 
+// Keep the existing key so an older or unreadable save cannot be shadowed.
 const SAVE_KEY = 'mls:world:v5';
 const LEGACY_SAVE_KEY = 'mls:world:v4';
 const OLDER_SAVE_KEY = 'mls:world:v3';
 
-interface SaveEnvelopeV5 {
+interface SaveEnvelopeV6 {
   schemaVersion: 6;
   savedAt: number;
   game: GameState;
@@ -48,7 +49,7 @@ async function writeGame(state: GameState): Promise<void> {
       kin: [],
       pendingEvent: state.pendingEvent,
     };
-    const envelope: SaveEnvelopeV5 = { schemaVersion: 6, savedAt: Date.now(), game: toSave };
+    const envelope: SaveEnvelopeV6 = { schemaVersion: 6, savedAt: Date.now(), game: toSave };
     await AsyncStorage.setItem(SAVE_KEY, JSON.stringify(envelope));
   } catch (e) {
     // Saving is best-effort; never crash the game over it.

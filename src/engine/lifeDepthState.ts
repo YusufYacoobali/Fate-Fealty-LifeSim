@@ -21,7 +21,9 @@ export function initializeLifeDepth(state: GameState): void {
     character.education ??= emptyEducation();
     if (character.id === state.playerCharacterId && state.memories.some(m => m.tag === 'lettered') && !character.education.qualifications.includes('literacy')) character.education.qualifications.push('literacy');
     character.professionalHistory ??= {};
+    const needsStatus = !character.socialStatus;
     character.socialStatus ??= legacyStatus(character.rankIdx);
+    if (needsStatus && character.id === state.playerCharacterId && state.memories.some(m => m.tag === 'promoted_knight')) character.socialStatus.martialHonour = 'knight';
     character.background ??= {
       origin: character.rankIdx >= 5 ? 'royal' : character.rankIdx >= 3 ? 'noble' : 'peasant',
       familyId: character.birthFamilyId ?? '', guardianIds: [...(character.guardianIds?.length ? character.guardianIds : character.parentIds ?? [])],

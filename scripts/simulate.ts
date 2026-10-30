@@ -1,10 +1,10 @@
+import { runWithWorldRng, pick, rnd } from '../src/engine/random';
 import { resolveRpgEncounter } from '../src/__tests__/rpgSoakHelpers';
 /**
  * Headless engine smoke test. Plays many full lives with random choices and
  * asserts invariants. Run: npx tsx scripts/simulate.ts
  */
-import { createLife, cloneState } from '../src/engine/gameState';
-import { applyChoice } from '../src/engine/storyGraph';
+import { createLife } from '../src/engine/gameState';
 import { eventById, isChoiceEnabled } from '../src/engine/eventPicker';
 import { ACTIVITY_DEFS } from '../src/data/activities';
 import { RANKS } from '../src/data/ranks';
@@ -12,9 +12,7 @@ import { GameState } from '../src/types/game';
 import { gameReducer } from '../src/state/gameReducer';
 import { ENTRY_CAREERS } from '../src/data/careers';
 
-function randomChoice<T>(a: T[]): T {
-  return a[Math.floor(Math.random() * a.length)];
-}
+function randomChoice<T>(a: T[], state: GameState): T { return runWithWorldRng(state.world, () => pick(a)); }
 
 function assert(cond: boolean, msg: string) {
   if (!cond) throw new Error('INVARIANT FAILED: ' + msg);
@@ -35,7 +33,7 @@ function checkInvariants(s: GameState) {
   assert(s.holding.criticalYears >= 0, 'negative Holding crisis streak');
   assert(s.actionClock.used >= 0 && s.actionClock.used <= 24, `action clock out of range: ${s.actionClock.used}`);
   assert(s.actionClock.cap === 24, `unexpected action cap: ${s.actionClock.cap}`);
-  assert(s.kin.filter((person) => person.alive).length <= 30, 'living world exceeded its soft cap');
+  assert(s.kin.filter((person) => person.alive).length <= 60, 'living world exceeded its soft cap');
   for (const relationship of Object.values(s.world.relationships)) {
     for (const perspective of [relationship.aToB, relationship.bToA]) {
       for (const value of Object.values(perspective)) assert(value >= 0 && value <= 100, `relationship dimension out of range: ${value}`);
@@ -52,7 +50,7 @@ let arcsSeen = 0;
 let maxAge = 0;
 
 for (let i = 0; i < LIVES; i++) {
-  let s = createLife({ settings: { autoScroll: true, difficulty: randomChoice(['Merciful', 'Normal', 'Brutal']), liveForever: false, haptics: false, soundEffects: false } });
+  let s = createLife({ worldSeed: 400000 + i, settings: { autoScroll: true, difficulty: (['Merciful', 'Normal', 'Brutal'] as const)[i % 3], liveForever: false, haptics: false, soundEffects: false } });
   s.lifetimeUnlocked = Math.random() < 0.5;
   let guard = 0;
 
@@ -64,20 +62,19 @@ for (let i = 0; i < LIVES; i++) {
       if (ev.arcNodeOnly) arcsSeen++;
       eventsSeen++;
       const choices = ev.choices.filter((c) => isChoiceEnabled(s, c));
-      const choice = randomChoice(choices);
-      s = cloneState(s);
-      applyChoice(s, ev, choice);
+      const choice = randomChoice(choices, s);
+      s = gameReducer(s, { type: 'CHOOSE', choice });
     } else {
       // Spend a variable part of the yearly allowance, including work, then
       // deliberately age up early or at the cap.
-      const actions = Math.floor(Math.random() * 7);
+      const actions = runWithWorldRng(s.world, () => rnd(0, 6));
       for (let action = 0; action < actions && !s.dead && !s.pendingEvent; action++) {
-        if (!s.occupation.careerId && s.age >= 8 && Math.random() < 0.25) {
-          s = gameReducer(s, { type: 'CAREER_ACTION', action: 'apply', careerId: randomChoice(ENTRY_CAREERS).id });
-        } else if (s.occupation.careerId && Math.random() < 0.35) {
+        if (!s.occupation.careerId && s.age >= 8 && runWithWorldRng(s.world, () => rnd(0, 99)) < 25) {
+          s = gameReducer(s, { type: 'CAREER_ACTION', action: 'apply', careerId: randomChoice(ENTRY_CAREERS, s).id });
+        } else if (s.occupation.careerId && runWithWorldRng(s.world, () => rnd(0, 99)) < 35) {
           s = gameReducer(s, { type: 'CAREER_ACTION', action: 'work' });
         } else {
-          s = gameReducer(s, { type: 'DO_ACTIVITY', id: randomChoice(ACTIVITY_DEFS).id });
+          s = gameReducer(s, { type: 'DO_ACTIVITY', id: randomChoice(ACTIVITY_DEFS, s).id });
         }
       }
       s = gameReducer(s, { type: 'AGE_UP' });

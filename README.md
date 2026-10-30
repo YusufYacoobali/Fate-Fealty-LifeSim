@@ -1,5 +1,7 @@
 # Medieval Life — a pixel-art life sim
 
+The `v5` life-depth overhaul adds seven birth origins, playable education, distinct professional careers and a persistent royal court with protected succession. See [the implementation and verification report](docs/life-depth-overhaul.md) for systems, migration behavior, acceptance scenarios and release checks.
+
 A BitLife-style medieval life simulator for mobile, built with **Expo SDK 57 + React Native 0.86 + React 19.2 + TypeScript**. Be born a muddy peasant in Swineford, age up one year at a time, and claw your way toward knighthood and nobility — or die of a mild cough at 30. The goose is your best friend.
 
 Built to match the pixel-art mockup (`Medieval Life.dc.html`) 1:1, on top of a fully data-driven game engine.

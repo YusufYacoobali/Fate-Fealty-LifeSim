@@ -51,3 +51,19 @@ it('preserves unreadable and future saves even if an autosave is attempted', asy
   expect((await loadGame()).blockedByFutureVersion).toBe(true);
   await AsyncStorage.clear();
 });
+
+it('recognises professional legacies without awarding a noble child military honours', () => {
+  const { legacyScore } = require('@/engine/consequenceEngine');
+  const { evaluateAchievements } = require('@/engine/metaProgression');
+  const { buildLifeChronicle } = require('@/engine/deathEngine');
+  const { DEFAULT_META } = require('@/state/appMeta');
+  const noble = createLife({ worldSeed: 1, birthOrigin: 'noble' });
+  expect(evaluateAchievements(DEFAULT_META, noble, false).newly).not.toContain('knighted');
+  const commoner = createLife({ worldSeed: 2, birthOrigin: 'peasant' });
+  const before = legacyScore(commoner);
+  commoner.world.characters[commoner.playerCharacterId].professionalHistory!.medicine = { reputation: 60, completedActions: ['diagnose_patient','treat_household','noble_fever'], milestones: ['recognised_practice'], contactIds: [], matters: [], actionsYear: -1, actionsUsed: 0, lastWorkedYear: 1320 };
+  expect(legacyScore(commoner)).toBeGreaterThan(before + 200);
+  expect(commoner.rankIdx).toBe(0);
+  expect(buildLifeChronicle(commoner)[0]).toContain('medicine legacy');
+  expect(evaluateAchievements(DEFAULT_META, commoner, false).newly).toContain('professional_legacy');
+});

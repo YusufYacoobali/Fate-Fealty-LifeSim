@@ -153,6 +153,7 @@ export function performCourtAction(state: GameState, action: CourtAction, target
     applyRelationshipShift(state, official.id, { respect: 0 }, { affinity: change, trust: change });
     if (opposed) appendCharacterMemory(official, { id: `council_dissent_${state.nextId++}`, year: state.world.currentYear, type: 'council_dissent', actorIds: [p.id], sentiment: -25, salience: 4, inherited: true, summary: `${official.name} opposed ${p.name}'s ${action.replaceAll('_',' ')} decision.` });
   }
+  court.treasury = clamp(court.treasury, 0, 5000);
   recordCourt(state, action, targetId, text);
   if (target) appendCharacterMemory(target, { id: `court_${state.nextId++}`, year: state.world.currentYear, type: `court_${action}`, actorIds: [p.id], sentiment: ['disinherit','dismiss','expose'].includes(action) ? -25 : 15, salience: 4, inherited: true, summary: text });
   return state;
@@ -170,6 +171,11 @@ export function reconcileCourt(state: GameState): void {
   refreshRoyalClaims(state);
   settleRoyalSuccession(state);
   const ruler = state.world.characters[court.rulerId];
+  if (ruler) {
+    ruler.socialStatus ??= legacyStatus(5);
+    ruler.socialStatus.estate = 'royal';
+    ruler.socialStatus.titles = [...new Set([...ruler.socialStatus.titles, 'Monarch'])];
+  }
   if (ruler?.age >= 16) { if (court.regentId) court.formerRegentId = court.regentId; court.regentId = undefined; }
   else if (!court.regentId || !state.world.characters[court.regentId]?.alive) court.regentId = Object.values(court.offices).find(id => state.world.characters[id!]?.alive && state.world.characters[id!].age >= 18);
   for (const c of Object.values(state.world.characters)) if (c.alive && c.id !== court.rulerId && c.rankIdx >= 5) c.rankIdx = 3;
@@ -253,6 +259,7 @@ export function applyCourtScandal(state: GameState, decision: NonNullable<Effect
     if (innocent) { delete court.offices.treasurer; applyRelationshipShift(state, innocent, { affinity: -8 }, { affinity: -35, trust: -30 }); }
     court.legitimacy = clamp(court.legitimacy - 12); state.world.factions.guilds.playerStanding = clamp(state.world.factions.guilds.playerStanding - 15,-100,100);
   } else { remove(); applyRelationshipShift(state, scandal.actorId, { trust: -12 }, { affinity: -20 }); court.legitimacy = clamp(court.legitimacy - 2); }
+  court.treasury = clamp(court.treasury, 0, 5000);
   recordCourt(state, `scandal_${decision}`, scandal.actorId, `${official?.name ?? 'The official'}: ${scandal.amount} treasury gold diverted; the crown chose ${decision}.`);
 }
 

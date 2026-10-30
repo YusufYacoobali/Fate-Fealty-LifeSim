@@ -172,12 +172,13 @@ export const PREMIUM_EVENTS: GameEvent[] = [
     premium: true,
     category: 'noble',
     title: 'THE EMPTY TREASURY',
-    text: 'The royal treasury contains three coins, two moths, and a note blaming the previous ruler.',
+    requires: { custom: s => !!s.world.court && s.world.court.treasury < 30 },
+    text: s => `The royal treasury contains ${s.world.court?.treasury ?? 0} gold, two moths, and a note blaming the previous ruler.`,
     ageMin: 35,
     ranks: ['Monarch'],
     choices: [
-      { label: 'Sell royal jewels', outcome: { text: 'The crown jewels shrink. The kingdom eats. A fair trade, unless you ask jewelers.', effects: { gold: 45, reputation: 10, faith: 4, holding: { stores: 8, loyalty: 5 }, addTags: ['kind_ruler'] }, tone: 'good' } },
-      { label: 'Raise royal taxes', outcome: { text: 'The treasury fattens overnight. So does the list of people muttering near tavern doors.', effects: { gold: 75, reputation: -16, holding: { loyalty: -20 }, addTags: ['cruel_ruler'] }, tone: 'plain' } },
+      { label: 'Seek gifts from wealthy households', outcome: { text: 'Wealthy households contribute coin and grain to the royal appeal. The kingdom eats, and the donors keep very careful receipts.', effects: { royalTreasury: 45, worldConditions: { foodSecurity: 5 }, reputation: 10, faith: 4, holding: { stores: 8, loyalty: 5 }, addTags: ['kind_ruler'] }, tone: 'good' } },
+      { label: 'Raise royal taxes', outcome: { text: 'The treasury fattens overnight. So does the list of people muttering near tavern doors.', effects: { royalTreasury: 75, worldConditions: { prosperity: -6, publicOrder: -5 }, faction: { factionId: 'commons', playerStanding: -10 }, reputation: -16, holding: { loyalty: -20 }, addTags: ['cruel_ruler'] }, tone: 'plain' } },
     ],
   },
   {
@@ -217,7 +218,7 @@ export const PREMIUM_EVENTS: GameEvent[] = [
     ranks: ['Monarch'],
     once: true,
     choices: [
-      { label: 'Name an heir publicly', outcome: { text: 'The court exhales. A named heir is a shield against chaos, and a target for everyone ambitious.', effects: { reputation: 10, charm: 4, addTags: ['dynasty_secured'], addKin: { kind: 'child', role: 'Royal Heir', trait: 'Born to rule', rel: 68, isHeir: true }, memory: { tag: 'named_heir', weight: 6 } }, tone: 'good' } },
+      { label: 'Name an heir publicly', requires: { custom: s => !!s.world.court?.claims.some(c => c.characterId !== s.world.court!.rulerId && !c.disinherited && s.world.characters[c.characterId]?.alive) }, outcome: { text: 'The court exhales. A named heir is a shield against chaos, and a target for everyone ambitious.', effects: { reputation: 10, charm: 4, addTags: ['dynasty_secured'], royalTransition: 'name_heir', memory: { tag: 'named_heir', weight: 6 } }, tone: 'good' } },
       { label: 'Keep them guessing', outcome: { text: 'Mystery has power. It also has daggers.', effects: { wits: 8, reputation: -8, memory: { tag: 'unclear_succession', weight: 4 } }, tone: 'plain' } },
     ],
   },

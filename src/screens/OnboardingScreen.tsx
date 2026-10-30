@@ -260,7 +260,7 @@ function DestinyPage({ compact }: { compact: boolean }) {
         color={C.textDark}
         style={{ textAlign: 'center', marginBottom: compact ? 8 : 12 }}
       >
-        The free adventure carries you from Peasant through Noble. Premium opens the final rise to Baron and Monarch, expands your holding into a realm, adds more goals and ruler stories, and raises your yearly action limit from 24 to 50.
+        The free adventure includes ordinary origins, learning, professions and political service. Titles require birthright, service or a formal grant. Premium includes royal birth, Baron and Monarch progression, prestige careers, ruler stories, and 50 yearly actions instead of 24.
       </PixelText>
       <View style={{ gap: compact ? 7 : 9 }}>
         {RANKS.map((rank) => {

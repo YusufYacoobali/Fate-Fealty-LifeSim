@@ -58,6 +58,13 @@ function recoverEducationActors(state: GameState): void {
     const peer = Object.values(state.world.characters).find(c => c.id !== p.id && c.id !== e.mentorId && c.alive && Math.abs(c.age - state.age) <= 3 && c.id !== 'goose')
       ?? spawnKin(state, { kind: 'acquaintance', age: state.age, role: 'Fellow learner', bio: 'Your fellow learner keeps careful count of every slight and every favour.' });
     e.classmateIds.push(peer.id);
+    const peerLearning = educationOf(peer);
+    if (!peerLearning.track) { peerLearning.track = def.id; peerLearning.startedYear = state.world.currentYear; }
+    if (peerLearning.track === def.id) {
+      peerLearning.mentorId = e.mentorId;
+      peerLearning.classmateIds = [...new Set([...peerLearning.classmateIds, p.id])];
+      peer.childDevelopment!.investment = Math.max(4, peer.childDevelopment!.investment);
+    }
   }
 }
 export function applyEducationEffect(state: GameState, effect: NonNullable<Effects['education']>): void {
@@ -94,8 +101,8 @@ export function performEducationAction(state: GameState, action: EducationAction
   e.actionsUsed++;
   if (action === 'scholarship') {
     e.scholarship = true;
-    state.world.factions.church.playerStanding += 2;
-    pushFeed(state, 'PATRONAGE', '#365f88', 'You earn a bursary by copying the parish’s burial accounts. The dead make patient schoolfellows. Tuition is now covered, including later study.', 'good');
+    state.world.factions.church.playerStanding = clamp(state.world.factions.church.playerStanding + 2, -100, 100);
+    pushFeed(state, 'PATRONAGE', '#365f88', 'You earn a bursary by carrying parchment and tending the parish lamps. Tuition is now covered, including later study.', 'good');
     return state;
   }
   if (action === 'enrol') {
@@ -147,12 +154,20 @@ export function tickEducation(state: GameState): void {
         e.comingOfAge = true;
         pushFeed(state, 'COMING OF AGE', '#7a4f9a', `You enter adulthood with ${e.qualifications.length ? e.qualifications.map(q => q.replaceAll('_', ' ')).join(', ') : 'no formal qualification'}. ${e.classmateIds.map(id => state.world.characters[id]?.name).filter(Boolean).join(' and ') || 'The people of your household'} will remember how you got here. Later study remains open.`, 'plain');
       }
-    } else if (c.age >= 5 && c.age <= 18 && (c.childDevelopment?.investment ?? 0) > 0) {
-      e.track ??= c.childDevelopment?.education === 'martial' ? 'martial' : c.childDevelopment?.education === 'court' ? 'noble' : 'parish';
-      e.progress = clamp(e.progress + 8 + Math.min(8, c.childDevelopment!.investment));
-      if (e.progress >= 100 && c.age >= educationTrack(e.track).completionAge) {
-        e.qualifications = [...new Set([...e.qualifications, ...educationTrack(e.track).qualifications])];
-        e.history.push({ track: e.track, year: state.world.currentYear, outcome: 'completed' }); e.track = null;
+    } else {
+      const investment = c.childDevelopment?.investment ?? 0;
+      if (!e.track && c.age >= 5 && c.age <= 18 && investment > 0) {
+        const track = c.childDevelopment?.education === 'martial' ? 'martial' : c.childDevelopment?.education === 'court' ? 'noble' : c.childDevelopment?.education === 'craft' ? 'guild' : c.childDevelopment?.education === 'church' ? 'cathedral' : 'parish';
+        if (!e.history.some(h => h.track === track && h.outcome === 'completed') && c.age >= educationTrack(track).minAge) { e.track = track; e.startedYear = state.world.currentYear; }
+      }
+      if (e.track) {
+        const def = educationTrack(e.track);
+        if (e.mentorId && !state.world.characters[e.mentorId]?.alive) e.mentorId = Object.values(state.world.characters).find(mentor => mentor.alive && mentor.age >= 20 && mentor.id !== c.id && mentor.occupation.careerId === def.mentorCareer)?.id;
+        e.progress = clamp(e.progress + 8 + Math.min(8, investment));
+        if (e.progress >= 100 && c.age >= def.completionAge && state.world.currentYear - (e.startedYear ?? state.world.currentYear - def.years) >= def.years) {
+          e.qualifications = [...new Set([...e.qualifications, ...def.qualifications])];
+          e.history.push({ track: e.track, year: state.world.currentYear, outcome: 'completed' }); e.track = null;
+        }
       }
     }
   }

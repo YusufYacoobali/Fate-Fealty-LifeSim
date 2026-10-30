@@ -1,9 +1,7 @@
+import { gameReducer } from '../src/state/gameReducer';
 import { resolveRpgEncounter } from '../src/__tests__/rpgSoakHelpers';
 /** Focused-play sim: train toward knighthood, earn gold, manage health. */
-import { createLife, cloneState } from '../src/engine/gameState';
-import { ageUp } from '../src/engine/lifeDirector';
-import { applyChoice } from '../src/engine/storyGraph';
-import { doActivity } from '../src/engine/activityEngine';
+import { createLife } from '../src/engine/gameState';
 import { eventById, isChoiceEnabled } from '../src/engine/eventPicker';
 import { RANKS } from '../src/data/ranks';
 
@@ -15,8 +13,7 @@ const LIVES = 300;
 let bestRank = 0;
 
 for (let i = 0; i < LIVES; i++) {
-  let s = createLife({ settings: { autoScroll: true, difficulty: 'Normal', liveForever: false, haptics: false, soundEffects: false } });
-  s.lifetimeUnlocked = true;
+  let s = createLife({ worldSeed: 500000 + i, lifetimeUnlocked: true, settings: { autoScroll: true, difficulty: 'Normal', liveForever: false, haptics: false, soundEffects: false } });
   let guard = 0;
   while (!s.dead && guard < 400) {
     guard++;
@@ -25,16 +22,13 @@ for (let i = 0; i < LIVES; i++) {
       const ev = eventById(s.pendingEvent.eventId)!;
       const choices = ev.choices.filter((c) => isChoiceEnabled(s, c));
       // Prefer the first choice (usually the "engage" path).
-      s = cloneState(s);
-      applyChoice(s, ev, choices[0]);
+      s = gameReducer(s, { type: 'CHOOSE', choice: choices[0] });
       continue;
     }
-    s = cloneState(s);
-    if (s.stats.health < 35 && s.gold >= 4) doActivity(s, 'herbalist');
-    else if (s.gold < 240 && s.rankIdx >= 2) doActivity(s, 'fields');
-    else doActivity(s, 'train');
-    s = cloneState(s);
-    ageUp(s);
+    if (s.stats.health < 35 && s.gold >= 4) s = gameReducer(s, { type: 'DO_ACTIVITY', id: 'herbalist' });
+    else if (s.gold < 240 && s.rankIdx >= 2) s = gameReducer(s, { type: 'DO_ACTIVITY', id: 'fields' });
+    else s = gameReducer(s, { type: 'DO_ACTIVITY', id: 'train' });
+    s = gameReducer(s, { type: 'AGE_UP' });
   }
   if (s.rankIdx >= 2) reachedKnight++;
   if (s.rankIdx >= 3) reachedNoble++;

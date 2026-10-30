@@ -192,7 +192,7 @@ function enrichCharacter(character: WorldCharacter, index: number, familyId: str
 }
 
 function createLifeFromWorldSeed(opts: FreshLifeOptions, worldSeed: number): GameState {
-  const first = opts.firstName?.trim() || pick(FIRST_NAMES);
+  const first = opts.firstName?.trim() || pick(namesForGender(opts.gender ?? 'man'));
   const epithet = pick(EPITHETS);
   const settings = opts.settings ?? DEFAULT_SETTINGS;
   const inherit = opts.inherit ?? {};

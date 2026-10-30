@@ -155,6 +155,8 @@ export function buildLifeChronicle(s: GameState): string[] {
     const other = s.world.characters[otherId];
     if (other) relevant.push(`${other.name} remained one of the strongest threads in this life.`);
   }
+  const professional = Object.entries(s.world.characters[s.playerCharacterId].professionalHistory ?? {}).sort(([, a], [, b]) => b.reputation - a.reputation).find(([, r]) => r.reputation >= 20 || r.matters.some(m => m.resolved));
+  if (professional) { const [family, record] = professional; relevant.unshift(`${s.first} built a ${family} legacy: standing ${record.reputation}; ${record.milestones.slice(-3).map(m => m.replaceAll('_', ' ')).join(', ')}.`); }
   if (!relevant.length) relevant.push(`${s.first} lived through ${s.age} changing years in Swineford.`);
   return relevant.slice(0, 6);
 }

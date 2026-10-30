@@ -58,7 +58,8 @@ export function performSpecialization(state: GameState, id: string): GameState {
   addMoney(state, -def.cost);
   const contact = contactFor(state, def, r);
   if (!r.rivalId || !state.world.characters[r.rivalId]?.alive) {
-    r.rivalId = Object.values(state.world.characters).find(c => c.id !== p.id && c.id !== contact.id && c.alive && (c.worldMemories?.some(m => m.type === 'school_grudge' && m.actorIds.includes(p.id)) || c.birthFamilyId && state.world.families[p.birthFamilyId ?? '']?.enemyFamilyIds.includes(c.birthFamilyId)))?.id
+    r.rivalId = Object.values(state.world.characters).find(c => c.id !== p.id && c.id !== contact.id && c.alive && c.worldMemories?.some(m => m.type === 'school_grudge' && m.actorIds.includes(p.id)))?.id
+      ?? Object.values(state.world.characters).find(c => c.id !== p.id && c.id !== contact.id && c.alive && c.birthFamilyId && state.world.families[p.birthFamilyId ?? '']?.enemyFamilyIds.includes(c.birthFamilyId))?.id
       ?? spawnKin(state, { kind: 'foe', age: Math.max(18, state.age), role: `${def.family} rival`, bio: 'A professional competitor who keeps copies of every agreement.' }).id;
   }
   if (def.story) {
@@ -80,6 +81,7 @@ export function performSpecialization(state: GameState, id: string): GameState {
     case 'apprentice': {
       let apprentice = r.apprenticeId ? state.world.characters[r.apprenticeId] : undefined;
       if (!apprentice?.alive) { apprentice = spawnKin(state, { kind: 'acquaintance', age: 12, role: 'Your workshop apprentice', bio: 'Learning under your care and paid from your workshop.' }); r.apprenticeId = apprentice.id; }
+      apprentice.occupation.careerId = 'apprentice';
       apprentice.education!.track = 'guild'; apprentice.education!.progress = clamp(apprentice.education!.progress + 18);
       apprentice.education!.mentorId = p.id; apprentice.education!.startedYear ??= state.world.currentYear;
       apprentice.childDevelopment!.education = 'craft'; apprentice.childDevelopment!.investment += 4;
@@ -113,7 +115,7 @@ export function performSpecialization(state: GameState, id: string): GameState {
     case 'satire': applyRelationshipShift(state, r.rivalId, { affinity: -4 }, { affinity: -8 }); break;
     case 'defend': if (contact.legalState) { contact.legalState.status = 'free'; contact.legalState.suspicion = Math.max(0, contact.legalState.suspicion - 15); for (const charge of contact.legalState.charges) charge.resolved = true; } break;
     case 'investigate': for (const secret of contact.secrets ?? []) { if (!secret.knownByIds.includes(p.id)) secret.knownByIds.push(p.id); } break;
-    case 'judgment': if (contact.legalState) { contact.legalState.suspicion = Math.max(0, contact.legalState.suspicion - 8); } state.world.factions.crown.playerStanding += 2; break;
+    case 'judgment': if (contact.legalState) { contact.legalState.suspicion = Math.max(0, contact.legalState.suspicion - 8); } state.world.factions.crown.playerStanding = clamp(state.world.factions.crown.playerStanding + 2, -100, 100); break;
     case 'recruit': contact.factionId = 'outlaws'; contact.factionInfluence = clamp((contact.factionInfluence ?? 0) + 5); break;
     case 'operation': addMoney(state, 7); p.legalState!.suspicion = clamp(p.legalState!.suspicion + 18); break;
     case 'betrayal': applyRelationshipShift(state, r.rivalId, { trust: -12 }, { affinity: -8 }); break;
@@ -127,6 +129,7 @@ export function performSpecialization(state: GameState, id: string): GameState {
   applyRelationshipShift(state, contact.id, { affinity: 3 }, { affinity: 4, respect: 2 });
   appendCharacterMemory(contact, { id: `profession_${state.nextId++}`, year: state.world.currentYear, type: `professional_${id}`, actorIds: [p.id], sentiment: 12, salience: 3, inherited: true, summary: `${p.name}: ${def.text}` });
   grantSkillXp(state, def.skill, 7, def.name.toLowerCase());
+  if (state.world.court) state.world.court.treasury = clamp(state.world.court.treasury, 0, 5000);
   pushFeed(state, 'PROFESSION', '#365f88', `${def.text} ${contact.name} records the agreement. Cost ${def.cost}g.`, 'good');
   return state;
 }
@@ -193,6 +196,7 @@ export function applyProfessionalEffect(state: GameState, effect: NonNullable<Ef
   appendCharacterMemory(client, { id: `professional_verdict_${state.nextId++}`, year: state.world.currentYear, type: milestone, actorIds: [p.id], sentiment: honest ? 30 : -30, salience: 5, inherited: true, summary: text });
   const family = state.world.families[p.birthFamilyId ?? ''];
   if (family) { family.reputation = clamp(family.reputation + (honest ? 5 : -5), -100, 100); family.inheritedMemories = appendFamilyMemory(family.inheritedMemories, { id: `legacy_${state.nextId++}`, year: state.world.currentYear, type: milestone, sentiment: honest ? 25 : -25, salience: 4, summary: text }); }
+  if (state.world.court) state.world.court.treasury = clamp(state.world.court.treasury, 0, 5000);
   pushFeed(state, 'PROFESSIONAL LEGACY', '#7a4f9a', text, honest ? 'good' : 'bad');
 }
 

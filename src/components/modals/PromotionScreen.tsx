@@ -18,7 +18,7 @@ interface Props {
 /** What the new station actually unlocks, in the player's own terms. */
 const RANK_MEANING: Record<number, string> = {
   1: 'A squire eats better, trains under a real blade, and is finally worth someone noticing.',
-  2: 'A knight carries steel by right, holds a manor, and answers to lords rather than reeves.',
+  2: 'Knighthood recognises martial service. Nobility and political office remain separate grants.',
   3: 'A noble commands lands and tenants, and the Crown now knows thy family name.',
   4: 'A baron holds a barony in his own right, with courts, levies and enemies to match.',
   5: 'A monarch rules the realm. There is no one left above thee to blame.',
@@ -28,7 +28,6 @@ export function PromotionScreen({ rankIdx, reason, reducedMotion, onDone }: Prop
   const { width, height } = useWindowDimensions();
   const compact = width < 360 || height < 660;
   const rank = RANKS[rankIdx];
-  const previous = RANKS[rankIdx - 1];
   const portrait = rankPortraitAsset(rank.key);
   const frame = compact ? 104 : 132;
 
@@ -85,7 +84,7 @@ export function PromotionScreen({ rankIdx, reason, reducedMotion, onDone }: Prop
         </View>
 
         <PixelText font="body" size={compact ? 17 : 19} color={C.creamBlue} style={{ textAlign: 'center' }}>
-          {previous ? `No longer a ${previous.key.toLowerCase()}.` : 'A new beginning.'}
+          A new title brings new obligations.
         </PixelText>
         <PixelText font="pixel" size={compact ? 14 : 17} color={C.charm} style={{ textAlign: 'center', marginTop: 8 }}>
           {rank.key.toUpperCase()}

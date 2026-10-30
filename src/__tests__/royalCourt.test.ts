@@ -122,3 +122,30 @@ describe('persistent royal court', () => {
     expect(gameReducer(next, { type: 'CONTINUE_AS_HEIR' })).toEqual(next);
   });
 });
+
+it('existing royal events name real claimants and credit the royal treasury', () => {
+  const { eventById } = require('@/engine/eventPicker');
+  let s = crown();
+  const children = [...(s.world.characters[s.playerCharacterId].childIds ?? [])];
+  const heirEvent = eventById('monarch_heir_question');
+  s.pendingEvent = { eventId: heirEvent.id };
+  s = gameReducer(s, { type: 'CHOOSE', choice: heirEvent.choices[0] });
+  expect(s.world.court!.heirId).toBeDefined();
+  expect(s.world.characters[s.playerCharacterId].childIds ?? []).toEqual(children);
+  s.world.court!.treasury = 10;
+  const privateGold = s.gold, treasuryEvent = eventById('monarch_empty_treasury');
+  s.pendingEvent = { eventId: treasuryEvent.id };
+  s = gameReducer(s, { type: 'CHOOSE', choice: treasuryEvent.choices[0] });
+  expect(s.world.court!.treasury).toBe(55);
+  expect(s.gold).toBe(privateGold);
+});
+
+it('keeps the recognised crown authoritative when legacy code writes the rank adapter', () => {
+  const s = crown();
+  s.rankIdx = 4;
+  s.world.characters[s.playerCharacterId].socialStatus!.estate = 'baronial';
+  reconcileCourt(s);
+  expect(s.rankIdx).toBe(5);
+  expect(s.world.characters[s.playerCharacterId].socialStatus!.estate).toBe('royal');
+  expect(s.world.court!.rulerId).toBe(s.playerCharacterId);
+});

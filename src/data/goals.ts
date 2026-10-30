@@ -32,7 +32,7 @@ export const LIFE_GOALS: LifeGoalDef[] = [
   { id: 'scholar', title: 'Become a Scholar', desc: `Raise Wits to ${STAT_TARGET}.`, emoji: '✦', progress: (s) => frac(s.stats.wits, STAT_TARGET), done: (s) => s.stats.wits >= STAT_TARGET },
   { id: 'beloved', title: "Win the People's Love", desc: `Raise Charm to ${STAT_TARGET}.`, emoji: '★', progress: (s) => frac(s.stats.charm, STAT_TARGET), done: (s) => s.stats.charm >= STAT_TARGET },
   { id: 'devout', title: 'Lead a Holy Life', desc: `Raise Faith to ${FAITH_TARGET}.`, emoji: '✝', progress: (s) => frac(s.stats.faith, FAITH_TARGET), done: (s) => s.stats.faith >= FAITH_TARGET },
-  { id: 'knighthood', title: 'Earn Your Spurs', desc: 'Rise to the rank of Knight.', emoji: '🛡️', progress: (s) => frac(s.rankIdx, 2), done: (s) => s.rankIdx >= 2 },
+  { id: 'knighthood', title: 'Earn Your Spurs', desc: 'Rise to the rank of Knight.', emoji: '🛡️', progress: (s) => s.world.characters[s.playerCharacterId].socialStatus?.martialHonour === 'knight' ? 1 : s.world.characters[s.playerCharacterId].socialStatus?.martialHonour === 'squire' ? 0.5 : 0, done: (s) => s.world.characters[s.playerCharacterId].socialStatus?.martialHonour === 'knight' },
   { id: 'elder', title: 'Live to a Grand Old Age', desc: `Reach the age of ${ELDER_TARGET}.`, emoji: '🧓', progress: (s) => frac(s.age - 18, ELDER_TARGET - 18), done: (s) => s.age >= ELDER_TARGET },
   { id: 'wedded', title: 'Find True Love', desc: 'Take a spouse and wed.', emoji: '💍', progress: (s) => (s.tags.includes('married') ? 1 : 0), done: (s) => s.tags.includes('married') },
   { id: 'barony', title: 'Become a Baron', desc: 'Rise to the rank of Baron.', emoji: '🏰', premium: true, progress: (s) => frac(s.rankIdx, 4), done: (s) => s.rankIdx >= 4 },

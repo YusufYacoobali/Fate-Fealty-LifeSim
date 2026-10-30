@@ -29,6 +29,7 @@ export interface AchievementDef {
 const livingChildren = (s: GameState) => s.kin.filter((k) => k.kind === 'child' && k.alive).length;
 
 export const ACHIEVEMENTS: AchievementDef[] = [
+  { id: 'professional_legacy', name: 'A Calling Remembered', emoji: '📜', desc: 'Earn 40 professional standing and three distinct accomplishments in one calling.', check: c => Object.values(c.state.world.characters[c.state.playerCharacterId].professionalHistory ?? {}).some(r => r.reputation >= 40 && r.completedActions.length >= 3) },
   { id: 'trusted_maker', name: 'Trusted Maker', emoji: '⚒️', desc: 'Earn a trusted professional mark by making faults right.', check: (c) => c.state.world.characters[c.state.playerCharacterId]?.tradeJourney?.ending === 'trusted' },
   { id: 'prosperous_trader', name: 'Prosperous Trader', emoji: '🪙', desc: 'Complete a profitable trade partnership.', check: (c) => c.state.world.characters[c.state.playerCharacterId]?.tradeJourney?.ending === 'prosperous' },
   { id: 'independent_hand', name: 'Independent Hand', emoji: '🔨', desc: 'Finish your venture on your own terms.', check: (c) => c.state.world.characters[c.state.playerCharacterId]?.tradeJourney?.ending === 'independent' },
@@ -38,8 +39,8 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: 'the_reaper', name: 'Memento Mori', emoji: '🪦', desc: 'Meet your end for the first time.', check: (c) => c.atDeath },
 
   // --- station ---
-  { id: 'squired', name: 'A Squire Rises', emoji: '🧒', desc: 'Climb to the rank of Squire.', check: (c) => c.state.rankIdx >= 1 },
-  { id: 'knighted', name: 'Arise, Sir Knight', emoji: '🛡️', desc: 'Be dubbed a Knight.', check: (c) => c.state.rankIdx >= 2 },
+  { id: 'squired', name: 'A Squire Rises', emoji: '🧒', desc: 'Climb to the rank of Squire.', check: (c) => ['squire', 'knight'].includes(c.state.world.characters[c.state.playerCharacterId].socialStatus?.martialHonour ?? 'none') },
+  { id: 'knighted', name: 'Arise, Sir Knight', emoji: '🛡️', desc: 'Be dubbed a Knight.', check: (c) => c.state.world.characters[c.state.playerCharacterId].socialStatus?.martialHonour === 'knight' },
   { id: 'ennobled', name: 'Born Again Noble', emoji: '👑', desc: 'Ascend to the nobility.', check: (c) => c.state.rankIdx >= 3 },
 
   { id: 'baron_rise', name: 'Lord of the Manor', emoji: '🏰', desc: 'Rise to the rank of Baron.', premium: true, check: (c) => c.state.rankIdx >= 4 },

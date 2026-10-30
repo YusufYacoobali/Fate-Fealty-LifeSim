@@ -67,3 +67,16 @@ describe('playable education', () => {
     }
   });
 });
+
+it('classmates have their own canonical learning records and finish before heir control', () => {
+  const { tickEducation } = require('@/engine/educationEngine');
+  let s = createLife({ worldSeed: 141, birthOrigin: 'artisan' }); s.age = 10;
+  s = gameReducer(s, { type: 'EDUCATION', action: 'enrol', track: 'guild' });
+  const p = s.world.characters[s.playerCharacterId];
+  const peer = s.world.characters[p.education!.classmateIds[0]];
+  expect(peer.education!.track).toBe('guild');
+  expect(peer.education!.classmateIds).toContain(p.id);
+  for (let year = 0; year < 10; year++) { s.world.currentYear++; peer.age++; tickEducation(s); }
+  expect(peer.education!.qualifications).toContain('apprenticeship');
+  expect(peer.education!.history.filter(h => h.track === 'guild' && h.outcome === 'completed')).toHaveLength(1);
+});

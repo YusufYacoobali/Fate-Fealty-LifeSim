@@ -1,13 +1,9 @@
 import { careerById } from '@/data/careers';
 import { legacyStatus } from './lifeDepthState';
 /**
- * Path & rank progression.
- *
- * Two things live here:
- *  1. The visible CLASS LADDER, advanced
- *     via hidden `rankProgress` plus gating requirements per rank.
- *  2. The hidden LIFE PATHS (martial/court/church/labour/outlaw) whose dominant
- *     value tells the event picker what kind of life this is becoming.
+ * Hidden life paths and public standing. rankIdx remains a compatibility
+ * projection: ordinary progression can recognise martial training, while birth,
+ * explicit grants and court succession control hereditary titles and the crown.
  */
 
 import { GameState, PathKey } from '@/types/game';
@@ -292,7 +288,7 @@ function explainStanding(s: GameState, items: StandingContribution[], delta: num
 
 /**
  * Called every age-up after events resolve: settle the year's standing account,
- * then auto-promote if the player has earned it. Progress can fall as well as
+ * then recognise eligible martial progression. Progress can fall as well as
  * rise, and a rank already held is never lost here — only the climb toward the
  * next one is.
  */

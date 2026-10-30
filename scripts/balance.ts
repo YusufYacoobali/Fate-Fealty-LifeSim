@@ -1,3 +1,4 @@
+import { gameReducer } from '../src/state/gameReducer';
 import { resolveRpgEncounter } from '../src/__tests__/rpgSoakHelpers';
 /**
  * Balance report. Runs a *skilled* agent (heals when low, builds toward the next
@@ -6,15 +7,11 @@ import { resolveRpgEncounter } from '../src/__tests__/rpgSoakHelpers';
  *
  * Run: npx tsx scripts/balance.ts
  */
-import { createLife, cloneState } from '../src/engine/gameState';
-import { ageUp } from '../src/engine/lifeDirector';
-import { applyChoice } from '../src/engine/storyGraph';
-import { doActivity } from '../src/engine/activityEngine';
+import { createLife } from '../src/engine/gameState';
 import { eventById, isChoiceEnabled } from '../src/engine/eventPicker';
 import { canPromote } from '../src/engine/pathProgression';
 import { RANKS } from '../src/data/ranks';
 import { GameState, Choice, Difficulty } from '../src/types/game';
-import { manageHolding } from '../src/engine/holdingEngine';
 
 /** Pick the activity a deliberate climber would choose this year. */
 function chooseActivity(s: GameState): string {
@@ -52,9 +49,8 @@ function chooseOption(s: GameState, choices: Choice[]): Choice {
   return safe ?? choices[0];
 }
 
-function runLife(difficulty: Difficulty, useHolding: boolean): GameState {
-  let s = createLife({ settings: { autoScroll: true, difficulty, liveForever: false, haptics: false, soundEffects: false } });
-  s.lifetimeUnlocked = true;
+function runLife(difficulty: Difficulty, useHolding: boolean, index: number): GameState {
+  let s = createLife({ worldSeed: 600000 + index + (['Merciful', 'Normal', 'Brutal'] as Difficulty[]).indexOf(difficulty) * 10000, lifetimeUnlocked: true, settings: { autoScroll: true, difficulty, liveForever: false, haptics: false, soundEffects: false } });
   let guard = 0;
   while (!s.dead && guard < 400) {
     guard++;
@@ -62,18 +58,15 @@ function runLife(difficulty: Difficulty, useHolding: boolean): GameState {
     if (s.pendingEvent) {
       const ev = eventById(s.pendingEvent.eventId)!;
       const choices = ev.choices.filter((c) => isChoiceEnabled(s, c));
-      s = cloneState(s);
-      applyChoice(s, ev, chooseOption(s, choices));
+      s = gameReducer(s, { type: 'CHOOSE', choice: chooseOption(s, choices) });
       continue;
     }
-    s = cloneState(s);
     if (useHolding) {
       const order = chooseHoldingAction(s);
-      if (order) manageHolding(s, order);
+      if (order) s = gameReducer(s, { type: 'MANAGE_HOLDING', id: order });
     }
-    doActivity(s, chooseActivity(s));
-    s = cloneState(s);
-    ageUp(s);
+    s = gameReducer(s, { type: 'DO_ACTIVITY', id: chooseActivity(s) });
+    s = gameReducer(s, { type: 'AGE_UP' });
   }
   return s;
 }
@@ -85,10 +78,10 @@ function report(difficulty: Difficulty, lives: number, useHolding: boolean) {
   let goalAssigned = 0;
   let goalDone = 0;
   for (let i = 0; i < lives; i++) {
-    const s = runLife(difficulty, useHolding);
+    const s = runLife(difficulty, useHolding, i);
     rankReached[s.rankIdx]++;
     if (s.goalId) goalAssigned++;
-    if (s.goalDone) goalDone++;
+    if (s.tags.includes('goal_done')) goalDone++; // Completed ambitions rotate immediately.
     totalAge += s.age;
     if (s.age < 20) buckets['<20']++;
     else if (s.age < 40) buckets['20-39']++;
@@ -96,13 +89,14 @@ function report(difficulty: Difficulty, lives: number, useHolding: boolean) {
     else buckets['60+']++;
   }
   const pct = (n: number) => `${((n / lives) * 100).toFixed(1)}%`;
-  console.log(`\n=== ${difficulty} (skilled play${useHolding ? ' + Holding' : ' + idle Holding'}, ${lives} lives) ===`);
+  console.log(`\n=== ${difficulty} (legacy stat-focused play${useHolding ? ' + Holding' : ' + idle Holding'}, ${lives} lives) ===`);
   console.log(`Avg lifespan: ${(totalAge / lives).toFixed(1)}`);
   console.log(`Lifespan buckets: <20 ${pct(buckets['<20'])} | 20-39 ${pct(buckets['20-39'])} | 40-59 ${pct(buckets['40-59'])} | 60+ ${pct(buckets['60+'])}`);
   RANKS.forEach((r, i) => console.log(`  reached ${r.key.padEnd(8)} ${pct(rankReached[i] + rankReached.slice(i + 1).reduce((a, b) => a + b, 0))} (final ${pct(rankReached[i])})`));
   console.log(`Life goal: assigned ${pct(goalAssigned)} | fulfilled ${pct(goalDone)} (${goalAssigned ? ((goalDone / goalAssigned) * 100).toFixed(1) : '0'}% of those assigned)`);
 }
 
-const LIVES = 2000;
+const requestedLives = Number(process.env.MLS_BALANCE_LIVES ?? 2000);
+const LIVES = Number.isInteger(requestedLives) && requestedLives > 0 ? requestedLives : 2000;
 const USE_HOLDING = process.argv.includes('--holding');
 (['Merciful', 'Normal', 'Brutal'] as Difficulty[]).forEach((d) => report(d, LIVES, USE_HOLDING));

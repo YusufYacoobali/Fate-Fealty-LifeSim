@@ -1,3 +1,4 @@
+import { currentRank } from '@/state/viewModel';
 import { CourtPanel } from './CourtPanel';
 import { HoldingExpansionPanel } from '../rpg/RpgPanels';
 import React from 'react';
@@ -119,7 +120,7 @@ export function HoldingTab({ state, onAction, onUpgrade, onToggleVillage }: Prop
             <View style={{ flex: 1 }}>
               <PixelText font="pixel" size={10} color={C.charm}>{title.toUpperCase()}</PixelText>
               <PixelText font="body" size={15} color={C.creamBlue} style={{ marginTop: 4 }}>
-                {RANKS[state.rankIdx].key} lands. Dynasty {state.lifeNo}.
+                {currentRank(state).key} lands. Dynasty {state.lifeNo}.
               </PixelText>
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>

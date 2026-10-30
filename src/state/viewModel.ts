@@ -60,15 +60,24 @@ export function selectedKin(s: GameState): KinMember | null {
 }
 
 export function selectRankPath(s: GameState) {
+  const status = s.world.characters[s.playerCharacterId].socialStatus;
+  const held = [
+    status?.estate === 'commoner',
+    ['squire', 'knight'].includes(status?.martialHonour ?? 'none'),
+    status?.martialHonour === 'knight',
+    ['noble', 'baronial', 'royal'].includes(status?.estate ?? 'commoner'),
+    status?.estate === 'baronial' || status?.titles.includes('Baron'),
+    s.world.court?.rulerId === s.playerCharacterId || (s.dead && s.rankIdx === 5),
+  ];
   return RANKS.map((r, i) => {
     const locked = !!r.premium && !s.lifetimeUnlocked;
-
+    const current = held[i] && i === s.rankIdx;
     return {
-      name: r.short,
+      name: i === 0 ? 'COMMONER' : r.short,
       locked,
-      bg: locked ? '#c2ccd8' : i === s.rankIdx ? C.charm : i < s.rankIdx ? C.faith : C.lightFill,
-      sd: locked ? '#7a8799' : i === s.rankIdx ? C.charmDark : i < s.rankIdx ? C.faithDark : C.paleEdge,
-      fg: locked ? '#41536b' : i <= s.rankIdx ? C.inkSoft : '#7a93b0',
+      bg: locked ? '#c2ccd8' : current ? C.charm : held[i] ? C.faith : C.lightFill,
+      sd: locked ? '#7a8799' : current ? C.charmDark : held[i] ? C.faithDark : C.paleEdge,
+      fg: locked ? '#41536b' : held[i] ? C.inkSoft : '#7a93b0',
     };
   });
 }
@@ -91,7 +100,7 @@ export function selectRankClimb(s: GameState) {
   }
 
   return {
-    from: current.short,
+    from: s.rankIdx === 0 ? 'COMMONER' : current.short,
     route: requiredRoute,
     to: next.short,
     progress: s.rankIdx >= 2 || !player.education?.qualifications.includes('martial_training') || careerById(s.occupation.careerId)?.family !== 'martial' ? 0 : Math.round(Math.max(0, Math.min(1, ...readiness)) * 100),

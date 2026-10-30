@@ -50,6 +50,12 @@ export function careerAvailability(state: GameState, career: CareerDef): string 
   if (state.dead) return 'Thy life is ended';
   if (career.premium && !state.lifetimeUnlocked) return 'Requires the Lifetime Pass';
   if (state.age < career.minAge) return `Requires age ${career.minAge}`;
+  const education = state.world.characters[state.playerCharacterId]?.education;
+  const qualification = ({ craft: 'apprenticeship', trade: 'literacy', church: 'clerical_learning', martial: 'martial_training', court: 'court_education', medicine: 'literacy', law: 'literacy' } as const)[career.family as 'craft' | 'trade' | 'church' | 'martial' | 'court' | 'medicine' | 'law'];
+  const history = state.world.characters[state.playerCharacterId]?.professionalHistory?.[career.family];
+  // Existing jobs stay valid; new appointments accept formal learning or a
+  // longer, documented route through practical service and mentorship.
+  if (career.tier > 0 && qualification && !education?.qualifications.includes(qualification) && !(history?.milestones.includes('field_training') && (state.occupation.experience >= 100 || history.reputation >= 35))) return `Needs ${qualification.replaceAll('_', ' ')} or practical mentorship`;
   if (career.minReputation != null && state.reputation < career.minReputation) return 'Thy reputation is too low';
   for (const [key, value] of Object.entries(career.minStats ?? {})) {
     if (state.stats[key as keyof typeof state.stats] < (value ?? 0)) return `Needs ${key} ${value}`;

@@ -1,3 +1,4 @@
+import { EducationPanel } from './EducationPanel';
 import { TrainingPanel } from '../rpg/RpgPanels';
 import { QuestsTab } from './QuestsTab';
 import React from 'react';
@@ -55,6 +56,7 @@ export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
 
       {/* activity grid */}
       {cat === 'quests' ? <QuestsTab /> : <ScrollView key={cat} style={{ flex: 1 }} contentContainerStyle={{ padding: 11, paddingBottom: 7 }}>
+        {(cat === 'all' || cat === 'practice') && <EducationPanel state={state} />}
         {cat === 'practice' && <TrainingPanel /> }
         {(cat === 'all' || cat === 'work') && <CareerPanel state={state} onAction={onCareer} />}
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>

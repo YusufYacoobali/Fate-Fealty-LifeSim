@@ -1,3 +1,4 @@
+import { EDUCATION_EVENTS, ORIGIN_CHILDHOOD_EVENTS } from './educationEvents';
 import { COMBAT_EVENTS } from './combatEvents';
 /**
  * Content registry. Aggregates every event bank into a single list and a
@@ -25,6 +26,7 @@ import { ACTIVITY_CONSEQUENCE_EVENTS } from './activityConsequenceEvents';
 import { LEGAL_SYSTEM_EVENTS } from '@/engine/legalEngine';
 
 const RAW_EVENTS: GameEvent[] = [
+  ...EDUCATION_EVENTS, ...ORIGIN_CHILDHOOD_EVENTS,
   ...COMBAT_EVENTS,
   ...CHILD_EVENTS,
   ...PEASANT_EVENTS,

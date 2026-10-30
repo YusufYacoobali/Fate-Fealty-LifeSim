@@ -1,3 +1,5 @@
+import { EducationAction, educationAvailability, performEducationAction } from '@/engine/educationEngine';
+import type { EducationTrackId } from '@/types/game';
 /**
  * The reducer is the bridge between React and the pure engine. Every action
  * clones the current state, hands it to the relevant engine function(s), and
@@ -36,6 +38,7 @@ import { beginForge, closeForge, finishForge, startForge, strikeForge } from '@/
 import { resolveTradeChoice } from '@/engine/tradeJourney';
 
 export type GameAction =
+  | { type: 'EDUCATION'; action: EducationAction; track?: EducationTrackId }
   | { type: 'FORGE_START'; task: ForgeTask; revision: number }
   | { type: 'FORGE_BEGIN'; id: string }
   | { type: 'FORGE_STRIKE'; id: string; sequence: number; position: number }
@@ -228,6 +231,8 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         },
       );
     }
+
+    case 'EDUCATION': return timed(state, s => educationAvailability(s, action.action, action.track) === null, s => performEducationAction(s, action.action, action.track));
 
     case 'BUY': {
       return timed(state, (s) => shopAvailability(s, action.item).available, (s) => buyItem(s, action.item));

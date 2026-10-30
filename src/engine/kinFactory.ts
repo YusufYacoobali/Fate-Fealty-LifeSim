@@ -1,3 +1,4 @@
+import { emptyEducation, legacyStatus } from './lifeDepthState';
 /**
  * Kin factory — the single place new family members are minted. Content only
  * needs to say `addKin: { kind: 'child' }`; this fills randomised, era-appropriate
@@ -157,6 +158,16 @@ export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
     childDevelopment: { completedMilestones: [], education: 'none', investment: 0, favour: 0 },
     factionInfluence: 0,
   } satisfies Partial<WorldCharacter>);
+  member.education = emptyEducation();
+  member.professionalHistory = {};
+  member.socialStatus = legacyStatus(member.rankIdx);
+  if (spec.kind === 'child' && player) {
+    const estate = player.socialStatus?.estate ?? 'commoner';
+    member.socialStatus = { estate, martialHonour: 'none', titles: estate === 'royal' ? ['Royal kin'] : estate === 'noble' || estate === 'baronial' ? ['Noble'] : [], grants: ['birthright'] };
+    member.rankIdx = estate === 'commoner' ? 0 : 3;
+    member.occupation = { careerId: null, experience: 0, performance: 50, workedThisYear: 0 };
+    member.background = { origin: estate === 'royal' ? 'royal' : estate !== 'commoner' ? 'noble' : player.background?.origin ?? 'peasant', familyId, guardianIds: [...parentIds], householdWealth: s.world.households.find(h => h.id === playerHousehold)?.wealth ?? 0, inherited: false };
+  }
   s.kin = [...s.kin, member];
   s.world.characters[member.id] = member;
   if (!s.world.families[familyId]) {

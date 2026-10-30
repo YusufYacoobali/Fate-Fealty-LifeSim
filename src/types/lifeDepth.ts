@@ -14,6 +14,7 @@ export type Qualification = 'literacy' | 'apprenticeship' | 'guild_recommendatio
 export interface EducationState {
   track: EducationTrackId | null;
   mentorId?: string;
+  startedYear?: number;
   classmateIds: string[];
   progress: number;
   misconduct: number;

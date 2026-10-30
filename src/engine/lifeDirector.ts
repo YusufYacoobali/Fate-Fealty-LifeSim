@@ -1,3 +1,4 @@
+import { tickEducation } from './educationEngine';
 /**
  * The Life Director — the heartbeat of the game. Each call to `ageUp` advances
  * one year and, in order:
@@ -88,6 +89,7 @@ export function ageUp(s: GameState): GameState {
   tickPersistentSociety(s);
   tickWorldConditions(s);
   tickFactions(s);
+  tickEducation(s);
   tickLegalSystem(s);
   resolveScheduledConsequences(s);
 

@@ -594,6 +594,7 @@ export interface HoldingUpgradeDef {
 // ---------------------------------------------------------------------------
 
 export interface Effects {
+  education?: { progress?: number; misconduct?: number; mentorBond?: number; peerBond?: number; scholarship?: boolean; dismiss?: boolean };
   skillXp?: Partial<Record<import('./rpg').SkillId, number>>;
   debt?: { principal: number; lenderId?: string; interestRate?: number };
   materials?: Partial<Record<import('./rpg').MaterialId, number>>;

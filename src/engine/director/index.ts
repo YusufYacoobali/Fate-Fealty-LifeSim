@@ -1,3 +1,4 @@
+import { EDUCATION_EVENTS } from '@/content/educationEvents';
 import { GameEvent, GameState } from '@/types/game';
 import { bindEventActors, isEventPlayable, pickEvent } from '../eventPicker';
 import { popReadyArc } from '../storyGraph';
@@ -85,6 +86,12 @@ export function directYear(state: GameState): DirectedYear {
     return { event, kind: event ? actual : 'quiet', threadId, isLegal: false };
   };
 
+  const education = state.world.characters[state.playerCharacterId].education;
+  if (kind !== 'thread' && education?.track && state.world.currentYear % 3 === 0) {
+    const lesson = EDUCATION_EVENTS.find(event => event.id.startsWith(`education_${education.track}_`) && isEventPlayable(state, event));
+    if (lesson) return serve(lesson, 'standalone');
+  }
+
   switch (kind) {
     case 'thread': {
       // Ambient threads and story beats are both continuations; prefer whichever
@@ -116,6 +123,10 @@ export function directYear(state: GameState): DirectedYear {
 
 /** Bind actors for the chosen event, reusing a thread's existing cast. */
 export function bindDirectedEvent(state: GameState, directed: DirectedYear): Record<string, string> | undefined {
+  if (directed.event?.id.startsWith('education_')) {
+    const e = state.world.characters[state.playerCharacterId].education;
+    return e?.mentorId && e.classmateIds[0] ? { mentor: e.mentorId, classmate: e.classmateIds[0] } : undefined;
+  }
   const thread = directed.threadId ? openThreads(state).find((item) => item.id === directed.threadId) : undefined;
   // A chain that changes its cast halfway through is not one story any more.
   if (thread?.bindings && directed.event?.actorRoles) {

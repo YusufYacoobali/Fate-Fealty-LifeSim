@@ -1,3 +1,5 @@
+import { dueProfessionalEventId, bindProfessionalEvent } from '../careerSpecializationEngine';
+import { eventById } from '../eventPicker';
 import { EDUCATION_EVENTS } from '@/content/educationEvents';
 import { GameEvent, GameState } from '@/types/game';
 import { bindEventActors, isEventPlayable, pickEvent } from '../eventPicker';
@@ -59,6 +61,14 @@ export function directYear(state: GameState): DirectedYear {
   if (legal) {
     recordBeat(state, 'thread');
     return { event: legal, kind: 'thread', isLegal: true };
+  }
+
+  const professionalId = dueProfessionalEventId(state);
+  const professionalEvent = professionalId ? eventById(professionalId) : undefined;
+  if (professionalEvent) {
+    state.activeArcs = state.activeArcs.filter(a => a.nextNodeId !== professionalId);
+    recordBeat(state, 'thread');
+    return { event: professionalEvent, kind: 'thread', isLegal: false };
   }
 
   const closing = nearingEnd(state);
@@ -123,6 +133,7 @@ export function directYear(state: GameState): DirectedYear {
 
 /** Bind actors for the chosen event, reusing a thread's existing cast. */
 export function bindDirectedEvent(state: GameState, directed: DirectedYear): Record<string, string> | undefined {
+  if (directed.event?.id.startsWith('profession_')) return bindProfessionalEvent(state, directed.event.id);
   if (directed.event?.id.startsWith('education_')) {
     const e = state.world.characters[state.playerCharacterId].education;
     return e?.mentorId && e.classmateIds[0] ? { mentor: e.mentorId, classmate: e.classmateIds[0] } : undefined;

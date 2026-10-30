@@ -8,7 +8,7 @@ describe('professional gameplay', () => {
   it.each(ENTRY_CAREERS)('$family exposes three different actions with persistent outcomes', career => {
     let s = createLife({ worldSeed: 27, birthOrigin: 'peasant' });
     Object.assign(s, { age: 35, gold: 100, occupation: { careerId: career.id, experience: 100, performance: 80, workedThisYear: 0 } });
-    const actions = CAREER_SPECIALIZATIONS.filter(a => a.family === career.family);
+    const actions = CAREER_SPECIALIZATIONS.filter(a => a.family === career.family && !a.story);
     expect(actions).toHaveLength(3);
     const originalRank = s.rankIdx;
     for (const a of actions) {

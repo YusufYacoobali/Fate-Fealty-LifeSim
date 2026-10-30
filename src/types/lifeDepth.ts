@@ -45,7 +45,7 @@ export interface ProfessionalRecord {
   actionsYear: number;
   actionsUsed: number;
   lastWorkedYear: number;
-  matters: { id: string; actorId: string; stage: number; decision?: string; resolved: boolean }[];
+  matters: { id: string; actorId: string; stage: number; openedYear?: number; decision?: string; resolved: boolean }[];
 }
 export type ProfessionalHistory = Partial<Record<CareerFamily, ProfessionalRecord>>;
 export type CourtOffice = 'chancellor' | 'treasurer' | 'marshal' | 'religious_adviser';

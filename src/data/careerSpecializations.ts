@@ -1,3 +1,4 @@
+import { PROFESSIONAL_STORIES } from './professionalStories';
 import type { CareerFamily, FactionKey, Qualification, WorldConditionKey } from '@/types/game';
 import type { SkillId } from '@/types/rpg';
 export interface CareerSpecialization {
@@ -44,3 +45,8 @@ export const CAREER_SPECIALIZATIONS: CareerSpecialization[] = rows.map(([family,
   contactCareer: ({ agriculture: 'tenant_farmer', craft: 'artisan', trade: 'trader', church: 'cleric', martial: 'guard', court: 'steward', medicine: 'herb_gatherer', entertainment: 'busker', law: 'copyist', outlaw: 'poacher_job' } as const)[family],
 }));
 export const specializationsFor = (family: CareerFamily) => CAREER_SPECIALIZATIONS.filter(a => a.family === family);
+
+for (const story of PROFESSIONAL_STORIES) {
+  const base = CAREER_SPECIALIZATIONS.find(a => a.family === story.family)!;
+  CAREER_SPECIALIZATIONS.push({ ...base, id: story.id, name: story.title, story: true, cost: 3 });
+}

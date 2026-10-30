@@ -1,3 +1,4 @@
+import { applyProfessionalEffect } from './careerSpecializationEngine';
 import { applyEducationEffect } from './educationEngine';
 /**
  * The consequence engine turns a declarative `Effects` object into mutations on
@@ -45,6 +46,7 @@ function rankProgressDelta(delta: number, fullStrength: boolean): number {
 
 export function applyEffects(s: GameState, eff?: Effects): GameState {
   if (!eff) return s;
+  if (eff.professional) applyProfessionalEffect(s, eff.professional);
   if (eff.education) applyEducationEffect(s, eff.education);
   for (const [id, amount] of Object.entries(eff.materials ?? {})) s.rpg.materials[id as MaterialId] = Math.max(0, (s.rpg.materials[id as MaterialId] ?? 0) + amount);
   for (const [id, amount] of Object.entries(eff.goods ?? {})) s.rpg.goods[id] = Math.max(0, (s.rpg.goods[id] ?? 0) + amount);

@@ -279,6 +279,7 @@ export function GameScreen() {
           <EventModal
             state={state}
             event={currentEvent}
+            onProfessionalClient={(characterId) => { haptic('light',buzz); dispatch({ type: 'PROFESSIONAL_CLIENT',characterId }); }}
             onChoose={(choice) => {
               haptic('medium', buzz);
               dispatch({ type: 'CHOOSE', choice });

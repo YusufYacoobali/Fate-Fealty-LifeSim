@@ -1,3 +1,4 @@
+import { professionalClientContext } from '@/engine/professionalClients';
 import { BIRTH_ORIGINS } from '@/data/birthOrigins';
 import { educationAvailability } from '@/engine/educationEngine';
 import { specializationAvailability } from '@/engine/careerSpecializationEngine';
@@ -30,7 +31,10 @@ function resolvePending(state: GameState): GameState {
   while (state.pendingEvent && !state.dead && guard++ < 4) {
     const event = eventById(state.pendingEvent.eventId);
     if (!event) throw new Error(`missing pending event ${state.pendingEvent.eventId}`);
-    const choice = event.choices.find((candidate) => isChoiceEnabled(state, candidate));
+    const clients = professionalClientContext(state);
+    if (clients?.people.length) state = gameReducer(state,{ type: 'PROFESSIONAL_CLIENT',characterId: clients.people[state.world.currentYear % clients.people.length].id });
+    const available = event.choices.filter(candidate => isChoiceEnabled(state,candidate));
+    const choice = event.id.startsWith('practice_') ? available[state.world.currentYear % available.length] : available[0];
     if (!choice) throw new Error(`blocked event ${event.id}`);
     state = gameReducer(state, { type: 'CHOOSE', choice });
   }

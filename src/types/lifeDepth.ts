@@ -46,6 +46,9 @@ export interface SocialStatus {
   grants: string[];
 }
 export interface ProfessionalRecord {
+  adviserId?: string;
+  patientCare?: PatientCareRecord[];
+  lastCareReviewYear?: number;
   actionYears?: Record<string, number>;
   rivalryYear?: number;
   shifts?: number;
@@ -58,7 +61,20 @@ export interface ProfessionalRecord {
   actionsYear: number;
   actionsUsed: number;
   lastWorkedYear: number;
-  matters: { kind?: 'practice'; ownerId?: string; success?: boolean; id: string; actorId: string; stage: number; openedYear?: number; decision?: string; resolved: boolean }[];
+  matters: { kind?: 'practice'; ownerId?: string; requiredPremium?: boolean; success?: boolean; id: string; actorId: string; stage: number; openedYear?: number; decision?: string; resolved: boolean }[];
+}
+export interface PatientCareRecord {
+  id: string;
+  patientId: string;
+  clinicianId: string;
+  adviserId?: string;
+  startedYear: number;
+  reviewYear: number;
+  reviewedYear?: number;
+  baselineHealth: number;
+  conditions: { id: string; conditionId: string; severity: number; kind: 'illness' | 'injury' | 'disability' }[];
+  treatmentSucceeded: boolean;
+  status: 'awaiting_review' | 'recovered' | 'improved' | 'stable' | 'declined' | 'deceased' | 'unavailable';
 }
 export type ProfessionalHistory = Partial<Record<CareerFamily, ProfessionalRecord>>;
 export type CourtOffice = 'chancellor' | 'treasurer' | 'marshal' | 'religious_adviser';

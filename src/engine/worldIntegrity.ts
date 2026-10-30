@@ -60,7 +60,7 @@ export function worldIntegrityIssues(state: GameState): string[] {
   }
   for (const c of Object.values(characters)) {
     for (const id of [...(c.education?.classmateIds ?? []), ...(c.education?.formerMentorIds ?? []), ...(c.education?.sponsorships ?? []).flatMap(s => s.sponsorId ? [s.sponsorId] : []), ...(c.education?.mentorId ? [c.education.mentorId] : [])]) if (!characters[id]) issues.push(`orphaned education reference ${id}`);
-    for (const record of Object.values(c.professionalHistory ?? {})) for (const id of [...record.contactIds, ...(record.rivalId ? [record.rivalId] : []), ...record.matters.map(m => m.actorId)]) if (!characters[id]) issues.push(`orphaned professional reference ${id}`);
+    for (const record of Object.values(c.professionalHistory ?? {})) for (const id of [...record.contactIds, ...(record.rivalId ? [record.rivalId] : []), ...record.matters.map(m => m.actorId), ...(record.adviserId ? [record.adviserId] : []), ...(record.patientCare ?? []).flatMap(c => [c.patientId,c.clinicianId,...(c.adviserId ? [c.adviserId] : [])])]) if (!characters[id]) issues.push(`orphaned professional reference ${id}`);
   }
   return Array.from(new Set(issues));
 }

@@ -20,10 +20,13 @@ function careerRoutineId(action: CareerAction): string | null {
 
 export function CareerPanel({ state, onAction }: { state: GameState; onAction: (action: CareerAction, careerId?: string) => void }) {
   const [section, setSection] = useState<'work' | 'profession' | 'commissions' | 'record'>('work');
+  const [careOpen, setCareOpen] = useState(false);
+  const [careLimit, setCareLimit] = useState(3);
   const [finances, setFinances] = useState(false);
   const [job, setJob] = useState(ENTRY_CAREERS[0].family);
   const career = careerById(state.occupation.careerId);
   const record = career ? state.world.characters[state.playerCharacterId].professionalHistory?.[career.family] : undefined;
+  const careRecords = [...(state.world.characters[state.playerCharacterId].professionalHistory?.medicine?.patientCare ?? [])].sort((a,b) => Number(b.status === 'awaiting_review') - Number(a.status === 'awaiting_review') || b.startedYear - a.startedYear);
   const debt = state.debts.reduce((sum, item) => sum + item.principal, 0);
   const actionsRemaining = Math.max(0, state.actionClock.cap - state.actionClock.used);
   const careerArt = (family: string) => CAREER_FAMILY_ART[family as keyof typeof CAREER_FAMILY_ART] ?? FEATURE_ART.work;
@@ -105,7 +108,7 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
 
       <PanelChips items={[{ id: 'work',label: 'Work' }, { id: 'profession',label: 'Profession' }, { id: 'commissions',label: 'Commissions' }, { id: 'record',label: 'Standing' }]} value={section} onChange={setSection} />
       {section === 'profession' && <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-        {career && specializationsFor(career.family).filter(a => !a.story).map(a => button('specialize', a.name.toUpperCase(), `${a.cost}g · professional milestone`, a.id))}
+        {career && specializationsFor(career.family).filter(a => !a.story).map(a => button('specialize', a.name.toUpperCase(), `${a.cost}g · 1 action · choose a method`, a.id))}
         </View>}
       {section === 'work' && <><View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginTop: 9 }}>
         {career && button('work', `WORK AS ${career.title.toUpperCase()}`, `Earn about ${career.wage}g and improve performance.`)}
@@ -124,6 +127,14 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
 
       {section === 'profession' && !career && <PixelText size={16}>Choose an occupation under Work to begin professional activities.</PixelText>}
       {section === 'commissions' && <><PixelText size={16}>Consequential commissions follow your professional work. Some settle at once; others return for a later reckoning.</PixelText><View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginTop: 8 }}>{career && specializationsFor(career.family).filter(a => a.story).map(a => button('specialize', a.name, `${a.cost}g · a named commission`, a.id))}</View>{record?.matters.filter(m => !m.resolved).map((m,i) => <View key={i} style={[PANEL.parchCard,{ marginTop: 6 }]}><PixelText size={16}>{state.world.characters[m.actorId]?.name ?? 'Client unavailable'} · {specializationsFor(career!.family).find(a => a.id === m.id)?.name ?? m.id}. {m.stage === 1 ? 'A later reckoning is pending.' : 'A decision is pending.'}</PixelText></View>)}</>}
+      {section === 'commissions' && careRecords.length > 0 && <View style={{ marginTop: 8 }}>
+        <PixelButton bg={C.lightFill} shadow={C.parchSd} onPress={() => setCareOpen(!careOpen)} innerStyle={{ padding: 10, minHeight: 46 }}><PixelText size={16}>Patient follow-ups · {careRecords.filter(c => c.status === 'awaiting_review').length} pending {careOpen ? '▴' : '▾'}</PixelText></PixelButton>
+        {careOpen && <><PixelText size={15} color={C.textMuted} style={{ marginVertical: 6 }}>The next annual review checks each actual patient's recovery. Records remain when you change professions.</PixelText>{careRecords.slice(0,careLimit).map(c => <View key={c.id} style={[PANEL.parchCard,{ marginBottom: 7 }]}>
+          <PixelText size={17}>{state.world.characters[c.patientId]?.name ?? 'Patient unavailable'} · {c.status.replaceAll('_',' ')}</PixelText>
+          <PixelText size={15} style={{ marginTop: 4 }}>Health at first care {c.baselineHealth} · {state.world.characters[c.patientId]?.alive ? `now ${state.world.characters[c.patientId].stats.health}` : 'deceased'}. {c.status === 'awaiting_review' ? `Review in year ${c.reviewYear}.` : `Reviewed in year ${c.reviewedYear}.`}</PixelText>
+          <PixelText size={15} color={C.textMuted}>Clinician: {state.world.characters[c.clinicianId]?.name ?? 'Previous practitioner'}{c.adviserId ? ` · consulted ${state.world.characters[c.adviserId]?.name ?? 'physician'}` : ''}</PixelText>
+        </View>)}{careLimit < careRecords.length && <PixelButton bg={C.parch} shadow={C.parchSd} onPress={() => setCareLimit(careLimit + 3)} innerStyle={{ padding: 10, minHeight: 44 }}><PixelText size={15}>Show three older patient records</PixelText></PixelButton>}</>}
+      </View>}
       {section === 'record' && <View style={PANEL.parchCard}><PixelText size={17}>Professional reputation: {record?.reputation ?? 0}</PixelText><PixelText size={16} style={{ marginTop: 6 }}>Achievements: {record?.milestones.map(m => m.replaceAll('_',' ')).join(' · ') || 'No milestones yet'}</PixelText><PixelText size={16} style={{ marginTop: 6 }}>Contacts: {record?.contactIds.map(id => state.world.characters[id]?.name).filter(Boolean).join(', ') || 'None yet'}</PixelText><PixelText size={16} style={{ marginTop: 6 }}>Rival: {state.world.characters[record?.rivalId ?? '']?.name ?? 'No established rival'}</PixelText><PixelText size={15} color={C.textMuted} style={{ marginTop: 6 }}>Earlier careers, commissions and relationships remain in your life record.</PixelText></View>}
       {section === 'profession' && career?.family === 'craft' && <ForgePlayButton task={{ kind: 'work' }} label="WORK AT THE ANVIL · 1 ACTION" />}
 

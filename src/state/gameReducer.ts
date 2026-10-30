@@ -1,3 +1,4 @@
+import { selectProfessionalClient } from '@/engine/professionalClients';
 import { CourtAction, courtAvailability, performCourtAction, reconcileCourt } from '@/engine/courtEngine';
 import type { CourtOffice } from '@/types/game';
 import { EducationAction, educationAvailability, performEducationAction } from '@/engine/educationEngine';
@@ -40,6 +41,7 @@ import { beginForge, closeForge, finishForge, startForge, strikeForge } from '@/
 import { resolveTradeChoice } from '@/engine/tradeJourney';
 
 export type GameAction =
+  | { type: 'PROFESSIONAL_CLIENT'; characterId: string }
   | { type: 'COURT'; counsel?: 'consult' | 'override'; action: CourtAction; targetId?: string; office?: CourtOffice }
   | { type: 'EDUCATION'; action: EducationAction; track?: EducationTrackId; funding?: import('@/types/game').SponsorshipKind; sponsorId?: string }
   | { type: 'FORGE_START'; task: ForgeTask; revision: number }
@@ -202,6 +204,10 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       return finishEngineTransaction(aged);
     }
 
+    case 'PROFESSIONAL_CLIENT': {
+      const s = cloneState(state);
+      return selectProfessionalClient(s,action.characterId) ? s : state;
+    }
     case 'CHOOSE': {
       const s = cloneState(state);
       const event = s.pendingEvent ? eventById(s.pendingEvent.eventId) : undefined;

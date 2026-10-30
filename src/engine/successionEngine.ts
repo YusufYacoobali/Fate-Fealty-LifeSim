@@ -60,6 +60,8 @@ export function continueAsHeir(state: GameState, requestedHeirId?: string, lifet
     record.reputation = Math.max(record.reputation, Math.floor(inherited.reputation / 2));
     record.contactIds = [...new Set([...record.contactIds, ...inherited.contactIds])];
     record.rivalId ??= inherited.rivalId;
+    record.adviserId ??= inherited.adviserId;
+    for (const care of inherited.patientCare ?? []) if (care.status === 'awaiting_review' && !record.patientCare?.some(c => c.id === care.id)) (record.patientCare ??= []).push({ ...care,conditions: care.conditions.map(c => ({ ...c })) });
     for (const matter of inherited.matters.filter(m => !m.resolved)) if (!record.matters.some(m => m.id === matter.id)) record.matters.push({ ...matter, ...(matter.kind === 'practice' ? { ownerId: heir.id } : {}) });
   }
   state.lifetimeUnlocked = lifetimeUnlocked;

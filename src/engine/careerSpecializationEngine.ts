@@ -1,3 +1,5 @@
+import { professionalClients } from './professionalClients';
+import { beginPatientCare, medicalAdviser, retainMedicalAdviser, provideMedicalCare, recordMedicalFamilyGrievance, reviewPatientCare } from './medicalPractice';
 import { PROFESSIONAL_STORIES, immediateProfessionalBranch } from '@/data/professionalStories';
 import type { CareerFamily, Effects, GameState, ProfessionalRecord, WorldCharacter } from '@/types/game';
 import { CAREER_SPECIALIZATIONS, CareerSpecialization } from '@/data/careerSpecializations';
@@ -33,11 +35,15 @@ export function specializationAvailability(state: GameState, id: string): string
 }
 function contactFor(state: GameState, def: CareerSpecialization, record: ProfessionalRecord): WorldCharacter {
   record.contactIds = record.contactIds.filter(id => !!state.world.characters[id]);
-  const existing = record.contactIds.map(id => state.world.characters[id]).find(c => c.alive && c.id !== state.playerCharacterId);
-  const sick = Object.values(state.world.characters).filter(c => c.alive && c.age >= 18 && c.id !== state.playerCharacterId && c.id !== 'goose' && ((c.healthConditions ?? []).some(h => h.severity > 0) || c.stats.health < 65));
+  const partners = def.family === 'trade' ? professionalClients(state,'trade',record) : undefined;
+  const existing = record.contactIds.map(id => state.world.characters[id]).find(c => c.alive && c.id !== state.playerCharacterId && (!partners || partners.some(p => p.id === c.id)));
+  const sick = Object.values(state.world.characters).filter(c => c.alive && c.id !== state.playerCharacterId && c.id !== 'goose' && ((c.healthConditions ?? []).some(h => h.severity > 0) || c.stats.health < 65));
   const noblePatient = def.family === 'medicine' ? (def.id === 'noble_fever' ? sick.find(c => c.rankIdx >= 3) : undefined) ?? sick.find(c => record.contactIds.includes(c.id)) ?? sick[0] : undefined;
-  const contact = noblePatient ?? existing ?? Object.values(state.world.characters).find(c => c.id !== state.playerCharacterId && c.alive && c.age >= 18 && c.occupation.careerId === def.contactCareer)
-    ?? spawnKin(state, { kind: 'acquaintance', age: 30, role: `${def.family} client`, bio: 'A recurring professional contact with a household and a long memory.' });
+  let contact = noblePatient ?? existing ?? (partners ? partners.find(c => c.occupation.careerId === def.contactCareer) ?? partners[0] : Object.values(state.world.characters).find(c => c.id !== state.playerCharacterId && c.alive && c.age >= 18 && c.occupation.careerId === def.contactCareer));
+  if (!contact) {
+    contact = spawnKin(state, { kind: 'acquaintance', age: 30, role: `${def.family} client`, bio: 'A recurring professional contact with a household and a long memory.' });
+    if (def.family === 'trade') contact.occupation.careerId = def.contactCareer;
+  }
   if (!record.contactIds.includes(contact.id)) record.contactIds.push(contact.id);
   return contact;
 }
@@ -70,7 +76,7 @@ export function performSpecialization(state: GameState, id: string): GameState {
     return state;
   }
   r.matters = r.matters.filter(m => m.kind !== 'practice' || !m.resolved || (m.openedYear ?? 0) >= state.world.currentYear - 6);
-  r.matters.push({ id, kind: 'practice', ownerId: p.id, actorId: contact.id, stage: 0, openedYear: state.world.currentYear, resolved: false });
+  r.matters.push({ id, kind: 'practice', ownerId: p.id, requiredPremium: !!careerById(state.occupation.careerId)?.premium, actorId: contact.id, stage: 0, openedYear: state.world.currentYear, resolved: false });
   state.pendingEvent = { eventId: `practice_${id}`, bindings: { client: contact.id, rival: r.rivalId } };
   pushFeed(state, 'PROFESSIONAL WORK', '#365f88', `${contact.name}: choose your method for ${def.name.toLowerCase()}. Preparation costs ${def.cost}g.`, 'plain');
   return state;
@@ -82,13 +88,15 @@ export function practiceProspects(state: GameState, id: string, choice: number, 
   const relevant = ({ agriculture: ['literacy'], craft: ['apprenticeship','guild_recommendation'], trade: ['literacy','guild_recommendation'], church: ['clerical_learning'], martial: ['martial_training'], court: ['court_education'], medicine: ['clerical_learning'], entertainment: ['literacy'], law: ['literacy','court_education'], outlaw: ['martial_training'] } as Record<string, string[]>)[def.family];
   const qualifications = p.education?.qualifications.filter(q => relevant.includes(q)).length ?? 0;
   const strain = ['diseasePressure', 'warThreat', 'religiousTension'].includes(def.condition) ? state.world.conditions[def.condition] : 100 - state.world.conditions[def.condition];
-  const competence = contact.stats.wits + (contact.skills?.[def.skill]?.level ?? 1) * 5;
+  const adviser = def.family === 'medicine' ? medicalAdviser(state,r,contact.id) : undefined;
+  const competence = def.family === 'medicine' ? adviser ? adviser.stats.wits + (adviser.skills?.scholarship.level ?? 1) * 5 : 0 : contact.stats.wits + (contact.skills?.[def.skill]?.level ?? 1) * 5;
+  const unconfirmed = def.mechanism === 'treat' && contact.healthConditions?.some(c => c.severity > 0 && !c.diagnosed) ? 12 : 0;
   const rival = state.world.characters[r.rivalId ?? ''];
   const pressure = rival?.alive && rival.rel < 40 ? 7 : 0;
   const temperament = contact.personalityTraits?.some(t => ['cunning', 'envious', 'cruel'].includes(t)) ? (choice === 1 ? -6 : -3) : contact.personalityTraits?.some(t => ['loyal', 'patient', 'generous'].includes(t)) ? 3 : 0;
   const method = choice === 1 ? -15 : choice === 2 ? Math.min(16, competence / 7) : 5;
-  const odds = clamp(40 + skillLevel(state, def.skill) * 5 + state.stats.wits / 8 + state.occupation.experience / 25 + r.reputation / 5 + qualifications * 2 + (trust - 50) / 8 + method + temperament - strain / 5 - pressure, 12, 94) / 100;
-  return { odds, reason: `Skill ${skillLevel(state, def.skill)}, experience ${Math.round(state.occupation.experience)}, professional standing ${r.reputation}; ${contact.name}'s trust ${Math.round(trust)}, realm pressure ${Math.round(strain)}${pressure ? ` and competition from ${rival.name}` : ''}.` };
+  const odds = clamp(40 + skillLevel(state, def.skill) * 5 + state.stats.wits / 8 + state.occupation.experience / 25 + r.reputation / 5 + qualifications * 2 + (trust - 50) / 8 + method + temperament - strain / 5 - pressure - unconfirmed, 12, 94) / 100;
+  return { odds, reason: `Skill ${skillLevel(state, def.skill)}, experience ${Math.round(state.occupation.experience)}, professional standing ${r.reputation}; ${contact.name}'s trust ${Math.round(trust)}, realm pressure ${Math.round(strain)}${unconfirmed ? '; symptoms are not yet confirmed by examination' : ''}${choice === 2 && adviser ? `; consulted ${adviser.name}` : ''}${pressure ? ` and competition from ${rival.name}` : ''}.` };
 }
 export function resolveProfessionalPractice(state: GameState, id: string, choice: number): void {
   if (![0,1,2].includes(choice)) return;
@@ -97,13 +105,18 @@ export function resolveProfessionalPractice(state: GameState, id: string, choice
   const matter = r.matters.find(m => m.id === id && m.kind === 'practice' && !m.resolved && m.ownerId === p.id);
   if (!matter || matter.stage !== 0) return;
   const currentCareer = careerById(state.occupation.careerId);
-  if (currentCareer?.premium && !state.lifetimeUnlocked) { matter.resolved = true; return; }
+  if ((matter.requiredPremium || currentCareer?.premium) && !state.lifetimeUnlocked) { matter.resolved = true; pushFeed(state,'PROFESSION','#a36a1f','This commission requires Premium access and closes without a reward.','plain'); return; }
   let contact = state.world.characters[matter.actorId];
   if (!contact?.alive) { matter.resolved = true; pushFeed(state, 'PROFESSION', '#a36a1f', 'The client is no longer living. This commission is closed without a reward.', 'plain'); return; }
+  if (def.family === 'trade' && (contact.age < 18 || ['imprisoned','exiled'].includes(contact.legalState?.status ?? 'free'))) { matter.resolved = true; pushFeed(state,'PROFESSION','#a36a1f',`${contact.name} cannot act as a trading partner now. The proposed agreement closes without a reward.`,'plain'); return; }
   if (choice === 2) { if (state.gold < 2) return; addMoney(state, -2); }
+  if (choice === 2 && def.family === 'medicine') retainMedicalAdviser(state,r,contact.id);
+  if (!r.contactIds.includes(contact.id)) r.contactIds.push(contact.id);
+  const hadClinicalNeed = contact.stats.health < 65 || !!contact.healthConditions?.some(c => c.severity > 0);
   const prospects = practiceProspects(state, id, choice, contact);
   const success = chance(prospects.odds);
   matter.resolved = true; matter.stage = 2; matter.success = success;
+  if (def.mechanism === 'treat') beginPatientCare(state,r,contact,success,choice === 2 ? r.adviserId : undefined);
   state.occupation.experience += success ? 8 : 3;
   state.occupation.workedThisYear++;
   r.lastWorkedYear = state.world.currentYear;
@@ -115,7 +128,7 @@ export function resolveProfessionalPractice(state: GameState, id: string, choice
       const damage = choice === 1 ? 7 : 2; contact.stats.health = Math.max(1, contact.stats.health - damage);
       detail = `${contact.name}'s condition fails to improve${choice === 1 ? ' after your forceful intervention' : ''}. Their household records a complaint.`;
       appendCharacterMemory(contact, { id: `complaint_${state.nextId++}`, year: state.world.currentYear, type: 'medical_complaint', actorIds: [p.id], sentiment: -30, salience: 5, inherited: true, summary: detail });
-      if (choice === 1) registerProfessionalComplaint(state, contact, 'harmful treatment', 20);
+      if (choice === 1) { registerProfessionalComplaint(state, contact, 'harmful treatment', 20); recordMedicalFamilyGrievance(state,contact); }
     }
     if (def.family === 'martial') contact.stats.health = Math.max(1, contact.stats.health - (choice === 1 ? 8 : 2));
     grantSkillXp(state, def.skill, 3, 'learning from a failed professional attempt');
@@ -156,11 +169,7 @@ export function resolveProfessionalPractice(state: GameState, id: string, choice
     case 'advice': contact.factionInfluence = clamp((contact.factionInfluence ?? 0) + 4); break;
     case 'audit': if (state.world.court) state.world.court.treasury += 6; break;
     case 'diagnose': { for (const condition of contact.healthConditions ?? []) if (condition.severity > 0) condition.diagnosed = true; break; }
-    case 'treat': {
-      const gain = 4 + skillLevel(state, 'scholarship'); if ((contact.healthConditions ?? []).length || contact.stats.health < 65) contact.stats.health = clamp(contact.stats.health + gain);
-      for (const condition of contact.healthConditions ?? []) { condition.diagnosed = true; condition.severity = Math.max(0, condition.severity - gain * 2); }
-      contact.healthConditions = (contact.healthConditions ?? []).filter(c => c.severity > 0); break;
-    }
+    case 'treat': provideMedicalCare(contact,4 + skillLevel(state,'scholarship')); break;
     case 'epidemic': for (const c of Object.values(state.world.characters).filter(c => c.alive && c.stats.health < 60).slice(0, 4)) c.stats.health = clamp(c.stats.health + 3); break;
     case 'perform': addMoney(state, Math.min(7, 3 + skillLevel(state, 'scholarship'))); break;
     case 'satire': applyRelationshipShift(state, r.rivalId!, { affinity: -4 }, { affinity: -8 }); break;
@@ -178,7 +187,7 @@ export function resolveProfessionalPractice(state: GameState, id: string, choice
   appendCharacterMemory(contact, { id: `profession_${state.nextId++}`, year: state.world.currentYear, type: `professional_${id}`, actorIds: [p.id], sentiment: 12, salience: 3, inherited: true, summary: `${p.name}: ${def.text}` });
   grantSkillXp(state, def.skill, 7, def.name.toLowerCase());
   if (state.world.court) state.world.court.treasury = clamp(state.world.court.treasury, 0, 5000);
-  pushFeed(state, 'PROFESSION', '#365f88', `${def.family === 'medicine' ? ((contact.healthConditions ?? []).length || contact.stats.health < 65 ? `${contact.name} receives care based on their actual condition.` : `${contact.name} has no active illness: a preventive consultation finds no diagnosis to invent.`) : def.family === 'law' ? `${contact.name}'s evidence is prepared for the proper hearing. Charges and sentences remain subject to judicial resolution.` : def.text} ${contact.name} records the ${choice === 1 ? 'rapid' : choice === 2 ? 'shared' : 'careful'} work. ${prospects.reason}`, 'good');
+  pushFeed(state, 'PROFESSION', '#365f88', `${def.family === 'medicine' ? (hadClinicalNeed ? `${contact.name} ${def.mechanism === 'diagnose' ? 'is examined and the actual findings are recorded' : def.mechanism === 'treat' ? 'receives care; a follow-up is recorded for next year' : 'helps organise fever relief for the affected households'}.` : `${contact.name} has no active illness: a preventive consultation finds no diagnosis to invent.`) : def.family === 'law' ? `${contact.name}'s evidence is prepared for the proper hearing. Charges and sentences remain subject to judicial resolution.` : def.text} ${contact.name} records the ${choice === 1 ? 'rapid' : choice === 2 ? 'shared' : 'careful'} work. ${prospects.reason}`, 'good');
 }
 export function registerProfessionalComplaint(state: GameState, client: WorldCharacter, offence: string, severity: number): void {
   const legal = state.world.characters[state.playerCharacterId].legalState; if (!legal) return;
@@ -187,6 +196,7 @@ export function registerProfessionalComplaint(state: GameState, client: WorldCha
 }
 export function tickProfessionalStanding(state: GameState): void {
   const p = state.world.characters[state.playerCharacterId];
+  if (p.professionalHistory?.medicine) reviewPatientCare(state,p.professionalHistory.medicine);
   for (const [family, r] of Object.entries(p.professionalHistory ?? {})) {
     if (state.world.currentYear - r.lastWorkedYear > 2 && r.reputation > 0) r.reputation--;
     const rival = state.world.characters[r.rivalId ?? ''];
@@ -236,10 +246,8 @@ export function applyProfessionalEffect(state: GameState, effect: NonNullable<Ef
   addMoney(state, honest ? 6 : 14);
   if (effect.family === 'medicine') {
     const ill = client.stats.health < 65 || client.healthConditions?.some(c => c.severity > 0);
-    if (ill) client.stats.health = clamp(client.stats.health + (honest ? 20 : -18));
+    if (ill) { beginPatientCare(state,r,client,honest); if (honest) provideMedicalCare(client,20); else client.stats.health = clamp(client.stats.health - 18); }
     if (!honest && ill) registerProfessionalComplaint(state, client, 'professional malpractice', 35);
-    for (const condition of client.healthConditions ?? []) condition.severity = Math.max(0, condition.severity - (honest ? 30 : 0));
-    client.healthConditions = (client.healthConditions ?? []).filter(c => c.severity > 0);
     state.world.conditions.diseasePressure = clamp(state.world.conditions.diseasePressure + (honest ? -8 : 5));
     if (!honest) state.stats.health = Math.max(1, state.stats.health - 8);
   }

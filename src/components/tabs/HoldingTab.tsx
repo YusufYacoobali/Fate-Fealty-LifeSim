@@ -88,6 +88,8 @@ export function HoldingTab({ state, onAction, onUpgrade, onToggleVillage }: Prop
       style={{ flex: 1 }}
       contentInsetAdjustmentBehavior="automatic"
       keyboardShouldPersistTaps="handled"
+      automaticallyAdjustKeyboardInsets
+      keyboardDismissMode="on-drag"
       contentContainerStyle={{ padding: 11, paddingBottom: 18 }}
     >
       <CourtPanel state={state} />

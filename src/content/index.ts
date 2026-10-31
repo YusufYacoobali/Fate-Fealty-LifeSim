@@ -1,4 +1,5 @@
 import { legacyNarrativeTheme } from './narrativeThemes';
+import { NARRATIVE_CRIME_EVENTS } from './narrativeCrimeEvents';
 import { NARRATIVE_ROMANCE_EVENTS } from './narrativeRomanceEvents';
 import { NARRATIVE_FAMILY_EVENTS } from './narrativeFamilyEvents';
 import { ROYAL_COURT_EVENTS } from './royalCourtEvents';
@@ -33,6 +34,7 @@ import { LEGAL_SYSTEM_EVENTS } from '@/engine/legalEngine';
 const RAW_EVENTS: GameEvent[] = [
   ...NARRATIVE_FAMILY_EVENTS,
   ...NARRATIVE_ROMANCE_EVENTS,
+  ...NARRATIVE_CRIME_EVENTS,
   ...ROYAL_COURT_EVENTS,
   ...CAREER_SPECIALIZATION_EVENTS,
   ...EDUCATION_EVENTS, ...ORIGIN_CHILDHOOD_EVENTS,

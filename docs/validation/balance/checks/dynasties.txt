@@ -1,0 +1,20 @@
+
+> fate-and-fealty@1.0.0 test
+> jest --runInBand src/__tests__/persistentWorldFullSoak.test.ts -t three-generation dynasties
+
+PASS src/__tests__/persistentWorldFullSoak.test.ts (19.894 s)
+  persistent-world full soak matrix
+    ✓ runs three-generation dynasties without replacing the world or social graph (19249 ms)
+    ○ skipped retains expected-child household references when an artisan household moves
+    ○ skipped completes the configured life count per difficulty
+    ○ skipped completes lives for every life role
+    ○ skipped covers every converted encounter with actual cast and immediate closure
+    ○ skipped matches uninterrupted play across deterministic reload checkpoints
+  life depth deterministic checkpoints
+    ○ skipped matches uninterrupted education, career and court play after equivalent reloads
+
+Test Suites: 1 passed, 1 total
+Tests:       6 skipped, 1 passed, 7 total
+Snapshots:   0 total
+Time:        20.202 s
+Ran all test suites matching /src\/__tests__\/persistentWorldFullSoak.test.ts/i with tests matching "three-generation dynasties".

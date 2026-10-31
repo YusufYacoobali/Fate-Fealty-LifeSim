@@ -1,0 +1,69 @@
+[
+  {
+    "eventId": "life_pilgrim_bridge",
+    "conditionalFatality": 0.1,
+    "oldFailure": "The bridge gives way over deep water. The assurance of protection cannot keep you afloat.",
+    "ordinarySetback": "The plank breaks near the bank. You crawl out coughing, having reached the far side of your confidence rather than the river.",
+    "catastropheCause": "Drowned after choosing to cross a visibly broken bridge."
+  },
+  {
+    "eventId": "life_gallows_rope",
+    "conditionalFatality": 0.12,
+    "oldFailure": "The condemned section parts over the quarry. The last assurance you hear is that it held yesterday.",
+    "ordinarySetback": "The rope parts above a lower shelf. You survive the fall with a broken bone; the rope seller describes this as useful information.",
+    "catastropheCause": "Killed in a fall while testing a condemned rope."
+  },
+  {
+    "eventId": "life_lightning_rod",
+    "conditionalFatality": 0.22,
+    "oldFailure": "Lightning strikes the exposed roof. The promised hazard payment is no defence against it.",
+    "ordinarySetback": "A gust throws you against the roof and the crowd scatters. Your fee is spent on treating the burns before anybody can call it a profit.",
+    "catastropheCause": "Killed while knowingly holding an iron pole on a roof during a storm."
+  },
+  {
+    "eventId": "life_boat_fare",
+    "conditionalFatality": 0.08,
+    "oldFailure": "The overloaded boat capsizes in deep water. The extra fare cannot purchase a shore.",
+    "ordinarySetback": "The ferry rolls and you reach the shallows clinging to a bundle. The ferryman asks you to stop counting the passengers aloud.",
+    "catastropheCause": "Drowned after choosing an overloaded ferry."
+  },
+  {
+    "eventId": "life_quarry_shortcut",
+    "conditionalFatality": 0.1,
+    "oldFailure": "The ledge crumbles beneath you. The shorter route has no place to stop the fall.",
+    "ordinarySetback": "The ledge gives way into a scrub shelf. You reach the road with a broken bone and an entirely new respect for its length.",
+    "catastropheCause": "Killed after choosing a dangerous shortcut through an abandoned quarry."
+  },
+  {
+    "eventId": "plague_arrives",
+    "branch": 2,
+    "conditionalFatality": 0.04,
+    "oldFailure": "It came through the rats, through the very walls. There was no barricade against it.",
+    "ordinarySetback": "The sickness reaches the house. You need care and lose strength, but the barred door has not decided the ending.",
+    "catastropheCause": "Died of the Pestilence, alone behind a barred door."
+  },
+  {
+    "eventId": "plague_arrives",
+    "branch": 1,
+    "conditionalFatality": 0.12,
+    "oldFailure": "You tended the sick, and the sickness took you in turn. A merciful death, the priest says. He is lying.",
+    "ordinarySetback": "You fall ill after tending the sick. Another carer takes your place; accepting the bed is harder than offering it.",
+    "catastropheCause": "Died of the Pestilence, tending those who could not be saved."
+  },
+  {
+    "eventId": "plague_arrives",
+    "branch": 0,
+    "conditionalFatality": 0.08,
+    "oldFailure": "You fled, but carried the sickness with you. The fever finds you on the road.",
+    "ordinarySetback": "The fever finds you on the road. A nearby household gives you shelter, and the illness must run its real course.",
+    "catastropheCause": "Taken by the Pestilence on a lonely hill road."
+  },
+  {
+    "eventId": "arc_war_2",
+    "branch": 0,
+    "conditionalFatality": 0.15,
+    "oldFailure": "A looter found you \"dead\" and was most surprised when you flinched. The scuffle did not go your way.",
+    "ordinarySetback": "A looter finds you breathing and strikes before fleeing. You stagger out wounded, furious at having played the least convincing corpse on the field.",
+    "catastropheCause": "Cut down by a battlefield looter while feigning death."
+  }
+]

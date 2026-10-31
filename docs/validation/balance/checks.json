@@ -1,0 +1,112 @@
+{
+  "date": "2026-10-31",
+  "branch": "v5",
+  "baseline": "49f550117a90ffb183ab35882b35293e3db695f3",
+  "implementationCommit": "77f9f19632527305b773a9b522bd4bc7daf5d9f6",
+  "appSourceSha256": "f6165dda4f0949337cef8fd5eab8173999eed1a7955dfe6b2248da235232e666",
+  "tests": {
+    "jest": {
+      "command": "npm test -- --runInBand",
+      "suites": 93,
+      "tests": 926,
+      "passed": true,
+      "log": "checks/jest.txt"
+    },
+    "typescript": {
+      "command": "npm run typecheck",
+      "passed": true,
+      "log": "checks/typescript.txt"
+    },
+    "dynasties": {
+      "command": "MLS_FULL_SOAK=1 npm test -- --runInBand src/__tests__/persistentWorldFullSoak.test.ts -t 'three-generation dynasties'",
+      "count": 100,
+      "generations": 3,
+      "passed": true,
+      "log": "checks/dynasties.txt",
+      "scope": "Eight annual steps per founding/intermediate generation followed by explicit heir transfer; not 300 natural lifetime simulations."
+    }
+  },
+  "cohorts": {
+    "totalLives": 12600,
+    "perPolicyPerRevision": 2100,
+    "perRolePerCohort": 300,
+    "freePerCohort": 525,
+    "premiumPerCohort": 1575,
+    "allFinished": true,
+    "reloadChecks": 33907,
+    "reloadFailures": 0,
+    "stalls": 0,
+    "worldIntegrityFailures": 0,
+    "integrityScope": "Audit throws on any death-state integrity issue. Existing annual and heir checks also remain in Jest.",
+    "authoredSchedules": 0,
+    "authoredOpenAtDeath": 0,
+    "independentReplay": {
+      "lives": 21,
+      "rowsMatch": true,
+      "all14SampleTranscriptsMatch": true
+    }
+  },
+  "editorial": {
+    "live": 545,
+    "addedScenes": 25,
+    "rewrittenEvents": 48,
+    "rewrittenOutcomes": 52,
+    "effectComparisons": 52,
+    "validation": [],
+    "liveCatastrophicChoices": 9
+  },
+  "browser": {
+    "browser.json": {
+      "cases": 36,
+      "errors": 0
+    },
+    "navigation.json": {
+      "cases": 6,
+      "errors": 0
+    },
+    "browser-legal-final.json": {
+      "cases": 6,
+      "errors": 0
+    }
+  },
+  "production": {
+    "command": "EXPO_NO_TELEMETRY=1 CI=1 npx expo export --platform all --max-workers 2 --output-dir /tmp/fate-balance-production",
+    "platforms": [
+      "web",
+      "ios",
+      "android"
+    ],
+    "passed": true,
+    "bundleSha256": {
+      "android/index-2894b2f2d3b858f36cee8570c01be4a6.hbc": "83c4893b62096e950e0207f42f2fe4e9fd6735fedbd2c2390ce66c9ca6cb9ec1",
+      "ios/index-8c0eceab18db475d8575e357e73e16cb.hbc": "1759efb12b39dad4b04a49901ad73c6a1eac20c3adaa3b983af84db9efea9b0a",
+      "web/index-af88230467aed7c6f67c636805148e37.js": "dd33d2a355244dc8b1bdf340e906d64754695ce5ae3ce5a61b70cb7c3c46a248",
+      "web/notifications-eae1edb959796e144e128439cf08efdc.js": "d8c0195cae71b55b6fb0e5b7205773a313acb69258bdafc37ba76859dae4d4ef"
+    }
+  },
+  "protectedSourceUnchangedFromBaselineSha256": {
+    "src/engine/deathEngine.ts": "621c43d61cd40664491a54bb2e52d8d3170d6f88344d5203510be150b79f2356",
+    "src/engine/random.ts": "b8bee79b1208b94ac006bcc2b35eed43524323d01c3fc73d8153c806b3756acb",
+    "src/components/modals/EventModal.tsx": "7fa3a29cf605855022c0ebb1239eb8740ebff08214ca7844e6908902543f75b3",
+    "src/components/NavBar.tsx": "c304a5679650ecfd0c81aedaec126a7cdef321a30ac7371bcd992a22511b5b01",
+    "src/theme/theme.ts": "7a5916ee82991ad5438d8930275ea877ee969f5f680a6f0b27b921dd6437f62f",
+    "src/state/hooks/useGameAudio.ts": "100d12d9a05302b4f152bb987ca581c050aba2b220d1d64e06bad9dd6a2bd94b",
+    "src/services/haptics.ts": "21eb67e94fabbf5a68ade9f99d3ef929c37a5ee807a2969ab43a87979f0a4690",
+    "src/services/audioLogic.ts": "bc754e7753a8a7125e14d449f06c15a8c27b858c73bbe4ca834e563ac963d26d"
+  },
+  "auditControllerSha256": {
+    "scripts/auditNarrative.ts": "092d7104249bf6203b5ef7403e3983c4609f5ed2ec98ae132049891131f36564",
+    "scripts/narrativeRiskAudit.ts": "721bdf8cac003007760e1eaf4c4c67361df7991b674bcbbf6f2d8934f396d41a"
+  },
+  "measurementNotes": [
+    "Raw baseline v5 NPC incidents included dying players; comparison subtracts CHOOSE player deaths. No baseline player died in the only authored combined mother-death/health-loss choices, so no cofatal NPC incidence is removed.",
+    "The median is recomputed from all 2100 age rows, correcting the early raw summary upper-median convention.",
+    "Policies and gameplay RNG are unaffected by these aggregation corrections.",
+    "The balanced policy bypasses risk ranking; the final cautious and reckless baselines use the same scoring as the updated cohorts."
+  ],
+  "remainingReleaseLimits": [
+    "Existing release:check blocks on the missing published Android TERMS_OF_USE_URL.",
+    "Real OS font scaling, sound/haptics, signed native builds, background/resume and store purchases/restores require device checks.",
+    "No store submission or Meta/RevenueCat dashboard delivery validation."
+  ]
+}

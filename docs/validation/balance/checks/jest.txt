@@ -1,0 +1,193 @@
+
+> fate-and-fealty@1.0.0 test
+> jest --runInBand
+
+PASS src/__tests__/lifePacing.test.ts (194.033 s)
+PASS src/__tests__/director.test.ts (57.412 s)
+PASS src/__tests__/livingWorldSoak.test.ts (50.987 s)
+PASS src/__tests__/persistentWorldFullSoak.test.ts (35.373 s)
+PASS src/__tests__/rpgJourneys.test.ts (20.511 s)
+PASS src/__tests__/auditRegressions.test.ts (8.628 s)
+PASS src/__tests__/singleYearNarrative.test.ts
+PASS src/__tests__/persistentWorldPerformance.test.ts
+PASS src/__tests__/birthOrigins.test.ts
+PASS src/__tests__/courtPolitics.test.ts
+PASS src/__tests__/narrativeOverhaul.test.ts
+PASS src/__tests__/lifeDirector.test.ts
+PASS src/__tests__/careerSpecializations.test.ts
+PASS src/__tests__/onboardingPaywall.test.tsx
+PASS src/__tests__/narrativeBalance.test.ts
+PASS src/__tests__/professionalCorrectness.test.ts
+PASS src/__tests__/existingSystemsPolish.test.ts
+PASS src/__tests__/lifeDepthAcceptance.test.ts
+PASS src/__tests__/professionalStories.test.ts
+PASS src/__tests__/romanceDiscovery.test.tsx
+PASS src/__tests__/education.test.ts
+PASS src/__tests__/educationFunding.test.ts
+PASS src/__tests__/eventModalReveal.test.tsx
+PASS src/__tests__/contextualActivities.test.ts
+PASS src/__tests__/gameplayPolish.test.ts
+PASS src/__tests__/rpgAudit.test.ts
+PASS src/__tests__/onboardingLayout.test.ts
+PASS src/__tests__/rpgExpansion.test.ts
+PASS src/__tests__/freePracticeUi.test.tsx
+PASS src/__tests__/livingWorldUpdate.test.ts
+PASS src/__tests__/content.test.ts
+PASS src/__tests__/lifeDepthFoundation.test.ts
+  ● Console
+
+    console.warn
+      [persistence] load failed; preserving unreadable save SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+          at JSON.parse (<anonymous>)
+          at parse (/workspace/Fate-Fealty-LifeSim/src/state/persistence.ts:72:27)
+          at Generator.next (<anonymous>)
+          at asyncGeneratorStep (/workspace/Fate-Fealty-LifeSim/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+          at _next (/workspace/Fate-Fealty-LifeSim/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+      86 |     return { state: parsed, blockedByFutureVersion: false };
+      87 |   } catch (e) {
+    > 88 |     console.warn('[persistence] load failed; preserving unreadable save', e);
+         |             ^
+      89 |     return { state: null, blockedByFutureVersion: true };
+      90 |   }
+      91 | }
+
+      at warn (src/state/persistence.ts:88:13)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+    console.warn
+      [persistence] save failed SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+          at JSON.parse (<anonymous>)
+          at parse (/workspace/Fate-Fealty-LifeSim/src/state/persistence.ts:42:29)
+          at Generator.next (<anonymous>)
+          at asyncGeneratorStep (/workspace/Fate-Fealty-LifeSim/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+          at _next (/workspace/Fate-Fealty-LifeSim/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+      55 |   } catch (e) {
+      56 |     // Saving is best-effort; never crash the game over it.
+    > 57 |     console.warn('[persistence] save failed', e);
+         |             ^
+      58 |   }
+      59 | }
+      60 |
+
+      at warn (src/state/persistence.ts:57:13)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+    console.warn
+      [persistence] load failed; preserving unreadable save SyntaxError: Unexpected end of JSON input
+          at JSON.parse (<anonymous>)
+          at parse (/workspace/Fate-Fealty-LifeSim/src/state/persistence.ts:72:27)
+          at Generator.next (<anonymous>)
+          at asyncGeneratorStep (/workspace/Fate-Fealty-LifeSim/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+          at _next (/workspace/Fate-Fealty-LifeSim/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+      86 |     return { state: parsed, blockedByFutureVersion: false };
+      87 |   } catch (e) {
+    > 88 |     console.warn('[persistence] load failed; preserving unreadable save', e);
+         |             ^
+      89 |     return { state: null, blockedByFutureVersion: true };
+      90 |   }
+      91 | }
+
+      at warn (src/state/persistence.ts:88:13)
+      at asyncGeneratorStep (node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)
+      at _next (node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)
+
+PASS src/__tests__/workshopUpdate.test.ts
+PASS src/__tests__/holdingEngine.test.ts
+PASS src/__tests__/annualNarrative.test.ts
+PASS src/__tests__/professionalPatients.test.ts
+PASS src/__tests__/persistentWorld.test.ts
+PASS src/__tests__/soloPractice.test.ts
+PASS src/__tests__/narrativeState.test.ts
+PASS src/__tests__/goalEngine.test.ts
+PASS src/__tests__/practiceProAccess.test.ts
+PASS src/__tests__/qualityExpansionSystems.test.ts
+PASS src/__tests__/typewriter.test.ts
+PASS src/__tests__/random.test.ts
+PASS src/__tests__/misdeeds.test.ts
+PASS src/__tests__/characterCreation.test.ts
+PASS src/__tests__/careerRisk.test.ts
+PASS src/__tests__/eventPicker.test.ts
+PASS src/__tests__/companionEvents.test.ts
+PASS src/__tests__/pixelAnimationLifecycle.test.tsx
+PASS src/__tests__/gameReducer.test.ts
+PASS src/__tests__/duelEngine.test.ts
+PASS src/__tests__/lifeDepthBindings.test.ts
+PASS src/__tests__/ageGates.test.ts
+PASS src/__tests__/combatGatheringPolish.test.ts
+PASS src/__tests__/returnRumour.test.ts
+PASS src/__tests__/sharedNarrativeThemes.test.ts
+PASS src/__tests__/viceActivities.test.ts
+PASS src/__tests__/traitEngine.test.ts
+PASS src/__tests__/dailyRewards.test.ts
+PASS src/__tests__/royalCourt.test.ts
+PASS src/__tests__/qualityExpansionContent.test.ts
+PASS src/__tests__/storyGraph.test.ts
+PASS src/__tests__/persistence.test.ts
+PASS src/__tests__/contentDistinctiveness.test.ts
+PASS src/__tests__/shopMarkets.test.ts
+PASS src/__tests__/familyPlanning.test.ts
+PASS src/__tests__/metaConfig.test.ts
+PASS src/__tests__/lifecycleEngine.test.ts
+PASS src/__tests__/chainTitleMigration.test.ts
+PASS src/__tests__/reviewLogic.test.ts
+PASS src/__tests__/kinship.test.ts
+PASS src/__tests__/shopPromoLogic.test.ts
+PASS src/__tests__/consequenceEngine.test.ts
+PASS src/__tests__/metaAds.test.ts
+  ● Console
+
+    console.warn
+      [meta-ads] Measurement unavailable; check native build and configuration.
+
+      21 |   const next = queue.then(work).catch(() => {
+      22 |     // Measurement must never break gameplay or a store transaction.
+    > 23 |     if (__DEV__) console.warn('[meta-ads] Measurement unavailable; check native build and configuration.');
+         |                          ^
+      24 |   });
+      25 |   queue = next;
+      26 |   return next;
+
+      at warn (src/services/metaAds.ts:23:26)
+
+    console.warn
+      [meta-ads] Measurement unavailable; check native build and configuration.
+
+      21 |   const next = queue.then(work).catch(() => {
+      22 |     // Measurement must never break gameplay or a store transaction.
+    > 23 |     if (__DEV__) console.warn('[meta-ads] Measurement unavailable; check native build and configuration.');
+         |                          ^
+      24 |   });
+      25 |   queue = next;
+      26 |   return next;
+
+      at warn (src/services/metaAds.ts:23:26)
+
+PASS src/__tests__/pathProgression.test.ts
+PASS src/__tests__/launchPaywallLogic.test.ts
+PASS src/__tests__/kinFactory.test.ts
+PASS src/__tests__/choiceRisk.test.ts
+PASS src/__tests__/purchasesLogic.test.ts
+PASS src/__tests__/deathEngine.test.ts
+PASS src/__tests__/purchaseRecovery.test.ts
+PASS src/__tests__/useGameAudio.test.tsx
+PASS src/__tests__/metaProgression.test.ts
+PASS src/__tests__/purchaseAttribution.test.ts
+PASS src/__tests__/purchaseUpgrades.test.ts
+PASS src/__tests__/proTrial.test.ts
+PASS src/__tests__/notificationMessages.test.ts
+PASS src/__tests__/premiumOwnershipLifecycle.test.tsx
+PASS src/__tests__/viewModel.test.ts
+PASS src/__tests__/worldJournal.test.ts
+PASS src/__tests__/premiumOffersRecovery.test.tsx
+PASS src/__tests__/audioLogic.test.ts
+
+Test Suites: 93 passed, 93 total
+Tests:       926 passed, 926 total
+Snapshots:   0 total
+Time:        394.726 s, estimated 494 s
+Ran all test suites.

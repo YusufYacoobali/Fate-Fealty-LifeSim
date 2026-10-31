@@ -1,0 +1,428 @@
+{
+  "browser": "Chromium production export",
+  "results": [
+    {
+      "id": "comic_escaped_letter",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Constance"
+      ],
+      "overflow": false,
+      "choice": "read",
+      "reloadPreserved": true
+    },
+    {
+      "id": "comic_escaped_letter",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Constance"
+      ],
+      "overflow": false,
+      "choice": "read",
+      "reloadPreserved": true
+    },
+    {
+      "id": "comic_escaped_letter",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Constance"
+      ],
+      "overflow": false,
+      "choice": "read",
+      "reloadPreserved": true
+    },
+    {
+      "id": "comic_escaped_letter",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Constance"
+      ],
+      "overflow": false,
+      "choice": "read",
+      "reloadPreserved": true
+    },
+    {
+      "id": "comic_ordinary_john",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "work",
+      "reloadPreserved": true
+    },
+    {
+      "id": "comic_ordinary_john",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "work",
+      "reloadPreserved": true
+    },
+    {
+      "id": "comic_ordinary_john",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "work",
+      "reloadPreserved": true
+    },
+    {
+      "id": "comic_ordinary_john",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "work",
+      "reloadPreserved": true
+    },
+    {
+      "id": "comic_rival_saddle",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Sir Roderick"
+      ],
+      "overflow": false,
+      "choice": "help",
+      "reloadPreserved": true
+    },
+    {
+      "id": "comic_rival_saddle",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Sir Roderick"
+      ],
+      "overflow": false,
+      "choice": "help",
+      "reloadPreserved": true
+    },
+    {
+      "id": "comic_rival_saddle",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Sir Roderick"
+      ],
+      "overflow": false,
+      "choice": "help",
+      "reloadPreserved": true
+    },
+    {
+      "id": "comic_rival_saddle",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Sir Roderick"
+      ],
+      "overflow": false,
+      "choice": "help",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_boat_fare",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Leofric"
+      ],
+      "overflow": false,
+      "choice": "wait",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_boat_fare",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Leofric"
+      ],
+      "overflow": false,
+      "choice": "wait",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_boat_fare",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Leofric"
+      ],
+      "overflow": false,
+      "choice": "wait",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_boat_fare",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Leofric"
+      ],
+      "overflow": false,
+      "choice": "wait",
+      "reloadPreserved": true
+    },
+    {
+      "id": "system_legal_trial",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [],
+      "overflow": false,
+      "choice": "defend",
+      "reloadPreserved": true
+    },
+    {
+      "id": "system_legal_trial",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [],
+      "overflow": false,
+      "choice": "defend",
+      "reloadPreserved": true
+    },
+    {
+      "id": "system_legal_trial",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [],
+      "overflow": false,
+      "choice": "defend",
+      "reloadPreserved": true
+    },
+    {
+      "id": "system_legal_trial",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [],
+      "overflow": false,
+      "choice": "defend",
+      "reloadPreserved": true
+    },
+    {
+      "id": "royal_creative_accounts",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [],
+      "overflow": false,
+      "choice": "royal_creative_accounts_choice_1",
+      "reloadPreserved": true
+    },
+    {
+      "id": "royal_creative_accounts",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [],
+      "overflow": false,
+      "choice": "royal_creative_accounts_choice_1",
+      "reloadPreserved": true
+    },
+    {
+      "id": "royal_creative_accounts",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [],
+      "overflow": false,
+      "choice": "royal_creative_accounts_choice_1",
+      "reloadPreserved": true
+    },
+    {
+      "id": "royal_creative_accounts",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [],
+      "overflow": false,
+      "choice": "royal_creative_accounts_choice_1",
+      "reloadPreserved": true
+    },
+    {
+      "id": "court_office_contest",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Lord Aldric",
+        "Beatrice",
+        "Hugh"
+      ],
+      "overflow": false,
+      "choice": "merit",
+      "reloadPreserved": true
+    },
+    {
+      "id": "court_office_contest",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Lord Aldric",
+        "Beatrice",
+        "Hugh"
+      ],
+      "overflow": false,
+      "choice": "merit",
+      "reloadPreserved": true
+    },
+    {
+      "id": "court_office_contest",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Lord Aldric",
+        "Beatrice",
+        "Hugh"
+      ],
+      "overflow": false,
+      "choice": "merit",
+      "reloadPreserved": true
+    },
+    {
+      "id": "court_office_contest",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Lord Aldric",
+        "Beatrice",
+        "Hugh"
+      ],
+      "overflow": false,
+      "choice": "merit",
+      "reloadPreserved": true
+    },
+    {
+      "id": "comic_accidental_champion",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "price",
+      "reloadPreserved": true
+    },
+    {
+      "id": "comic_accidental_champion",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "price",
+      "reloadPreserved": true
+    },
+    {
+      "id": "comic_accidental_champion",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "price",
+      "reloadPreserved": true
+    },
+    {
+      "id": "comic_accidental_champion",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "price",
+      "reloadPreserved": true
+    },
+    {
+      "id": "comic_escaped_letter",
+      "width": 280,
+      "textEnlargement": 1.35,
+      "animated": false,
+      "actors": [
+        "Constance"
+      ],
+      "overflow": false,
+      "choice": "read",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_boat_fare",
+      "width": 280,
+      "textEnlargement": 1.35,
+      "animated": false,
+      "actors": [
+        "Leofric"
+      ],
+      "overflow": false,
+      "choice": "wait",
+      "reloadPreserved": true
+    },
+    {
+      "id": "system_legal_trial",
+      "width": 280,
+      "textEnlargement": 1.35,
+      "animated": false,
+      "actors": [],
+      "overflow": false,
+      "choice": "defend",
+      "reloadPreserved": true
+    },
+    {
+      "id": "comic_escaped_letter",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": true,
+      "actors": [
+        "Constance"
+      ],
+      "overflow": false,
+      "choice": "read",
+      "reloadPreserved": true
+    }
+  ],
+  "errors": []
+}

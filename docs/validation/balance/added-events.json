@@ -1,0 +1,2282 @@
+[
+  {
+    "id": "comic_accidental_champion",
+    "category": "family",
+    "domain": "family",
+    "title": "THE KNIGHT WHO WON BY ACCIDENT",
+    "text": "{{other}} boasts of never losing a duel. You discover the previous opponents were paid to surrender. Unfortunately, the next challenge has just been addressed to you.",
+    "choices": [
+      {
+        "id": "price",
+        "label": "Ask the champion what surrender pays",
+        "outcome": {
+          "text": "{{other}} gives you six gold to preserve the legend. You fall over after a magnificently unconvincing blow and spend the walk home rehearsing a better groan.",
+          "effects": {
+            "gold": 6,
+            "reputation": -3,
+            "bond": {
+              "role": "other",
+              "trust": 8
+            },
+            "createSecret": {
+              "type": "criminal_contact",
+              "severity": 20
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": true
+        }
+      },
+      {
+        "id": "audience",
+        "label": "Invite the previous opponents to demonstrate",
+        "outcome": {
+          "text": "Three former victims demonstrate the same fatal stagger. {{other}} objects that you have organised a very unfair rehearsal.",
+          "effects": {
+            "reputation": 4,
+            "bond": {
+              "role": "other",
+              "respect": 4,
+              "affinity": -15,
+              "flag": "rival"
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "fight",
+        "label": "Insist on a real practice bout (injury risk)",
+        "outcome": {
+          "text": "{{other}} has to lift a sword without paying anyone first. The spectators become attentive for entirely new reasons.",
+          "effects": {},
+          "tone": "plain"
+        },
+        "challenge": {
+          "role": "other",
+          "stakes": {
+            "summary": "A real bout can injure either opponent.",
+            "win": {
+              "reputation": 6,
+              "bond": {
+                "role": "other",
+                "respect": 10
+              }
+            },
+            "lose": {
+              "health": -14,
+              "reputation": -4
+            }
+          }
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "other": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event",
+        "rankAtLeast": 2
+      }
+    },
+    "repetitionGroup": "comic_accidental_champion",
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_escaped_letter",
+    "category": "family",
+    "domain": "family",
+    "title": "THE LOVE LETTER THAT ESCAPED",
+    "text": "Your private love letter has reached the wrong hearth. Three neighbours consider the description flattering. {{spouse}} would like to know which of them resembles a summer orchard.",
+    "choices": [
+      {
+        "id": "read",
+        "label": "Read the original aloud, including the intended name",
+        "outcome": {
+          "text": "{{spouse}} hears the name before the unfortunate fruit comparison. The misunderstanding ends; the orchard will take longer to live down.",
+          "effects": {
+            "bond": {
+              "role": "spouse",
+              "trust": 8
+            },
+            "charm": -1
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "lie",
+        "label": "Claim it was an exercise for a travelling poet",
+        "outcome": {
+          "text": "{{spouse}} asks you to recite another verse. Your sudden objection to poetry is much less convincing than the first letter.",
+          "effects": {
+            "bond": {
+              "role": "spouse",
+              "trust": -17
+            },
+            "reputation": -3
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "dedicate",
+        "label": "Dedicate the entire disastrous poem to your spouse",
+        "outcome": {
+          "text": "You recite it under your own window. {{spouse}} pulls you inside before the orchard can acquire another harvest.",
+          "effects": {
+            "charm": 3,
+            "bond": {
+              "role": "spouse",
+              "affinity": 9,
+              "respect": -3
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "spouse": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event",
+        "relation": "spouse"
+      }
+    },
+    "repetitionGroup": "romantic_misunderstandings",
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_ordinary_john",
+    "category": "family",
+    "domain": "family",
+    "title": "THE NOBLE’S BRILLIANT DISGUISE",
+    "text": "{{other}} arrives in a sack with a coronet underneath and insists the name is “Ordinary John”. Ordinary John would like to hear an honest opinion of the local nobility.",
+    "choices": [
+      {
+        "id": "work",
+        "label": "Give Ordinary John an ordinary load to carry",
+        "outcome": {
+          "text": "{{other}} carries it three steps before requesting the sort of assistance usually reserved for important people. You praise the remarkable speed of the promotion.",
+          "effects": {
+            "wits": 2,
+            "reputation": 3,
+            "bond": {
+              "role": "other",
+              "respect": 5,
+              "affinity": -5
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "truth",
+        "label": "Describe exactly what the households complain about",
+        "outcome": {
+          "text": "{{other}} forgets to disguise the voice halfway through defending the lord. The argument becomes considerably more useful after that.",
+          "effects": {
+            "bond": {
+              "role": "other",
+              "trust": 8,
+              "affinity": -6
+            },
+            "faction": {
+              "factionId": "commons",
+              "playerStanding": 3
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "flatter",
+        "label": "Remark how handsome the disguised lord must be",
+        "outcome": {
+          "text": "{{other}} agrees before remembering not to know. You are both obliged to admire the sack for a moment.",
+          "effects": {
+            "charm": 3,
+            "bond": {
+              "role": "other",
+              "affinity": 9
+            },
+            "reputation": -2
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "other": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event",
+        "rankAtLeast": 3
+      }
+    },
+    "repetitionGroup": "comic_ordinary_john",
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_wedding_hiccup",
+    "category": "family",
+    "domain": "family",
+    "title": "THE WEDDING SPEECH THAT WILL NOT END",
+    "text": "{{other}} asks you to toast a newly married couple. A hiccup arrives after the first name and appears determined to marry it to every sentence.",
+    "choices": [
+      {
+        "id": "short",
+        "label": "Offer the shortest possible blessing",
+        "outcome": {
+          "text": "You say “Happiness”, hiccup once and sit. {{other}} calls it the most efficient speech of the feast.",
+          "effects": {
+            "charm": 2,
+            "bond": {
+              "role": "other",
+              "trust": 5
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "song",
+        "label": "Make the interruption part of a song",
+        "outcome": {
+          "text": "The guests join in at the wrong places. {{other}} has to explain to the bride’s aunt that this was not a family custom until five minutes ago.",
+          "effects": {
+            "charm": 4,
+            "reputation": -2,
+            "bond": {
+              "role": "other",
+              "affinity": 5
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "persist",
+        "label": "Refuse to surrender the rest of your magnificent speech",
+        "outcome": {
+          "text": "The couple finish eating before you finish the introduction. {{other}} moves the candle farther from your sleeve without interrupting the hiccups.",
+          "effects": {
+            "reputation": -4,
+            "faith": 1,
+            "bond": {
+              "role": "other",
+              "respect": -5
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "other": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event"
+      }
+    },
+    "repetitionGroup": "weddings",
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_wrong_balcony",
+    "category": "family",
+    "domain": "family",
+    "title": "THE LADDER AT THE WRONG WINDOW",
+    "text": "{{other}} waits below a dark window with flowers. You know the room belongs to an elderly wool sorter who has already opened a bucket.",
+    "choices": [
+      {
+        "id": "warn",
+        "label": "Move the admirer before the bucket tips",
+        "outcome": {
+          "text": "{{other}} escapes with dry flowers and a much wetter opinion of the address supplied by a friend.",
+          "effects": {
+            "bond": {
+              "role": "other",
+              "trust": 10
+            },
+            "wits": 1
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "announce",
+        "label": "Announce the serenade to its actual audience",
+        "outcome": {
+          "text": "The wool sorter demands a second verse. {{other}} receives the bucket only after failing to supply one.",
+          "effects": {
+            "charm": 3,
+            "bond": {
+              "role": "other",
+              "trust": -12,
+              "flag": "rival"
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "sing",
+        "label": "Take the first verse yourself",
+        "outcome": {
+          "text": "The bucket finds you instead. {{other}} helps wring out your cloak and promises never to praise your voice again.",
+          "effects": {
+            "health": -2,
+            "bond": {
+              "role": "other",
+              "affinity": 12
+            },
+            "reputation": -2
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "other": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event"
+      }
+    },
+    "repetitionGroup": "romantic_misunderstandings",
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_borrowed_sleeves",
+    "category": "family",
+    "domain": "family",
+    "title": "THE SLEEVES THAT ARRIVED BEFORE YOU",
+    "text": "{{other}} lends you fashionable sleeves for an important supper. They reach the soup before your hands and the candle before your judgement.",
+    "choices": [
+      {
+        "id": "roll",
+        "label": "Roll them up and admit the loan",
+        "outcome": {
+          "text": "You eat with both hands visible. {{other}} asks why nobody told the tailor this was an available arrangement.",
+          "effects": {
+            "bond": {
+              "role": "other",
+              "trust": 6
+            },
+            "wits": 2
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "grand",
+        "label": "Continue the magnificent gestures",
+        "outcome": {
+          "text": "The left sleeve extinguishes a candle and the right acquires somebody else’s sauce. {{other}} retrieves the sleeves before they can accept a third invitation.",
+          "effects": {
+            "reputation": -4,
+            "bond": {
+              "role": "other",
+              "affinity": -6
+            },
+            "gold": -3
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "partner",
+        "label": "Ask your neighbour to hold the spare fabric",
+        "outcome": {
+          "text": "The two of you conduct supper like an awkward sail. {{other}} is delighted until asked to steer the pudding.",
+          "effects": {
+            "charm": 3,
+            "bond": {
+              "role": "other",
+              "affinity": 7
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "other": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event"
+      }
+    },
+    "repetitionGroup": "comic_borrowed_sleeves",
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_proud_minstral",
+    "category": "family",
+    "domain": "family",
+    "title": "THE HERO WITH A RHYME MISSING",
+    "text": "{{other}} commissions a song about your courage. The minstrel has found rhymes for your name, but all of them involve a cowardly act or a skin complaint.",
+    "choices": [
+      {
+        "id": "change",
+        "label": "Become the hero under a less musical name",
+        "outcome": {
+          "text": "The song praises a stranger with your deeds. {{other}} enjoys it until the stranger is credited with paying for supper.",
+          "effects": {
+            "reputation": 2,
+            "gold": -2,
+            "bond": {
+              "role": "other",
+              "affinity": 5
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "honest",
+        "label": "Suggest the embarrassing incident yourself",
+        "outcome": {
+          "text": "The audience laughs where you intended. {{other}} has to surrender the much worse version prepared for later.",
+          "effects": {
+            "charm": 4,
+            "bond": {
+              "role": "other",
+              "respect": 6
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "command",
+        "label": "Demand that courage rhyme with your name",
+        "outcome": {
+          "text": "The minstrel stretches the word across three notes. {{other}} starts coughing at every repetition and finally leaves the room to recover.",
+          "effects": {
+            "reputation": -4,
+            "bond": {
+              "role": "other",
+              "affinity": -5
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "other": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event"
+      }
+    },
+    "repetitionGroup": "public_vanity",
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_cherry_stone",
+    "category": "family",
+    "domain": "family",
+    "title": "THE CHAMPION’S VERY SMALL WEAPON",
+    "text": "{{other}} challenges you to spit a cherry stone farther than the village champion. The champion is the baker’s grandmother and has removed her good shoes.",
+    "choices": [
+      {
+        "id": "compete",
+        "label": "Compete with suitable respect",
+        "successChance": 0.55,
+        "success": {
+          "text": "Your stone passes hers. {{other}} congratulates you at a careful distance from the grandmother’s second attempt.",
+          "effects": {
+            "charm": 3,
+            "reputation": 2
+          },
+          "tone": "good"
+        },
+        "failure": {
+          "text": "Your stone lands in your own collar. {{other}} declares this an entirely different achievement.",
+          "effects": {
+            "charm": -1,
+            "bond": {
+              "role": "other",
+              "affinity": 5
+            }
+          },
+          "tone": "bad"
+        },
+        "forecast": {
+          "risk": "medium",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "judge",
+        "label": "Judge the distances instead",
+        "outcome": {
+          "text": "{{other}} disputes half a thumb’s length until the grandmother offers to demonstrate it against a nearby target. The dispute ends.",
+          "effects": {
+            "wits": 2,
+            "bond": {
+              "role": "other",
+              "trust": 5
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "cheat",
+        "label": "Kick your stone farther while everyone watches hers",
+        "outcome": {
+          "text": "The grandmother has been watching your feet. {{other}} awards you a special prize for having apparently misunderstood the sport.",
+          "effects": {
+            "reputation": -5,
+            "bond": {
+              "role": "other",
+              "trust": -5
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "other": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event"
+      }
+    },
+    "repetitionGroup": "comic_cherry_stone",
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_peacock_step",
+    "category": "family",
+    "domain": "family",
+    "title": "THE DANCE WITH ONE INSTRUCTION TOO MANY",
+    "text": "{{other}} teaches a fashionable dance before the lord’s supper. Every step has a name. Your feet know none of them.",
+    "choices": [
+      {
+        "id": "simple",
+        "label": "Offer a simpler village measure",
+        "outcome": {
+          "text": "The servants recognise the tune and the nobles borrow their timing. {{other}} calls this the rustic portion of an increasingly successful evening.",
+          "effects": {
+            "charm": 4,
+            "bond": {
+              "role": "other",
+              "respect": 5
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "invent",
+        "label": "Invent names for the mistakes",
+        "outcome": {
+          "text": "The audience follows the second mistake willingly. {{other}} is obliged to explain why the dance now contains “Avoid the Chair”.",
+          "effects": {
+            "charm": 5,
+            "bond": {
+              "role": "other",
+              "affinity": -4
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "stop",
+        "label": "Stop before taking anyone else with you",
+        "outcome": {
+          "text": "You leave the floor with a bow that requires no assistance. {{other}} praises your judgement in the voice usually used for the injured.",
+          "effects": {
+            "wits": 2,
+            "bond": {
+              "role": "other",
+              "trust": 3
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "other": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event"
+      }
+    },
+    "repetitionGroup": "comic_peacock_step",
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_soup_proof",
+    "category": "family",
+    "domain": "family",
+    "title": "THE MERCHANT’S FABULOUSLY EMPTY FEAST",
+    "text": "{{other}} invites the important buyers to admire a new fortune. The dishes are magnificent, the portions are tiny and the cook has begun serving the decorations.",
+    "choices": [
+      {
+        "id": "share",
+        "label": "Turn it into a shared supper",
+        "outcome": {
+          "text": "You bring bread and invite everyone to add what they have. {{other}} acquires a warm evening at the cost of a rather cold pretence.",
+          "effects": {
+            "householdState": {
+              "food": -4
+            },
+            "bond": {
+              "role": "other",
+              "trust": 10
+            },
+            "reputation": 2
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "praise",
+        "label": "Praise the remarkable lightness of every course",
+        "outcome": {
+          "text": "The buyers repeat the compliment until {{other}} orders the cook to make something heavy. The cook brings the pot.",
+          "effects": {
+            "charm": 3,
+            "bond": {
+              "role": "other",
+              "affinity": -12,
+              "flag": "rival"
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "leave",
+        "label": "Leave hungry without exposing the host",
+        "outcome": {
+          "text": "{{other}} follows you to the door with an apology wrapped round the last piece of cheese.",
+          "effects": {
+            "bond": {
+              "role": "other",
+              "trust": 7
+            },
+            "health": -1
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "other": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event"
+      }
+    },
+    "repetitionGroup": "comic_soup_proof",
+    "requires": {
+      "careerFamilies": [
+        "trade"
+      ]
+    },
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_fierce_hat",
+    "category": "family",
+    "domain": "family",
+    "title": "THE HAT THAT FRIGHTENS ITS OWNER",
+    "text": "{{other}} acquires a plumed hat to make an impression at court. A gust makes the plume brush the back of the neck. The resulting leap makes a different impression.",
+    "choices": [
+      {
+        "id": "catch",
+        "label": "Catch the hat before the second attack",
+        "outcome": {
+          "text": "{{other}} thanks you and holds the hat at arm’s length for the rest of the introduction.",
+          "effects": {
+            "bond": {
+              "role": "other",
+              "trust": 8
+            },
+            "charm": 1
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "bow",
+        "label": "Bow solemnly to the victorious feather",
+        "outcome": {
+          "text": "The servants copy the bow. {{other}} removes the plume with the expression of someone dismissing a dangerous officer.",
+          "effects": {
+            "charm": 3,
+            "bond": {
+              "role": "other",
+              "trust": -10,
+              "flag": "rival"
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "wear",
+        "label": "Offer to tame the creature yourself",
+        "outcome": {
+          "text": "You wear the hat backwards. {{other}} is forced to choose between gratitude and explaining why this looks better.",
+          "effects": {
+            "reputation": 2,
+            "bond": {
+              "role": "other",
+              "affinity": 6
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "other": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event"
+      }
+    },
+    "repetitionGroup": "comic_fierce_hat",
+    "requires": {
+      "rankAtLeast": 1
+    },
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_hermit_guest",
+    "category": "family",
+    "domain": "family",
+    "title": "THE HERMIT WHO ENJOYS VISITORS",
+    "text": "{{other}} invites you to meet a famous hermit. The hermit offers three courses, asks who else is coming and complains that solitude has been slow this season.",
+    "choices": [
+      {
+        "id": "listen",
+        "label": "Let the lonely host talk",
+        "outcome": {
+          "text": "The hermit tells you about the winter. {{other}} quietly stops explaining the advantages of never needing anybody.",
+          "effects": {
+            "faith": 3,
+            "bond": {
+              "role": "other",
+              "trust": 6
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "invite",
+        "label": "Invite the hermit to your next supper",
+        "outcome": {
+          "text": "The invitation is accepted before you have named a date. {{other}} wonders whether a hermit may bring a companion.",
+          "effects": {
+            "householdState": {
+              "food": -3
+            },
+            "bond": {
+              "role": "other",
+              "affinity": 8
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "mock",
+        "label": "Ask whether the wilderness requires a waiting room",
+        "outcome": {
+          "text": "The hermit finds an excellent view for you outside. {{other}} remains for the second course.",
+          "effects": {
+            "charm": 2,
+            "bond": {
+              "role": "other",
+              "affinity": -7
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "other": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event"
+      }
+    },
+    "repetitionGroup": "comic_hermit_guest",
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_bravery_pig",
+    "category": "family",
+    "domain": "family",
+    "title": "THE NOBLE’S PROOF OF COURAGE",
+    "text": "{{other}} offers to demonstrate courage by approaching an allegedly savage pig. The pig is asleep. Its owner recommends leaving both facts undisturbed.",
+    "choices": [
+      {
+        "id": "quiet",
+        "label": "Declare the beast subdued before waking it",
+        "outcome": {
+          "text": "{{other}} accepts the triumph in a whisper. The pig sleeps through its own defeat.",
+          "effects": {
+            "charm": 3,
+            "bond": {
+              "role": "other",
+              "trust": 7
+            },
+            "reputation": -1
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "wake",
+        "label": "Wake the pig and let courage take its course",
+        "outcome": {
+          "text": "The pig rises, sniffs and follows the smell of the feast. {{other}} retreats faster than anyone expected a victory to travel.",
+          "effects": {
+            "reputation": 3,
+            "bond": {
+              "role": "other",
+              "affinity": -15,
+              "flag": "rival"
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "lead",
+        "label": "Show how its owner actually handles it",
+        "outcome": {
+          "text": "You lead it away with food. {{other}} asks whether anyone needs to mention the food in the account of your bravery.",
+          "effects": {
+            "householdState": {
+              "food": -2
+            },
+            "skillXp": {
+              "husbandry": 5
+            },
+            "bond": {
+              "role": "other",
+              "respect": 6
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "other": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event",
+        "rankAtLeast": 3
+      }
+    },
+    "repetitionGroup": "comic_bravery_pig",
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_rival_saddle",
+    "category": "family",
+    "domain": "family",
+    "title": "THE RIVAL WHO ARRIVED SIDEWAYS",
+    "text": "{{other}} rides into the square rehearsing a splendid greeting. The saddle begins to turn halfway through it.",
+    "choices": [
+      {
+        "id": "help",
+        "label": "Hold the reins before the speech falls off",
+        "outcome": {
+          "text": "{{other}} completes the greeting from the ground. Thanks follows considerably later, but it does follow.",
+          "effects": {
+            "bond": {
+              "role": "other",
+              "trust": 10
+            },
+            "reputation": 2
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "audience",
+        "label": "Ask the crowd to admire the new riding style",
+        "outcome": {
+          "text": "{{other}} spends the evening explaining how little the incident mattered. By nightfall, even the stable boy knows which side landed first.",
+          "effects": {
+            "charm": 4,
+            "bond": {
+              "role": "other",
+              "trust": -15
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "lesson",
+        "label": "Offer a private lesson in checking the girth",
+        "outcome": {
+          "text": "{{other}} accepts after making it clear that the lesson concerns the saddle’s conduct.",
+          "effects": {
+            "skillXp": {
+              "arms": 3
+            },
+            "bond": {
+              "role": "other",
+              "respect": 7
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "other": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event",
+        "relation": "rival"
+      }
+    },
+    "repetitionGroup": "comic_rival_saddle",
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_jealous_mirror",
+    "category": "family",
+    "domain": "family",
+    "title": "THE PERSON YOUR SPOUSE KEEPS PRAISING",
+    "text": "{{spouse}} has praised a stranger’s looks three times. You discover the portrait being admired is a very flattering picture of you.",
+    "choices": [
+      {
+        "id": "admit",
+        "label": "Admit the resemblance before demanding an apology",
+        "outcome": {
+          "text": "{{spouse}} studies you, then the picture, then asks whether the painter can also improve your hearing.",
+          "effects": {
+            "bond": {
+              "role": "spouse",
+              "affinity": 8
+            },
+            "charm": -1
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "join",
+        "label": "Agree that the stranger seems delightful",
+        "outcome": {
+          "text": "You compliment the painted face until {{spouse}} turns it round. Supper includes a surprisingly detailed discussion of modesty.",
+          "effects": {
+            "charm": 3,
+            "bond": {
+              "role": "spouse",
+              "respect": -4,
+              "affinity": 5
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "accuse",
+        "label": "Insist this proves something suspicious anyway",
+        "outcome": {
+          "text": "{{spouse}} puts the portrait away. The room becomes less handsome and much less willing to explain itself.",
+          "effects": {
+            "bond": {
+              "role": "spouse",
+              "trust": -15
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "spouse": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event",
+        "relation": "spouse"
+      }
+    },
+    "repetitionGroup": "public_vanity",
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_proposal_pear",
+    "category": "family",
+    "domain": "family",
+    "title": "THE PROPOSAL THAT STUCK",
+    "text": "You plan a graceful greeting for {{other}} and take one last bite of pear. The greeting arrives as an urgent request for help with the pear.",
+    "choices": [
+      {
+        "id": "honest",
+        "label": "Start again after you can speak",
+        "outcome": {
+          "text": "{{other}} hears the real greeting between two small laughs. The second attempt has fewer ornaments and a better answer.",
+          "effects": {
+            "bond": {
+              "role": "other",
+              "affinity": 10,
+              "trust": 5
+            },
+            "charm": 1
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "bow",
+        "label": "Pretend the coughing was an elaborate bow",
+        "outcome": {
+          "text": "{{other}} returns the bow while trying not to laugh. You have introduced an unfortunate new custom between you.",
+          "effects": {
+            "charm": 3,
+            "bond": {
+              "role": "other",
+              "affinity": 5
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "retreat",
+        "label": "Retreat with what remains of your dignity",
+        "outcome": {
+          "text": "{{other}} offers water for the retreat. Your dignity has to accept it before leaving.",
+          "effects": {
+            "bond": {
+              "role": "other",
+              "respect": 2
+            },
+            "charm": -1
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "other": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event",
+        "unmarried": true,
+        "romanceEligible": true
+      }
+    },
+    "repetitionGroup": "comic_proposal_pear",
+    "requires": {
+      "custom": "s=>!s.world.characters[s.playerCharacterId].spouseId"
+    },
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_secret_footprints",
+    "category": "family",
+    "domain": "family",
+    "title": "THE ROMANCE WITH VERY CLEAR FOOTPRINTS",
+    "text": "{{spouse}} points to two sets of muddy footprints outside a neighbour’s window. Yours lead there and back. You were returning a borrowed kettle; the kettle has not stayed to testify.",
+    "choices": [
+      {
+        "id": "fetch",
+        "label": "Fetch the kettle and its owner",
+        "outcome": {
+          "text": "The owner arrives carrying the kettle and an excellent memory for the handle you broke. {{spouse}} forgives the supposed romance before discussing the handle.",
+          "effects": {
+            "gold": -3,
+            "bond": {
+              "role": "spouse",
+              "trust": 10
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "mud",
+        "label": "Explain that many people own feet",
+        "outcome": {
+          "text": "{{spouse}} agrees, then asks how many of them wear your patched left shoe. The argument acquires a very specific shape.",
+          "effects": {
+            "bond": {
+              "role": "spouse",
+              "trust": -12
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "repair",
+        "label": "Admit the broken handle before anything else",
+        "outcome": {
+          "text": "{{spouse}} asks why a kettle was worth such an impressive effort to appear unfaithful. The two of you finish laughing before supper.",
+          "effects": {
+            "bond": {
+              "role": "spouse",
+              "affinity": 9
+            },
+            "reputation": -1
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "spouse": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event",
+        "relation": "spouse"
+      }
+    },
+    "repetitionGroup": "romantic_misunderstandings",
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_borrowed_baby",
+    "category": "family",
+    "domain": "family",
+    "title": "THE BABY WHO CHOSE THE IMPORTANT GUEST",
+    "text": "{{other}} brings a visiting dignitary to admire a new baby. The baby reaches for the grand chain and immediately decides it is worth tasting.",
+    "choices": [
+      {
+        "id": "toy",
+        "label": "Offer a wooden toy in exchange",
+        "outcome": {
+          "text": "The baby releases the chain. {{other}} watches the dignitary thank a piece of wood for succeeding where rank had failed.",
+          "effects": {
+            "bond": {
+              "role": "other",
+              "trust": 6
+            },
+            "charm": 2
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "praise",
+        "label": "Congratulate the baby on excellent judgement",
+        "outcome": {
+          "text": "{{other}} has to hold the baby while the guest removes the chain. Neither appears willing to be the first to apologise.",
+          "effects": {
+            "charm": 3,
+            "bond": {
+              "role": "other",
+              "affinity": -6
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "rescue",
+        "label": "Take the baby and the responsibility",
+        "outcome": {
+          "text": "The baby releases the chain and grips your sleeve. {{other}} calls this a happy transfer of government.",
+          "effects": {
+            "bond": {
+              "role": "other",
+              "trust": 9
+            },
+            "householdLesson": {
+              "progress": 3
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "other": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event"
+      }
+    },
+    "repetitionGroup": "comic_borrowed_baby",
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_honourable_coward",
+    "category": "family",
+    "domain": "family",
+    "title": "THE HERO HIDING BEHIND THE RIGHT DOOR",
+    "text": "{{other}} hides from a noisy quarrel behind a cellar door. Opening it lets out the household’s enormous dog, which ends the quarrel immediately. Witnesses are cheering the courage.",
+    "choices": [
+      {
+        "id": "credit",
+        "label": "Praise the dog’s contribution",
+        "outcome": {
+          "text": "The owner feeds the actual hero. {{other}} accepts a smaller share of the applause without having to re-enter the cellar.",
+          "effects": {
+            "reputation": 3,
+            "bond": {
+              "role": "other",
+              "respect": 5
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "legend",
+        "label": "Help improve the story",
+        "outcome": {
+          "text": "{{other}} becomes increasingly brave with each telling and increasingly dependent on your silence.",
+          "effects": {
+            "charm": 3,
+            "bond": {
+              "role": "other",
+              "trust": 10
+            },
+            "createSecret": {
+              "type": "criminal_contact",
+              "severity": 15
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": true
+        }
+      },
+      {
+        "id": "quiet",
+        "label": "Get the frightened neighbour away from the crowd",
+        "outcome": {
+          "text": "{{other}} stops shaking once the cheering is two streets away. You let the dog have the rest of the story.",
+          "effects": {
+            "bond": {
+              "role": "other",
+              "trust": 12
+            },
+            "faith": 1
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "other": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event"
+      }
+    },
+    "repetitionGroup": "comic_honourable_coward",
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_lofty_bed",
+    "category": "family",
+    "domain": "family",
+    "title": "THE BED MADE FOR A MUCH BETTER PERSON",
+    "text": "{{other}} has raised a bed to show the household’s importance. Getting into it now requires a servant, a stool and a willingness to be seen needing both.",
+    "choices": [
+      {
+        "id": "stairs",
+        "label": "Build a small step and name nobody in particular",
+        "outcome": {
+          "text": "{{other}} tests the step after everyone has been asked to leave. The furniture finally becomes suitable for sleeping.",
+          "effects": {
+            "skillXp": {
+              "craftsmanship": 4
+            },
+            "bond": {
+              "role": "other",
+              "trust": 7
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "admire",
+        "label": "Admire the view from the floor",
+        "outcome": {
+          "text": "{{other}} descends to explain that height is not the point. This takes both the stool and most of the explanation.",
+          "effects": {
+            "charm": 3,
+            "bond": {
+              "role": "other",
+              "affinity": -9
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "lower",
+        "label": "Suggest returning the legs to ordinary length",
+        "outcome": {
+          "text": "The carpenter lowers the bed while {{other}} is away. You are thanked for the comfort and blamed for the lost elevation.",
+          "effects": {
+            "bond": {
+              "role": "other",
+              "respect": 6,
+              "affinity": -3
+            },
+            "wits": 2
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "other": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event"
+      }
+    },
+    "repetitionGroup": "comic_lofty_bed",
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_feud_tune",
+    "category": "family",
+    "domain": "family",
+    "title": "THE FAMILY FEUD LEARNS A TUNE",
+    "text": "{{other}} whistles a tune associated with an old family insult. Half the lane recognises the insult; the other half keeps asking for the next verse.",
+    "choices": [
+      {
+        "id": "different",
+        "label": "Supply an embarrassingly affectionate new verse",
+        "outcome": {
+          "text": "The tune survives as a love song nobody wants to claim. {{other}} finds it much harder to whistle threateningly.",
+          "effects": {
+            "charm": 4,
+            "bond": {
+              "role": "other",
+              "trust": 5
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "answer",
+        "label": "Sing the insulting verse back (family feud)",
+        "outcome": {
+          "text": "The lane learns both versions. Your households now possess a quarrel that can be performed without either of you being present.",
+          "effects": {
+            "reputation": -4,
+            "familyFeud": {
+              "role": "other",
+              "reason": "Public exchange of a family insult"
+            },
+            "bond": {
+              "role": "other",
+              "trust": -20
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "high",
+          "positive": [],
+          "negative": [
+            "A lasting family feud"
+          ],
+          "warnsDelayedConsequence": true
+        }
+      },
+      {
+        "id": "private",
+        "label": "Ask what the quarrel is actually about",
+        "outcome": {
+          "text": "{{other}} begins with a grandfather, loses track of a cousin and finally admits to never having met either. You agree to leave them out of supper.",
+          "effects": {
+            "bond": {
+              "role": "other",
+              "trust": 10
+            },
+            "wits": 2
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "other": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event",
+        "outsideFamily": true
+      }
+    },
+    "repetitionGroup": "comic_feud_tune",
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_rival_praise",
+    "category": "family",
+    "domain": "family",
+    "title": "THE COMPLIMENT YOUR RIVAL BELIEVED",
+    "text": "{{other}} mistakes your sarcastic praise for a sincere recommendation. The resulting bow is so grateful that the audience has stopped laughing.",
+    "choices": [
+      {
+        "id": "allow",
+        "label": "Let the compliment become true",
+        "outcome": {
+          "text": "You help finish the task you had intended to mock. {{other}} thanks you a second time. Resenting the first was much easier.",
+          "effects": {
+            "health": -2,
+            "bond": {
+              "role": "other",
+              "trust": 12,
+              "clearRivalry": true
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "explain",
+        "label": "Explain the joke at full volume",
+        "outcome": {
+          "text": "The crowd understands. {{other}} understands more than you meant to teach.",
+          "effects": {
+            "charm": 2,
+            "reputation": -3,
+            "bond": {
+              "role": "other",
+              "trust": -18
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "redirect",
+        "label": "Suggest a more modest first attempt",
+        "outcome": {
+          "text": "{{other}} tries it and succeeds. You are left in the awkward position of having given useful advice.",
+          "effects": {
+            "bond": {
+              "role": "other",
+              "respect": 8
+            },
+            "wits": 1
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "other": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event",
+        "relation": "rival"
+      }
+    },
+    "repetitionGroup": "comic_rival_praise",
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_suitor_rehearsal",
+    "category": "family",
+    "domain": "family",
+    "title": "THE SUITOR WHO BROUGHT A PROPMAN",
+    "text": "{{other}} rehearses a flattering speech to you. A friend behind the hedge supplies the forgotten words and, on one occasion, the wrong beloved’s name.",
+    "choices": [
+      {
+        "id": "hedge",
+        "label": "Ask the hedge whether it wishes to join the conversation",
+        "outcome": {
+          "text": "The prompter crawls out. {{other}} delivers the remaining sentence without help, and it is much better for being short.",
+          "effects": {
+            "bond": {
+              "role": "other",
+              "affinity": 8
+            },
+            "charm": 2
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "learn",
+        "label": "Teach the suitor to ask a real question",
+        "outcome": {
+          "text": "{{other}} asks what you would actually enjoy doing. The hedge, having no prepared answer, is finally quiet.",
+          "effects": {
+            "bond": {
+              "role": "other",
+              "trust": 10
+            },
+            "wits": 1
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "depart",
+        "label": "Leave before the hedge proposes marriage",
+        "outcome": {
+          "text": "{{other}} bows alone. The prompter supplies an ending to somebody who is already walking home.",
+          "effects": {
+            "bond": {
+              "role": "other",
+              "affinity": -5
+            },
+            "charm": 1
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "other": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event",
+        "unmarried": true,
+        "romanceEligible": true
+      }
+    },
+    "repetitionGroup": "comic_suitor_rehearsal",
+    "requires": {
+      "custom": "s=>!s.world.characters[s.playerCharacterId].spouseId"
+    },
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_triumphal_return",
+    "category": "family",
+    "domain": "family",
+    "title": "THE TRIUMPH THAT REACHED THE WRONG HOUSE",
+    "text": "{{other}} returns from a modest errand beneath a garland and two borrowed banners. The procession stops at your house because nobody thought to ask where the hero lived.",
+    "choices": [
+      {
+        "id": "welcome",
+        "label": "Offer the hero a seat and water",
+        "outcome": {
+          "text": "{{other}} sits among the abandoned banners and admits the errand concerned a missing shoe. You ask whether it has returned in triumph too.",
+          "effects": {
+            "householdState": {
+              "food": -2
+            },
+            "bond": {
+              "role": "other",
+              "trust": 8
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "redirect",
+        "label": "Lead the procession to the actual destination",
+        "outcome": {
+          "text": "The neighbours cheer when the right door finally opens. {{other}} has to acknowledge your contribution to the navigation.",
+          "effects": {
+            "reputation": 3,
+            "bond": {
+              "role": "other",
+              "respect": 5
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "hero",
+        "label": "Accept the applause yourself",
+        "outcome": {
+          "text": "You bow until somebody asks what you did. {{other}} supplies the answer with the joy of someone finally useful to the ceremony.",
+          "effects": {
+            "charm": 3,
+            "reputation": -5,
+            "bond": {
+              "role": "other",
+              "trust": -7
+            }
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "other": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event"
+      }
+    },
+    "repetitionGroup": "comic_triumphal_return",
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  },
+  {
+    "id": "comic_false_wake",
+    "category": "family",
+    "domain": "family",
+    "title": "THE WAKE THAT STARTED TOO EARLY",
+    "text": "{{parent}} falls asleep during preparations for an elderly neighbour’s wake. A visiting mourner begins praising the wrong person’s virtues. {{parent}} opens one eye at the first exaggeration.",
+    "choices": [
+      {
+        "id": "correct",
+        "label": "Make the introduction before the speech improves",
+        "outcome": {
+          "text": "The mourner is relieved to discover a living critic. {{parent}} asks to keep the part about generosity for another occasion.",
+          "effects": {
+            "boundKinRel": {
+              "role": "parent",
+              "delta": 8
+            },
+            "charm": 2
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "listen",
+        "label": "Let your parent hear the affectionate part",
+        "outcome": {
+          "text": "{{parent}} waits until the kind words are finished before asking for tea. The mourner laughs and stays to share it.",
+          "effects": {
+            "boundKinRel": {
+              "role": "parent",
+              "delta": 12
+            },
+            "faith": 2
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      },
+      {
+        "id": "object",
+        "label": "Correct the praise as well as the identity",
+        "outcome": {
+          "text": "{{parent}} sits up to defend virtues nobody had questioned until you arrived. The actual wake proceeds with rather less help from you.",
+          "effects": {
+            "bond": {
+              "role": "parent",
+              "trust": -10
+            },
+            "reputation": -3
+          },
+          "tone": "plain"
+        },
+        "forecast": {
+          "risk": "low",
+          "positive": [],
+          "negative": [],
+          "warnsDelayedConsequence": false
+        }
+      }
+    ],
+    "ageMin": 18,
+    "stakes": "meaningful",
+    "actorRoles": {
+      "parent": {
+        "minAge": 18,
+        "alive": true,
+        "excludePlayer": true,
+        "missingActor": "clear_event",
+        "relation": "parent"
+      }
+    },
+    "repetitionGroup": "family_embarrassment",
+    "legacyNarrative": false,
+    "rarity": "common",
+    "cooldownYears": 15,
+    "editorialScore": 3
+  }
+]

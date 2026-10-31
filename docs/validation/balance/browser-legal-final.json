@@ -1,0 +1,66 @@
+{
+  "browser": "Chromium production export",
+  "results": [
+    {
+      "id": "system_legal_trial",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [],
+      "overflow": false,
+      "choice": "defend",
+      "reloadPreserved": true
+    },
+    {
+      "id": "system_legal_trial",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [],
+      "overflow": false,
+      "choice": "defend",
+      "reloadPreserved": true
+    },
+    {
+      "id": "system_legal_trial",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [],
+      "overflow": false,
+      "choice": "defend",
+      "reloadPreserved": true
+    },
+    {
+      "id": "system_legal_trial",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [],
+      "overflow": false,
+      "choice": "defend",
+      "reloadPreserved": true
+    },
+    {
+      "id": "system_legal_trial",
+      "width": 280,
+      "textEnlargement": 1.35,
+      "animated": false,
+      "actors": [],
+      "overflow": false,
+      "choice": "defend",
+      "reloadPreserved": true
+    },
+    {
+      "id": "system_legal_trial",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": true,
+      "actors": [],
+      "overflow": false,
+      "choice": "defend",
+      "reloadPreserved": true
+    }
+  ],
+  "errors": []
+}

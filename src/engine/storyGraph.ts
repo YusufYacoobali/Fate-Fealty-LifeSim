@@ -1,3 +1,4 @@
+import { callbackSource } from './narrativeCallbacks';
 import { startDuel } from './duelEngine';
 /**
  * Story graph + choice resolution.
@@ -86,7 +87,9 @@ export function applyChoice(s: GameState, event: GameEvent, ch: Choice): ChoiceR
       { changes: feedbackChanges(before, s) },
     );
     const participantIds = [s.playerCharacterId, ...Object.values(s.pendingEvent?.bindings ?? {})];
+    const source = callbackSource(s,event);
     appendWorldHistory(s, {
+      eventId: event.id, resolvedChoiceId: ch.id, actorBindings: { ...s.pendingEvent?.bindings }, callbackForHistoryId: source?.id,
       id: `history_choice_${s.nextId++}`,
       year: s.world.currentYear,
       type: outcome.tone === 'bad' ? 'failure' : 'choice',

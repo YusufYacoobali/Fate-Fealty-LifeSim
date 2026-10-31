@@ -17,6 +17,9 @@ import { addMemory, addMoney, addTag, pushFeed, removeTag } from './gameState';
 import { clamp } from './random';
 import { promote, demote } from './pathProgression';
 import { killKin as killKinMember, spawnKin } from './kinFactory';
+import { HEALTH_CONDITIONS } from '@/content/healthConditions';
+import { appendFamilyMemory } from './worldJournal';
+import { canProposeTo, performSystemicRelationshipAction } from './relationshipEngine';
 import { applyRelationshipShift } from './relationshipState';
 import { grantSkillXp } from './rpgProgress';
 import { MaterialId, SkillId } from '@/types/rpg';
@@ -143,12 +146,49 @@ export function applyEffects(s: GameState, eff?: Effects): GameState {
     }
   }
 
+  if (eff.bond) {
+    const id = resolveCharacterId(eff.bond.role);
+    if (s.world.characters[id]?.alive && id !== s.playerCharacterId) {
+      const { affinity = 0, trust = 0, respect = 0, flag } = eff.bond;
+      const relation = applyRelationshipShift(s,id,{affinity,trust,respect},{affinity,trust,respect});
+      if (flag && !relation.flags.includes(flag)) relation.flags.push(flag);
+    }
+  }
+  if (eff.marryRole) {
+    const partner = s.world.characters[resolveCharacterId(eff.marryRole)];
+    if (partner?.alive && !partner.spouseId && canProposeTo(s,partner)) performSystemicRelationshipAction(s,partner,'accept_proposal');
+  }
+  if (eff.endMarriage) {
+    const p = s.world.characters[s.playerCharacterId], spouse = s.world.characters[p.spouseId ?? ''];
+    if (spouse?.alive) performSystemicRelationshipAction(s,spouse,'divorce');
+  }
+  if (eff.work && s.occupation.careerId) {
+    s.occupation.experience = Math.max(0,s.occupation.experience + (eff.work.experience ?? 0));
+    s.occupation.performance = clamp(s.occupation.performance + (eff.work.performance ?? 0));
+    s.occupation.guildStanding = clamp((s.occupation.guildStanding ?? 0) + (eff.work.guildStanding ?? 0));
+  }
+  if (eff.employment === 'dismiss' && s.occupation.careerId) {
+    s.occupation = { careerId: null, experience: 0, performance: 50, workedThisYear: 0 };
+    s.tags = s.tags.filter(t => t !== 'gainfully_employed' && !t.startsWith('career_family_'));
+  }
+  if (eff.familyFeud) {
+    const p = s.world.characters[s.playerCharacterId], actor = s.world.characters[resolveCharacterId(eff.familyFeud.role)];
+    const own = s.world.families[p.birthFamilyId ?? ''], other = s.world.families[actor?.birthFamilyId ?? ''];
+    if (own && other && own.id !== other.id) {
+      for (const [a,b] of [[own,other],[other,own]]) {
+        if (!a.enemyFamilyIds.includes(b.id)) a.enemyFamilyIds.push(b.id);
+        a.allyFamilyIds = a.allyFamilyIds.filter(id => id !== b.id);
+        a.inheritedMemories = appendFamilyMemory(a.inheritedMemories,{ id: `feud_${s.nextId++}`, year: s.world.currentYear, type: 'narrative_feud', sentiment: -35, salience: 4, summary: `${p.name} and ${actor.name}: ${eff.familyFeud.reason}` });
+      }
+    }
+  }
+
   // --- kin roster changes (new spouse/child, or a death) ---
   if (eff.addKin) {
     const specs = Array.isArray(eff.addKin) ? eff.addKin : [eff.addKin];
     for (const spec of specs) spawnKin(s, spec);
   }
-  if (eff.killKin) killKinMember(s, eff.killKin);
+  if (eff.killKin) killKinMember(s, resolveCharacterId(eff.killKin));
 
   // --- promotion / demotion (forced) ---
   if (eff.promote) promote(s);
@@ -205,7 +245,7 @@ export function applyEffects(s: GameState, eff?: Effects): GameState {
       else character.healthConditions.push({
         id: `health_${s.nextId++}`,
         conditionId: eff.healthCondition.conditionId,
-        kind: eff.healthCondition.conditionId.includes('injury') || ['broken_bone', 'deep_cut', 'burns', 'head_injury'].includes(eff.healthCondition.conditionId) ? 'injury' : 'illness',
+        kind: HEALTH_CONDITIONS.find(c => c.id === eff.healthCondition!.conditionId)?.kind ?? 'illness',
         severity: clamp(eff.healthCondition.severity), diagnosed: Boolean(eff.healthCondition.diagnosed),
         startedYear: s.world.currentYear, nextReviewYear: s.world.currentYear + 1, sourceId: s.pendingEvent?.eventId,
       });
@@ -224,7 +264,8 @@ export function applyEffects(s: GameState, eff?: Effects): GameState {
       if (eff.legal.notoriety != null) legal.notoriety = clamp(legal.notoriety + eff.legal.notoriety);
       if (eff.legal.status) legal.status = eff.legal.status;
       if (eff.legal.sentenceYears != null) legal.sentenceYearsRemaining = Math.max(0, eff.legal.sentenceYears);
-      if (eff.legal.charge) legal.charges.push({ ...eff.legal.charge, id: `charge_${s.nextId++}`, year: s.world.currentYear, resolved: false, victimIds: [...eff.legal.charge.victimIds], witnessIds: [...eff.legal.charge.witnessIds] });
+      if (eff.legal.sentenceYearsDelta != null) legal.sentenceYearsRemaining = Math.max(0, legal.sentenceYearsRemaining + eff.legal.sentenceYearsDelta);
+      if (eff.legal.charge) legal.charges.push({ ...eff.legal.charge, id: `charge_${s.nextId++}`, year: s.world.currentYear, resolved: false, victimIds: eff.legal.charge.victimIds.map(resolveCharacterId), witnessIds: eff.legal.charge.witnessIds.map(resolveCharacterId) });
     }
   }
   if (eff.faction) {

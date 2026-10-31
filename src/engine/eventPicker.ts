@@ -1,3 +1,6 @@
+import { isRomanceEligible } from './relationshipEngine';
+import { callbackSource, callbackBindings } from './narrativeCallbacks';
+import { careerById } from '@/data/careers';
 import { duelAvailability } from './duelEngine';
 /**
  * Event picker. Evaluates conditions and selects the next main event for the
@@ -19,6 +22,7 @@ import { MaterialId, SkillId } from '@/types/rpg';
 export function meetsCondition(s: GameState, c?: Condition): boolean {
   if (!c) return true;
   const character = s.world.characters[s.playerCharacterId];
+  if (c.careerFamilies && !c.careerFamilies.includes(careerById(s.occupation.careerId)?.family!)) return false;
   if (c.birthOrigins && (!character.background || !c.birthOrigins.includes(character.background.origin))) return false;
   if (c.educationTracks && (!character.education?.track || !c.educationTracks.includes(character.education.track))) return false;
   if (c.qualifications?.some(q => !character.education?.qualifications.includes(q))) return false;
@@ -135,6 +139,7 @@ function isDirected(e: GameEvent): boolean {
  * exclusions on top (see isEventEligible).
  */
 export function isEventPlayable(s: GameState, e: GameEvent): boolean {
+  if (e.callback && !callbackSource(s,e)) return false;
   if (e.premium && !s.lifetimeUnlocked) return false;
   if (e.once && s.firedOnce.includes(e.id)) return false;
   if (e.ageMin != null && s.age < e.ageMin) return false;
@@ -146,12 +151,15 @@ export function isEventPlayable(s: GameState, e: GameEvent): boolean {
   if (last != null && s.world.currentYear - last < (e.cooldownYears ?? 15)) return false;
   // A scheduled continuation answers to the director's own spacing, not to the
   // gate that stops one thread hogging consecutive years.
-  if (!isDirected(e)) {
+  if (!isDirected(e) && !e.callback) {
     const groupLast = e.repetitionGroup ? s.world.repetitionLedger[e.repetitionGroup] : undefined;
     if (groupLast != null && s.world.currentYear - groupLast < REPETITION_GAP_YEARS) return false;
   }
   if (s.world.recentNarrativeIds.slice(-12).includes(e.id)) return false;
-  if (e.actorRoles && Object.values(e.actorRoles).some((role) => actorCandidates(s, role).length === 0)) return false;
+  if (e.callback) {
+    const bindings = callbackBindings(s,e);
+    if (!bindings || Object.entries(e.actorRoles ?? {}).some(([key, role]) => !actorCandidates(s,role).some(c => c.id === bindings[key]))) return false;
+  } else if (e.actorRoles && !assignEventCast(s,e,false)) return false;
   // Must have at least one selectable choice.
   return e.choices.some((ch) => isChoiceAvailable(s, ch));
 }
@@ -188,12 +196,16 @@ export function isChoiceEnabled(s: GameState, ch: Choice): boolean {
  * this, adding content to a domain would silently make every other domain
  * rarer.
  */
-function eventWeight(s: GameState, e: GameEvent): number {
-  let w = (e.weight ?? 1) / (e.domain ? DOMAIN_EVENT_COUNTS[e.domain] || 1 : 1);
+function eventWeight(s: GameState, e: GameEvent, counts: Partial<Record<ContentDomain,number>>): number {
+  let w = (e.weight ?? 1) / (e.domain ? counts[e.domain] || 1 : 1);
   const path = dominantPath(s);
 
 
   if (e.paths && e.paths.includes(path)) w *= 2.2;
+  if (e.requires?.careerFamilies) w *= 2;
+  if (e.requires?.hasKinOfKind || Object.values(e.actorRoles ?? {}).some(r => !!r.relation)) w *= 1.6;
+  if (e.requires?.roles) w *= 1.4;
+  if (e.callback) w *= 4;
   // Rarity thins out cold starts, not payoffs the player has already unlocked.
   if (e.rarity === 'uncommon') w *= 0.7;
   if (e.rarity === 'rare') w *= 0.35;
@@ -208,7 +220,8 @@ function eventWeight(s: GameState, e: GameEvent): number {
 export function pickEvent(s: GameState): GameEvent | null {
   const eligible = ALL_EVENTS.filter((e) => isEventEligible(s, e));
   if (eligible.length === 0) return null;
-  return pickWeighted(eligible, (e) => eventWeight(s, e));
+  const counts = eligible.reduce((out, e) => { if (e.domain) out[e.domain] = (out[e.domain] ?? 0) + 1; return out; }, {} as Partial<Record<ContentDomain,number>>);
+  return pickWeighted(eligible, (e) => eventWeight(s, e, counts));
 }
 
 export function eventById(id: string): GameEvent | undefined {
@@ -217,7 +230,21 @@ export function eventById(id: string): GameEvent | undefined {
 
 function actorCandidates(s: GameState, role: EventActorRole) {
   return Object.values(s.world.characters).filter((character) => {
+    if (role.characterId && character.id !== role.characterId) return false;
     if (role.excludePlayer !== false && character.id === s.playerCharacterId) return false;
+    if (role.gender && character.gender !== role.gender) return false;
+    const p = s.world.characters[s.playerCharacterId];
+    if (role.outsideFamily && (!character.birthFamilyId || !s.world.families[character.birthFamilyId] || character.birthFamilyId === p.birthFamilyId)) return false;
+    if (role.rankAtLeast != null && character.rankIdx < role.rankAtLeast) return false;
+    if (role.careerFamilies && !role.careerFamilies.includes(careerById(character.occupation.careerId)?.family!)) return false;
+    if (role.legalStatuses && !role.legalStatuses.includes(character.legalState?.status ?? 'free')) return false;
+    if (role.unmarried && character.spouseId) return false;
+    if (role.romanceEligible && !isRomanceEligible(s,character)) return false;
+    if (role.relation === 'parent' && !p.parentIds?.includes(character.id)) return false;
+    if (role.relation === 'child' && !character.parentIds?.includes(p.id)) return false;
+    if (role.relation === 'spouse' && p.spouseId !== character.id) return false;
+    if (role.relation === 'sibling' && !character.parentIds?.some(id => p.parentIds?.includes(id))) return false;
+    if (role.relation === 'rival' && !Object.values(s.world.relationships).some(r => ((r.aId === p.id && r.bId === character.id) || (r.bId === p.id && r.aId === character.id)) && r.flags.some(f => f === 'rival' || f === 'feud'))) return false;
     if (role.alive != null && character.alive !== role.alive) return false;
     if (role.minAge != null && character.age < role.minAge) return false;
     if (role.maxAge != null && character.age > role.maxAge) return false;
@@ -227,18 +254,30 @@ function actorCandidates(s: GameState, role: EventActorRole) {
   });
 }
 
+/** Solve the cast as a whole, so two roles cannot silently claim the same sole actor. */
+function assignEventCast(s: GameState, event: GameEvent, random: boolean): Record<string,string> | undefined {
+  const roles = Object.entries(event.actorRoles ?? {}).map(([id,role]) => ({ id, candidates: actorCandidates(s,role) })).sort((a,b) => a.candidates.length - b.candidates.length);
+  const bindings: Record<string,string> = {}, used = new Set<string>();
+  const visit = (index:number): boolean => {
+    if (index === roles.length) return true;
+    const {id,candidates} = roles[index];
+    const remaining = candidates.filter(c => !used.has(c.id));
+    while (remaining.length) {
+      const actor = random ? pick(remaining) : remaining[0];
+      remaining.splice(remaining.indexOf(actor),1);
+      bindings[id] = actor.id; used.add(actor.id);
+      if (visit(index+1)) return true;
+      used.delete(actor.id); delete bindings[id];
+    }
+    return false;
+  };
+  return visit(0) ? bindings : undefined;
+}
+
 export function bindEventActors(s: GameState, event: GameEvent): Record<string, string> | undefined {
+  if (event.callback) return callbackBindings(s,event);
   if (!event.actorRoles) return undefined;
-  const used = new Set<string>();
-  const bindings: Record<string, string> = {};
-  for (const [roleId, role] of Object.entries(event.actorRoles)) {
-    const candidates = actorCandidates(s, role).filter((character) => !used.has(character.id));
-    if (!candidates.length) return undefined;
-    const actor = pick(candidates);
-    bindings[roleId] = actor.id;
-    used.add(actor.id);
-  }
-  return bindings;
+  return assignEventCast(s,event,true);
 }
 
 export function recordEventResolution(s: GameState, event: GameEvent, choiceId: string): void {

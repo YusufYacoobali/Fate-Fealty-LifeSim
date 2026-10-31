@@ -471,7 +471,7 @@ export function cloneState(s: GameState): GameState {
         condition: item.condition ? { ...item.condition } : undefined,
         resolution: cloneConsequence(item.resolution),
       })),
-      history: s.world.history.map((entry) => ({ ...entry, participantIds: [...entry.participantIds], familyIds: [...entry.familyIds], causes: [...entry.causes] })),
+      history: s.world.history.map((entry) => ({ ...entry, actorBindings: entry.actorBindings ? { ...entry.actorBindings } : undefined, participantIds: [...entry.participantIds], familyIds: [...entry.familyIds], causes: [...entry.causes] })),
       pacing: { ...s.world.pacing },
       recentNarrativeIds: [...s.world.recentNarrativeIds],
       contentLedger: Object.fromEntries(Object.entries(s.world.contentLedger).map(([id, entry]) => [id, { ...entry }])),

@@ -65,7 +65,7 @@ export function noteChainBeatResolved(state: GameState, event: GameEvent): void 
       id: chain.id,
       beatIndex: chain.index,
       total: chain.total,
-      nextDueYear: state.world.currentYear + rnd(MIN_BEAT_GAP, MAX_BEAT_GAP),
+      nextDueYear: state.world.currentYear + rnd(chain.minGapYears ?? MIN_BEAT_GAP, chain.maxGapYears ?? MAX_BEAT_GAP),
       openedYear: openThreads(state).find((thread) => thread.id === chain.id)?.openedYear ?? state.world.currentYear,
       bindings: state.pendingEvent?.bindings ?? undefined,
     });

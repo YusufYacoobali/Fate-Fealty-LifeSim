@@ -421,6 +421,10 @@ export interface ScheduledConsequence {
 }
 
 export interface WorldHistoryEntry {
+  eventId?: string;
+  resolvedChoiceId?: string;
+  actorBindings?: Record<string,string>;
+  callbackForHistoryId?: string;
   id: string;
   year: number;
   type: string;
@@ -595,6 +599,12 @@ export interface HoldingUpgradeDef {
 // ---------------------------------------------------------------------------
 
 export interface Effects {
+  bond?: { role: string; affinity?: number; trust?: number; respect?: number; flag?: 'rival' | 'feud' | 'friend' };
+  familyFeud?: { role: string; reason: string };
+  endMarriage?: boolean;
+  marryRole?: string;
+  employment?: 'dismiss';
+  work?: { experience?: number; performance?: number; guildStanding?: number };
   royalTransition?: 'claim' | 'abdicate' | 'depose' | 'name_heir';
   royalTreasury?: number;
   courtScandal?: 'investigate' | 'cover' | 'scapegoat' | 'dismiss';
@@ -650,7 +660,7 @@ export interface Effects {
   schedule?: Omit<ScheduledConsequence, 'id'> | Array<Omit<ScheduledConsequence, 'id'>>;
   healthCondition?: { conditionId: string; severity: number; targetId?: string; diagnosed?: boolean };
   removeHealthCondition?: { conditionId: string; targetId?: string };
-  legal?: { targetId?: string; suspicion?: number; notoriety?: number; status?: LegalStatus; charge?: Omit<LegalCharge, 'id' | 'year' | 'resolved'>; sentenceYears?: number };
+  legal?: { targetId?: string; suspicion?: number; notoriety?: number; status?: LegalStatus; charge?: Omit<LegalCharge, 'id' | 'year' | 'resolved'>; sentenceYears?: number; sentenceYearsDelta?: number };
   faction?: { factionId: FactionKey; influence?: number; playerStanding?: number; pressure?: string };
   householdState?: { householdId?: string; wealth?: number; food?: number; quality?: number; capacity?: number; status?: number };
   createSecret?: { targetId?: string; type: NpcSecret; severity: number; knownByIds?: string[] };
@@ -658,6 +668,7 @@ export interface Effects {
 }
 
 export interface Condition {
+  careerFamilies?: CareerFamily[];
   birthOrigins?: import('./lifeDepth').BirthOriginId[];
   educationTracks?: import('./lifeDepth').EducationTrackId[];
   qualifications?: import('./lifeDepth').Qualification[];
@@ -766,6 +777,15 @@ export type EventCategory =
   | 'arc';
 
 export interface EventActorRole {
+  characterId?: string;
+  gender?: GenderIdentity;
+  outsideFamily?: boolean;
+  relation?: 'parent' | 'spouse' | 'child' | 'sibling' | 'rival';
+  rankAtLeast?: number;
+  careerFamilies?: CareerFamily[];
+  legalStatuses?: LegalStatus[];
+  unmarried?: boolean;
+  romanceEligible?: boolean;
   minAge?: number;
   maxAge?: number;
   alive?: boolean;
@@ -782,9 +802,13 @@ export interface EventChainRef {
   index: number;
   /** Total beats in the chain. */
   total: number;
+  minGapYears?: number;
+  maxGapYears?: number;
 }
 
 export interface GameEvent {
+  stakes?: 'minor' | 'meaningful' | 'major';
+  callback?: { eventId: string; choiceIds: string[]; minYears?: number; maxYears?: number; inherited?: boolean; roleMap?: Record<string,string> };
   id: string;
   category: EventCategory;
   /** Premium content; only eligible when lifetimeUnlocked is true. */

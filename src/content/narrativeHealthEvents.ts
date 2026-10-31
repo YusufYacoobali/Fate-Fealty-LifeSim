@@ -11,7 +11,7 @@ export const NARRATIVE_HEALTH_EVENTS: GameEvent[] = [
     reply('try','Submit to the abrasive treatment (permanent eye damage)','The paste injures your eyes. Failing sight becomes a lasting disability, and {{other}} loses your trust.',{health:-16,healthCondition:{conditionId:'failing_sight',severity:35},bond:{role:'other',trust:-25}}),
     reply('question','Demand evidence from a patient rather than cutlery','You improve public standing by challenging the claim. {{other}} learns that a polished spoon is not a testimonial.',{reputation:4,bond:{role:'other',trust:-8},wits:2}),
   ],{repetitionGroup:'false_cures',stakes:'major'}),
-  scene('life_fever_work','peasant','health','THE WORK THAT WILL NOT SWEAT ITSELF','During an actual bout of fever, {{other}} insists a hard day’s labour will drive the sickness out. You would prefer it to leave by a door that does not require lifting.',[
+  scene('life_fever_work','peasant','health','THE WORK THAT WILL NOT SWEAT ITSELF','While you are feverish, {{other}} insists a hard day’s labour will drive the sickness out. You would prefer it to leave by a door that does not require lifting.',[
     reply('rest','Rest and accept a lost day’s work','You recover some health and lose a little work performance. The existing illness remains subject to its real course.',{health:7,work:{performance:-5},bond:{role:'other',affinity:-3}}),
     reply('work','Work through the fever (risk making it worse)','You lose health and the lung fever becomes more severe. {{other}} is impressed by an effort your body has not endorsed.',{health:-16,healthCondition:{conditionId:'lung_fever',severity:18},work:{performance:3},bond:{role:'other',respect:5}}),
     reply('help','Pay for practical help and keep resting (7g)','You pay for help and recover some strength without pretending the payment itself removes the disease.',{gold:-7,health:10,work:{performance:-2}},{costGold:7}),
@@ -44,7 +44,7 @@ export const NARRATIVE_HEALTH_EVENTS: GameEvent[] = [
     reply('work','Keep working and refuse the fuss','You lose some health and gain a little work experience. The disability is neither cured nor turned into a moral failing.',{health:-4,work:{experience:4},bond:{role:'other',affinity:-2}}),
   ],{requires:{hasHealthCondition:['chronic_pain']},repetitionGroup:'recovery_and_care'}),
   scene('life_cough_false_warranty','peasant','health','THE TONIC WITH A FUNERAL GUARANTEE','{{other}} recommends a tonic whose seller promises a refund if it fails. The refund must be claimed in person, after burial.',[
-    reply('decline','Decline the reassuring guarantee','You keep your money and improve your judgement. {{other}} has to explain why the condition sounded reasonable.',{wits:4,bond:{role:'other',trust:-3}}),
+    reply('decline','Decline the reassuring guarantee','You ask to see the guarantee in writing. {{other}} discovers a pressing appointment with someone who has not asked that question.',{wits:4,bond:{role:'other',trust:-3}}),
     reply('buy','Buy it despite the warning (6g)','You pay for a useless tonic and lose a little health. No disease is removed, and the guarantee remains admirably difficult to invoke.',{gold:-6,health:-3,bond:{role:'other',trust:-6}},{costGold:6}),
     reply('expose','Read the condition to the waiting customers','You expose the trick and gain public standing. {{other}} is embarrassed to have supplied such a precise recommendation.',{reputation:4,bond:{role:'other',affinity:-6}}),
   ],{repetitionGroup:'false_cures'}),
@@ -52,7 +52,7 @@ export const NARRATIVE_HEALTH_EVENTS: GameEvent[] = [
     reply('truth','Give an honest account of your limits','You lose work performance and gain trust with {{other}} by refusing a useful falsehood. Your health remains a fact rather than a certificate.',{work:{performance:-4},bond:{role:'other',trust:7},reputation:2}),
     reply('false','Submit the false declaration','You gain a little performance at the cost of health and a fraud charge. The declaration has not repaired the body it describes.',{work:{performance:5},health:-7,legal:fraud('Submitting a knowingly false fitness declaration')}),
   ],{requires:{minAge:16,statAtMost:{health:35}},repetitionGroup:'professional_fraud'}),
-  scene('life_bandage_promise','peasant','health','THE BANDAGE TIED TO A PROMISE','{{other}} helps dress your actual wound and asks you to remember the favour when less frightened. The knot is firmer than the request.',[
+  scene('life_bandage_promise','peasant','health','THE BANDAGE TIED TO A PROMISE','{{other}} helps dress your wound and asks you to remember the favour when less frightened. The knot is firmer than the request.',[
     reply('remember','Promise practical help when you are able','You gain a little health and a trustworthy bond. The wound remains under care rather than vanishing under a promise.',{health:4,bond:{role:'other',trust:14,flag:'friend'}}),
     reply('pay','Pay fairly instead of owing a favour (5g)','You pay five gold for the help and recover some strength. {{other}} accepts a small, completed kindness.',{gold:-5,health:4,bond:{role:'other',trust:5}},{costGold:5}),
     reply('dismiss','Accept the help and dismiss the obligation','You gain some health and lose trust. {{other}} tightens the final knot in silence.',{health:3,bond:{role:'other',trust:-16}}),

@@ -41,7 +41,7 @@ export const NARRATIVE_CALLBACK_EVENTS: GameEvent[] = [
     reply('remind','List everything you sacrificed','You keep the list and damage the bond. {{other}} is alive to hear it, which makes the account no kinder.',{bond:{role:'other',trust:-12,affinity:-8}}),
   ],'mother'),
   echo('echo_roderick_words','knight_duel',['knight_duel_choice_3'],'THE GLOVE LEFT IN A POCKET','Roderick remembers losing the argument instead of the duel. {{other}} has brought no glove this time, but has rehearsed an opening sentence.',[
-    reply('hear','Hear the grievance without staging another victory','You improve trust with {{other}} and gain a little judgement. The old humiliation is not repeated for an audience.',{bond:{role:'other',trust:10},wits:2}),
+    reply('hear','Hear the grievance without staging another victory','You hear {{other}} out without inviting the neighbours to enjoy it. The grievance becomes easier to understand when nobody is performing it.',{bond:{role:'other',trust:10},wits:2}),
     reply('repeat','Repeat the winning argument in public','You gain charm and deepen the rivalry. {{other}} now has a second date to attach to the same grievance.',{charm:4,bond:{role:'other',affinity:-16,flag:'rival'}}),
   ]),
   echo('echo_alive_witness','life_living_corpse',['testify'],'THE DECEASED OBJECTS AGAIN','{{other}} has received a copy of the corrected claim. Your parent asks whether being officially alive now excuses the next assessment.',[
@@ -149,7 +149,7 @@ export const NARRATIVE_CALLBACK_EVENTS: GameEvent[] = [
     reply('boast','Make a public account of the earlier drawing','You gain reputation and damage the relationship. The corrected river now has to carry the old humiliation as well.',{reputation:3,bond:{role:'other',affinity:-12}}),
   ]),
   echo('echo_coin_weight','life_crown_counterfeit_coin',['debase'],'THE COIN RETURNS BY WEIGHT','{{other}} brings back the light coin issued under your order. Traders have begun weighing your face instead of trusting it.',[
-    reply('relief','Fund a public correction (18g)','You spend personal gold to improve public order and family standing. The dishonest issue remains part of your real legal record.',{gold:-18,worldConditions:{publicOrder:5},familyReputation:{delta:3}},{costGold:18}),
+    reply('relief','Fund a public correction (18g)','You spend personal gold to improve public order and family standing. The correction buys some goodwill; the charge over the dishonest issue remains on the roll.',{gold:-18,worldConditions:{publicOrder:5},familyReputation:{delta:3}},{costGold:18}),
     reply('deny','Blame the people weighing the coins','Public order falls further and {{other}} loses trust. The silver continues to be absent without asking anyone’s permission.',{worldConditions:{publicOrder:-5},bond:{role:'other',trust:-14}}),
   ],'other',{premium:true,domain:'politics'}),
   echo('echo_private_execution','life_crown_private_trial',['hear'],'THE MORNING YOU REFUSED TO SAVE','{{other}} remembers your refusal to approve a condemnation before evidence. Another petition now arrives with witnesses rather than a convenient conclusion.',[

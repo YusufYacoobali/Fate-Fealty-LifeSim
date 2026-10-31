@@ -618,7 +618,16 @@ function marry(state: GameState, kin: KinMember, relation: Relationship): void {
     spouse.householdId = player?.householdId ?? 'house_player';
   }
   const household = state.world.households.find((item) => item.id === (player?.householdId ?? 'house_player')) ?? state.world.households[0];
+  // Moving an existing person must remove the old membership immediately;
+  // a wedding can be the last decision before a life ends, before the annual repair.
+  for (const previous of state.world.households) {
+    if (previous.id !== household.id) previous.memberIds = previous.memberIds.filter(id => id !== kin.id);
+  }
+  if (spouse) spouse.householdId = household.id;
   household.memberIds = Array.from(new Set([...household.memberIds, kin.id]));
+  for (const expected of state.world.expectedChildren) {
+    if (expected.status === 'expected' && expected.parentIds.includes(kin.id)) expected.householdId = household.id;
+  }
   pushFeed(state, 'WEDDING', C.good, `You marry ${kin.name} by your own choosing. Bells ring, bread vanishes, and two families pretend not to count the gifts.`, 'good');
 }
 

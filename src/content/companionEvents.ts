@@ -16,6 +16,7 @@ export const COMPANION_EVENTS: GameEvent[] = [
   // --- a sibling arrives (early childhood) --------------------------------
   {
     id: 'family_sibling_born',
+    actorRoles:{mother:{relation:'parent',gender:'woman',alive:true,excludePlayer:true,missingActor:'clear_event'}},
     category: 'family',
     title: 'A SQUALLING ARRIVAL',
     text: 'Your mother sits you down with a strange smile. By harvest, you will not be the only small person in this cottage.',
@@ -25,11 +26,10 @@ export const COMPANION_EVENTS: GameEvent[] = [
     weight: 1.4,
     requires: {
       kinCountAtMost: { sibling: 0 },
-      custom: (s) => s.kin.some((k) => k.id === 'mother' && k.alive),
     },
     choices: [
-      { label: 'Rejoice! A playmate at last', outcome: { text: 'A sibling is born! Loud, wrinkled, and immediately beloved. You vow to teach them everything about turnips.', effects: { addKin: { kind: 'sibling', rel: 70 }, kinRel: { id: 'mother', delta: 6 }, faith: 2, memory: { tag: 'sibling_born', weight: 2 } }, tone: 'good' } },
-      { label: 'Sulk about sharing the porridge', outcome: { text: 'A sibling is born anyway. You sulk magnificently, but the baby grips your finger and your cold heart thaws a little.', effects: { addKin: { kind: 'sibling', rel: 45 }, charm: -2, memory: { tag: 'sibling_born', weight: 2 } }, tone: 'plain' } },
+      { label: 'Rejoice! A playmate at last', outcome: { text: 'A sibling is born! Loud, wrinkled, and immediately beloved. You vow to teach them everything about turnips.', effects: { addKin: { kind: 'sibling', age:0, rel: 70 }, kinRel: { id: 'mother', delta: 6 }, faith: 2, memory: { tag: 'sibling_born', weight: 2 } }, tone: 'good' } },
+      { label: 'Sulk about sharing the porridge', outcome: { text: 'A sibling is born anyway. You sulk magnificently, but the baby grips your finger and your cold heart thaws a little.', effects: { addKin: { kind: 'sibling', age:0, rel: 45 }, charm: -2, memory: { tag: 'sibling_born', weight: 2 } }, tone: 'plain' } },
     ],
   },
 
@@ -46,7 +46,7 @@ requires: { kinCountAtMost: { friend: 1 } },
 choices: [
       { label: 'Offer half your turnip', outcome: { text: 'You split your turnip and gained a friend for life. The finest trade you will ever make.', effects: { addKin: { kind: 'friend', role: 'Childhood Friend', trait: 'True as iron', rel: 72, age: 9 }, charm: 3, memory: { tag: 'made_friend', weight: 2 } }, tone: 'good' } },
       { label: 'Challenge them to a pebble contest', successChance: (s) => 0.45 + s.stats.charm / 200, success: { text: 'You lost the contest on purpose (mostly) and won a friend. Cunning diplomacy.', effects: { addKin: { kind: 'friend', role: 'Childhood Friend', trait: 'Competitive', rel: 62, age: 9 }, wits: 2, memory: { tag: 'made_friend', weight: 2 } }, tone: 'good' }, failure: { text: 'You won too hard and gloated too long. They stomped off. The pebble remains your only trophy.', effects: { charm: -3 }, tone: 'bad' } },
-      { label: 'Hide behind the goose', outcome: { text: 'Sir Quackbeard hissed. The smith’s child fled. Your social circle remains: one goose.', effects: { kinRel: { id: 'goose', delta: 4 } }, tone: 'plain' } },
+      { label: 'Hide behind the goose', requires:{custom:s=>s.world.characters.goose?.alive===true}, outcome: { text: 'Sir Quackbeard hissed. The smith’s child fled. Your social circle remains: one goose.', effects: { kinRel: { id: 'goose', delta: 4 } }, tone: 'plain' } },
     ]
 },
 

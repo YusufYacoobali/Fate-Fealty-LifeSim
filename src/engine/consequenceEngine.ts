@@ -151,6 +151,7 @@ export function applyEffects(s: GameState, eff?: Effects): GameState {
     if (s.world.characters[id]?.alive && id !== s.playerCharacterId) {
       const { affinity = 0, trust = 0, respect = 0, flag } = eff.bond;
       const relation = applyRelationshipShift(s,id,{affinity,trust,respect},{affinity,trust,respect});
+      if (eff.bond.clearRivalry) relation.flags = relation.flags.filter(f => f !== 'rival' && f !== 'feud');
       if (flag && !relation.flags.includes(flag)) relation.flags.push(flag);
     }
   }

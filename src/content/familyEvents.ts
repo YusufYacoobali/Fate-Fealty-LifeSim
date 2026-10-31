@@ -82,6 +82,7 @@ choices: [
 },
   {
     id: 'family_roderick_truce',
+    actorRoles: { other: { characterId:'roderick', alive:true, excludePlayer:true, missingActor:'clear_event' } },
     category: 'family',
     title: 'AN OLD FOE, HUMBLED',
     text: 'Sir Roderick appears at your door, greyer and smaller and short of a manor. "I... was wrong about you," he mutters. "About the apple. About all of it."',
@@ -89,7 +90,7 @@ choices: [
     requires: { custom: (s) => (s.kin.find((k) => k.id === 'roderick')?.rel ?? 0) >= 30 },
     once: true,
     choices: [
-      { label: 'Forgive him at last', outcome: { text: 'You clasp his hand. Decades of grudge dissolve in a moment. He weeps; so, secretly, do you.', effects: { faith: 8, charm: 4, kinRel: { id: 'roderick', delta: 30 }, memory: { tag: 'reconciled', weight: 3 } }, tone: 'good' } },
+      { label: 'Forgive him at last', outcome: { text: 'You clasp his hand. Decades of grudge dissolve in a moment. He weeps; so, secretly, do you.', effects: { faith: 8, charm: 4, kinRel: { id: 'roderick', delta: 30 }, bond: { role:'other', clearRivalry:true, flag:'friend' }, memory: { tag: 'reconciled', weight: 3 } }, tone: 'good' } },
       { label: 'Hand him a single apple, and shut the door', outcome: { text: 'You give him one apple. "Now we are even," you say. The door closes. Petty? Perhaps. Satisfying? Immensely.', effects: { charm: 2, wits: 2, memory: { tag: 'the_apple_returned', weight: 2 } }, tone: 'plain' } },
     ],
   },

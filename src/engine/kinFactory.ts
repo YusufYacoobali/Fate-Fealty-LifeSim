@@ -128,6 +128,8 @@ export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
     healthTags: [],
     memories: [],
   };
+  const assigned = ENTRY_CAREERS.find(c => c.id === member.occupation.careerId);
+  if (assigned && member.age < assigned.minAge) member.occupation = { careerId:null, experience:0, performance:50, workedThisYear:0 };
   const player = s.world.characters[s.playerCharacterId];
   const playerHousehold = player?.householdId ?? 'house_player';
   const familyId = ['child', 'sibling'].includes(spec.kind) && player?.birthFamilyId
@@ -177,7 +179,7 @@ export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
   s.world.families[familyId].memberIds.push(member.id);
   let household = s.world.households.find((item) => item.id === member.householdId);
   if (!household) {
-    household = { id: member.householdId!, headId: member.id, memberIds: [], wealth: member.gold, foodSecurity: 50, status: 40 };
+    household = { id: member.householdId!, headId: member.id, memberIds: [], wealth: member.gold, foodSecurity: 50, status: 40, residenceQuality: 45, capacity: 4, storedFood: 50 };
     s.world.households.push(household);
   }
   household.memberIds = Array.from(new Set([...household.memberIds, member.id]));

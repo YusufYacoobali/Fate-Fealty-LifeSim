@@ -87,3 +87,16 @@ describe('content integrity', () => {
     expect(ANNUAL_MESSAGES.length).toBeGreaterThanOrEqual(32);
   });
 });
+
+
+describe('narrative overhaul compatibility',()=>{
+  it('retains every baseline event and choice ID and every load-bearing chain title',()=>{
+    const baseline=JSON.parse(require('fs').readFileSync(require('path').join(process.cwd(),'docs/validation/narrative/baseline.json'),'utf8'));
+    for(const old of baseline.events){
+      const current=EVENTS_BY_ID[old.id];expect(current).toBeDefined();
+      expect(current.choices.map(c=>c.id)).toEqual(old.choices.map((c:{id:string})=>c.id));
+      expect(current.title).toBe(old.id==='family_mother_ill'?'A MOTHER TAKES ILL':old.title);
+    }
+    for(const old of baseline.annual)expect(ANNUAL_MESSAGES.some(m=>m.id===old.id)).toBe(true);
+  });
+});

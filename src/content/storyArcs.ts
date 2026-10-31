@@ -43,6 +43,7 @@ export const STORY_ARCS: GameEvent[] = [
     arc: 'marriage',
     arcNodeOnly: true,
     title: 'A YEAR OF MARRIED LIFE',
+    requires:{hasTags:['married'],custom:s=>!!s.world.characters[s.world.characters[s.playerCharacterId].spouseId??'']?.alive},
     text: 'A year wed. The first flush has settled into something steadier. Your spouse asks, gently, what you both should build toward.',
     choices: [
       { label: 'A houseful of children', outcome: { text: 'You agree to fill the cottage with noise and turnip-stained little hands. Terrifying. Wonderful.', effects: { faith: 4, health: -2, addTags: ['wants_children'], memory: { tag: 'chose_family', weight: 2 } }, tone: 'good' } },

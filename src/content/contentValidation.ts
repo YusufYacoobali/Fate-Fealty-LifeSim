@@ -1,3 +1,4 @@
+import { ANNUAL_MESSAGES } from './annualMessages';
 import { ACTIVITY_DEFS } from '@/data/activities';
 import { CAREERS } from '@/data/careers';
 import { ContentDomain, Effects, GameEvent } from '@/types/game';
@@ -43,12 +44,12 @@ function createsLastingChange(event: GameEvent): boolean {
 }
 
 function callbackEvent(event: GameEvent): boolean {
-  return Boolean(event.requires?.hasWorldMemoryType?.length || event.requires?.hasKnownSecret || event.requires?.hasHealthCondition?.length);
+  return Boolean(event.callback || event.requires?.hasWorldMemoryType?.length || event.requires?.hasKnownSecret || event.requires?.hasHealthCondition?.length);
 }
 
 function tokensFrom(event: GameEvent): string[] {
-  const source = typeof event.text === 'string' ? event.text : event.text.toString();
-  return [...source.matchAll(/\{\{(\w+)\.(?:name|role)\}\}/g)].map((match) => match[1]);
+  const sources = [event.title, typeof event.text === 'string' ? event.text : event.text.toString(), ...event.choices.flatMap(c => [c.label,c.outcome?.text,c.success?.text,c.failure?.text])];
+  return sources.flatMap(source => [...(source ?? '').matchAll(/\{\{(\w+)(?:\.(?:name|role|subject|object|possessive))?\}\}/g)].map(match => match[1]));
 }
 
 export function validateContent(): ContentValidationIssue[] {
@@ -104,6 +105,21 @@ export function validateContent(): ContentValidationIssue[] {
     const minimumChoices = event.arcNodeOnly ? 1 : 2;
     if (event.choices.length < minimumChoices || event.choices.length > 4) error('choice_count', event.id, `Expected ${minimumChoices}–4 choices, found ${event.choices.length}.`);
     if (!event.arcNodeOnly && !createsLastingChange(event)) error('no_lasting_outcome', event.id, 'Selectable events require an outcome beyond visible stat changes.');
+    if (event.callback) {
+      const spec = event.callback, source = EVENTS_BY_ID[spec.eventId];
+      if (!source) error('missing_callback_source',event.id,`Missing source ${spec.eventId}.`);
+      else {
+        if (source.premium && !event.premium) error('callback_premium_bypass',event.id,'A Premium source needs a Premium callback.');
+        for (const id of spec.choiceIds) if (!source.choices.some(c => c.id === id)) error('missing_callback_choice',event.id,`Missing source choice ${id}.`);
+        for (const role of Object.keys(event.actorRoles ?? {})) if (!source.actorRoles?.[spec.roleMap?.[role] ?? role]) error('missing_callback_actor',event.id,`Source does not bind ${role}.`);
+      }
+      if ((spec.minYears ?? 1) < 1 || (spec.maxYears ?? 3) < (spec.minYears ?? 1)) error('invalid_callback_window',event.id,'Callback windows must follow the decision.');
+      if (!spec.inherited && (spec.maxYears ?? 3) > 3) error('slow_callback',event.id,'Ordinary callbacks should resolve within three years.');
+    }
+    for (const effects of outcomes(event)) {
+      if (effects.healthCondition && !HEALTH_CONDITIONS.some(c => c.id === effects.healthCondition!.conditionId)) error('unknown_health_condition',event.id,`Unknown condition ${effects.healthCondition.conditionId}.`);
+      if (!event.arcNodeOnly) for (const role of [effects.bond?.role,effects.familyFeud?.role,effects.marryRole].filter((v):v is string=>!!v)) if (!event.actorRoles?.[role]) error('unbound_effect_actor',event.id,`Effect role ${role} is not bound.`);
+    }
     const choiceIds = new Set<string>();
     for (const choice of event.choices) {
       if (!choice.id) error('missing_choice_id', event.id, 'Every choice requires a stable id.');
@@ -118,7 +134,8 @@ export function validateContent(): ContentValidationIssue[] {
       }
     }
     if (!event.arcNodeOnly) {
-      for (const token of tokensFrom(event)) if (!event.actorRoles?.[token]) error('unbound_token', event.id, `Token role ${token} is not declared.`);
+      const directedRoles = event.id.startsWith('origin_child_') || ['household_first_words','household_rainy_roof'].includes(event.id) ? ['contact','guardian','mother','father'] : [];
+      for (const token of tokensFrom(event)) if (!event.actorRoles?.[token] && !directedRoles.includes(token)) error('unbound_token', event.id, `Token role ${token} is not declared.`);
     }
   }
 
@@ -171,6 +188,16 @@ export function validateContent(): ContentValidationIssue[] {
       }
     }
     if (story.recovery.recoveryBeatId && !story.beats[story.recovery.recoveryBeatId]) error('invalid_recovery', story.id, `Recovery beat ${story.recovery.recoveryBeatId} does not exist.`);
+  }
+
+  const annualIds = new Set<string>();
+  for (const message of ANNUAL_MESSAGES) {
+    if (annualIds.has(message.id)) error('duplicate_annual',message.id,'Duplicate annual identifier.');
+    annualIds.add(message.id);
+    if (!message.theme) error('missing_annual_theme',message.id,'Annual observations need a shared theme.');
+    const effects = message.effects;
+    if (effects && (effects.death || effects.killKin || effects.prison || effects.exile || effects.endMarriage || effects.marryRole || effects.addKin || effects.employment)) error('irreversible_flavour',message.id,'Annual flavour cannot make an irreversible life decision.');
+    for (const match of message.text.matchAll(/\{\{(\w+)\}\}/g)) if (!message.actors?.includes(match[1] as any)) error('unbound_annual_actor',message.id,`Annual role ${match[1]} is not declared.`);
   }
 
   if (ACTIVITY_DEFS.length !== 56) error('activity_total', 'activities', `Expected 56 activities, found ${ACTIVITY_DEFS.length}.`);

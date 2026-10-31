@@ -93,6 +93,8 @@ const LEGACY_ACTORS: Record<string, AnnualActor[]> = {
   goose_court_news: ['goose'], old_oath_found: ['mother'], father_weather_knee: ['father'],
 };
 const ONCE = new Set(['baby_first_steps', 'baby_first_word', 'baby_goose_guard', 'child_goose']);
+// Feed-only legacy saves predate the character-level annual ledger.
+const LEGACY_ONCE_TEXT: Record<string,string> = {"baby_first_steps": "You took your first steps and immediately fell into a basket of turnips. The village applauded both events.", "baby_first_word": "Your first word was 'turnip'. Your mother wept with pride; Your father nodded as if this settled something.", "baby_goose_guard": "Sir Quackbeard has appointed himself guardian of your cradle. Visitors are now inspected, and occasionally bitten.", "child_goose": "You and Sir Quackbeard the goose became inseparable. He bites everyone but you."};
 
 export const ANNUAL_MESSAGES: AnnualMessage[] = [
   ...LEGACY_ANNUAL_MESSAGES.map(m => ({ ...m, theme: LEGACY_THEMES[m.id], actors: LEGACY_ACTORS[m.id], once: ONCE.has(m.id) })),
@@ -136,7 +138,7 @@ export function eligibleAnnualMessages(s: GameState, excludedIds: readonly strin
     && (years[m.id] === undefined || (!m.once && s.world.currentYear - years[m.id] >= 12))
     && (themes[m.theme] === undefined || s.world.currentYear - themes[m.theme] >= 2)
     && !recentText.has(renderAnnualText(s,m))
-    && (!m.once || !s.feed.some(entry => entry.text === m.text))
+    && (!m.once || !s.feed.some(entry => entry.text === m.text || entry.text === LEGACY_ONCE_TEXT[m.id]))
     && meetsCondition(s,m.requires));
 }
 

@@ -599,7 +599,7 @@ export interface HoldingUpgradeDef {
 // ---------------------------------------------------------------------------
 
 export interface Effects {
-  bond?: { role: string; affinity?: number; trust?: number; respect?: number; flag?: 'rival' | 'feud' | 'friend' };
+  bond?: { role: string; affinity?: number; trust?: number; respect?: number; clearRivalry?: boolean; flag?: 'rival' | 'feud' | 'friend' };
   familyFeud?: { role: string; reason: string };
   endMarriage?: boolean;
   marryRole?: string;

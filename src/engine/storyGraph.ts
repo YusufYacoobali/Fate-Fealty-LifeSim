@@ -16,7 +16,7 @@ import { feedbackSnapshot, feedbackChanges } from './choiceFeedback';
 import { Choice, GameEvent, GameState, Outcome } from '@/types/game';
 import { applyEffects } from './consequenceEngine';
 import { pushFeed } from './gameState';
-import { eventById, isChoiceEnabled, recordEventResolution } from './eventPicker';
+import { eventById, isChoiceEnabled, isEventPlayable, recordEventResolution } from './eventPicker';
 import { chance } from './random';
 import { rollBonusFromTraits, grantAcquiredTraits } from './traitEngine';
 import { checkLifeGoal } from './goalEngine';
@@ -162,8 +162,10 @@ export function queueArc(s: GameState, arc: string, nextNodeId: string): GameSta
 export function popReadyArc(s: GameState): GameEvent | null {
   if (s.activeArcs.length === 0) return null;
   // Continue the oldest queued arc that started before this year.
-  const ready = s.activeArcs.find((a) => a.startedAge < s.age);
-  if (!ready) return null;
-  s.activeArcs = s.activeArcs.filter((a) => a.arc !== ready.arc);
-  return eventById(ready.nextNodeId) ?? null;
+  for (const ready of s.activeArcs.filter(a => a.startedAge < s.age)) {
+    s.activeArcs = s.activeArcs.filter(a => a.arc !== ready.arc);
+    const event = eventById(ready.nextNodeId);
+    if (event && isEventPlayable(s,event)) return event;
+  }
+  return null;
 }

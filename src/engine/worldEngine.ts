@@ -48,6 +48,7 @@ function promoteNpc(state: GameState, npc: KinMember, budget: { left: number }):
   const career = careerById(npc.occupation.careerId);
   if (!career?.promotesTo || npc.occupation.experience < 55 || !chance(0.18)) return false;
   const next = careerById(career.promotesTo)!;
+  if (npc.age < next.minAge) return false;
   npc.occupation = { careerId: next.id, experience: 10, performance: 55, workedThisYear: 0 };
   npc.role = next.title;
   if (budget.left > 0) {
@@ -59,6 +60,7 @@ function promoteNpc(state: GameState, npc: KinMember, budget: { left: number }):
 
 function simulateNpcCareer(state: GameState, npc: KinMember, budget: { left: number }): void {
   let career = careerById(npc.occupation.careerId);
+  if (career && npc.age < career.minAge) { npc.occupation = { careerId:null,experience:0,performance:50,workedThisYear:0 }; career = undefined; }
   if (!career && npc.age >= 8) {
     const possible = CAREERS.filter((item) => item.tier === 0 && npc.age >= item.minAge);
     if (possible.length) {
@@ -137,7 +139,7 @@ function simulateNpcSocialLife(state: GameState): void {
   const sharedHouseholdId = a.householdId ?? b.householdId ?? `house_${a.id}`;
   let sharedHousehold = state.world.households.find((household) => household.id === sharedHouseholdId);
   if (!sharedHousehold) {
-    sharedHousehold = { id: sharedHouseholdId, headId: a.id, memberIds: [], wealth: a.gold + b.gold, foodSecurity: 50, status: 40 };
+    sharedHousehold = { id: sharedHouseholdId, headId: a.id, memberIds: [], wealth: a.gold + b.gold, foodSecurity: 50, status: 40, residenceQuality: 45, capacity: 4, storedFood: 50 };
     state.world.households.push(sharedHousehold);
   }
   for (const household of state.world.households) household.memberIds = household.memberIds.filter((id) => id !== b.id || household.id === sharedHouseholdId);

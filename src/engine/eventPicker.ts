@@ -230,6 +230,9 @@ export function eventById(id: string): GameEvent | undefined {
 
 function actorCandidates(s: GameState, role: EventActorRole) {
   return Object.values(s.world.characters).filter((character) => {
+    // Quackbeard belongs in explicitly authored goose scenes, not generic
+    // creditors, physicians or letter-writing suitors as his age increases.
+    if (character.id === 'goose' && role.characterId !== 'goose') return false;
     if (role.characterId && character.id !== role.characterId) return false;
     if (role.excludePlayer !== false && character.id === s.playerCharacterId) return false;
     if (role.gender && character.gender !== role.gender) return false;

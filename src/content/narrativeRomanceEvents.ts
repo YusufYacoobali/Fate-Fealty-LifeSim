@@ -85,6 +85,6 @@ export const NARRATIVE_ROMANCE_EVENTS: GameEvent[] = [
   scene('life_lover_public_oath','family','crime','THE OATH THAT WAS NOT YOURS','{{other}} has circulated a claim that you promised marriage. You remember promising to return a borrowed pot. The pot is still at home.',[
     reply('return','Return the pot before witnesses','You return the object you actually promised and reject the other claim publicly. {{other}} resents the clarity.',{bond:{role:'other',trust:-12},familyReputation:{delta:4}}),
     reply('settle','Pay to withdraw the accusation (9g)','Nine gold buys an end to this claim, together with a secret about how readily your name can be priced.',{gold:-9,bond:{role:'other',trust:-8},createSecret:{type:'hidden_debt',severity:25}},{costGold:9}),
-    reply('forge','Produce a forged counterclaim','You answer an accusation with a document that creates a real forgery charge. The pot has become the most innocent participant.',{legal:fraud('Forging evidence in a marriage dispute'),familyReputation:{delta:-6},bond:{role:'other',affinity:-20,flag:'feud'}}),
+    reply('forge','Produce a forged counterclaim','Your counterclaim reaches the clerk, who recognises the false seal. You face a forgery charge; the pot has become the most innocent participant.',{legal:fraud('Forging evidence in a marriage dispute'),familyReputation:{delta:-6},bond:{role:'other',affinity:-20,flag:'feud'}}),
   ],{repetitionGroup:'humiliating_marriages'}),
 ];

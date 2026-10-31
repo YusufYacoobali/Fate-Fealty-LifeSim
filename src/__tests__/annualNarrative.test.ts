@@ -42,3 +42,13 @@ it('keeps court, occupational, famine and sickness observations relevant', () =>
   expect(ids).toContain('work_parish_seat');
   expect(new Set(ANNUAL_MESSAGES.map(m=>m.id)).size).toBe(ANNUAL_MESSAGES.length);
 });
+
+
+it('recognises a rewritten once-only infancy beat in a feed-only legacy save',()=>{
+ const baseline=JSON.parse(require('fs').readFileSync(require('path').join(process.cwd(),'docs/validation/narrative/baseline.json'),'utf8'));
+ const old=baseline.annual.find((m:{id:string})=>m.id==='baby_first_word');
+ const s=createLife({worldSeed:1704});s.age=2;s.world.characters[s.playerCharacterId].annualNarrativeYears={};
+ expect(eligibleAnnualMessages(s).some(m=>m.id===old.id)).toBe(true);
+ s.feed.push({id:999,age:1,tag:'INFANCY',text:old.text,tone:'good'});
+ expect(eligibleAnnualMessages(s).some(m=>m.id===old.id)).toBe(false);
+});

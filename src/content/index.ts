@@ -1,4 +1,5 @@
 import { legacyNarrativeTheme } from './narrativeThemes';
+import { NARRATIVE_FAITH_EVENTS } from './narrativeFaithEvents';
 import { NARRATIVE_POLITICS_EVENTS } from './narrativePoliticsEvents';
 import { NARRATIVE_WORK_EVENTS } from './narrativeWorkEvents';
 import { NARRATIVE_CRIME_EVENTS } from './narrativeCrimeEvents';
@@ -39,6 +40,7 @@ const RAW_EVENTS: GameEvent[] = [
   ...NARRATIVE_CRIME_EVENTS,
   ...NARRATIVE_WORK_EVENTS,
   ...NARRATIVE_POLITICS_EVENTS,
+  ...NARRATIVE_FAITH_EVENTS,
   ...ROYAL_COURT_EVENTS,
   ...CAREER_SPECIALIZATION_EVENTS,
   ...EDUCATION_EVENTS, ...ORIGIN_CHILDHOOD_EVENTS,

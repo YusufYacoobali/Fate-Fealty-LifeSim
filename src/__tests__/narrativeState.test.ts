@@ -75,6 +75,19 @@ it('preserves old history through the only essential title correction and leaves
  const before=JSON.stringify(s.world.rngState),migrated=CONTENT_MIGRATIONS[7](s.world).world;
  expect(migrated.history[0].causes).toEqual(['A MOTHER TAKES ILL','AT THE CHURCH DOOR']);expect(JSON.stringify(migrated.rngState)).toBe(before);
 });
+it('spaces separate royal accounting prompts using saved court decisions',()=>{
+ const {directYear}=require('@/engine/director');
+ const s=adult(),court=s.world.court!;court.rulerId=s.playerCharacterId;s.rankIdx=5;
+ court.scandals=[{office:'treasurer',actorId:'edwin',amount:12,exposed:false}];
+ expect(directYear(s).event?.id).toBe('royal_creative_accounts');
+ court.records.push({year:s.world.currentYear,kind:'scandal_investigate',actorId:s.playerCharacterId,detail:'A prior inquiry'});
+ s.world.currentYear++;
+ expect(directYear(s).event?.id).not.toBe('royal_creative_accounts');
+ syncPlayerToWorld(s);const loaded=normalizeGameState(JSON.parse(JSON.stringify(s)));
+ expect(directYear(loaded).event?.id).not.toBe('royal_creative_accounts');
+ loaded.world.currentYear+=2;
+ expect(directYear(loaded).event?.id).toBe('royal_creative_accounts');
+});
 
 it('gives newly formed households the same capacity before and after normalization',()=>{
  const s=adult();const newcomer=spawnKin(s,{kind:'acquaintance',age:28});

@@ -73,3 +73,10 @@ it('every callback names a real source choice; expired or deceased actors cannot
 it('retains Premium gates in both new royal scenes and their callbacks',()=>{
  for(const e of ALL_EVENTS.filter(e=>e.premium&&(e.id.startsWith('life_')||e.callback))){const s=fixture(e);s.lifetimeUnlocked=false;expect(isEventPlayable(s,e)).toBe(false);}
 });
+it('allows adult petitioners in monarch scenes without requiring a second noble',()=>{
+ for(const e of newEncounters.filter(e=>e.id.startsWith('life_crown_'))){
+  const s=fixture(e);
+  for(const c of Object.values(s.world.characters))if(c.id!==s.playerCharacterId)c.rankIdx=0;
+  expect({id:e.id,playable:isEventPlayable(s,e)}).toEqual({id:e.id,playable:true});
+ }
+});

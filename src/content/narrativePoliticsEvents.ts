@@ -2,7 +2,7 @@ import type { GameEvent } from '@/types/game';
 import { scene, reply, risk, ADULT, LORD, RIVAL, fraud } from './narrativeHelpers';
 const noble={requires:{rankAtLeast:3},ageMin:18,actorRoles:{other:LORD},repetitionGroup:'court_precedence'};
 const court={requires:{custom:(s:import('@/types/game').GameState)=>s.rankIdx>=3||(s.world.characters[s.playerCharacterId].factionInfluence??0)>=20},actorRoles:{other:ADULT},repetitionGroup:'court_intrigue'};
-const crown={premium:true,requires:{custom:(s:import('@/types/game').GameState)=>s.world.court?.rulerId===s.playerCharacterId},ageMin:18,actorRoles:{other:LORD},stakes:'major' as const,repetitionGroup:'royal_judgement'};
+const crown={premium:true,requires:{custom:(s:import('@/types/game').GameState)=>s.world.court?.rulerId===s.playerCharacterId},ageMin:18,actorRoles:{other:ADULT},stakes:'major' as const,repetitionGroup:'royal_judgement'};
 export const NARRATIVE_POLITICS_EVENTS: GameEvent[] = [
   scene('life_falcon_supper','noble','politics','THE ROYAL FEAST OF DISASTER','A visiting envoy’s falcon has been served at supper. {{other}} recognises its silver ring and offers to say it was a diplomatic gift if you will support the story. The cook offers the remaining wing.',[
     reply('admit','Admit the disaster and fund compensation (16g)','You pay for compensation and improve your family’s reputation for candour. {{other}} is relieved that the bird’s final journey need not become a border dispute.',{gold:-16,familyReputation:{delta:6},worldConditions:{warThreat:-3},bond:{role:'other',trust:8}},{costGold:16}),

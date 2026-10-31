@@ -75,7 +75,12 @@ export function directYear(state: GameState): DirectedYear {
     return { event: professionalEvent, kind: 'thread', isLegal: false };
   }
 
-  if (state.lifetimeUnlocked && state.world.court?.rulerId === state.playerCharacterId && state.world.court.scandals.some(s => !s.resolved)) {
+  // Separate official scandals must not monopolise every year of a reign.
+  // The existing court record survives reloads; manual audits remain available.
+  const court = state.world.court;
+  const lastAccountingYear = court?.records.filter(r => r.kind.startsWith('scandal_')).at(-1)?.year;
+  if (state.lifetimeUnlocked && court?.rulerId === state.playerCharacterId && court.scandals.some(s => !s.resolved)
+    && (lastAccountingYear === undefined || state.world.currentYear - lastAccountingYear >= 3)) {
     recordBeat(state, 'thread');
     return { event: eventById('royal_creative_accounts')!, kind: 'thread', isLegal: false };
   }

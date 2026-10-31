@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Pressable } from 'react-native';
+import { View, Pressable, useWindowDimensions } from 'react-native';
 import { PixelText } from './ui/PixelText';
-import { C } from '@/theme/theme';
+import { C, textSize } from '@/theme/theme';
 import { Tab } from '@/types/game';
 
 interface NavDef {
@@ -29,8 +29,12 @@ export function NavBar({
   onTab: (t: Tab) => void;
   lockedTabs?: Partial<Record<Tab, boolean>>;
 }) {
+  const { width, fontScale } = useWindowDimensions();
+  const [navWidth, setNavWidth] = React.useState(width);
+  const compactPeople = (navWidth - 8) / NAV.length - 2 < textSize(7) * 6 * fontScale + 2;
   return (
     <View
+      onLayout={event => setNavWidth(event.nativeEvent.layout.width)}
       style={{
         minHeight: 58,
         flexShrink: 0,
@@ -74,7 +78,7 @@ export function NavBar({
               {locked && <PixelText font="pixel" size={7} color={C.charm}>P</PixelText>}
             </View>
             <PixelText font="pixel" size={7} color={locked ? C.charm : on ? C.white : '#7fa8d0'} style={{ marginTop: 5, maxWidth: '100%', textAlign: 'center' }}>
-              {n.label}
+              {n.id === 'kin' && compactPeople ? 'KIN' : n.label}
             </PixelText>
           </Pressable>
         );

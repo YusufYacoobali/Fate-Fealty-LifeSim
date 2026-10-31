@@ -52,6 +52,7 @@ export function worldIntegrityIssues(state: GameState): string[] {
   }
   const court = state.world.court;
   if (court) {
+    if (court.crisis && [court.crisis.rulerId, court.crisis.leaderId, court.crisis.challengerId].some(id => !characters[id])) issues.push('orphaned court crisis');
     if (!characters[court.rulerId]) issues.push('missing recognised ruler');
     const occupants = Object.values(court.offices);
     if (new Set(occupants).size !== occupants.length || occupants.includes(court.rulerId)) issues.push('incompatible council offices');

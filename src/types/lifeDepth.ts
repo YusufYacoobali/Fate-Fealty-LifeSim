@@ -86,6 +86,8 @@ export interface RoyalClaim {
   disinherited: boolean;
 }
 export interface CourtState {
+  /** A critical reign cannot fall in an annual update until its ruler has answered. */
+  crisis?: { rulerId: string; leaderId: string; challengerId: string; openedYear: number; responseYear?: number };
   petition?: { applicantId: string; rulerId: string; office: CourtOffice; incumbentId?: string; rivalId?: string; year: number; resolved: boolean; outcome?: 'appointed' | 'rejected' | 'conditional' | 'withdrawn' | 'retained'; requiredStanding?: number };
   coalitions?: { leaderId: string; memberIds: string[]; claimantId?: string; strength: number; lastMoveYear: number; lastAudienceYear?: number }[];
 

@@ -1,3 +1,4 @@
+import { allianceUnavailable } from './courtAlliances';
 import type { CourtOffice, Effects, GameState, WorldCharacter } from '@/types/game';
 import type { CourtAction } from './courtEngine';
 import { POLITICAL_OFFICES } from '@/data/politicalOffices';
@@ -12,6 +13,7 @@ export function courtCandidatesFor(s: GameState, action: CourtAction): WorldChar
   if (!court) return [];
   return Object.values(s.world.characters).filter(c => {
     if (!c.alive || c.id === 'goose' || c.id === s.playerCharacterId) return false;
+    if (action === 'alliance') return allianceUnavailable(s, c.id) === null;
     if (action === 'justice') return c.legalState?.status === 'imprisoned';
     if (action === 'name_heir' || action === 'disinherit') return c.id !== court.rulerId && court.claims.some(q => q.characterId === c.id && !q.disinherited);
     if (action === 'appoint') return c.age >= 18 && c.id !== court.rulerId && !Object.values(court.offices).includes(c.id);
@@ -126,17 +128,29 @@ export function tickCourtOpposition(s: GameState): void {
     pushFeed(s,'COURT OPPOSITION','#a36a1f',text,'bad');
   }
 }
+/** A critical audience bypasses ordinary coalition strength and audience cooldowns. */
+export function oppositionAudienceCoalition(s: GameState) {
+  const c = s.world.court;
+  if (!c || c.rulerId !== s.playerCharacterId || !s.lifetimeUnlocked) return;
+  const crisis = c.crisis;
+  if (crisis?.rulerId === c.rulerId && crisis.responseYear === undefined) {
+    const q = c.coalitions?.find(q => q.leaderId === crisis.leaderId && s.world.characters[q.leaderId]?.alive);
+    if (q) return q;
+  }
+  return c.coalitions?.find(q => s.world.characters[q.leaderId]?.alive && q.leaderId !== c.rulerId && q.strength >= 40 && (q.lastAudienceYear ?? -10) + 5 <= s.world.currentYear);
+}
 export function dueCourtEvent(s: GameState): string | undefined {
   const c = s.world.court; if (!c) return;
   if (c.petition && !c.petition.resolved && c.petition.applicantId === s.playerCharacterId) return 'court_office_contest';
-  if (c.rulerId === s.playerCharacterId && s.lifetimeUnlocked && c.coalitions?.some(q => q.strength >= 40 && (q.lastAudienceYear ?? -10) + 5 <= s.world.currentYear)) return 'court_opposition_audience';
+  if (oppositionAudienceCoalition(s)) return 'court_opposition_audience';
 }
 export function resolveCourtOpposition(s: GameState, choice: NonNullable<Effects['courtOpposition']>): void {
   const c = s.world.court;
   if (!c || c.rulerId !== s.playerCharacterId || !s.lifetimeUnlocked) return;
-  const q = c.coalitions?.find(q => q.strength >= 40 && (q.lastAudienceYear ?? -10) + 5 <= s.world.currentYear);
+  const q = oppositionAudienceCoalition(s);
   if (!q || (choice === 'negotiate' && c.treasury < 15)) return;
   q.lastAudienceYear = s.world.currentYear;
+  if (c.crisis?.rulerId === c.rulerId && c.crisis.leaderId === q.leaderId && c.crisis.responseYear === undefined) c.crisis.responseYear = s.world.currentYear;
   if (choice === 'negotiate') { c.treasury -= 15; q.strength = clamp(q.strength - 20); c.legitimacy = clamp(c.legitimacy + 3); applyRelationshipShift(s,q.leaderId,{}, { trust: 8 }); }
   if (choice === 'hear') { q.strength = clamp(q.strength - 8); c.legitimacy = clamp(c.legitimacy + 2); applyRelationshipShift(s,q.leaderId,{}, { respect: 5 }); }
   if (choice === 'assert') { q.strength = clamp(q.strength + 12); c.legitimacy = clamp(c.legitimacy - 6); s.world.conditions.publicOrder = clamp(s.world.conditions.publicOrder - 8); }

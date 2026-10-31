@@ -1,4 +1,5 @@
 import { createLife, cloneState, syncPlayerToWorld } from '@/engine/gameState';
+import { resolveCourtOpposition, dueCourtEvent } from '@/engine/courtPolitics';
 import { gameReducer } from '@/state/gameReducer';
 import { courtAvailability, reconcileCourt, tickCourt, applyCourtScandal } from '@/engine/courtEngine';
 import { recogniseRuler, addRoyalClaim, settleRoyalSuccession } from '@/engine/royalSuccessionEngine';
@@ -103,6 +104,11 @@ describe('persistent royal court', () => {
   it('can depose an unpopular ruler and preserve an exiled aftermath', () => {
     const s = crown(), court = s.world.court!;
     court.legitimacy = 0; s.world.conditions.publicOrder = 0; s.world.currentYear++;
+    runWithWorldRng(s.world, () => tickCourt(s));
+    expect(court.rulerId).toBe(s.playerCharacterId);
+    expect(dueCourtEvent(s)).toBe('court_opposition_audience');
+    resolveCourtOpposition(s, 'assert');
+    s.world.currentYear++;
     runWithWorldRng(s.world, () => tickCourt(s));
     expect(court.rulerId).not.toBe(s.playerCharacterId);
     expect(s.rankIdx).toBe(3);

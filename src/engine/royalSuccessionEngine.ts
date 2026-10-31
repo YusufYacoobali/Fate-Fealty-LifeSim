@@ -32,6 +32,7 @@ export function recogniseRuler(state: GameState, characterId: string, reason: st
     former.socialStatus.titles = [...new Set([...former.socialStatus.titles.filter(t => t !== 'Monarch'), 'Former ruler'])];
     if (former.id === state.playerCharacterId && !state.dead) state.rankIdx = 3;
   }
+  if (court.rulerId !== ruler.id) delete court.crisis;
   court.rulerId = ruler.id;
   ruler.rankIdx = 5;
   ruler.socialStatus ??= legacyStatus(5);

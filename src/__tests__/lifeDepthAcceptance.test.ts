@@ -125,6 +125,10 @@ describe('specified life-depth acceptance scenarios', () => {
     expect(s.world.factions.commons.playerStanding).toBeLessThan(0);
     s.world.court!.legitimacy = 0; s.world.conditions.publicOrder = 0; s.world.currentYear++;
     runWithWorldRng(s.world, () => tickCourt(s));
+    expect(s.world.court!.rulerId).toBe(s.playerCharacterId);
+    s.pendingEvent = { eventId: 'court_opposition_audience' }; s = resolve(s,2);
+    s.world.currentYear++;
+    runWithWorldRng(s.world, () => tickCourt(s));
     expect(s.world.court!.rulerId).not.toBe(s.playerCharacterId);
     expect(s.world.characters[s.playerCharacterId].legalState!.status).toBe('exiled');
     expect(s.dead).toBe(false);

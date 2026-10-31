@@ -160,7 +160,10 @@ describe('violence', () => {
 
   it('allows killing close blood while keeping ordinary violence restricted', () => {
     const s = makeState({ age: 30 });
-    const actions = contextualActions(s, s.kin.find((kin) => kin.id === 'mother')!);
+    // Birth circumstances may include a deceased parent; this case needs a living target.
+    const mother = s.kin.find((kin) => kin.id === 'mother')!;
+    mother.alive = s.world.characters.mother.alive = true;
+    const actions = contextualActions(s, mother);
     expect(actions).not.toContain('assault');
     expect(actions).toContain('murder');
     expect(actions).not.toContain('duel');

@@ -87,3 +87,131 @@ test('councillors react to the advice given before a successful decree, not its 
   expect(s.world.conditions.warThreat).toBeLessThan(40);
   expect(s.world.court!.coalitions ?? []).toEqual([]);
 });
+
+test('alliances require a new, distinct, documented household and charge only a successful agreement', () => {
+  let s = applicant(81);
+  const p = s.world.characters[s.playerCharacterId];
+  const { courtCandidatesFor } = require('@/engine/courtPolitics');
+  const { performCourtAction } = require('@/engine/courtEngine');
+  const own = s.world.families[p.birthFamilyId!];
+  const target = Object.values(s.world.characters).find(c => c.alive && c.age >= 18 && c.birthFamilyId && c.birthFamilyId !== own.id && s.world.families[c.birthFamilyId])!;
+  const other = s.world.families[target.birthFamilyId!];
+  own.allyFamilyIds = []; other.allyFamilyIds = [];
+  const invalid = (reason: RegExp) => {
+    const before = JSON.stringify(s);
+    expect(courtAvailability(s,'alliance',target.id)).toMatch(reason);
+    expect(courtCandidatesFor(s,'alliance').some((c: { id: string }) => c.id === target.id)).toBe(false);
+    expect(JSON.stringify(performCourtAction(s,'alliance',target.id))).toBe(before);
+    expect(JSON.stringify(gameReducer(s,{ type: 'COURT', action: 'alliance', targetId: target.id }))).toBe(before);
+  };
+  const familyId = target.birthFamilyId;
+  target.birthFamilyId = own.id; invalid(/own family/);
+  target.birthFamilyId = undefined; invalid(/recognised family/);
+  target.birthFamilyId = familyId; target.age = 17; invalid(/adult/); target.age = 30;
+  own.allyFamilyIds = [other.id]; invalid(/already allied/);
+  own.allyFamilyIds = []; other.allyFamilyIds = [own.id]; invalid(/already allied/);
+  other.allyFamilyIds = [];
+  const influence = p.factionInfluence!, used = s.actionClock.used;
+  expect(courtCandidatesFor(s,'alliance').some((c: { id: string }) => c.id === target.id)).toBe(true);
+  s = gameReducer(s,{ type: 'COURT', action: 'alliance', targetId: target.id });
+  expect(s.world.characters[s.playerCharacterId].factionInfluence).toBe(influence + 6);
+  expect(s.world.families[own.id].allyFamilyIds).toEqual([other.id]);
+  expect(s.world.families[other.id].allyFamilyIds).toEqual([own.id]);
+  expect(s.actionClock.used).toBe(used + 1);
+  s.world.currentYear++; s.actionClock.used = 0;
+  invalid(/already allied/);
+});
+
+function crisisMonarch(seed = 82) {
+  const s = monarch(seed), c = s.world.court!;
+  // Keep annual councillor rolls out of the crisis response contract.
+  for (const id of Object.values(c.offices)) {
+    s.world.characters[id!].personalityTraits = []; s.world.characters[id!].stats.wits = 50;
+  }
+  c.legitimacy = 0; s.world.conditions.publicOrder = 0; s.world.currentYear++;
+  runWithWorldRng(s.world,() => tickCourt(s));
+  return s;
+}
+test('critical annual updates preserve the ruler until an actual saved opposition response', () => {
+  let s = crisisMonarch();
+  expect(s.world.court!.rulerId).toBe(s.playerCharacterId);
+  expect(s.world.court!.crisis?.responseYear).toBeUndefined();
+  const crisis = s.world.court!.crisis!;
+  const q = s.world.court!.coalitions!.find(q => q.leaderId === crisis.leaderId)!;
+  q.lastAudienceYear = s.world.currentYear; // Ordinary cooldown cannot hide a crisis.
+  expect(dueCourtEvent(s)).toBe('court_opposition_audience');
+  const { directYear } = require('@/engine/director');
+  expect(directYear(s).event?.id).toBe('court_opposition_audience');
+  expect(crisis.responseYear).toBeUndefined(); // Scheduling is not a response.
+  s.pendingEvent = { eventId: 'court_opposition_audience' };
+  syncPlayerToWorld(s);
+  const rng = s.world.rngState;
+  s = normalizeGameState(JSON.parse(JSON.stringify(s)));
+  expect(s.world.rngState).toEqual(rng); expect(s.world.court!.crisis).toEqual(crisis);
+  s.world.currentYear++;
+  runWithWorldRng(s.world,() => tickCourt(s));
+  expect(s.world.court!.rulerId).toBe(s.playerCharacterId);
+  expect(s.world.court!.crisis?.responseYear).toBeUndefined();
+  s = choose(s,2);
+  expect(s.world.court!.crisis?.responseYear).toBe(s.world.currentYear);
+  syncPlayerToWorld(s); s = normalizeGameState(JSON.parse(JSON.stringify(s)));
+  expect(s.world.court!.crisis?.responseYear).toBe(s.world.currentYear);
+  expect(s.world.court!.rulerId).toBe(s.playerCharacterId);
+  runWithWorldRng(s.world,() => tickCourt(s));
+  expect(s.world.court!.rulerId).toBe(s.playerCharacterId);
+  s.world.currentYear++;
+  runWithWorldRng(s.world,() => tickCourt(s));
+  expect(s.world.court!.rulerId).not.toBe(s.playerCharacterId);
+  expect(s.world.characters[s.playerCharacterId].legalState!.status).toBe('exiled');
+  expect(s.world.court!.crisis).toBeUndefined();
+});
+test('a crisis settlement can prevent deposition and recovery clears the answered crisis', () => {
+  let s = crisisMonarch(83);
+  s.pendingEvent = { eventId: 'court_opposition_audience' }; s = choose(s,0);
+  expect(s.world.court!.coalitions![0].strength).toBe(30);
+  s.world.currentYear++; runWithWorldRng(s.world,() => tickCourt(s));
+  expect(s.world.court!.rulerId).toBe(s.playerCharacterId); expect(s.world.court!.crisis).toBeUndefined();
+  s = crisisMonarch(84);
+  s.pendingEvent = { eventId: 'court_opposition_audience' }; s = choose(s,2);
+  s.world.court!.legitimacy = 65;
+  s.world.currentYear++; runWithWorldRng(s.world,() => tickCourt(s));
+  expect(s.world.court!.rulerId).toBe(s.playerCharacterId); expect(s.world.court!.crisis).toBeUndefined();
+});
+test('an unaffordable settlement cannot count as answering; ordinary audiences do not pre-answer a later crisis', () => {
+  let s = monarch(85), c = s.world.court!;
+  addCourtOpposition(s, c.offices.chancellor!, 50);
+  s.pendingEvent = { eventId: 'court_opposition_audience' }; s = choose(s,1);
+  c = s.world.court!; c.legitimacy = 0; s.world.conditions.publicOrder = 0;
+  s.world.currentYear++; runWithWorldRng(s.world,() => tickCourt(s));
+  expect(c.rulerId).toBe(s.playerCharacterId); expect(dueCourtEvent(s)).toBe('court_opposition_audience');
+  c.treasury = 0;
+  s.pendingEvent = { eventId: 'court_opposition_audience' };
+  const result = choose(s,0);
+  expect(result.world.court).toEqual(c);
+  expect(result.pendingEvent?.eventId).toBe('court_opposition_audience');
+  expect(result.world.court!.crisis?.responseYear).toBeUndefined();
+});
+test('a change of monarch invalidates a previous ruler’s crisis and NPC coups still occur', () => {
+  const s = crisisMonarch(86), c = s.world.court!;
+  const { addRoyalClaim, recogniseRuler } = require('@/engine/royalSuccessionEngine');
+  const next = c.crisis!.challengerId;
+  addRoyalClaim(s,next,c.rulerId,'takeover',60); recogniseRuler(s,next,'a recorded abdication');
+  expect(c.crisis).toBeUndefined();
+  c.legitimacy = 0; s.world.conditions.publicOrder = 0;
+  s.world.currentYear++; runWithWorldRng(s.world,() => tickCourt(s));
+  expect(c.rulerId).not.toBe(next); expect(c.crisis).toBeUndefined();
+});
+
+
+test('a trial can delay the crisis audience without allowing an unanswered annual deposition', () => {
+  const s = crisisMonarch(87), legal = s.world.characters[s.playerCharacterId].legalState!;
+  const { directYear } = require('@/engine/director');
+  legal.suspicion = 50;
+  legal.charges.push({ id: 'crisis_trial', offence: 'fraud', severity: 30, evidence: 40, victimIds: [], witnessIds: [], year: s.world.currentYear, resolved: false });
+  expect(directYear(s).event?.id).toBe('system_legal_trial');
+  s.world.currentYear++; runWithWorldRng(s.world,() => tickCourt(s));
+  expect(s.world.court!.rulerId).toBe(s.playerCharacterId);
+  expect(s.world.court!.crisis?.responseYear).toBeUndefined();
+  legal.charges[legal.charges.length - 1].resolved = true;
+  expect(directYear(s).event?.id).toBe('court_opposition_audience');
+});

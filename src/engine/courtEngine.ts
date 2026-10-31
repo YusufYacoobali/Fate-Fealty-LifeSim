@@ -1,3 +1,4 @@
+import { allianceUnavailable } from './courtAlliances';
 import { beginOfficePetition, councilAdvice, reactToDecree, tickCourtOpposition, addCourtOpposition } from './courtPolitics';
 import type { CourtOffice, Effects, GameState, WorldCharacter } from '@/types/game';
 import { POLITICAL_OFFICES } from '@/data/politicalOffices';
@@ -67,6 +68,7 @@ export function courtAvailability(state: GameState, action: CourtAction, targetI
   const ruler = court.rulerId === p.id;
   if (!PUBLIC_ACTIONS.includes(action) && (!ruler || !state.lifetimeUnlocked || court.regentId)) return 'Requires an entitled adult ruler';
   if (['appoint','dismiss','petition'].includes(action) && (!office || !POLITICAL_OFFICES.some(o => o.id === office))) return 'Choose an office';
+  if (action === 'alliance') { const reason = allianceUnavailable(state, targetId); if (reason) return reason; }
   if (action === 'patron' && (target!.age < 18 || (target!.rankIdx < 3 && !Object.values(court.offices).includes(target!.id)))) return 'Choose an adult noble or council patron';
   if (action === 'appoint' && (target!.age < 18 || target!.id === court.rulerId || Object.values(court.offices).includes(target!.id))) return 'An adult may hold one council office';
   if (action === 'dismiss' && !court.offices[office!]) return 'That office is vacant';
@@ -116,7 +118,7 @@ export function performCourtAction(state: GameState, action: CourtAction, target
     }
     case 'alliance': {
       const family = state.world.families[p.birthFamilyId ?? ''], other = state.world.families[target!.birthFamilyId ?? ''];
-      if (family && other && family.id !== other.id) { family.allyFamilyIds = [...new Set([...family.allyFamilyIds, other.id])]; other.allyFamilyIds = [...new Set([...other.allyFamilyIds, family.id])]; }
+      family.allyFamilyIds.push(other.id); other.allyFamilyIds.push(family.id);
       p.factionInfluence = clamp((p.factionInfluence ?? 0) + 6); text = `${target!.name}'s household records an alliance with yours. Its obligations will outlive the present courtiers.`; break;
     }
     case 'advise': p.factionInfluence = clamp((p.factionInfluence ?? 0) + 5); world.prosperity = clamp(world.prosperity + 2); state.world.factions.crown.playerStanding = clamp(state.world.factions.crown.playerStanding + 3, -100, 100); text = 'Your correction removes a duplicate levy from the decree. The realm gains a little prosperity and you gain a little influence.'; break;
@@ -168,6 +170,13 @@ export function reconcileCourt(state: GameState): void {
   refreshRoyalClaims(state);
   settleRoyalSuccession(state);
   const ruler = state.world.characters[court.rulerId];
+  const crisis = court.crisis;
+  if (crisis && (
+    crisis.rulerId !== court.rulerId || court.rulerId !== state.playerCharacterId || !state.lifetimeUnlocked ||
+    !state.world.characters[crisis.leaderId]?.alive || !state.world.characters[crisis.challengerId]?.alive ||
+    court.claims.some(q => q.characterId === crisis.challengerId && q.disinherited) ||
+    !court.coalitions?.some(q => q.leaderId === crisis.leaderId)
+  )) delete court.crisis;
   if (ruler) {
     ruler.socialStatus ??= legacyStatus(5);
     ruler.socialStatus.estate = 'royal';
@@ -203,12 +212,34 @@ export function tickCourt(state: GameState): void {
     else if (traits.includes('loyal') && councillor.stats.wits >= 60) court.legitimacy = clamp(court.legitimacy + 1);
   }
   tickCourtOpposition(state);
-  if (court.legitimacy < 15 && state.world.conditions.publicOrder < 25) {
+  const critical = court.legitimacy < 15 && state.world.conditions.publicOrder < 25;
+  if (!critical && court.crisis?.responseYear !== undefined) delete court.crisis;
+  if (critical) {
     const former = state.world.characters[court.rulerId];
     const challenger = royalCandidates(state)[0] ?? Object.values(court.offices).map(id => state.world.characters[id!]).find(c => c?.alive && c.id !== former.id && c.id !== state.playerCharacterId);
-    if (challenger) {
-      addRoyalClaim(state, challenger.id, former.id, 'takeover', 60);
-      recogniseRuler(state, challenger.id, 'a rebellion backed by the disaffected council'); court.legitimacy = 42;
+    let canDepose = former.id !== state.playerCharacterId || !state.lifetimeUnlocked;
+    let successor = challenger;
+    if (!canDepose && challenger) {
+      if (!court.crisis) {
+        const leaderId = court.coalitions?.filter(q => state.world.characters[q.leaderId]?.alive && q.leaderId !== former.id).sort((a,b) => b.strength - a.strength)[0]?.leaderId ?? challenger.id;
+        addCourtOpposition(state, leaderId, 0);
+        const coalition = court.coalitions!.find(q => q.leaderId === leaderId)!;
+        coalition.strength = Math.max(50, coalition.strength);
+        coalition.claimantId = challenger.id;
+        court.crisis = { rulerId: former.id, leaderId, challengerId: challenger.id, openedYear: state.world.currentYear };
+        const detail = `${state.world.characters[leaderId].name}'s coalition threatens to depose you. Answer the households before the crown's future is decided.`;
+        court.records.push({ year: state.world.currentYear, kind: 'crisis_opened', actorId: leaderId, targetId: former.id, detail });
+        pushFeed(state, 'COURT CRISIS', '#a36a1f', detail, 'bad');
+      } else if (court.crisis.responseYear !== undefined && court.crisis.responseYear < state.world.currentYear) {
+        const coalition = court.coalitions!.find(q => q.leaderId === court.crisis!.leaderId)!;
+        canDepose = coalition.strength >= 40;
+        successor = state.world.characters[court.crisis.challengerId];
+        if (!canDepose) delete court.crisis;
+      }
+    }
+    if (successor && canDepose && addRoyalClaim(state, successor.id, former.id, 'takeover', 60) && recogniseRuler(state, successor.id, 'a rebellion backed by the disaffected council')) {
+      court.legitimacy = 42;
+      delete court.crisis;
       if (former.legalState) { former.legalState.status = 'exiled'; former.legalState.suspicion = 0; }
       if (former.id === state.playerCharacterId && !state.tags.includes('exiled')) state.tags.push('exiled');
     }

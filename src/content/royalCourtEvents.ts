@@ -1,4 +1,4 @@
-import { petitionProspects, petitionPatronEligible } from '@/engine/courtPolitics';
+import { petitionProspects, petitionPatronEligible, oppositionAudienceCoalition } from '@/engine/courtPolitics';
 import type { GameEvent } from '@/types/game';
 export const ROYAL_COURT_EVENTS: GameEvent[] = [
   { id: 'royal_creative_accounts', title: 'THE COUNCILLOR’S CREATIVE ACCOUNTS', category: 'noble', domain: 'politics', premium: true, arcNodeOnly: true, actorRoles: {},
@@ -23,7 +23,7 @@ ROYAL_COURT_EVENTS.push(
     ],
   },
   { id: 'court_opposition_audience', title: 'THE OPPOSING HOUSEHOLDS', category: 'noble', domain: 'politics', premium: true, arcNodeOnly: true, actorRoles: {},
-    text: s => { const q = s.world.court?.coalitions?.find(q => q.strength >= 40 && (q.lastAudienceYear ?? -10) + 5 <= s.world.currentYear); return `${s.world.characters[q?.leaderId ?? '']?.name ?? 'An opposing household'} brings a coalition before the council${q?.claimantId ? ` backing ${s.world.characters[q.claimantId]?.name}'s claim` : ''}. Their strength is ${q?.strength ?? 0}. They have withheld cooperation and demand an answer.`; },
+    text: s => { const q = oppositionAudienceCoalition(s); return `${s.world.characters[q?.leaderId ?? '']?.name ?? 'An opposing household'} brings a coalition before the council${q?.claimantId ? ` backing ${s.world.characters[q.claimantId]?.name}'s claim` : ''}. Their strength is ${q?.strength ?? 0}. They have withheld cooperation and demand an answer.${s.world.court?.crisis && s.world.court.crisis.responseYear === undefined && s.world.court?.crisis?.leaderId === q?.leaderId ? ' Your reign is in crisis. After your response, you may lose the crown next year if legitimacy stays below 15, public order below 25 and coalition strength at least 40. A settlement reduces strength by 20; a hearing by 8; dismissal adds 12.' : ''}`; },
     choices: [
       { label: 'Fund a negotiated settlement (15 treasury)', requires: { custom: s => (s.world.court?.treasury ?? 0) >= 15 }, outcome: { text: 'A recorded settlement reduces the coalition’s strength. Rival claims remain in the family record.', effects: { courtOpposition: 'negotiate' }, tone: 'good' } },
       { label: 'Hear the households’ grievances', outcome: { text: 'The hearing earns some respect and eases opposition while leaving the dispute open.', effects: { courtOpposition: 'hear' }, tone: 'plain' } },

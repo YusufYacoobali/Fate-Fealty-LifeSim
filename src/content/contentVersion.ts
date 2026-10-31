@@ -1,3 +1,4 @@
+import { legacyNarrativeTheme } from './narrativeThemes';
 import { WorldState } from '@/types/game';
 import { QUALITY_CHAIN_SPECS } from './qualityAmbientEvents';
 
@@ -45,7 +46,7 @@ function legacyChainTitleMap(): Record<string, string> {
 }
 
 /** Increment whenever persisted story/event identifiers or semantics change. */
-export const CURRENT_CONTENT_VERSION = 7;
+export const CURRENT_CONTENT_VERSION = 8;
 
 export interface ContentAliases {
   templates: Record<string, string>;
@@ -74,6 +75,14 @@ export type ContentMigration = (world: WorldState) => ContentMigrationResult;
 
 /** Sequential migrations are registered at the version being migrated FROM. */
 export const CONTENT_MIGRATIONS: Record<number, ContentMigration> = {
+  7: world => {
+    const repetitionLedger = { ...world.repetitionLedger };
+    for (const [id,record] of Object.entries(world.contentLedger ?? {})) {
+      const theme = legacyNarrativeTheme(id);
+      if (theme) repetitionLedger[theme] = Math.max(repetitionLedger[theme] ?? -Infinity, record.lastYear);
+    }
+    return { world: { ...world, repetitionLedger, history: world.history.map(entry => ({ ...entry, causes: entry.causes.map(cause => cause === 'MAUD TAKES ILL' ? 'A MOTHER TAKES ILL' : cause) })) }, notices: [] };
+  },
   6: (world) => ({ world, notices: [] }),
   // Character-level depth fields are migrated by normalizeGameState.
   5: (world) => ({ world, notices: [] }),

@@ -17,30 +17,47 @@ export const KNIGHT_EVENTS: GameEvent[] = [
     ],
   },
   {
-    id: 'knight_duel',
-    category: 'knight',
-    title: 'A CHALLENGE OF HONOUR',
-    text: 'Sir Roderick, the same man and the same apple, slaps you with a glove. "Defend your honour, peasant-knight, or be branded a coward."',
-    ageMin: 17,
-    ranks: ['Squire', 'Knight'],
-    requires: { custom: (s) => (s.kin.find((k) => k.id === 'roderick')?.rel ?? 100) < 40 },
-    weight: 2,
-    choices: [
-      { label: 'Accept the duel', successChance: (s) => 0.35 + s.stats.health / 300 + s.paths.martial / 200, success: { text: 'Steel rang on steel. You disarmed Roderick and held your blade to his smug throat. The crowd is ecstatic.', effects: { charm: 14, health: -10, path: { martial: 4 }, rankProgress: 20, reputation: 10, kinRel: { id: 'roderick', delta: -20 }, memory: { tag: 'beat_roderick', weight: 4 } }, tone: 'good' }, failure: { text: 'Roderick was quicker. You took a deep cut and lost the duel, and you did not yield. The watching squires noticed which of those they were meant to remember.', effects: { health: -22, charm: 4, reputation: 2 }, tone: 'bad' } },
-      { label: 'Refuse. It is beneath you', outcome: { text: 'You called the challenge childish and walked away. Some respect the restraint. Roderick crows victory.', effects: { charm: -6, reputation: -4, kinRel: { id: 'roderick', delta: -5 } }, tone: 'bad' } },
-      { label: 'Propose a contest of wits instead', requires: { statAtLeast: { wits: 55 } }, outcome: { text: 'You out-argued him so thoroughly the crowd laughed Roderick out of the square. A bloodless rout.', effects: { wits: 4, charm: 8, reputation: 6, kinRel: { id: 'roderick', delta: -12 } }, tone: 'good' } },
-    ],
-  },
+id: 'knight_duel',
+actorRoles:{other:{characterId:'roderick',alive:true,excludePlayer:true,minAge:18,missingActor:'clear_event'}},
+category: 'knight',
+title: 'A CHALLENGE OF HONOUR',
+text: "Sir Roderick produces a glove for a challenge of honour. The careful preparation suggests he has been finding the original quarrel insufficiently productive.",
+ageMin: 17,
+ranks: ['Squire', 'Knight'],
+requires: {custom:s=>!!s.world.characters.roderick?.alive&&(s.kin.find(k=>k.id==='roderick')?.rel??100)<40},
+weight: 2,
+choices: [{
+label: "Accept the duel (risk a serious cut)",
+successChance: (s) => 0.35 + s.stats.health / 300 + s.paths.martial / 200,
+success: {
+text: "You disarm Roderick and stop with the weapon at his throat. He remains alive, humiliated and much less likely to call the next quarrel accidental.",
+effects: { charm: 14, health: -10, path: { martial: 4 }, rankProgress: 20, reputation: 10, kinRel: { id: 'roderick', delta: -20 }, memory: { tag: 'beat_roderick', weight: 4 } },
+tone: 'good'
+},
+failure: {
+text: "Roderick cuts you badly. The injury is real; your refusal to pretend it was a victory earns a small measure of respect.",
+effects: {
+health: -22,
+charm: 4,
+reputation: 2,
+healthCondition: {"conditionId":"deep_cut","severity":30}
+},
+tone: 'bad'
+}
+},
+{ label: 'Refuse. It is beneath you', outcome: { text: 'You called the challenge childish and walked away. Some respect the restraint. Roderick crows victory.', effects: { charm: -6, reputation: -4, kinRel: { id: 'roderick', delta: -5 } }, tone: 'bad' } },
+{ label: 'Propose a contest of wits instead', requires: { statAtLeast: { wits: 55 } }, outcome: { text: 'You out-argued him so thoroughly the crowd laughed Roderick out of the square. A bloodless rout.', effects: { wits: 4, charm: 8, reputation: 6, kinRel: { id: 'roderick', delta: -12 } }, tone: 'good' } }]
+},
   {
-    id: 'knight_oath',
-    category: 'knight',
-    title: 'THE LORD’S SUMMONS',
-    text: 'Your liege calls his knights to muster. War with the next valley looms over a dispute about, inevitably, a field of turnips.',
-    ageMin: 18,
-    ranks: ['Knight', 'Noble'],
-    choices: [
+id: 'knight_oath',
+category: 'knight',
+title: 'THE LORD’S SUMMONS',
+text: "Your liege calls a muster over a disputed river crossing. The written claim is dry; the crossing, you are warned, will not be.",
+ageMin: 18,
+ranks: ['Knight', 'Noble'],
+choices: [
       { label: 'Ride to war for your liege', outcome: { text: 'You don your armour and ride out. The road to glory is muddy and smells of fear.', effects: { addTags: ['at_war'], path: { martial: 3 }, faith: 2 }, tone: 'plain', next: 'arc_war_1', nextWhen: 'now' } },
       { label: 'Send coin in your stead (20g)', costGold: 20, outcome: { text: 'You paid scutage to avoid the muster. Pragmatic, if not glorious. Some call it cowardice.', effects: { gold: -20, reputation: -5, charm: -3 }, tone: 'plain' } },
-    ],
-  },
+    ]
+},
 ];

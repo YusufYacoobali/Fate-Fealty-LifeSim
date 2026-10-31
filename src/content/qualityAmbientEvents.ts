@@ -86,6 +86,8 @@ function choiceFor(choice: BeatChoice): GameEvent['choices'][number] {
   };
 }
 
+const URGENT_CHAINS = new Set(['millers_fever','wounded_midwife','winter_roof','granary_rats','neighbours_fire','stolen_chalice','prophetic_child']);
+
 function eventFor(spec: ChainSpec, beat: Beat, stage: number, previous?: Beat): GameEvent {
   return defineEvent({
     id: `quality_${spec.id}_${stage + 1}`,
@@ -106,7 +108,7 @@ function eventFor(spec: ChainSpec, beat: Beat, stage: number, previous?: Beat): 
     // Chain beats are no longer scored above hand-written one-shot events. The
     // registry does not curate on this any more; it survives as a hint only.
     editorialScore: 4,
-    chain: { id: spec.id, index: stage, total: spec.beats.length },
+    chain: { id: spec.id, index: stage, total: spec.beats.length, minGapYears: URGENT_CHAINS.has(spec.id) ? 1 : 3, maxGapYears: URGENT_CHAINS.has(spec.id) ? 2 : 6 },
     choices: beat.choices.map(choiceFor),
   });
 }

@@ -6,32 +6,80 @@ import { GameEvent } from '@/types/game';
  */
 export const FAMILY_EVENTS: GameEvent[] = [
   {
-    id: 'family_mother_ill',
-    category: 'family',
-    title: 'MAUD TAKES ILL',
-    text: 'Your mother has caught a wasting fever. The herb-wife says the cure is dear, but possible.',
-    ageMin: 16,
-    requires: { custom: (s) => !!s.kin.find((k) => k.id === 'mother' && k.alive) },
-    once: true,
-    choices: [
-      { label: 'Spend all you can on her cure (15g)', costGold: 15, successChance: 0.7, success: { text: 'The cure worked. Your mother recovers, scolds you for spending so much, and bakes you a fortifying loaf.', effects: { gold: -15, faith: 6, kinRel: { id: 'mother', delta: 25 }, memory: { tag: 'devoted_child', weight: 3 } }, tone: 'good' }, failure: { text: 'You spared no expense, but the fever took her anyway. You hold her hand at the end.', effects: { gold: -15, health: -6, faith: 4, killKin: 'mother', memory: { tag: 'mother_died', weight: 4 } }, tone: 'bad' } },
-      { label: 'Pray and hope (free)', successChance: 0.4, success: { text: 'Whether by prayer or luck, the fever broke. Your mother lives, and credits the Almighty entirely.', effects: { faith: 8, kinRel: { id: 'mother', delta: 8 } }, tone: 'good' }, failure: { text: 'Prayer was not enough. Your mother passed in the night. The cottage feels impossibly empty.', effects: { faith: -4, health: -4, killKin: 'mother', memory: { tag: 'mother_died', weight: 4 } }, tone: 'bad' } },
-    ],
-  },
+id: 'family_mother_ill',
+category: 'family',
+title: "A MOTHER TAKES ILL",
+text: "{{mother}} is seriously ill. The herb-wife offers a costly treatment without a promise. Your mother objects to the expense before allowing herself to ask whether it might work.",
+ageMin: 16,
+requires: {custom:s=>(s.world.characters[s.playerCharacterId].parentIds??[]).some(id=>s.world.characters[id]?.alive&&s.world.characters[id].gender==='woman')},
+once: true,
+choices: [{
+label: "Fund the uncertain treatment (15g; she may die)",
+costGold: 15,
+successChance: 0.7,
+success: {
+text: "The treatment succeeds. {{mother}} recovers enough to complain about the fee, a sound you had been afraid of never hearing again.",
+effects: {
+gold: -15,
+faith: 6,
+kinRel: { id: 'mother', delta: 25 },
+memory: { tag: 'devoted_child', weight: 3 },
+removeHealthCondition: {"conditionId":"lung_fever","targetId":"mother"}
+},
+tone: 'good'
+},
+failure: {
+text: "The treatment cannot save {{mother}}. You stay beside the bed and hold a hand no amount of spending can keep warm.",
+effects: {
+gold: -15,
+health: -6,
+faith: 4,
+killKin: "mother",
+memory: { tag: 'mother_died', weight: 4 }
+},
+tone: 'bad'
+}
+},
+{
+label: "Offer care and prayer without the treatment (she may die)",
+successChance: 0.4,
+success: {
+text: "The fever breaks. {{mother}} credits your company before discussing anybody’s theology.",
+effects: {
+faith: 8,
+kinRel: { id: 'mother', delta: 8 },
+removeHealthCondition: {"conditionId":"lung_fever","targetId":"mother"}
+},
+tone: 'good'
+},
+failure: {
+text: "{{mother}} dies despite the care you can give. You do not mistake being unable to pay for having been unwilling to love.",
+effects: {
+faith: -4,
+health: -4,
+killKin: "mother",
+memory: { tag: 'mother_died', weight: 4 }
+},
+tone: 'bad'
+}
+}],
+actorRoles: { mother: { relation:'parent', gender:'woman', minAge:18, alive:true, excludePlayer:true, missingActor:'clear_event' } },
+stakes: "major"
+},
   {
-    id: 'family_newborn',
-    category: 'family',
-    title: 'A CHILD IS BORN',
-    text: 'Your spouse brings happy news: an heir! A small, loud, turnip-shaped heir.',
-    ageMin: 18,
-    ageMax: 45,
-    requires: { hasTags: ['married'] },
-    weight: 2,
-    choices: [
+id: 'family_newborn',
+category: 'family',
+title: 'A CHILD IS BORN',
+text: "A child has arrived in your household. The smallest person in the room has reorganised every task without speaking a comprehensible word.",
+ageMin: 18,
+ageMax: 45,
+requires: {hasTags:['married'],custom:s=>!!s.world.characters[s.world.characters[s.playerCharacterId].spouseId??'']?.alive},
+weight: 2,
+choices: [
       { label: 'Welcome the child with joy', outcome: { text: 'A healthy babe joins your household and your line continues. You weep, then panic about feeding it.', effects: { health: 2, charm: 2, faith: 4, addTags: ['has_heir'], addKin: { kind: 'child', isHeir: true, role: 'Thine Heir' }, memory: { tag: 'became_parent', weight: 3 } }, tone: 'good' } },
       { label: 'Welcome the child quietly', outcome: { text: 'You keep the first days close to the household, making promises before making announcements.', effects: { faith: 2, addTags: ['has_heir'], addKin: { kind: 'child', isHeir: true, role: 'Thine Heir' }, memory: { tag: 'private_welcome', weight: 3 } }, tone: 'plain' } },
-    ],
-  },
+    ]
+},
   {
     id: 'family_roderick_truce',
     category: 'family',

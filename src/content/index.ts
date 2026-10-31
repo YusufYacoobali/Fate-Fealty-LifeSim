@@ -1,3 +1,5 @@
+import { legacyNarrativeTheme } from './narrativeThemes';
+import { NARRATIVE_FAMILY_EVENTS } from './narrativeFamilyEvents';
 import { ROYAL_COURT_EVENTS } from './royalCourtEvents';
 import { CAREER_SPECIALIZATION_EVENTS } from './careerSpecializationEvents';
 import { EDUCATION_EVENTS, ORIGIN_CHILDHOOD_EVENTS } from './educationEvents';
@@ -28,6 +30,7 @@ import { ACTIVITY_CONSEQUENCE_EVENTS } from './activityConsequenceEvents';
 import { LEGAL_SYSTEM_EVENTS } from '@/engine/legalEngine';
 
 const RAW_EVENTS: GameEvent[] = [
+  ...NARRATIVE_FAMILY_EVENTS,
   ...ROYAL_COURT_EVENTS,
   ...CAREER_SPECIALIZATION_EVENTS,
   ...EDUCATION_EVENTS, ...ORIGIN_CHILDHOOD_EVENTS,
@@ -89,7 +92,7 @@ function normaliseEvent(event: GameEvent): GameEvent {
     domain,
     rarity: event.rarity ?? (event.premium ? 'rare' : 'common'),
     cooldownYears: event.cooldownYears ?? 15,
-    repetitionGroup: event.repetitionGroup ?? `${domain}:${event.arc ?? event.id}`,
+    repetitionGroup: event.repetitionGroup ?? legacyNarrativeTheme(event.id) ?? `${domain}:${event.arc ?? event.id}`,
     actorRoles,
     editorialScore: event.editorialScore ?? (event.once || event.arc ? 4 : 3),
     choices: event.choices.map((choice, index) => ({

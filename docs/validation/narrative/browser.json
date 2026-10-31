@@ -1,0 +1,396 @@
+{
+  "browser": "Chromium production export",
+  "results": [
+    {
+      "id": "life_living_corpse",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Joan",
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "testify",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_living_corpse",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Joan",
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "testify",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_living_corpse",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Joan",
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "testify",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_living_corpse",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Joan",
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "testify",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_three_grooms",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Hugh"
+      ],
+      "overflow": false,
+      "choice": "expose",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_three_grooms",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Hugh"
+      ],
+      "overflow": false,
+      "choice": "expose",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_three_grooms",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Hugh"
+      ],
+      "overflow": false,
+      "choice": "expose",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_three_grooms",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Hugh"
+      ],
+      "overflow": false,
+      "choice": "expose",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_falcon_supper",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "admit",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_falcon_supper",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "admit",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_falcon_supper",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "admit",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_falcon_supper",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "admit",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_branding_substitute",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Mab"
+      ],
+      "overflow": false,
+      "choice": "refuse",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_branding_substitute",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Mab"
+      ],
+      "overflow": false,
+      "choice": "refuse",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_branding_substitute",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Mab"
+      ],
+      "overflow": false,
+      "choice": "refuse",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_branding_substitute",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Mab"
+      ],
+      "overflow": false,
+      "choice": "refuse",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_crown_private_trial",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Hilda"
+      ],
+      "overflow": false,
+      "choice": "hear",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_crown_private_trial",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Hilda"
+      ],
+      "overflow": false,
+      "choice": "hear",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_crown_private_trial",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Hilda"
+      ],
+      "overflow": false,
+      "choice": "hear",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_crown_private_trial",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Hilda"
+      ],
+      "overflow": false,
+      "choice": "hear",
+      "reloadPreserved": true
+    },
+    {
+      "id": "peasant_quack_doctor",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Mab"
+      ],
+      "overflow": false,
+      "choice": "peasant_quack_doctor_choice_1",
+      "reloadPreserved": true
+    },
+    {
+      "id": "peasant_quack_doctor",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Mab"
+      ],
+      "overflow": false,
+      "choice": "peasant_quack_doctor_choice_1",
+      "reloadPreserved": true
+    },
+    {
+      "id": "peasant_quack_doctor",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Mab"
+      ],
+      "overflow": false,
+      "choice": "peasant_quack_doctor_choice_1",
+      "reloadPreserved": true
+    },
+    {
+      "id": "peasant_quack_doctor",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Mab"
+      ],
+      "overflow": false,
+      "choice": "peasant_quack_doctor_choice_1",
+      "reloadPreserved": true
+    },
+    {
+      "id": "echo_shadow_household",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "mediate",
+      "reloadPreserved": true
+    },
+    {
+      "id": "echo_shadow_household",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "mediate",
+      "reloadPreserved": true
+    },
+    {
+      "id": "echo_shadow_household",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "mediate",
+      "reloadPreserved": true
+    },
+    {
+      "id": "echo_shadow_household",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "mediate",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_living_corpse",
+      "width": 280,
+      "textEnlargement": 1.35,
+      "animated": false,
+      "actors": [
+        "Joan",
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "testify",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_three_grooms",
+      "width": 280,
+      "textEnlargement": 1.35,
+      "animated": false,
+      "actors": [
+        "Hugh"
+      ],
+      "overflow": false,
+      "choice": "expose",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_crown_private_trial",
+      "width": 280,
+      "textEnlargement": 1.35,
+      "animated": false,
+      "actors": [
+        "Hilda"
+      ],
+      "overflow": false,
+      "choice": "hear",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_living_corpse",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": true,
+      "actors": [
+        "Joan",
+        "Elswyth"
+      ],
+      "overflow": false,
+      "choice": "testify",
+      "reloadPreserved": true
+    }
+  ],
+  "errors": []
+}

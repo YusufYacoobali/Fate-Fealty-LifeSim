@@ -1,0 +1,1278 @@
+# Editorial life-history reading
+
+31 October 2026. Final controller version 2. Seven complete chronological narrative tracks, one per role, plus a baseline commoner for comparison. Routine work/skill/standing accounting and unrelated world-population notices are omitted here. Every original feed entry is retained in the linked raw reports. No player-choice or narrative-year entry has been omitted.
+
+[Before raw histories](before-lives.json) · [After raw histories](after-lives.json)
+
+## Before — commoner — seed 840007
+
+premium; died aged 52; Died of a winter chill and a tired heart.
+
+- **0 · YEAR 0 · BORN:** Rowena wraps you in sacking while Thomas rescues the winter seed from a goat. Your first possession is a spoon with a previous owner who still visits.
+- **0 · YEAR 0 · TRAIT:** 🌹 From the cradle you are Comely. Fair of face, if not of fortune.
+- **1 · AGE 1 · INFANCY:** Your first word was 'turnip'. Your mother wept with pride; Your father nodded as if this settled something.
+- **1 · AGE 1 · CHOICE:** Your guardian folds the dry blanket around you. The roof will require a less comfortable remedy.
+- **2 · AGE 2 · INFANCY:** Sir Quackbeard has appointed himself guardian of your cradle. Visitors are now inspected, and occasionally bitten.
+- **2 · AGE 2 · INFANCY:** A winter fever swept the cottage. Your mother sat up three long nights with you until it broke.
+- **3 · AGE 3 · INFANCY:** You took your first steps and immediately fell into a basket of turnips. The village applauded both events.
+- **3 · AGE 3 · MISHAP:** You slipped in the pig trough before half the village. They are still laughing.
+- **3 · AGE 3 · CHOICE:** A sibling is born anyway. You sulk magnificently, but the baby grips your finger and your cold heart thaws a little.
+- **4 · AGE 4 · SABBATH:** You wore your best shoes to chapel. The mud wore them better.
+- **4 · AGE 4 · CHOICE:** Your household gains a small voice in its nightly accounting. The cups remain easier to count than the debts.
+- **5 · AGE 5 · WEATHER:** The harvest was good! Bread for all. You ate seven loaves out of principle.
+- **5 · AGE 5 · CHOICE:** The missing timber leaves the common gate open. Leofric charges your household for its replacement.
+- **6 · AGE 6 · CHILDHOOD:** You spent the whole year making increasingly ambitious mud structures.
+- **6 · AGE 6 · PLAGUE:** A cough went round the village. You survived by holding your breath for a season.
+- **6 · AGE 6 · CHOICE:** Prophecy tastes earthy. The village gasps, then asks tomorrow's forecast.
+- **7 · AGE 7 · BLESSING:** You lit a candle at the chapel. You feel holier and slightly singed.
+- **7 · AGE 7 · WISDOM:** You watched a monk do sums and learned what a 'zero' is. Revolutionary.
+- **8 · AGE 8 · HARVEST:** A turnip grew as large as a helmet. The village called it a sign and then ate it.
+- **8 · AGE 8 · COURT:** Sir Quackbeard was mentioned in court records as "loud but persuasive."
+- **8 · AGE 8 · CHOICE:** You named the rat Geoffrey. Geoffrey now eats your grain too. Worth it.
+- **9 · AGE 9 · MARKET:** Someone sold hats for goats. No one agreed whether the hats were for goats or from goats.
+- **9 · AGE 9 · WEATHER:** Your father's knee predicted rain. It also predicted stew, but only one came true.
+- **9 · AGE 9 · CHOICE:** You offer to carry the sack together. Sir Roderick accuses you of pitying them, then drops it on their own foot.
+- **10 · AGE 10 · GOSSIP:** A bard sang a song about you. It rhymed your name with 'garlic'.
+- **10 · AGE 10 · CHOICE:** You lost the contest on purpose (mostly) and won a friend. Cunning diplomacy.
+- **11 · AGE 11 · WEATHER:** The harvest was good! Bread for all. You ate seven loaves out of principle.
+- **11 · AGE 11 · SABBATH:** You wore your best shoes to chapel. The mud wore them better.
+- **11 · AGE 11 · CHOICE:** You tell Brother Oswin that the Deputy Pig Marshal lost a pig inside the chapel. It is true. Repeating the part about the baptismal font is optional, but you do.
+- **12 · AGE 12 · PLAGUE:** A cough went round the village. You survived by holding your breath for a season.
+- **12 · AGE 12 · FAMINE:** A lean winter. The bread ran short and so did tempers. You tightened your belt.
+- **12 · AGE 12 · CHOICE:** The wardens are correct, thorough and merciless. The workshop keeps its licence and loses its commissions, which amounts to the same thing more slowly.
+- **13 · AGE 13 · WISDOM:** A monk proved two chickens make three by hiding one in his sleeve.
+- **13 · AGE 13 · BELLS:** The church bell rang at the wrong hour. Everyone arrived tired and morally early.
+- **13 · AGE 13 · CHOICE:** You question the sellers. Each heard the tale from Sir Roderick, who received a sealed note from Brother Oswin. You keep the note.
+- **14 · AGE 14 · MISHAP:** You slipped in the pig trough before half the village. They are still laughing.
+- **14 · AGE 14 · CHOICE:** You sign. They pay the first three instalments early. You decide not to work out whether that is reassurance or a performance.
+- **15 · AGE 15 · MISHAP:** A goat headbutted you off the bridge. Sir Quackbeard witnessed your shame.
+- **15 · AGE 15 · GOSSIP:** A friar preached fasting while smelling powerfully of pudding. The village noticed.
+- **15 · AGE 15 · CHOICE:** He is embarrassed, blames a servant, and the measure is corrected before Lady Day without one word said in public. Nobody is punished and everybody eats.
+- **16 · AGE 16 · HARVEST:** A turnip grew as large as a helmet. The village called it a sign and then ate it.
+- **16 · YEARS LATER:** A choice made during rivals rise bears fruit three years later.
+- **16 · AGE 16 · CHOICE:** You go home. The bells keep ringing true and the wrong name keeps going on them, and everyone concerned has agreed to this.
+- **17 · AGE 17 · BLESSING:** You lit a candle at the chapel. You feel holier and slightly singed.
+- **17 · AGE 17 · CHOICE:** You send both notes to the guild clerk. The wage-cut scheme collapses. Sir Roderick blames you for exposing how easily they were fooled.
+- **18 · AGE 18 · FAMINE:** A lean winter. The bread ran short and so did tempers. You tightened your belt.
+- **18 · COMING OF AGE:** You enter adulthood with no formal qualification. The people of your household will remember how you got here. Later study remains open.
+- **18 · COMING OF AGE:** You are a grown soul now. You set yourself a life's ambition: Leave a Great Dynasty — Secure an heir or become a lasting dynasty.
+- **18 · AGE 18 · CHOICE:** The priest confiscates the toe, then quietly asks if there were any fingers.
+- **19 · AGE 19 · LAW:** The reeve banned suspicious whistling. You whistled innocently and learned nothing.
+- **19 · AGE 19 · RELIC:** A relic seller passed through with Saint Nobody's elbow. It bent suspiciously.
+- **19 · THE CROWN:** Elswyth is recognised as ruler. the documented succession.
+- **19 · AGE 19 · CHOICE:** You find the clause, copy it, and nail it to three shop doors. Nobody can claim not to know now. That was the point, and it costs you three friendly shops by Whitsun.
+- **20 · AGE 20 · WEATHER:** Your father's knee predicted rain. It also predicted stew, but only one came true.
+- **20 · AGE 20 · GOSSIP:** A bard sang a song about you. It rhymed your name with 'garlic'.
+- **20 · AGE 20 · CHOICE:** You walk out past the grain. Nine households sign, two do not, and the parish spends the rest of the winter deciding which of you was the fool.
+- **21 · AGE 21 · MARTIAL:** A passing knight polished a dent in his helm and called it character.
+- **21 · AGE 21 · MARKET:** Someone sold hats for goats. No one agreed whether the hats were for goats or from goats.
+- **21 · AGE 21 · CHOICE:** You offer a truce: no more rumours, no pressure on either household, and one public apology each. Sir Roderick agrees. The priest takes his clapper home.
+- **22 · AGE 22 · BELLS:** The church bell rang at the wrong hour. Everyone arrived tired and morally early.
+- **22 · AGE 22 · WISDOM:** A monk proved two chickens make three by hiding one in his sleeve.
+- **22 · AGE 22 · CHOICE:** You snatched the pebble and bolted. It's still just a pebble, but it's YOUR pebble now.
+- **23 · AGE 23 · ALE:** A tavern proverb named you wise. By dawn nobody remembered the proverb, only the ale.
+- **23 · AGE 23 · CHOICE:** The wardens are relieved, the parish is satisfied, and the workshop is finished. You are paid a mark for a silence nobody names as such.
+- **24 · AGE 24 · MISHAP:** You slipped in the pig trough before half the village. They are still laughing.
+- **24 · AGE 24 · MISHAP:** A goat headbutted you off the bridge. Sir Quackbeard witnessed your shame.
+- **24 · AGE 24 · CHOICE:** The work is genuinely good and the silence is genuinely purchased. Both facts are true at once and only one of them is discussed.
+- **25 · AGE 25 · WISDOM:** The hermit on the hill taught you to read three whole words. Two were 'turnip'.
+- **25 · AGE 25 · CHOICE:** After an epic broom-duel, the rat fled. The village cheered. You bled slightly.
+- **26 · AGE 26 · GOSSIP:** A friar preached fasting while smelling powerfully of pudding. The village noticed.
+- **26 · AGE 26 · CHOICE:** You hand over every roll including the ones that embarrass the parish. He reads for two days and writes down four names, none of them about arithmetic.
+- **27 · AGE 27 · WEATHER:** Your father's knee predicted rain. It also predicted stew, but only one came true.
+- **27 · AGE 27 · FAMINE:** A lean winter. The bread ran short and so did tempers. You tightened your belt.
+- **27 · AGE 27 · CHOICE:** You were unhorsed in 0.4 seconds, but the crowd loved your scream. Minor fame achieved.
+- **28 · AGE 28 · SABBATH:** You wore your best shoes to chapel. The mud wore them better.
+- **28 · AGE 28 · TAXES:** The tax collector came. He left with most of your coin and one of your chickens.
+- **28 · AGE 28 · CHOICE:** They sign. There is a clause about a chair by the fire and the right to watch the pours, and it is honoured until the second winter.
+- **29 · AGE 29 · ALE:** A tavern proverb named you wise. By dawn nobody remembered the proverb, only the ale.
+- **29 · AGE 29 · ROMANCE:** You winked at the miller's child across the square. You think it went well. It did not.
+- **29 · AGE 29 · CHOICE:** Four hours, one barrel, and a written agreement about bells. It holds because everybody had to say their terms out loud in front of the other side.
+- **30 · AGE 30 · WISDOM:** A monk proved two chickens make three by hiding one in his sleeve.
+- **30 · AGE 30 · GOSSIP:** A bard sang a song about you. It rhymed your name with 'garlic'.
+- **30 · AGE 30 · CHOICE:** You find a turnip floating in the relic jar. The crowd turns on him with ladles.
+- **31 · AGE 31 · FORTUNE:** Found a shiny coin in the mud. It is mostly mud, but it spends.
+- **31 · AGE 31 · CHOICE:** It goes up with his mark on it and he is helped out to hear the first peal. He says it is a little flat. It is not.
+- **32 · AGE 32 · MARTIAL:** A passing knight polished a dent in his helm and called it character.
+- **32 · AGE 32 · BLESSING:** You lit a candle at the chapel. You feel holier and slightly singed.
+- **32 · AGE 32 · CHOICE:** You take it in the child’s own words with the date and two witnesses. It is either the most valuable page in the parish or a piece of paper.
+- **33 · AGE 33 · WISDOM:** The hermit on the hill taught you to read three whole words. Two were 'turnip'.
+- **33 · AGE 33 · CHOICE:** You pay the whole tenth on the first day. The refusal collapses within a week and the parish is very clear about who collapsed it.
+- **34 · AGE 34 · WEATHER:** Your father's knee predicted rain. It also predicted stew, but only one came true.
+- **34 · AGE 34 · CHOICE:** You sign as the instigator. You are barred from guild work for two years and nine apprentices keep their indentures, and everybody in the trade knows why.
+- **35 · AGE 35 · LAW:** The reeve banned suspicious whistling. You whistled innocently and learned nothing.
+- **35 · AGE 35 · SABBATH:** You wore your best shoes to chapel. The mud wore them better.
+- **35 · AGE 35 · CHOICE:** You took your vows. The world grows quieter, the prayers longer, and the soul, they promise, lighter.
+- **36 · AGE 36 · MISHAP:** A goat headbutted you off the bridge. Sir Quackbeard witnessed your shame.
+- **36 · AGE 36 · FAMINE:** A lean winter. The bread ran short and so did tempers. You tightened your belt.
+- **36 · AGE 36 · CHOICE:** You get it entered that the modus is to be read aloud each Lady Day. It is read for a hundred and forty years, long after nobody remembers why.
+- **37 · AGE 37 · BELLS:** The church bell rang at the wrong hour. Everyone arrived tired and morally early.
+- **37 · AGE 37 · GOSSIP:** A friar preached fasting while smelling powerfully of pudding. The village noticed.
+- **37 · AGE 37 · CHOICE:** They say a woman told them, and describe somebody who has been dead since before they were born, accurately, including the limp.
+- **38 · AGE 38 · VICE:** You found dice under a chapel pew. Someone has been praying for sixes.
+- **38 · AGE 38 · BLESSING:** You lit a candle at the chapel. You feel holier and slightly singed.
+- **38 · AGE 38 · CHOICE:** You go home. Six people saw them come out of that door and you are the only one who has decided to be no help whatsoever.
+- **39 · AGE 39 · WEATHER:** The harvest was good! Bread for all. You ate seven loaves out of principle.
+- **39 · AGE 39 · CHOICE:** You say it gives back less than it took and decline. The charter passes without you, and in eight years somebody quotes your refusal in a very different argument.
+- **40 · AGE 40 · ALE:** A tavern proverb named you wise. By dawn nobody remembered the proverb, only the ale.
+- **40 · AGE 40 · HARVEST:** A turnip grew as large as a helmet. The village called it a sign and then ate it.
+- **40 · AGE 40 · CHOICE:** You and Emma jointly challenge a trader’s false weights. The trader looks at both of you and quietly fetches the honest scales.
+- **41 · AGE 41 · SABBATH:** You wore your best shoes to chapel. The mud wore them better.
+- **41 · AGE 41 · FORTUNE:** A merchant overpaid you by mistake and rode off. You said nothing. Wise.
+- **41 · AGE 41 · CHOICE:** A fine evening of talk. You part warmly, but strangers stay strangers when the purse stays shut.
+- **42 · AGE 42 · FORTUNE:** Found a shiny coin in the mud. It is mostly mud, but it spends.
+- **42 · AGE 42 · CHOICE:** The family is out of debt by Michaelmas and the child has stopped speaking except when asked. Both of those are consequences of the same decision.
+- **43 · AGE 43 · PLAGUE:** A cough went round the village. You survived by holding your breath for a season.
+- **43 · AGE 43 · MISHAP:** You slipped in the pig trough before half the village. They are still laughing.
+- **43 · AGE 43 · CHOICE:** Threepence and no questions asked. You now own the only piece of evidence in the parish. It sits in your purse for a month before you understand what you are carrying.
+- **44 · AGE 44 · MARKET:** Someone sold hats for goats. No one agreed whether the hats were for goats or from goats.
+- **44 · AGE 44 · WISDOM:** You watched a monk do sums and learned what a 'zero' is. Revolutionary.
+- **44 · AGE 44 · CHOICE:** You declare the flag cannot read itself. This is called wisdom by three people and heresy by one, and it is the one who writes letters.
+- **45 · AGE 45 · VICE:** You found dice under a chapel pew. Someone has been praying for sixes.
+- **45 · YEARS LATER:** Five years on, the family legacy of rivals rise is still remembered.
+- **45 · AGE 45 · CHOICE:** They go red and apologise properly, which is rare, and tell the story again eighteen months later.
+- **46 · AGE 46 · TAXES:** The tax collector came. He left with most of your coin and one of your chickens.
+- **46 · AGE 46 · PLAGUE:** A sickness scare packed the chapel. The coughs harmonized terribly.
+- **46 · AGE 46 · CHOICE:** It is the answer that ends the matter without anybody being burned or believed. The child is left alone and grows up ordinary, which was possibly the point.
+- **47 · AGE 47 · MISHAP:** A loose thread undid half your tunic in the market. The tailor called it ventilation.
+- **47 · AGE 47 · FORTUNE:** A merchant overpaid you by mistake and rode off. You said nothing. Wise.
+- **47 · AGE 47 · CHOICE:** Your speech on floral temptation moves the court. The pig is spared and immediately eats the verdict.
+- **48 · AGE 48 · BLESSING:** You lit a candle at the chapel. You feel holier and slightly singed.
+- **49 · AGE 49 · WEATHER:** The harvest was good! Bread for all. You ate seven loaves out of principle.
+- **49 · AGE 49 · COURT:** Sir Quackbeard was mentioned in court records as "loud but persuasive."
+- **49 · AGE 49 · CHOICE:** You do the arithmetic in public: a roof, nine hens, and a labourer’s wage. The steward strikes the testimony and the witness leaves the parish before Advent.
+- **50 · AGE 50 · BELLS:** The church bell rang at the wrong hour. Everyone arrived tired and morally early.
+- **50 · AGE 50 · CHOICE:** You are probably right about the facts. Being right about the facts turns out to have nothing whatever to do with it.
+- **51 · AGE 51 · WISDOM:** The hermit on the hill taught you to read three whole words. Two were 'turnip'.
+- **51 · AGE 51 · CHOICE:** Nine shillings, three days, and new reed over the whole hearth end. It is the correct decision and it empties the purse before winter.
+- **52 · AGE 52 · PLAGUE:** A sickness scare packed the chapel. The coughs harmonized terribly.
+- **52 · AGE 52 · THE END:** You died at 52. Died of a winter chill and a tired heart.
+
+## After — commoner — seed 840007
+
+premium; died aged 53; Died of a winter chill and a tired heart.
+
+- **0 · YEAR 0 · BORN:** Rowena wraps you in sacking while Thomas rescues the winter seed from a goat. Your first possession is a spoon with a previous owner who still visits.
+- **0 · YEAR 0 · TRAIT:** 🌹 From the cradle you are Comely. Fair of face, if not of fortune.
+- **1 · AGE 1 · INFANCY:** A winter cough keeps you awake. Rowena warms your blanket by the hearth and stays until your breathing settles.
+- **1 · AGE 1 · CHOICE:** Your guardian folds the dry blanket around you. The roof will require a less comfortable remedy.
+- **2 · AGE 2 · CHILDHOOD:** You build a miniature house in the mud and give it a very small door. Visitors will have to be polite enough to shrink.
+- **2 · AGE 2 · CHILDHOOD:** Sir Quackbeard lets you sit nearby while he preens. It is a quiet friendship with rather strict terms of admission.
+- **2 · AGE 2 · CHOICE:** The cat refuses to join the crockery. Your household repeats the word more slowly.
+- **3 · AGE 3 · MISHAP:** You slip beside the watering trough. A bystander offers advice after you have stopped needing it.
+- **3 · AGE 3 · CHOICE:** A sibling is born! Loud, wrinkled, and immediately beloved. You vow to teach them everything about turnips.
+- **4 · AGE 4 · FORTUNE:** Found a shiny coin in the mud. It is mostly mud, but it spends.
+- **5 · AGE 5 · WEATHER:** You build a snow lord with an enormous nose. The thaw removes his authority before anyone can collect rent.
+- **5 · AGE 5 · QUIET KINDNESS:** Rowena pretends not to notice the crust you save for later. At bedtime there is a second one beside it.
+- **5 · AGE 5 · CHOICE:** You and your neighbour prove the tally. The hen remains imaginary; the debt does not grow.
+- **6 · AGE 6 · GROWING UP:** The children play at holding court. The judge is chosen because she owns the stool; the prisoner owns the biscuits.
+- **6 · AGE 6 · CHOICE:** You make a meal of the disputed evidence. The household gains food; no prediction is proved merely because you are fed.
+- **7 · AGE 7 · FAMILY TABLE:** Your first clay cup leaks. Rowena calls it a fine sieve and uses it anyway.
+- **7 · AGE 7 · DAILY MISHAPS:** The soap seller’s hands are cleaner than anyone’s in the square. He keeps dropping the money.
+- **7 · AGE 7 · CHOICE:** The reopened ditch saves seed on both strips. Leofric records your household’s share of the labour.
+- **8 · AGE 8 · LEARNING:** A monk draws a tiny sleeping clerk beside a solemn passage on vigilance. You wonder who the book was meant for.
+- **8 · AGE 8 · GOSSIP:** A friar preached fasting while smelling powerfully of pudding. The village noticed.
+- **8 · AGE 8 · CHOICE:** Sir Quackbeard hissed. The smith’s child fled. Your social circle remains: one goose.
+- **9 · AGE 9 · DAILY MISHAPS:** The well rope catches on a sleeve. A vigorous argument follows about which of the two is supposed to go down.
+- **10 · AGE 10 · WEATHER:** Frost draws a finer window than the glazier ever managed. You admire it until someone reminds you it is on the inside.
+- **10 · AGE 10 · WISDOM:** A hermit teaches you the words on a milestone. His complaints about visitors become easier to understand.
+- **10 · AGE 10 · CHOICE:** You ask why anyone should carry turnips for free. The crowd drifts away. Agnes is left guarding two sacks and an excellent bow.
+- **11 · AGE 11 · MISHAP:** A loose thread undid half your tunic in the market. The tailor called it ventilation.
+- **11 · AGE 11 · CHOICE:** You tell Sir Roderick that the Deputy Pig Marshal lost a pig inside the chapel. It is true. Repeating the part about the baptismal font is optional, but you do.
+- **12 · AGE 12 · OFFICIAL VANITY:** The bailiff’s new hat is too tall for the courthouse door. He makes everyone wait while authority enters sideways.
+- **12 · AGE 12 · CHOICE:** The seller has not consulted the landlord. You gain judgement while the leeches continue to make a much simpler living.
+- **13 · AGE 13 · WEATHER:** A neighbour hangs washing in a rare patch of sun. Half the lane turns to watch it, as though warmth were a public performance.
+- **13 · AGE 13 · BLESSING:** You lit a candle at the chapel. You feel holier and slightly singed.
+- **13 · AGE 13 · CHOICE:** You question the sellers. Each heard the tale from Agnes, who received a sealed note from Sir Roderick. You keep the note.
+- **14 · AGE 14 · LOCAL JUSTICE:** A witness clears his throat every time the clerk reaches the useful part. The testimony is eventually adjourned for water.
+- **15 · AGE 15 · MARKET:** Someone sold hats for goats. No one agreed whether the hats were for goats or from goats.
+- **15 · AGE 15 · CHOICE:** You show Agnes both notes. They read the wage offer twice, then call Sir Roderick a name usually reserved for diseased turnips.
+- **16 · AGE 16 · WEDDING GOSSIP:** The clerk reads marriage banns so softly that only the objections can be heard.
+- **16 · YEARS LATER:** A choice made during rivals rise bears fruit three years later.
+- **16 · AGE 16 · CHOICE:** You spread private gossip and gain a rival in Joan, who no longer trusts you with an account that might reach the next funeral.
+- **17 · AGE 17 · PERSONAL GRUDGES:** Sir Roderick wishes you excellent health with the expression of someone cancelling a small celebration.
+- **17 · AGE 17 · CHOICE:** You offer a truce: no more rumours, no pressure on either household, and one public apology each. Agnes agrees. The priest takes his clapper home.
+- **18 · AGE 18 · QUIET KINDNESS:** A stranger leaves bread beside the poor box and goes before anyone can praise the gift.
+- **18 · COMING OF AGE:** You enter adulthood with no formal qualification. The people of your household will remember how you got here. Later study remains open.
+- **18 · COMING OF AGE:** You are a grown soul now. You set yourself a life's ambition: Win the People's Love — Raise Charm to 85.
+- **18 · AGE 18 · CHOICE:** You get the ironwork and the good pot out and hidden before anybody comes to help. It is worth a fortnight of wages and it is watched from three doorways.
+- **19 · AGE 19 · FAMILY:** Rowena finds an old family warning against trusting smiling millers. The warning is written on the back of an unpaid milling bill.
+- **19 · AGE 19 · LOCAL JUSTICE:** The clerk corrects a spelling in a warrant with more care than he gives the accusation beneath it.
+- **19 · AGE 19 · CHOICE:** You refuse the gamble and gain some judgement. Not every uncertain meal needs a conclusive ending.
+- **20 · AGE 20 · MISHAP:** A tethered goat loops its rope around your ankle. It watches you untie the knot as though reviewing your work.
+- **20 · AGE 20 · COURTSHIP GOSSIP:** Two courting neighbours speak through a fence. Their chaperone listens from the gate, complaining that the acoustics are poor.
+- **20 · THE CROWN:** Elswyth is recognised as ruler. the documented succession.
+- **20 · AGE 20 · CHOICE:** You and Agnes jointly challenge a trader’s false weights. The trader looks at both of you and quietly fetches the honest scales.
+- **21 · AGE 21 · OFFICIAL VANITY:** A clerk refuses an unsigned complaint that the official seal has been stolen.
+- **21 · AGE 21 · CHOICE:** Four miles and a different manor. You keep everybody and you lose your holding, your suit of court and every claim Swineford owed you.
+- **22 · AGE 22 · GOSSIP:** A bard fits your name into a song by adding two syllables and a crime you have never committed.
+- **22 · AGE 22 · LAW:** The reeve banned suspicious whistling. You whistled innocently and learned nothing.
+- **22 · AGE 22 · CHOICE:** You improve public standing and lose Rowena’s confidence in your willingness to make an example of someone.
+- **23 · AGE 23 · PLAGUE:** A sickness scare packed the chapel. The coughs harmonized terribly.
+- **23 · AGE 23 · CHOICE:** It was carelessness by somebody who is fourteen and has not eaten properly since. You now know and can never quite unknow it.
+- **24 · AGE 24 · PARISH LIFE:** The sacristan straightens a candle after every prayer. Disorder is the one sin he can reliably put right.
+- **24 · AGE 24 · DAILY MISHAPS:** Fresh rushes make the floor look respectable. The missing spoon is still under the old respectability.
+- **24 · AGE 24 · CHOICE:** Seven names, and three of them work for men who would pay for that list. You do not sell it yet. You write it down.
+- **25 · AGE 25 · FIELD WORK:** You reach the field before the shouting begins. For a little while it belongs to birds and your own breathing.
+- **25 · YEARS LATER:** Five years on, the family legacy of rivals rise is still remembered.
+- **25 · AGE 25 · CHOICE:** The whole tithing turns out, as the law requires, and finds nothing. Merek spends the night in the reeve’s outhouse on the strength of your word.
+- **26 · AGE 26 · DAILY MISHAPS:** A cat walks over a freshly copied page. Its contribution is darker, clearer and much less expensive than the scribe’s.
+- **26 · AGE 26 · LOCAL JUSTICE:** A witness clears his throat every time the clerk reaches the useful part. The testimony is eventually adjourned for water.
+- **26 · YEARS LATER:** A choice made during ashes household bears fruit three years later.
+- **26 · AGE 26 · CHOICE:** The public accusation damages Tomas’s trust in you and improves your own standing. No part of the payment reaches your skin.
+- **27 · AGE 27 · ROMANCE:** You try a knowing smile across the square and receive a puzzled one in return. The misunderstanding is mercifully brief.
+- **27 · AGE 27 · CHOICE:** Three days of asking ends at a tinker who bought it at Stourbridge fair from a man he cannot describe. It proves nothing and unproves nothing.
+- **28 · AGE 28 · WISDOM:** A monk explains division with three apples. The lesson becomes subtraction when somebody eats the example.
+- **28 · AGE 28 · RELIGIOUS HYPOCRISY:** A hermit complains that visitors interrupt his solitude, then asks whether anyone mentioned his new cave.
+- **28 · AGE 28 · CHOICE:** The same house, on the same footings, on twenty-two shillings of somebody else’s money at a rate you did not read carefully.
+- **29 · AGE 29 · FALSE RELICS:** The relic’s case is polished so brightly that nobody can see the bone. The keeper thinks this has improved attendance.
+- **29 · AGE 29 · CHOICE:** You gain wit and lose Joan’s patience. The book remains impressively dry.
+- **30 · AGE 30 · HOUSEHOLD ACCOUNTS:** A tally stick splits neatly into two matching accounts. You wish every disagreement could be settled by breaking a stick correctly.
+- **30 · AGE 30 · CHOICE:** He takes it, changes his story a third time, and is now worth precisely nothing as a witness to anybody at all, yourself included.
+- **31 · AGE 31 · PERSONAL GRUDGES:** Sir Roderick greets you by your full name in public. No friendly person has ever needed quite so much of it.
+- **31 · AGE 31 · WEATHER:** Thomas predicts rain from an aching knee. You carry a cloak out of affection and are dry by good fortune.
+- **31 · AGE 31 · CHOICE:** It goes to the church court, where the penalty is penance and the object comes before the person. The reeve does not speak to you until Lady Day twice over.
+- **32 · AGE 32 · MARKET LIFE:** The locksmith locks his own stall to demonstrate a new bolt. His apprentice has the key and the afternoon off.
+- **32 · AGE 32 · LOCAL JUSTICE:** The watch changes its password. By dusk everybody knows it except the man who chose it.
+- **32 · AGE 32 · CHOICE:** You pay to have your objection heard through ordinary testimony. Crown standing improves without the heat being mistaken for evidence.
+- **33 · AGE 33 · PRIVATE SECRETS:** You notice how often people glance at a chest after insisting there is nothing in it.
+- **33 · AGE 33 · CHOICE:** You say it loudly and often until it becomes true. Three households never speak again, and the parish is content to call that a resolution.
+- **34 · AGE 34 · COURTSHIP GOSSIP:** Two courting neighbours speak through a fence. Their chaperone listens from the gate, complaining that the acoustics are poor.
+- **34 · AGE 34 · CHOICE:** It is paid, and the next, and the one after. The house is beautiful and the household works for it for five years.
+- **35 · AGE 35 · DAILY MISHAPS:** A stool gives way under the only person who had just called the meeting to order.
+- **35 · AGE 35 · ROADS:** A cartwheel returns to the same rut so faithfully that the driver accuses it of having relatives there.
+- **35 · AGE 35 · CHOICE:** You fix the banner and earn respect from everyone who can read cloth.
+- **36 · AGE 36 · COURTSHIP GOSSIP:** A suitor praises someone’s fine judgement, then spends an hour explaining why they should choose him.
+- **36 · AGE 36 · WISDOM:** A monk leaves a space in his sums to show you how nothing can have a place. You think about that on the way home.
+- **36 · AGE 36 · CHOICE:** The parish learns it nearly hanged a neighbour over pewter under gilt. The churchwarden’s tomb is in the chancel and cannot be asked about it.
+- **37 · AGE 37 · QUIET KINDNESS:** A stranger leaves bread beside the poor box and goes before anyone can praise the gift.
+- **37 · AGE 37 · MARKET LIFE:** You can afford the good thread this year. It feels extravagant until you remember what the cheap thread cost in mending.
+- **37 · AGE 37 · CHOICE:** You keep your seat. The reading ends, everyone files out, and the whole business settles into the parish like damp into a wall.
+- **38 · AGE 38 · MISHAP:** You slip beside the watering trough. A bystander offers advice after you have stopped needing it.
+- **38 · AGE 38 · TAXES:** The collector takes three gold and gives you a receipt large enough to wrap a much more valuable payment.
+- **38 · AGE 38 · CHOICE:** Your household gains wealth from the disputed use, and you acquire a fraud charge. The stone is silent; the witnesses are not.
+- **39 · AGE 39 · PARISH LIFE:** The sacristan straightens a candle after every prayer. Disorder is the one sin he can reliably put right.
+- **39 · AGE 39 · REMEMBRANCE:** An old hymn brings back a voice you had almost forgotten. You lose the next verse trying to hear it again.
+- **39 · YEARS LATER:** Five years on, the family legacy of ashes household is still remembered.
+- **39 · AGE 39 · CHOICE:** Your confession shortens the hearing, though not the memory of it.
+- **40 · AGE 40 · GOSSIP:** A bard fits your name into a song by adding two syllables and a crime you have never committed.
+- **40 · AGE 40 · CHOICE:** Seven shillings, replaced quietly, and the sick are paid on Friday. Two brothers work out what happened and neither of them ever says so.
+- **41 · AGE 41 · DAILY MISHAPS:** The soap seller’s hands are cleaner than anyone’s in the square. He keeps dropping the money.
+- **41 · AGE 41 · CHOICE:** They pay you a grudging coin and remember the price of your help more than the help itself.
+- **42 · AGE 42 · WEDDING GOSSIP:** A bride’s veil catches on the chapel door. Her aunt calls it an omen; the carpenter calls it a nail.
+- **42 · AGE 42 · SABBATH:** You wore your best shoes to chapel. The mud wore them better.
+- **42 · AGE 42 · CHOICE:** The four with nothing get seen. The seven with something remember precisely how that decision was made and by whom.
+- **43 · AGE 43 · QUIET KINDNESS:** Someone leaves a glowing coal ready for your cold hearth. You never learn who; the room warms anyway.
+- **43 · AGE 43 · HOUSEHOLD ACCOUNTS:** An official explains that there is a fee for recording a fee. You begin to understand why parchment is dear.
+- **43 · AGE 43 · CHOICE:** Fifteen names and forty years of burials, on the fire. There is now no evidence of anything, including of who is owed relief.
+- **44 · AGE 44 · ROADS:** You take a familiar uneven step without looking. Your foot remembers a street your head was too busy to notice.
+- **44 · AGE 44 · FALSE RELICS:** The relic’s case is polished so brightly that nobody can see the bone. The keeper thinks this has improved attendance.
+- **44 · AGE 44 · CHOICE:** Nothing happens. The seller says the toe is shy before crowds.
+- **45 · AGE 45 · FORTUNE:** Found a shiny coin in the mud. It is mostly mud, but it spends.
+- **45 · AGE 45 · UNEXPECTED SIGHTS:** A traveller teaches you a greeting in a distant tongue. You repeat it until it sounds like a place you might reach.
+- **45 · AGE 45 · CHOICE:** Forty years of burials, sick pay and candle wax, handed over entire. It is dull, it is complete, and it makes the conspiracy charge collapse under its own boredom.
+- **46 · AGE 46 · BELLS:** The church bell rang at the wrong hour. Everyone arrived tired and morally early.
+- **46 · AGE 46 · DAILY MISHAPS:** A cat walks over a freshly copied page. Its contribution is darker, clearer and much less expensive than the scribe’s.
+- **46 · YEARS LATER:** A choice made during secret brotherhood bears fruit three years later.
+- **46 · AGE 46 · CHOICE:** They take it quietly and thank you for coming. You are never entirely sure whether it helped them and entirely sure it was owed.
+- **47 · AGE 47 · LOCAL JUSTICE:** A witness clears his throat every time the clerk reaches the useful part. The testimony is eventually adjourned for water.
+- **47 · THE CROWN:** Thomas is recognised as ruler. the documented succession.
+- **47 · AGE 47 · CHOICE:** You improve public order by challenging the dangerous claim. Emma acquires a rival who knows exactly which boards are missing.
+- **48 · AGE 48 · HOUSEHOLD ACCOUNTS:** You count what you owe instead of sheep. The sheep would at least have had the decency to jump away.
+- **48 · AGE 48 · PARISH LIFE:** The bell rope wears smooth where generations of hands have pulled it. You hold the same place for a moment.
+- **48 · AGE 48 · CHOICE:** You pay it for the rest of your life and the box pays your burial. The light is still burning in that church in 1520.
+- **49 · AGE 49 · MARKET LIFE:** The locksmith locks his own stall to demonstrate a new bolt. His apprentice has the key and the afternoon off.
+- **49 · AGE 49 · CHOICE:** Twenty-five shillings, a bishop’s clerk and an examination that is mostly Latin. They pass, barely, and are lawful for the rest of their life.
+- **50 · AGE 50 · DAILY MISHAPS:** Fresh rushes make the floor look respectable. The missing spoon is still under the old respectability.
+- **50 · AGE 50 · CHOICE:** You gain faith and lose some work performance. Simon approves of a sacrifice you are both able to measure.
+- **51 · AGE 51 · PUBLIC VANITY:** A lover recites a moving poem. The minstrel listening behind him remembers writing it for someone else.
+- **51 · AGE 51 · CHOICE:** You arrange it without asking. The parish is better served and Simon does not speak to you again for nine years.
+- **52 · AGE 52 · DAILY MISHAPS:** The well rope catches on a sleeve. A vigorous argument follows about which of the two is supposed to go down.
+- **52 · AGE 52 · FORTUNE:** A merchant overpaid you by mistake and rode off. You said nothing. Wise.
+- **52 · YEARS LATER:** A choice made during healers burden bears fruit three years later.
+- **52 · AGE 52 · CHOICE:** You say it without excuses. It does not make it even and it stops it becoming the thing that never gets said.
+- **53 · AGE 53 · MARKET LIFE:** A rope seller demonstrates the strength of his wares by tying up his assistant. The assistant negotiates his wages from there.
+- **53 · AGE 53 · THE END:** You died at 53. Died of a winter chill and a tired heart.
+
+## After — artisan_merchant — seed 840008
+
+premium; died aged 55; Died of a winter chill and a tired heart.
+
+- **0 · YEAR 0 · BORN:** Your cradle travels with a consignment of cloth. Mathilda keeps you warm in the finest offcuts; Simon notes that even scraps have a price.
+- **0 · YEAR 0 · TRAIT:** 🌟 From the cradle you are Golden Child. Blessed with strength, charm, wit, and grace beyond ordinary children.
+- **1 · AGE 1 · INFANCY:** Sir Quackbeard inspects your cradle with the severity of a constable. He objects to the blanket and loses the argument.
+- **1 · AGE 1 · CHOICE:** The bowl catches a little water. Your guardian praises the help and moves your bedding somewhere dry.
+- **2 · AGE 2 · INFANCY:** You take three determined steps towards a stool. Mathilda catches you before you discover the fourth is missing.
+- **2 · AGE 2 · FAMILY TABLE:** Mathilda softens a crust for you, blows on it, and tests it twice. The second test is mostly hunger.
+- **3 · AGE 3 · CHILDHOOD:** Sir Quackbeard lets you sit nearby while he preens. It is a quiet friendship with rather strict terms of admission.
+- **3 · AGE 3 · CHOICE:** The cat refuses to join the crockery. Your household repeats the word more slowly.
+- **4 · AGE 4 · DAILY MISHAPS:** Your borrowed boots reach the puddle before you do and leave considerably later.
+- **4 · AGE 4 · CHOICE:** A sibling is born! Loud, wrinkled, and immediately beloved. You vow to teach them everything about turnips.
+- **5 · AGE 5 · SABBATH:** You wore your best shoes to chapel. The mud wore them better.
+- **6 · AGE 6 · MISHAP:** A tethered goat loops its rope around your ankle. It watches you untie the knot as though reviewing your work.
+- **6 · AGE 6 · CHOICE:** You make a meal of the disputed evidence. The household gains food; no prediction is proved merely because you are fed.
+- **7 · AGE 7 · LEARNING:** A sundial gives a precise answer until a cloud arrives. You appreciate an instrument willing to admit it does not know.
+- **8 · AGE 8 · FORTUNE:** Found a shiny coin in the mud. It is mostly mud, but it spends.
+- **8 · AGE 8 · ROADS:** A cartwheel returns to the same rut so faithfully that the driver accuses it of having relatives there.
+- **8 · AGE 8 · CHOICE:** The recount establishes what was delivered. The rival must challenge a witnessed account.
+- **9 · AGE 9 · GROWING UP:** The children play at holding court. The judge is chosen because she owns the stool; the prisoner owns the biscuits.
+- **9 · AGE 9 · WEATHER:** Frost draws a finer window than the glazier ever managed. You admire it until someone reminds you it is on the inside.
+- **9 · AGE 9 · CHOICE:** You ask why anyone should carry turnips for free. The crowd drifts away. Tomas is left guarding two sacks and an excellent bow.
+- **10 · AGE 10 · LEARNING:** A monk draws a tiny sleeping clerk beside a solemn passage on vigilance. You wonder who the book was meant for.
+- **10 · AGE 10 · DAILY MISHAPS:** A stool gives way under the only person who had just called the meeting to order.
+- **10 · AGE 10 · CHOICE:** The frog leaves a wet impression on the page. You gain a reputation for mischief and the monk gains a very brief pupil with excellent jumping prospects.
+- **11 · AGE 11 · LOCAL JUSTICE:** Someone has put a cushion in the stocks. The gaoler removes it, on the grounds that punishment should not attract regulars.
+- **11 · AGE 11 · CHOICE:** You tell Merek that the Deputy Pig Marshal lost a pig inside the chapel. It is true. Repeating the part about the baptismal font is optional, but you do.
+- **12 · AGE 12 · DAILY MISHAPS:** A cat walks over a freshly copied page. Its contribution is darker, clearer and much less expensive than the scribe’s.
+- **12 · AGE 12 · CHOICE:** The seller has not consulted the landlord. You gain judgement while the leeches continue to make a much simpler living.
+- **13 · AGE 13 · MILL:** The miller measured your flour with a scoop that looked hungry.
+- **13 · AGE 13 · CHOICE:** You name Tomas as the liar and demand they produce the alleged ladle. Half the market cheers. The other half wants to see the ladle.
+- **14 · AGE 14 · PLAGUE:** A sickness scare packed the chapel. The coughs harmonized terribly.
+- **14 · AGE 14 · CHOICE:** You ask Tomas to describe the ladle. They change its size three times. The crowd laughs, then gets tired of you asking a fourth time.
+- **15 · AGE 15 · LAW:** The reeve banned suspicious whistling. You whistled innocently and learned nothing.
+- **15 · AGE 15 · PARISH LIFE:** The sacristan straightens a candle after every prayer. Disorder is the one sin he can reliably put right.
+- **15 · AGE 15 · CHOICE:** You give the court exactly what you know: not enough to clear them, not enough to hang them. Both sides find you useless and entirely honest.
+- **16 · AGE 16 · FAMILY TABLE:** For once the soup is thick enough to hold a spoon upright. You eat before anyone mistakes it for building material.
+- **16 · YEARS LATER:** A choice made during rivals rise bears fruit three years later.
+- **16 · AGE 16 · CHOICE:** You ask the priest to hold up the clapper while Tomas repeats the accusation. They cannot finish. You have won, and made the humiliation needlessly thorough.
+- **17 · AGE 17 · GOSSIP:** A friar preached fasting while smelling powerfully of pudding. The village noticed.
+- **17 · AGE 17 · ALE:** A tavern proverb named you wise. By dawn nobody remembered the proverb, only the ale.
+- **17 · AGE 17 · CHOICE:** Compurgation: seven neighbours swearing to your word, not to the facts. You get twelve by noon and the presentment dies the same day.
+- **18 · AGE 18 · QUIET KINDNESS:** Someone carries a lantern to a sick neighbour after the chapel closes. There is no audience for the walk home.
+- **18 · COMING OF AGE:** You enter adulthood with no formal qualification. The people of your household will remember how you got here. Later study remains open.
+- **18 · COMING OF AGE:** You are a grown soul now. You set yourself a life's ambition: Find True Love — Take a spouse and wed.
+- **18 · AGE 18 · CHOICE:** Your household gives up food and gains reputation. Joan sees a donation delivered without first hearing its name.
+- **19 · AGE 19 · WISDOM:** A hermit teaches you the words on a milestone. His complaints about visitors become easier to understand.
+- **19 · AGE 19 · PUBLIC VANITY:** A lover recites a moving poem. The minstrel listening behind him remembers writing it for someone else.
+- **19 · AGE 19 · CHOICE:** You find somebody willing to be equally certain of the opposite. The court now holds two immaculate lies and no means of choosing between them.
+- **20 · AGE 20 · COURT:** A travelling clerk sketches Sir Quackbeard in the margin of an account. For once the most forceful opinion on the page needs no signature.
+- **20 · AGE 20 · FALSE RELICS:** The relic’s case is polished so brightly that nobody can see the bone. The keeper thinks this has improved attendance.
+- **20 · AGE 20 · CHOICE:** He gives it, in exchange for an understanding about your labour services that will cost you two days a week until you die.
+- **21 · AGE 21 · RELIGIOUS HYPOCRISY:** A dispute over a saint’s feast ends when both sides discover that the cook has already served it.
+- **21 · AGE 21 · WEATHER:** Simon predicts rain from an aching knee. You carry a cloak out of affection and are dry by good fortune.
+- **21 · AGE 21 · CHOICE:** Your counterclaim reaches the clerk, who recognises the false seal. You face a forgery charge; the pot has become the most innocent participant.
+- **22 · AGE 22 · LEARNING:** A sundial gives a precise answer until a cloud arrives. You appreciate an instrument willing to admit it does not know.
+- **22 · THE CROWN:** Elswyth is recognised as ruler. the documented succession.
+- **22 · AGE 22 · CHOICE:** Your confession shortens the hearing, though not the memory of it.
+- **23 · AGE 23 · ROADS:** You take a familiar uneven step without looking. Your foot remembers a street your head was too busy to notice.
+- **23 · AGE 23 · OFFICIAL VANITY:** The bailiff’s new hat is too tall for the courthouse door. He makes everyone wait while authority enters sideways.
+- **23 · AGE 23 · CHOICE:** You keep your accounts precise and your accusations provable. Your family has learned the same lesson, at the cost of many uncomfortable dinners.
+- **24 · AGE 24 · WEDDING GOSSIP:** The chapel echoes a groom’s promise to obey. His family looks alarmed at having heard it twice.
+- **24 · AGE 24 · PLAGUE:** During the sickness scare you avoid the crowded stalls. You miss the company more than the haggling.
+- **24 · AGE 24 · CHOICE:** You go down before the pour and call the numbers. It becomes a habit neither of you ever names, and it lasts five years.
+- **25 · AGE 25 · TRADE CUSTOMS:** A cloth buyer produces his own measuring rod. It is noticeably longer when he buys than when he sells.
+- **25 · AGE 25 · MARKET LIFE:** A rope seller demonstrates the strength of his wares by tying up his assistant. The assistant negotiates his wages from there.
+- **25 · AGE 25 · CHOICE:** He is dismissed inside the week and the roll stands uncorrected, because correcting it would mean admitting it was wrong. Justice, administratively.
+- **26 · AGE 26 · COURTSHIP GOSSIP:** A suitor praises someone’s fine judgement, then spends an hour explaining why they should choose him.
+- **26 · AGE 26 · CHOICE:** They are called, they are sworn, and they say it. You are clear by Friday and they are presented at the next view.
+- **27 · AGE 27 · LAW:** The reeve banned suspicious whistling. You whistled innocently and learned nothing.
+- **27 · AGE 27 · RELIGIOUS HYPOCRISY:** A hermit complains that visitors interrupt his solitude, then asks whether anyone mentioned his new cave.
+- **27 · AGE 27 · CHOICE:** The platform gives way. The fall leaves lasting pain that does not disappear when the bruises fade.
+- **28 · AGE 28 · WEATHER:** A neighbour hangs washing in a rare patch of sun. Half the lane turns to watch it, as though warmth were a public performance.
+- **28 · AGE 28 · MARKET:** Someone sold hats for goats. No one agreed whether the hats were for goats or from goats.
+- **28 · YEARS LATER:** Five years on, the family legacy of rivals rise is still remembered.
+- **28 · AGE 28 · CHOICE:** You carry it. It is heavier than you expected and gets no lighter, and the wrong person stays under a shadow for years because you are decent.
+- **29 · AGE 29 · PERSONAL GRUDGES:** Sir Roderick greets you by your full name in public. No friendly person has ever needed quite so much of it.
+- **29 · YEARS LATER:** A choice made during the accused bears fruit three years later.
+- **29 · AGE 29 · CHOICE:** You go home. The bells keep ringing true and the wrong name keeps going on them, and everyone concerned has agreed to this.
+- **30 · AGE 30 · LOCAL JUSTICE:** Someone has put a cushion in the stocks. The gaoler removes it, on the grounds that punishment should not attract regulars.
+- **30 · AGE 30 · DAILY MISHAPS:** The well rope catches on a sleeve. A vigorous argument follows about which of the two is supposed to go down.
+- **30 · AGE 30 · CHOICE:** The ferry reaches the bank. You gain a small reputation for nerve and remain unable to spend it on better buoyancy.
+- **31 · AGE 31 · WEDDING GOSSIP:** A bride’s veil catches on the chapel door. Her aunt calls it an omen; the carpenter calls it a nail.
+- **31 · AGE 31 · PARISH LIFE:** The bell rope wears smooth where generations of hands have pulled it. You hold the same place for a moment.
+- **31 · AGE 31 · CHOICE:** Nineteen months, two petitions and a fee. One line struck and one line added, and the family read it aloud to each other every evening for a week.
+- **32 · AGE 32 · MISHAP:** A loose thread undid half your tunic in the market. The tailor called it ventilation.
+- **32 · AGE 32 · LEARNING:** A monk draws a tiny sleeping clerk beside a solemn passage on vigilance. You wonder who the book was meant for.
+- **32 · AGE 32 · CHOICE:** Three days over a low fire and most of it comes back. It is a genuine survey, badly copied, of something under the mere field.
+- **33 · AGE 33 · WEDDING GOSSIP:** The clerk reads marriage banns so softly that only the objections can be heard.
+- **33 · AGE 33 · CHOICE:** You get both. He is amerced, shamed, and ruined over five years, and the parish spends those five years deciding what that says about you.
+- **34 · AGE 34 · GOSSIP:** A friar preached fasting while smelling powerfully of pudding. The village noticed.
+- **35 · AGE 35 · QUIET KINDNESS:** A stranger leaves bread beside the poor box and goes before anyone can praise the gift.
+- **35 · AGE 35 · LOCAL JUSTICE:** The court dog sleeps through an argument over ownership. Both claimants lower their voices rather than wake it.
+- **35 · AGE 35 · CHOICE:** You read every name, including your own. Nobody enjoys it. It is entered in the roll as read, which is the only monument the business ever gets.
+- **36 · AGE 36 · RELIGIOUS HYPOCRISY:** A friar consults three calendars before deciding whether today requires him to refuse the cheese.
+- **36 · AGE 36 · CHOICE:** Twelve shillings and no explanation offered to anyone. The parish gets its bell and spends a decade guessing why.
+- **37 · AGE 37 · PARISH LIFE:** The chapel door whistles through the sermon. It is the only interruption the priest cannot ask to leave.
+- **37 · AGE 37 · WEDDING GOSSIP:** The jeweller explains that a wedding ring can be made smaller. The listening couples look briefly hopeful.
+- **37 · AGE 37 · CHOICE:** You give up the excursion and preserve your health. Emma keeps the story of the shortcut for a more agreeable audience.
+- **38 · AGE 38 · WISDOM:** A monk leaves a space in his sums to show you how nothing can have a place. You think about that on the way home.
+- **38 · AGE 38 · LOCAL JUSTICE:** A witness clears his throat every time the clerk reaches the useful part. The testimony is eventually adjourned for water.
+- **38 · AGE 38 · CHOICE:** The priest has it consecrated and blessed and firmly closed. He also asks, twice, who else had been down there, and you do not have an answer.
+- **39 · AGE 39 · DAILY MISHAPS:** A cat walks over a freshly copied page. Its contribution is darker, clearer and much less expensive than the scribe’s.
+- **39 · AGE 39 · CHOICE:** You avoid the expense and lose Isolde’s respect. The unfinished duty is smaller than your explanation for leaving it.
+- **40 · AGE 40 · WISDOM:** A hermit teaches you the words on a milestone. His complaints about visitors become easier to understand.
+- **40 · AGE 40 · CHOICE:** Thirty shillings, the moulds, the debts and the apprentice. The name over the door is now yours and half the parish thinks you circled it for years.
+- **41 · AGE 41 · MILL:** The miller measured your flour with a scoop that looked hungry.
+- **41 · AGE 41 · PERSONAL GRUDGES:** Sir Roderick wishes you excellent health with the expression of someone cancelling a small celebration.
+- **41 · AGE 41 · CHOICE:** Ninety years of rolls and one very reluctant priory. They did not die out. They were dispossessed, and there are descendants, and they are three miles away.
+- **42 · AGE 42 · GUILD CUSTOMS:** The guild spends an hour deciding who sits nearest the fire. No trade is conducted, but the importance of rank is kept warm.
+- **42 · AGE 42 · CHOICE:** You count thirty-seven arrows and one suspicious knitting needle.
+- **43 · AGE 43 · WEDDING GOSSIP:** The chapel echoes a groom’s promise to obey. His family looks alarmed at having heard it twice.
+- **43 · AGE 43 · CHOICE:** You are clear in law and marked in memory, which turns out to be the record that gets consulted.
+- **44 · AGE 44 · COURTSHIP GOSSIP:** A love letter circulates without a name. Three people blush at the same description of their teeth.
+- **44 · AGE 44 · CHOICE:** By dawn you have made a ditch, lost a shoe, and invented a new smell.
+- **45 · AGE 45 · REMEMBRANCE:** A household recipe says “as much as seems right.” Whoever wrote it took the quantity with them.
+- **45 · AGE 45 · BELLS:** The church bell rang at the wrong hour. Everyone arrived tired and morally early.
+- **45 · AGE 45 · CHOICE:** It goes up with his mark on it and he is helped out to hear the first peal. He says it is a little flat. It is not.
+- **46 · AGE 46 · MARKET LIFE:** The baker stamps every loaf with his initials. Nobody has asked to sign the small ones.
+- **46 · AGE 46 · CHOICE:** You refuse the unsupported claim and improve your judgement. Beatrix is suddenly less certain which country contains the fortune.
+- **47 · AGE 47 · COURTSHIP GOSSIP:** Two courting neighbours speak through a fence. Their chaperone listens from the gate, complaining that the acoustics are poor.
+- **47 · AGE 47 · CHOICE:** Ten nights of quiet digging under somebody else’s floor. You find it. Whatever it is worth, you can never once explain how you came by it.
+- **48 · AGE 48 · DAILY MISHAPS:** A stool gives way under the only person who had just called the meeting to order.
+- **48 · YEARS LATER:** Five years on, the family legacy of the accused is still remembered.
+- **48 · AGE 48 · CHOICE:** You go and look. The child is well fed, entirely alone, and has not been outside the precinct since it could walk.
+- **49 · AGE 49 · TRADE CUSTOMS:** A merchant warms his seal so carefully that he stamps the table instead of the deed. The table is now exceptionally well attested.
+- **49 · AGE 49 · CHOICE:** You pay for the damaged lot and gain craft experience sorting what can be used. No miraculous resale profit arrives with it.
+- **50 · AGE 50 · WISDOM:** A monk explains division with three apples. The lesson becomes subtraction when somebody eats the example.
+- **50 · AGE 50 · GETTING OLDER:** A young person explains how the world works. You recognise several of your own former errors and let them finish.
+- **50 · THE CROWN:** Cuthbert is recognised as ruler. recognition by the surviving council after the royal line failed.
+- **50 · AGE 50 · CHOICE:** One more at the table and a very large unanswered question living under your roof. The household adjusts and the question does not go away.
+- **51 · AGE 51 · LOCAL JUSTICE:** A witness clears his throat every time the clerk reaches the useful part. The testimony is eventually adjourned for water.
+- **51 · AGE 51 · GOSSIP:** A bard fits your name into a song by adding two syllables and a crime you have never committed.
+- **51 · TRAIT GAINED:** You are now Devoted Parent. Your line will remember your name fondly.
+- **51 · AGE 51 · CHOICE:** Seven names, and three of them work for men who would pay for that list. You do not sell it yet. You write it down.
+- **52 · AGE 52 · WISDOM:** A hermit teaches you the words on a milestone. His complaints about visitors become easier to understand.
+- **52 · AGE 52 · DAILY MISHAPS:** Fresh rushes make the floor look respectable. The missing spoon is still under the old respectability.
+- **52 · AGE 52 · CHOICE:** You pay seven gold for sunlight you were not using. Cuthbert accepts the money without conceding the existence of clouds.
+- **53 · AGE 53 · GETTING OLDER:** Your joints announce the weather before the sky does. They offer no useful advice about what to do with it.
+- **53 · AGE 53 · MARKET:** Someone sold hats for goats. No one agreed whether the hats were for goats or from goats.
+- **53 · AGE 53 · CHOICE:** You save Simon from a second performance and gain a grateful acquaintance. The flour remains unmoved.
+- **54 · AGE 54 · QUIET KINDNESS:** A stranger leaves bread beside the poor box and goes before anyone can praise the gift.
+- **54 · THE CROWN:** Edmund is recognised as ruler. recognition by the surviving council after the royal line failed.
+- **54 · AGE 54 · CHOICE:** The child is taken south within the week, well-horsed and well-attended, and is never heard of in this shire again by anybody.
+- **55 · AGE 55 · HOUSEHOLD ACCOUNTS:** An official explains that there is a fee for recording a fee. You begin to understand why parchment is dear.
+- **55 · AGE 55 · THE END:** You died at 55. Died of a winter chill and a tired heart.
+
+## After — clergy — seed 840009
+
+premium; died aged 49; Died of a winter chill and a tired heart.
+
+- **0 · YEAR 0 · BORN:** Joan reads a psalm over your cradle. Simon discovers that the parchment was promised to a patron. Your education begins with the price of words.
+- **0 · YEAR 0 · TRAIT:** 🌟 From the cradle you are Golden Child. Blessed with strength, charm, wit, and grace beyond ordinary children.
+- **1 · AGE 1 · INFANCY:** You take three determined steps towards a stool. Joan catches you before you discover the fourth is missing.
+- **2 · AGE 2 · FAMILY TABLE:** Joan softens a crust for you, blows on it, and tests it twice. The second test is mostly hunger.
+- **2 · AGE 2 · INFANCY:** Sir Quackbeard inspects your cradle with the severity of a constable. He objects to the blanket and loses the argument.
+- **2 · AGE 2 · CHOICE:** Your household gains a small voice in its nightly accounting. The cups remain easier to count than the debts.
+- **3 · AGE 3 · DAILY MISHAPS:** You spend a morning laughing at a ceiling beam. Nobody else can make it perform.
+- **3 · AGE 3 · QUIET KINDNESS:** Joan forgets the end of your lullaby and hums instead. You know the missing part and fall asleep waiting.
+- **4 · AGE 4 · GROWING UP:** Joan marks your height on the doorpost. You are now taller than last year’s debt notice.
+- **4 · AGE 4 · CHOICE:** Your guardian folds the dry blanket around you. The roof will require a less comfortable remedy.
+- **5 · AGE 5 · DAILY MISHAPS:** A stool gives way under the only person who had just called the meeting to order.
+- **5 · AGE 5 · LEARNING:** The writing master asks who touched his ink. You raise a perfectly black finger to deny it.
+- **5 · AGE 5 · CHOICE:** The marriage entry settles it. The friar must find his scandal elsewhere.
+- **6 · AGE 6 · WEATHER:** You build a snow lord with an enormous nose. The thaw removes his authority before anyone can collect rent.
+- **6 · AGE 6 · BELLS:** The church bell rang at the wrong hour. Everyone arrived tired and morally early.
+- **6 · AGE 6 · CHOICE:** The altered bread list is traced to your hand. Your household must replace what the charity lost.
+- **7 · AGE 7 · ROADS:** A cartwheel returns to the same rut so faithfully that the driver accuses it of having relatives there.
+- **7 · AGE 7 · MARKET LIFE:** The locksmith locks his own stall to demonstrate a new bolt. His apprentice has the key and the afternoon off.
+- **7 · AGE 7 · CHOICE:** You learn how frost split the root and improve household food planning. The forecast is useful precisely because nobody claims it speaks.
+- **8 · AGE 8 · FAMILY:** Joan finds an old family warning against trusting smiling millers. The warning is written on the back of an unpaid milling bill.
+- **9 · AGE 9 · GROWING UP:** The other children elect you shepherd of a flock of stones. None stray. Your reputation for husbandry is impeccable.
+- **9 · AGE 9 · LEARNING:** Joan teaches you a knot that holds under strain. The explanation includes an unflattering account of a cousin’s wedding.
+- **9 · AGE 9 · CHOICE:** You cross first, wheezing turnip dust. Beatrix insists the sack was uneven. The crowd insists they do the victory bow anyway.
+- **10 · AGE 10 · MARKET LIFE:** The baker stamps every loaf with his initials. Nobody has asked to sign the small ones.
+- **10 · AGE 10 · QUIET KINDNESS:** Someone leaves a glowing coal ready for your cold hearth. You never learn who; the room warms anyway.
+- **10 · AGE 10 · CHOICE:** You improve your own vegetable patch and fill the store cupboard. No patron required. No badge either, which is a mercy.
+- **11 · AGE 11 · FORTUNE:** A merchant overpaid you by mistake and rode off. You said nothing. Wise.
+- **11 · AGE 11 · GROWING UP:** The children play at holding court. The judge is chosen because she owns the stool; the prisoner owns the biscuits.
+- **11 · AGE 11 · CHOICE:** Your speech on floral temptation moves the court. The pig is spared and immediately eats the verdict.
+- **12 · AGE 12 · DAILY MISHAPS:** The soap seller’s hands are cleaner than anyone’s in the square. He keeps dropping the money.
+- **12 · AGE 12 · LOCAL JUSTICE:** A witness clears his throat every time the clerk reaches the useful part. The testimony is eventually adjourned for water.
+- **12 · AGE 12 · CHOICE:** He sets it badly and charges well. The hand works, mostly, and neither of you says which two fingers do not.
+- **13 · AGE 13 · PARISH LIFE:** The bell rope wears smooth where generations of hands have pulled it. You hold the same place for a moment.
+- **13 · AGE 13 · CHOICE:** You say it plainly and she does not argue. She just looks at the fire until you leave. She learns anyway, on kitchen floors, in the dark.
+- **14 · AGE 14 · MARKET LIFE:** A rope seller demonstrates the strength of his wares by tying up his assistant. The assistant negotiates his wages from there.
+- **14 · AGE 14 · WEATHER:** Simon predicts rain from an aching knee. You carry a cloak out of affection and are dry by good fortune.
+- **14 · AGE 14 · CHOICE:** You settle your household’s accounts in front of witnesses. The traders keep selling to your family, though the ladle jokes continue.
+- **15 · AGE 15 · TAXES:** The collector takes three gold and gives you a receipt large enough to wrap a much more valuable payment.
+- **15 · AGE 15 · CHOICE:** The treatment costs blood and coin without touching the rent. You leave with a clearer sense of what the leeches actually consume.
+- **16 · AGE 16 · PLAGUE:** A sickness scare packed the chapel. The coughs harmonized terribly.
+- **16 · AGE 16 · CHOICE:** You start turning up at the right moments with the right excuses. It costs you sleep and she pretends not to notice for both your sakes.
+- **17 · AGE 17 · FALSE RELICS:** The relic’s case is polished so brightly that nobody can see the bone. The keeper thinks this has improved attendance.
+- **17 · AGE 17 · LOCAL JUSTICE:** The court dog sleeps through an argument over ownership. Both claimants lower their voices rather than wake it.
+- **17 · YEARS LATER:** A choice made during rivals rise bears fruit three years later.
+- **17 · AGE 17 · CHOICE:** You tell Beatrix to bring complaints to you, not the miller. They agree to leave your household alone and immediately insult you instead.
+- **18 · AGE 18 · MISHAP:** A tethered goat loops its rope around your ankle. It watches you untie the knot as though reviewing your work.
+- **18 · COMING OF AGE:** You enter adulthood with no formal qualification. The people of your household will remember how you got here. Later study remains open.
+- **18 · COMING OF AGE:** You are a grown soul now. You set yourself a life's ambition: Become Monarch — Claim the crown itself.
+- **18 · AGE 18 · CHOICE:** Three days over a low fire and most of it comes back. It is a genuine survey, badly copied, of something under the mere field.
+- **19 · AGE 19 · PARISH DUTIES:** Two parishioners quarrel over the draughtiest pew. The cold is bearable; sitting behind the other household is not.
+- **19 · AGE 19 · FORTUNE:** Found a shiny coin in the mud. It is mostly mud, but it spends.
+- **19 · AGE 19 · CHOICE:** Forty years of hands against two. It goes badly for an hour and then it does not, and nobody afterwards can say which of them turned it.
+- **20 · AGE 20 · WEATHER:** The procession for rain ends in a downpour. The priest claims success from beneath the only dry canopy.
+- **20 · AGE 20 · CHOICE:** You offer a truce: no more rumours, no pressure on either household, and one public apology each. Beatrix agrees. The priest takes his clapper home.
+- **21 · AGE 21 · LAW:** The reeve banned suspicious whistling. You whistled innocently and learned nothing.
+- **21 · AGE 21 · ROADS:** You take a familiar uneven step without looking. Your foot remembers a street your head was too busy to notice.
+- **21 · AGE 21 · CHOICE:** You collect a small payment before the joke is discovered. The shed remains empty and you keep a secret about the route you sold.
+- **22 · AGE 22 · COURT:** A travelling clerk sketches Sir Quackbeard in the margin of an account. For once the most forceful opinion on the page needs no signature.
+- **22 · AGE 22 · CHOICE:** They send for the apprentice. The master hears about it the same afternoon, from someone who enjoyed telling her.
+- **23 · AGE 23 · RELIC:** A relic seller passed through with Saint Nobody's elbow. It bent suspiciously.
+- **23 · THE CROWN:** Aldric is recognised as ruler. the documented succession.
+- **23 · AGE 23 · CHOICE:** Four nights in the cold before you see who has the key. You know, now, and knowing turns out to be considerably harder than not knowing was.
+- **24 · AGE 24 · UNEXPECTED SIGHTS:** A traveller displays a sea creature’s enormous rib. The butcher asks after the rest before believing the story.
+- **24 · AGE 24 · DESK WORK:** Your ink freezes before your fingers do. For a short time the records are safe from everybody.
+- **24 · AGE 24 · CHOICE:** You measure it against every man in Swineford over the next month, entirely without explaining why. You find the match and you very much wish you had not.
+- **25 · AGE 25 · MARKET LIFE:** The locksmith locks his own stall to demonstrate a new bolt. His apprentice has the key and the afternoon off.
+- **25 · AGE 25 · CHOICE:** You put a full measure in and walk them to the door yourself. Four households know by morning and two of them start doing the same.
+- **26 · AGE 26 · CORRUPT OFFICIALS:** An official says his hands are clean. The new gloves are quite fine.
+- **26 · AGE 26 · CHOICE:** He forgives you for sins you had not planned yet. Efficient, if troubling. You keep the paper, which is the part that will matter.
+- **27 · AGE 27 · QUIET KINDNESS:** A stranger leaves bread beside the poor box and goes before anyone can praise the gift.
+- **27 · AGE 27 · COURTSHIP GOSSIP:** A suitor praises someone’s fine judgement, then spends an hour explaining why they should choose him.
+- **27 · AGE 27 · CHOICE:** Two days of shovelling and sorting in a stench that gets into your clothes. You save rather more than anyone expected and lose the rest.
+- **28 · AGE 28 · PARISH DUTIES:** A patched sheet of vellum makes you write around a hole. The sermon improves when given something it cannot say.
+- **28 · AGE 28 · CHOICE:** You read the whole account to the household including the sharing and the theft. It is a difficult evening and the granary is never short again.
+- **29 · AGE 29 · PRIVATE SECRETS:** You check that a certain chest is locked. It is. You check again, discovering that secrecy is mostly unpaid work.
+- **29 · AGE 29 · WEDDING GOSSIP:** The jeweller explains that a wedding ring can be made smaller. The listening couples look briefly hopeful.
+- **29 · AGE 29 · CHOICE:** You take it in the child’s own words with the date and two witnesses. It is either the most valuable page in the parish or a piece of paper.
+- **30 · AGE 30 · WISDOM:** A hermit teaches you the words on a milestone. His complaints about visitors become easier to understand.
+- **30 · AGE 30 · CHOICE:** He goes grey, says it was there when he came, and is entirely honest about that. He is much less honest about why he never mentioned it.
+- **31 · AGE 31 · FORTUNE:** A merchant overpaid you by mistake and rode off. You said nothing. Wise.
+- **31 · AGE 31 · LOCAL JUSTICE:** The watch changes its password. By dusk everybody knows it except the man who chose it.
+- **31 · THE CROWN:** Rowan is recognised as ruler. recognition by the surviving council after the royal line failed.
+- **31 · AGE 31 · CHOICE:** They say a woman told them, and describe somebody who has been dead since before they were born, accurately, including the limp.
+- **32 · AGE 32 · MISHAP:** A loose thread undid half your tunic in the market. The tailor called it ventilation.
+- **32 · AGE 32 · CHOICE:** You clear a corner by the hearth. The parish is relieved, your stores are not, and the child sleeps for fourteen hours.
+- **33 · AGE 33 · MARKET:** Someone sold hats for goats. No one agreed whether the hats were for goats or from goats.
+- **33 · TRAIT GAINED:** You are now Devoted Parent. Your line will remember your name fondly.
+- **33 · AGE 33 · CHOICE:** You collect twenty gold and increase household wealth. Existing debts are not erased by the takings, and Rowan trusts you less for pricing the frightened child’s answers.
+- **34 · AGE 34 · WEATHER:** A neighbour hangs washing in a rare patch of sun. Half the lane turns to watch it, as though warmth were a public performance.
+- **34 · AGE 34 · DAILY MISHAPS:** A stool gives way under the only person who had just called the meeting to order.
+- **34 · THE CROWN:** Beatrice is recognised as ruler. recognition by the surviving council after the royal line failed.
+- **34 · AGE 34 · CHOICE:** You and Beatrix jointly challenge a trader’s false weights. The trader looks at both of you and quietly fetches the honest scales.
+- **35 · AGE 35 · PARISH LIFE:** The sacristan straightens a candle after every prayer. Disorder is the one sin he can reliably put right.
+- **35 · AGE 35 · MARKET LIFE:** A cobbler promises shoes that will outlast their owner. An elderly customer asks for a more cheerful recommendation.
+- **35 · AGE 35 · CHOICE:** You march off to war, one frightened spearman among hundreds. The mud is the only certainty.
+- **35 · AGE 35 · CHOICE:** You edged away from the front toward the wagons. Safer, until somebody notices, and then a great deal worse.
+- **35 · AGE 35 · CHOICE:** You set your spear and the charging horse impaled itself. You stand, blood-soaked and alive, a hero of the field. The lord himself learns your name.
+- **35 · TRAIT GAINED:** You are now War Hero. Stood firm when braver folk fled the field.
+- **36 · AGE 36 · QUIET KINDNESS:** An old bowl is mended with neat metal staples. Someone decided it was worth keeping, cracks and all.
+- **36 · AGE 36 · CHOICE:** Ten nights of quiet digging under somebody else’s floor. You find it. Whatever it is worth, you can never once explain how you came by it.
+- **37 · AGE 37 · REMEMBRANCE:** You still leave room at the table for someone who will not be coming. This year you notice the space before setting out the bowl.
+- **37 · AGE 37 · CHOICE:** You say what the rector needs said. The dream is condemned from the pulpit, the family leaves the parish by spring, and you are on very good terms with the church.
+- **38 · AGE 38 · DAILY MISHAPS:** The soap seller’s hands are cleaner than anyone’s in the square. He keeps dropping the money.
+- **38 · AGE 38 · CHOICE:** You decline to give an opinion that somebody might later mistake for a guarantee. Leofric will need a different signature.
+- **39 · AGE 39 · ROADS:** A cartwheel returns to the same rut so faithfully that the driver accuses it of having relatives there.
+- **39 · YEARS LATER:** Five years on, the family legacy of rivals rise is still remembered.
+- **39 · AGE 39 · CHOICE:** No one visits for weeks. Peaceful, except for the screaming outside.
+- **40 · AGE 40 · DAILY MISHAPS:** Fresh rushes make the floor look respectable. The missing spoon is still under the old respectability.
+- **40 · AGE 40 · PARENTING:** Maud adopts your most irritating habit. You defend it much less confidently from the other side of the table.
+- **40 · AGE 40 · CHOICE:** The steward rules the claim has no standing, the birth kin are amerced fourpence for troubling the court, and the whole village now knows the child’s business.
+- **41 · AGE 41 · LEARNING:** A sundial gives a precise answer until a cloud arrives. You appreciate an instrument willing to admit it does not know.
+- **41 · AGE 41 · CHOICE:** The flood, the secret, the crowds, the penny a question, what you did about each. They listen the whole way through and thank you, and they do not stay.
+- **42 · AGE 42 · UNEXPECTED SIGHTS:** The sun darkens briefly. Someone bangs a pan at it. When daylight returns, he looks unbearable.
+- **42 · AGE 42 · CHOICE:** You sealed the door and rationed turnips for a grim season. The Pestilence passed you by.
+- **42 · TRAIT GAINED:** You are now Plague-Touched. Looked the Pestilence in the eye and lived.
+- **43 · AGE 43 · MARTIAL:** A passing knight explains that the dent in his helm saved his life. His squire says the doorway was never in much danger.
+- **43 · AGE 43 · FORTUNE:** Found a shiny coin in the mud. It is mostly mud, but it spends.
+- **43 · THE CROWN:** Tomas is recognised as ruler. recognition by the surviving council after the royal line failed.
+- **43 · AGE 43 · CHOICE:** Your money, no bond, no lender. It is cleaner and it makes you the creditor, which changes something between you that neither of you names.
+- **44 · AGE 44 · PUBLIC VANITY:** A lover recites a moving poem. The minstrel listening behind him remembers writing it for someone else.
+- **44 · AGE 44 · CHOICE:** You give them the date they wanted. The alderman’s son is furious, the wardens are delighted, and you have nine months to become somebody who can do this.
+- **45 · AGE 45 · RELIGIOUS HYPOCRISY:** A friar consults three calendars before deciding whether today requires him to refuse the cheese.
+- **45 · AGE 45 · DAILY MISHAPS:** A cat walks over a freshly copied page. Its contribution is darker, clearer and much less expensive than the scribe’s.
+- **45 · AGE 45 · CHOICE:** Your money, no bond, no lender. It is cleaner and it makes you the creditor, which changes something between you that neither of you names.
+- **46 · AGE 46 · BELLS:** The church bell rang at the wrong hour. Everyone arrived tired and morally early.
+- **46 · AGE 46 · GETTING OLDER:** Your joints announce the weather before the sky does. They offer no useful advice about what to do with it.
+- **46 · AGE 46 · CHOICE:** You put a basket on their step yourself. It costs you a fortnight of stores and buys you something the stores could not.
+- **47 · AGE 47 · REMEMBRANCE:** A household recipe says “as much as seems right.” Whoever wrote it took the quantity with them.
+- **47 · WEDDING:** You marry Constance by your own choosing. Bells ring, bread vanishes, and two families pretend not to count the gifts.
+- **47 · AGE 47 · CHOICE:** You marry Constance by consent. Neither of you gains an inheritance in advance of anyone’s death.
+- **48 · AGE 48 · WEATHER:** A neighbour hangs washing in a rare patch of sun. Half the lane turns to watch it, as though warmth were a public performance.
+- **48 · AGE 48 · CHOICE:** Twelve shillings out of your own purse and no argument in front of the apprentices. The work stays on time and the supplier does it again in spring.
+- **49 · AGE 49 · LEARNING:** A monk draws a tiny sleeping clerk beside a solemn passage on vigilance. You wonder who the book was meant for.
+- **49 · AGE 49 · THE END:** You died at 49. Died of a winter chill and a tired heart.
+
+## After — martial — seed 840010
+
+premium; died aged 71; Died peacefully of being very, very old.
+
+- **0 · YEAR 0 · BORN:** Edmund reports your birth to the garrison as one additional mouth. Avice insists you are a child, not a ration claim. Captain Joan requests clarification.
+- **0 · YEAR 0 · TRAIT:** 🙏 From the cradle you are Pious. Born with a prayer already on the lips.
+- **1 · AGE 1 · CHILDHOOD:** Sir Quackbeard lets you sit nearby while he preens. It is a quiet friendship with rather strict terms of admission.
+- **1 · AGE 1 · CHOICE:** The cat refuses to join the crockery. Your household repeats the word more slowly.
+- **2 · AGE 2 · INFANCY:** A winter cough keeps you awake. Avice warms your blanket by the hearth and stays until your breathing settles.
+- **2 · AGE 2 · GROWING UP:** Avice sews a bell to your sleeve to hear where you crawl. You learn to crawl very slowly.
+- **2 · AGE 2 · CHOICE:** A sibling is born! Loud, wrinkled, and immediately beloved. You vow to teach them everything about turnips.
+- **3 · AGE 3 · FAMILY TABLE:** Avice softens a crust for you, blows on it, and tests it twice. The second test is mostly hunger.
+- **3 · AGE 3 · DAILY MISHAPS:** You spend a morning laughing at a ceiling beam. Nobody else can make it perform.
+- **3 · AGE 3 · CHOICE:** Your guardian folds the dry blanket around you. The roof will require a less comfortable remedy.
+- **4 · AGE 4 · CHILDHOOD:** You build a miniature house in the mud and give it a very small door. Visitors will have to be polite enough to shrink.
+- **5 · AGE 5 · WISDOM:** A hermit teaches you the words on a milestone. His complaints about visitors become easier to understand.
+- **5 · AGE 5 · CHOICE:** The extra ration is refused when Joan checks the muster. Your household’s genuine claim is delayed.
+- **6 · AGE 6 · WEATHER:** A neighbour hangs washing in a rare patch of sun. Half the lane turns to watch it, as though warmth were a public performance.
+- **6 · AGE 6 · MISHAP:** You slip beside the watering trough. A bystander offers advice after you have stopped needing it.
+- **7 · AGE 7 · PARISH LIFE:** The chapel door whistles through the sermon. It is the only interruption the priest cannot ask to leave.
+- **7 · AGE 7 · CHOICE:** You learn how frost split the root and improve household food planning. The forecast is useful precisely because nobody claims it speaks.
+- **8 · AGE 8 · GOSSIP:** A bard fits your name into a song by adding two syllables and a crime you have never committed.
+- **8 · AGE 8 · GOSSIP:** A friar preached fasting while smelling powerfully of pudding. The village noticed.
+- **8 · AGE 8 · CHOICE:** You catch nine rats and establish, by arithmetic, that the rats account for about a third of it. The other two-thirds have a key.
+- **9 · AGE 9 · BLESSING:** You lit a candle at the chapel. You feel holier and slightly singed.
+- **9 · AGE 9 · CHOICE:** You cross first, wheezing turnip dust. Leofric insists the sack was uneven. The crowd insists they do the victory bow anyway.
+- **10 · AGE 10 · LEARNING:** A monk draws a tiny sleeping clerk beside a solemn passage on vigilance. You wonder who the book was meant for.
+- **10 · AGE 10 · CHOICE:** You put a full measure in and walk them to the door yourself. Four households know by morning and two of them start doing the same.
+- **11 · AGE 11 · WEATHER:** Edmund predicts rain from an aching knee. You carry a cloak out of affection and are dry by good fortune.
+- **11 · AGE 11 · CHOICE:** You accuse the pie of tempting honest men. The court pauses, then fines you for nonsense.
+- **12 · AGE 12 · FAMILY:** Avice finds an old family warning against trusting smiling millers. The warning is written on the back of an unpaid milling bill.
+- **12 · AGE 12 · CHOICE:** It goes at a good price to a buyer three villages off who does not open the sacks in your presence. You are paid and you are not proud of it.
+- **13 · AGE 13 · ROADS:** A cartwheel returns to the same rut so faithfully that the driver accuses it of having relatives there.
+- **13 · AGE 13 · CHOICE:** Eaten and spoiled. The other two numbers stay in your head, where they go on being true and go on being expensive.
+- **14 · AGE 14 · COURT:** A travelling clerk sketches Sir Quackbeard in the margin of an account. For once the most forceful opinion on the page needs no signature.
+- **14 · AGE 14 · CHOICE:** A shilling for fourpence of vellum. They take it happily and tell nine people about the profit. By Sunday the whole village knows there is a map.
+- **15 · AGE 15 · DAILY MISHAPS:** The well rope catches on a sleeve. A vigorous argument follows about which of the two is supposed to go down.
+- **15 · AGE 15 · CHOICE:** You tell Lord Aldric that the Deputy Pig Marshal lost a pig inside the chapel. It is true. Repeating the part about the baptismal font is optional, but you do.
+- **16 · AGE 16 · WEDDING GOSSIP:** The jeweller explains that a wedding ring can be made smaller. The listening couples look briefly hopeful.
+- **16 · AGE 16 · CHOICE:** You name Leofric as the liar and demand they produce the alleged ladle. Half the market cheers. The other half wants to see the ladle.
+- **17 · AGE 17 · WEATHER:** Frost draws a finer window than the glazier ever managed. You admire it until someone reminds you it is on the inside.
+- **17 · AGE 17 · CHOICE:** The priest confiscates the toe, then quietly asks if there were any fingers.
+- **18 · AGE 18 · PLAGUE:** A sickness scare packed the chapel. The coughs harmonized terribly.
+- **18 · COMING OF AGE:** You enter adulthood with no formal qualification. The people of your household will remember how you got here. Later study remains open.
+- **18 · COMING OF AGE:** You are a grown soul now. You set yourself a life's ambition: Rule Cruelly — Be remembered as a feared ruler.
+- **18 · AGE 18 · CHOICE:** Five iron pieces of a make no smith in the shire recognises. They are worth money to the right person and questions to everybody else.
+- **19 · AGE 19 · CORRUPT OFFICIALS:** An official says his hands are clean. The new gloves are quite fine.
+- **19 · YEARS LATER:** A choice made during rivals rise bears fruit three years later.
+- **19 · AGE 19 · CHOICE:** You take the murrain, the flood and the burial list to the commissioners in person. They cut the assessment by a third and mark Swineford as difficult.
+- **20 · AGE 20 · FORTUNE:** Found a shiny coin in the mud. It is mostly mud, but it spends.
+- **20 · AGE 20 · GOSSIP:** A bard fits your name into a song by adding two syllables and a crime you have never committed.
+- **20 · AGE 20 · CHOICE:** You point out that the church bell still rings. Then you stop talking. The bell supplies a considerably better argument.
+- **21 · AGE 21 · BELLS:** The church bell rang at the wrong hour. Everyone arrived tired and morally early.
+- **21 · AGE 21 · CHOICE:** You ask the priest to hold up the clapper while Leofric repeats the accusation. They cannot finish. You have won, and made the humiliation needlessly thorough.
+- **22 · AGE 22 · MARKET LIFE:** You can afford the good thread this year. It feels extravagant until you remember what the cheap thread cost in mending.
+- **22 · AGE 22 · PLAGUE:** During the sickness scare you avoid the crowded stalls. You miss the company more than the haggling.
+- **22 · AGE 22 · CHOICE:** You create an actual forgery charge while trying to escape an administrative error. The clerk now has something definite to write.
+- **23 · AGE 23 · COURTSHIP GOSSIP:** A widow moves her bench into the sun. Three men offer to carry it; she asks the one who brought a cushion.
+- **23 · AGE 23 · RELIGIOUS HYPOCRISY:** A dispute over a saint’s feast ends when both sides discover that the cook has already served it.
+- **23 · THE CROWN:** Elswyth is recognised as ruler. the documented succession.
+- **23 · AGE 23 · CHOICE:** Your defence exposes enough doubt for the charge to fail.
+- **24 · AGE 24 · LOCAL JUSTICE:** Someone has put a cushion in the stocks. The gaoler removes it, on the grounds that punishment should not attract regulars.
+- **24 · AGE 24 · QUIET KINDNESS:** Someone carries a lantern to a sick neighbour after the chapel closes. There is no audience for the walk home.
+- **24 · AGE 24 · CHOICE:** You now have the whole map and a theft from the manor archive on your conscience and, potentially, on the record.
+- **25 · AGE 25 · ALE:** A tavern proverb named you wise. By dawn nobody remembered the proverb, only the ale.
+- **25 · AGE 25 · CHOICE:** Thomas pays five gold and becomes much less neighbourly. The ladder has earned more than most apprentices.
+- **26 · AGE 26 · MILL:** The miller measured your flour with a scoop that looked hungry.
+- **26 · AGE 26 · CHOICE:** Ten shillings changes hands and your name is not read out. It is precisely what the five households did, and you were a great deal angrier about it in March.
+- **27 · AGE 27 · QUIET KINDNESS:** A stranger leaves bread beside the poor box and goes before anyone can praise the gift.
+- **27 · AGE 27 · DAILY MISHAPS:** The soap seller’s hands are cleaner than anyone’s in the square. He keeps dropping the money.
+- **27 · AGE 27 · CHOICE:** He is cautious, delighted, and writing to the bishop before you are out of the door. It is out of your hands inside a week.
+- **28 · AGE 28 · COURTSHIP GOSSIP:** The matchmaker judges a prospect by the state of their shoes. “Love walks,” she says. “Debt sends a messenger.”
+- **28 · AGE 28 · CHOICE:** Ten nights of quiet digging under somebody else’s floor. You find it. Whatever it is worth, you can never once explain how you came by it.
+- **29 · AGE 29 · SABBATH:** You wore your best shoes to chapel. The mud wore them better.
+- **29 · AGE 29 · CHOICE:** You keep your accounts precise and your accusations provable. Your family has learned the same lesson, at the cost of many uncomfortable dinners.
+- **30 · AGE 30 · RELIGIOUS HYPOCRISY:** A friar consults three calendars before deciding whether today requires him to refuse the cheese.
+- **30 · AGE 30 · FAMILY TABLE:** For once the soup is thick enough to hold a spoon upright. You eat before anyone mistakes it for building material.
+- **30 · AGE 30 · CHOICE:** You improve public order by challenging the dangerous claim. Alys acquires a rival who knows exactly which boards are missing.
+- **31 · AGE 31 · COURTSHIP GOSSIP:** A love letter circulates without a name. Three people blush at the same description of their teeth.
+- **31 · AGE 31 · CHOICE:** Swineford makes more in one summer than in the four years before it. It also buries nine people in August who came in already coughing.
+- **32 · AGE 32 · DAILY MISHAPS:** The well rope catches on a sleeve. A vigorous argument follows about which of the two is supposed to go down.
+- **32 · AGE 32 · CHOICE:** He picks twelve and the retainers stay against the wall. The fourteen are the sixteen you would have expected, and the hall empties in complete silence.
+- **33 · AGE 33 · COURTSHIP GOSSIP:** A suitor praises someone’s fine judgement, then spends an hour explaining why they should choose him.
+- **33 · AGE 33 · CHOICE:** He is far more worried than impressed and says three things about discernment of spirits that the family does not understand and does not like.
+- **34 · AGE 34 · PERSONAL GRUDGES:** Sir Roderick wishes you excellent health with the expression of someone cancelling a small celebration.
+- **34 · YEARS LATER:** Five years on, the family legacy of rivals rise is still remembered.
+- **34 · AGE 34 · CHOICE:** He tells you, quietly, that it is a sheep’s. He also tells you he will deny having said so, and that he is not the first man to have found this out.
+- **35 · AGE 35 · PARISH LIFE:** The chapel door whistles through the sermon. It is the only interruption the priest cannot ask to leave.
+- **35 · AGE 35 · HOUSEHOLD ACCOUNTS:** An official explains that there is a fee for recording a fee. You begin to understand why parchment is dear.
+- **35 · AGE 35 · CHOICE:** You send them to kin at Barton for the summer. The household concerned calms down, and the two who are protecting the secret work out exactly who moved the child.
+- **36 · AGE 36 · LEARNING:** A sundial gives a precise answer until a cloud arrives. You appreciate an instrument willing to admit it does not know.
+- **36 · AGE 36 · CHOICE:** The first bell launches you out of bed and into a bucket.
+- **37 · AGE 37 · CORRUPT OFFICIALS:** An official says his hands are clean. The new gloves are quite fine.
+- **37 · AGE 37 · FALSE RELICS:** The relic’s case is polished so brightly that nobody can see the bone. The keeper thinks this has improved attendance.
+- **37 · AGE 37 · CHOICE:** You collect twenty gold and increase household wealth. Existing debts are not erased by the takings, and Cecily trusts you less for pricing the frightened child’s answers.
+- **38 · AGE 38 · COURTSHIP GOSSIP:** Two courting neighbours speak through a fence. Their chaperone listens from the gate, complaining that the acoustics are poor.
+- **38 · AGE 38 · WEATHER:** Edmund predicts rain from an aching knee. You carry a cloak out of affection and are dry by good fortune.
+- **38 · AGE 38 · CHOICE:** You put it all on a man buried three years ago who cannot argue. The officer accepts it because it is convenient, and his widow hears about it by Friday.
+- **39 · AGE 39 · WEDDING GOSSIP:** A bride’s veil catches on the chapel door. Her aunt calls it an omen; the carpenter calls it a nail.
+- **39 · AGE 39 · CHOICE:** You pay for discretion and dubious eyesight. Agnes is pleased to find affection has a solvent friend.
+- **40 · AGE 40 · MISHAP:** A tethered goat loops its rope around your ankle. It watches you untie the knot as though reviewing your work.
+- **40 · AGE 40 · ROMANCE:** You try a knowing smile across the square and receive a puzzled one in return. The misunderstanding is mercifully brief.
+- **40 · AGE 40 · CHOICE:** You say what the rector needs said. The dream is condemned from the pulpit, the family leaves the parish by spring, and you are on very good terms with the church.
+- **41 · AGE 41 · FORTUNE:** Found a shiny coin in the mud. It is mostly mud, but it spends.
+- **41 · AGE 41 · CHOICE:** Two years of proctors and letters and one shoving match in the nave. Swineford keeps it, keeps the trade, and keeps the armed men in the porch indefinitely.
+- **42 · AGE 42 · COURTSHIP GOSSIP:** A widow moves her bench into the sun. Three men offer to carry it; she asks the one who brought a cushion.
+- **42 · AGE 42 · UNEXPECTED SIGHTS:** A rope walker crosses the square above your heads. The crowd holds its breath; his wife holds the collecting bowl steady.
+- **42 · AGE 42 · CHOICE:** You keep your health and lose a little favour with Constance. The peg remains admirably available.
+- **43 · AGE 43 · RELIC:** A relic seller passed through with Saint Nobody's elbow. It bent suspiciously.
+- **43 · AGE 43 · QUIET KINDNESS:** An old bowl is mended with neat metal staples. Someone decided it was worth keeping, cracks and all.
+- **43 · AGE 43 · CHOICE:** The flood, the secret, the crowds, the penny a question, what you did about each. They listen the whole way through and thank you, and they do not stay.
+- **44 · AGE 44 · LAW:** The reeve banned suspicious whistling. You whistled innocently and learned nothing.
+- **44 · AGE 44 · CHOICE:** Nobody says anything. By the next array the story has quietly rearranged itself so that everyone behaved rather better than they did.
+- **45 · AGE 45 · RELIGIOUS HYPOCRISY:** A friar consults three calendars before deciding whether today requires him to refuse the cheese.
+- **45 · AGE 45 · CHOICE:** You earn six gold and create a fraud charge. A worm in a cup has proved more difficult to defend than to sell.
+- **46 · AGE 46 · MARKET LIFE:** A rope seller demonstrates the strength of his wares by tying up his assistant. The assistant negotiates his wages from there.
+- **46 · AGE 46 · CHOICE:** The bribe is exposed before the court. The new charge proves easier than the old one.
+- **47 · AGE 47 · TAXES:** The collector takes three gold and gives you a receipt large enough to wrap a much more valuable payment.
+- **47 · AGE 47 · CHOICE:** You improve public order by challenging the dangerous claim. Percival acquires a rival who knows exactly which boards are missing.
+- **48 · AGE 48 · DAILY MISHAPS:** A cat walks over a freshly copied page. Its contribution is darker, clearer and much less expensive than the scribe’s.
+- **48 · THE CROWN:** Leofric is recognised as ruler. recognition by the surviving council after the royal line failed.
+- **48 · AGE 48 · CHOICE:** You preserve the moral point and improve Church standing. Godwin discovers that an argument can survive without a named victim.
+- **49 · AGE 49 · WEATHER:** A neighbour hangs washing in a rare patch of sun. Half the lane turns to watch it, as though warmth were a public performance.
+- **49 · AGE 49 · CHOICE:** You spend nine gold to help settle the dispute and improve public standing. The devil returns to work on unusually reasonable terms.
+- **50 · AGE 50 · BLESSING:** You lit a candle at the chapel. You feel holier and slightly singed.
+- **50 · AGE 50 · ALE:** A tavern proverb named you wise. By dawn nobody remembered the proverb, only the ale.
+- **50 · AGE 50 · CHOICE:** One comes over for the worst of it and charges by the mile. It is sensible, it works, and Gilbert understands exactly what it means.
+- **51 · AGE 51 · ROADS:** A cartwheel returns to the same rut so faithfully that the driver accuses it of having relatives there.
+- **51 · AGE 51 · GETTING OLDER:** Your oldest coat fits differently now. You blame the mending, which has no voice with which to object.
+- **51 · AGE 51 · CHOICE:** You are eight months ahead of anybody else who reads that list, and you spend all nineteen of them travelling.
+- **52 · AGE 52 · MARKET LIFE:** A cobbler promises shoes that will outlast their owner. An elderly customer asks for a more cheerful recommendation.
+- **52 · AGE 52 · BELLS:** The church bell rang at the wrong hour. Everyone arrived tired and morally early.
+- **52 · AGE 52 · CHOICE:** You expose the trick and gain public standing. Aldric is embarrassed to have supplied such a precise recommendation.
+- **53 · AGE 53 · FAMILY TABLE:** For once the soup is thick enough to hold a spoon upright. You eat before anyone mistakes it for building material.
+- **53 · AGE 53 · GETTING OLDER:** A young person explains how the world works. You recognise several of your own former errors and let them finish.
+- **53 · AGE 53 · CHOICE:** Your main room becomes the place Swineford is born for the better part of a decade. It costs you firewood, sleep and privacy, and the parish burial list for infants gets noticeably shorter.
+- **54 · AGE 54 · DAILY MISHAPS:** The well rope catches on a sleeve. A vigorous argument follows about which of the two is supposed to go down.
+- **54 · AGE 54 · MARKET:** Someone sold hats for goats. No one agreed whether the hats were for goats or from goats.
+- **54 · AGE 54 · CHOICE:** A forged entry does not prove the object never existed. It takes nine months and you find something, in a wall, that nobody can explain.
+- **55 · AGE 55 · LOCAL JUSTICE:** The watch changes its password. By dusk everybody knows it except the man who chose it.
+- **55 · AGE 55 · PLAGUE:** During the sickness scare you avoid the crowded stalls. You miss the company more than the haggling.
+- **55 · AGE 55 · CHOICE:** You give four gold and gain some faith. The priest accepts the donation and repeats the question, now that you have finished changing the subject.
+- **56 · AGE 56 · HOUSEHOLD ACCOUNTS:** A tally stick splits neatly into two matching accounts. You wish every disagreement could be settled by breaking a stick correctly.
+- **56 · AGE 56 · CHOICE:** You say nothing to anyone and she knows you saw. It holds until the winter she cannot hide it, and then it does not hold at all.
+- **57 · AGE 57 · OFFICIAL VANITY:** A clerk refuses an unsigned complaint that the official seal has been stolen.
+- **57 · AGE 57 · CHOICE:** Six each and no bidding against one another. It is efficient, it is profitable, and it turns two searchers into one market.
+- **58 · AGE 58 · MISHAP:** A loose thread undid half your tunic in the market. The tailor called it ventilation.
+- **58 · AGE 58 · CHOICE:** It is not your shop and not your quarrel. It becomes your quarrel by Candlemas, on worse terms.
+- **59 · AGE 59 · QUIET KINDNESS:** Someone carries a lantern to a sick neighbour after the chapel closes. There is no audience for the walk home.
+- **59 · AGE 59 · COURT:** A travelling clerk sketches Sir Quackbeard in the margin of an account. For once the most forceful opinion on the page needs no signature.
+- **59 · AGE 59 · CHOICE:** He arrives at first light, charges a mark, and does almost exactly what the apprentice had proposed at midnight.
+- **60 · AGE 60 · REMEMBRANCE:** A household recipe says “as much as seems right.” Whoever wrote it took the quantity with them.
+- **60 · YEARS LATER:** A choice made during relic hunter bears fruit three years later.
+- **60 · AGE 60 · CHOICE:** They send for the master, as they always have. She is grateful, she is slower than she was, and everyone agrees not to mention the second thing.
+- **61 · AGE 61 · WEDDING GOSSIP:** The chapel echoes a groom’s promise to obey. His family looks alarmed at having heard it twice.
+- **61 · THE CROWN:** Gilbert is recognised as ruler. recognition by the surviving council after the royal line failed.
+- **61 · AGE 61 · CHOICE:** You bring the demand into public view. Your reputation rises and Gilbert becomes a named rival rather than an invisible expense.
+- **62 · AGE 62 · RELIGIOUS HYPOCRISY:** A hermit complains that visitors interrupt his solitude, then asks whether anyone mentioned his new cave.
+- **62 · AGE 62 · CHOICE:** You describe the offer word for word at the next guild meeting. The master denies it, everyone believes you, and nothing whatsoever is done about it.
+- **63 · AGE 63 · GOSSIP:** A bard fits your name into a song by adding two syllables and a crime you have never committed.
+- **63 · AGE 63 · WEDDING GOSSIP:** A bride’s veil catches on the chapel door. Her aunt calls it an omen; the carpenter calls it a nail.
+- **63 · AGE 63 · CHOICE:** Bread and pottage for nine young men for three weeks. It empties your lardarium and it is the reason the strike lasts long enough to win anything.
+- **64 · AGE 64 · BLESSING:** You lit a candle at the chapel. You feel holier and slightly singed.
+- **64 · AGE 64 · CHOICE:** They sign, they are expelled, and they leave for Bristol in April. The eight who stayed are careful never to say the name out loud again.
+- **65 · AGE 65 · SOLDIERING:** A company horse receives better oats than its rider receives bread. Only one of them is allowed to object by biting.
+- **65 · AGE 65 · CHOICE:** You say it gives back less than it took and decline. The charter passes without you, and in eight years somebody quotes your refusal in a very different argument.
+- **66 · AGE 66 · REMEMBRANCE:** You find a ribbon you meant to throw away years ago. It returns to its box without any firmer decision.
+- **66 · AGE 66 · FORTUNE:** Found a shiny coin in the mud. It is mostly mud, but it spends.
+- **66 · AGE 66 · CHOICE:** Each piece goes back where it surfaced with a full account of how it got there attached. Nobody gets everything and every object gets its story.
+- **67 · AGE 67 · MARKET:** Someone sold hats for goats. No one agreed whether the hats were for goats or from goats.
+- **67 · AGE 67 · CHOICE:** You decline without circulating the letter. Alys appreciates having one disappointment instead of an audience.
+- **68 · AGE 68 · QUIET KINDNESS:** Someone leaves a glowing coal ready for your cold hearth. You never learn who; the room warms anyway.
+- **68 · AGE 68 · DAILY MISHAPS:** A stool gives way under the only person who had just called the meeting to order.
+- **68 · AGE 68 · CHOICE:** The histories are copied and outlive the objects by three hundred years. Nobody meant that, and it is the better half of the bargain.
+- **69 · AGE 69 · WISDOM:** A monk leaves a space in his sums to show you how nothing can have a place. You think about that on the way home.
+- **69 · AGE 69 · CHOICE:** The captain loves it. Confusion, he says, is half of war and most of command.
+- **69 · AGE 69 · CHOICE:** You prayed harder than you have ever prayed. Whether God listened, the battle will decide.
+- **69 · AGE 69 · CHOICE:** You lay among the fallen, unmoving, until the horses thundered past. Survival has no honour, but it has a pulse.
+- **70 · AGE 70 · FAMILY TABLE:** For once the soup is thick enough to hold a spoon upright. You eat before anyone mistakes it for building material.
+- **70 · AGE 70 · CHOICE:** You gain public wit and lose Godwin’s affection. The argument is not improved by your willingness to test it.
+- **71 · AGE 71 · PLAGUE:** A sickness scare packed the chapel. The coughs harmonized terribly.
+- **71 · AGE 71 · THE END:** You died at 71. Died peacefully of being very, very old.
+
+## After — outlaw — seed 840011
+
+premium; died aged 59; Killed in a fall while testing a condemned rope.
+
+- **0 · YEAR 0 · BORN:** You arrive during a rent dispute. Osric offers the bailiff a chicken; Rowena offers him the door. You inherit neither victory nor dry bedding.
+- **0 · YEAR 0 · TRAIT:** 🗣️ From the cradle you are Silver-Tongued. Could talk a bishop out of his hat.
+- **1 · AGE 1 · INFANCY:** A winter cough keeps you awake. Rowena warms your blanket by the hearth and stays until your breathing settles.
+- **1 · AGE 1 · CHOICE:** The bowl catches a little water. Your guardian praises the help and moves your bedding somewhere dry.
+- **2 · AGE 2 · INFANCY:** Your first clear word is “more.” Rowena looks pleased until you begin applying it to everything.
+- **2 · AGE 2 · INFANCY:** Sir Quackbeard inspects your cradle with the severity of a constable. He objects to the blanket and loses the argument.
+- **2 · AGE 2 · CHOICE:** A sibling is born anyway. You sulk magnificently, but the baby grips your finger and your cold heart thaws a little.
+- **3 · AGE 3 · MISHAP:** You slip beside the watering trough. A bystander offers advice after you have stopped needing it.
+- **4 · AGE 4 · WEATHER:** A neighbour hangs washing in a rare patch of sun. Half the lane turns to watch it, as though warmth were a public performance.
+- **4 · AGE 4 · CHOICE:** The cat refuses to join the crockery. Your household repeats the word more slowly.
+- **5 · AGE 5 · LEARNING:** The writing master asks who touched his ink. You raise a perfectly black finger to deny it.
+- **5 · AGE 5 · DAILY MISHAPS:** Fresh rushes make the floor look respectable. The missing spoon is still under the old respectability.
+- **6 · AGE 6 · QUIET KINDNESS:** Rowena pretends not to notice the crust you save for later. At bedtime there is a second one beside it.
+- **6 · AGE 6 · CHOICE:** You make a meal of the disputed evidence. The household gains food; no prediction is proved merely because you are fed.
+- **7 · AGE 7 · GROWING UP:** The children play at holding court. The judge is chosen because she owns the stool; the prisoner owns the biscuits.
+- **7 · AGE 7 · BLESSING:** You lit a candle at the chapel. You feel holier and slightly singed.
+- **8 · AGE 8 · FORTUNE:** Found a shiny coin in the mud. It is mostly mud, but it spends.
+- **8 · AGE 8 · CHOICE:** The common gate stands through winter. Leofric delivers the promised fallen wood.
+- **9 · AGE 9 · DAILY MISHAPS:** The soap seller’s hands are cleaner than anyone’s in the square. He keeps dropping the money.
+- **9 · AGE 9 · LEARNING:** Rowena teaches you a knot that holds under strain. The explanation includes an unflattering account of a cousin’s wedding.
+- **9 · AGE 9 · CHOICE:** You offer to carry the sack together. Agnes accuses you of pitying them, then drops it on their own foot.
+- **10 · AGE 10 · ROADS:** You take a familiar uneven step without looking. Your foot remembers a street your head was too busy to notice.
+- **11 · AGE 11 · QUIET KINDNESS:** Someone leaves a glowing coal ready for your cold hearth. You never learn who; the room warms anyway.
+- **11 · AGE 11 · FAMILY TABLE:** The soup bone is being used for a second day. It has begun to look less like an ingredient than a guest.
+- **11 · AGE 11 · CHOICE:** You drive the rat out and repair the gap, losing a little blood to the work. Household stores and security improve under a watchman that is now a plank.
+- **12 · AGE 12 · LEARNING:** A monk draws a tiny sleeping clerk beside a solemn passage on vigilance. You wonder who the book was meant for.
+- **12 · AGE 12 · CHOICE:** You offer to keep the pig accounts. Constance likes your confidence. Agnes now has to explain every missing turnip to you.
+- **13 · AGE 13 · HOUSEHOLD ACCOUNTS:** An official explains that there is a fee for recording a fee. You begin to understand why parchment is dear.
+- **13 · AGE 13 · CHOICE:** Your speech on floral temptation moves the court. The pig is spared and immediately eats the verdict.
+- **14 · AGE 14 · WEDDING GOSSIP:** The chapel echoes a groom’s promise to obey. His family looks alarmed at having heard it twice.
+- **14 · AGE 14 · CHOICE:** You name Agnes as the liar and demand they produce the alleged ladle. Half the market cheers. The other half wants to see the ladle.
+- **15 · AGE 15 · DAILY MISHAPS:** The well rope catches on a sleeve. A vigorous argument follows about which of the two is supposed to go down.
+- **15 · AGE 15 · CHOICE:** You point out that the church bell still rings. Then you stop talking. The bell supplies a considerably better argument.
+- **16 · AGE 16 · REMEMBRANCE:** A household recipe says “as much as seems right.” Whoever wrote it took the quantity with them.
+- **16 · AGE 16 · HOUSEHOLD ACCOUNTS:** You count what you owe instead of sheep. The sheep would at least have had the decency to jump away.
+- **16 · AGE 16 · CHOICE:** The crowd laughs. The drummer stops. Your rival must now provide their own dramatic entrance.
+- **17 · AGE 17 · LOCAL JUSTICE:** Someone has put a cushion in the stocks. The gaoler removes it, on the grounds that punishment should not attract regulars.
+- **17 · YEARS LATER:** A choice made during rivals rise bears fruit three years later.
+- **17 · AGE 17 · CHOICE:** It waits until after harvest and then until after Christmas. By spring they have stopped raising it, which you briefly mistake for agreement.
+- **18 · AGE 18 · RELIGIOUS HYPOCRISY:** A friar consults three calendars before deciding whether today requires him to refuse the cheese.
+- **18 · COMING OF AGE:** You enter adulthood with no formal qualification. The people of your household will remember how you got here. Later study remains open.
+- **18 · COMING OF AGE:** You are a grown soul now. You set yourself a life's ambition: Become a Baron — Rise to the rank of Baron.
+- **18 · AGE 18 · CHOICE:** You offer a truce: no more rumours, no pressure on either household, and one public apology each. Agnes agrees. The priest takes his clapper home.
+- **19 · AGE 19 · GOSSIP:** A bard fits your name into a song by adding two syllables and a crime you have never committed.
+- **19 · AGE 19 · WEDDING GOSSIP:** A bride’s veil catches on the chapel door. Her aunt calls it an omen; the carpenter calls it a nail.
+- **19 · AGE 19 · CHOICE:** You ring early. Half the village arrives angry, dressed, and spiritually confused.
+- **20 · AGE 20 · MISHAP:** A loose thread undid half your tunic in the market. The tailor called it ventilation.
+- **20 · AGE 20 · QUIET KINDNESS:** Rowena mends your torn sleeve without asking how it happened. That is how you know the story has already arrived.
+- **20 · AGE 20 · CHOICE:** They are decent, competent, and have no designs on anything. It is a considerable relief and a small, specific injury.
+- **21 · AGE 21 · LOCAL JUSTICE:** The clerk corrects a spelling in a warrant with more care than he gives the accusation beneath it.
+- **21 · AGE 21 · UNEXPECTED SIGHTS:** A travelling clockmaker shows a machine that marks each hour. Everyone spends half the afternoon waiting to be told they have wasted it.
+- **21 · AGE 21 · CHOICE:** You sign. They pay the first three instalments early. You decide not to work out whether that is reassurance or a performance.
+- **22 · AGE 22 · FORTUNE:** Found a shiny coin in the mud. It is mostly mud, but it spends.
+- **22 · THE CROWN:** Elswyth is recognised as ruler. the documented succession.
+- **22 · AGE 22 · CHOICE:** You preserve your time and damage your parent’s trust. The rest of the road is quieter than you expected.
+- **23 · AGE 23 · WEATHER:** Osric predicts rain from an aching knee. You carry a cloak out of affection and are dry by good fortune.
+- **23 · AGE 23 · PLAGUE:** A sickness scare packed the chapel. The coughs harmonized terribly.
+- **23 · AGE 23 · CHOICE:** You and Agnes jointly challenge a trader’s false weights. The trader looks at both of you and quietly fetches the honest scales.
+- **24 · AGE 24 · PERSONAL GRUDGES:** Sir Roderick greets you by your full name in public. No friendly person has ever needed quite so much of it.
+- **24 · AGE 24 · CORRUPT OFFICIALS:** An official says his hands are clean. The new gloves are quite fine.
+- **24 · AGE 24 · CHOICE:** You take that one entirely and say honestly that you do not remember the other two. It is the only answer that is not a negotiation.
+- **25 · AGE 25 · MARKET LIFE:** The locksmith locks his own stall to demonstrate a new bolt. His apprentice has the key and the afternoon off.
+- **25 · AGE 25 · ALE:** A tavern proverb named you wise. By dawn nobody remembered the proverb, only the ale.
+- **25 · AGE 25 · CHOICE:** You gain practical experience and a warm bond with Rowan. An evening passes without anybody trying to conquer anything.
+- **26 · AGE 26 · WEATHER:** Frost draws a finer window than the glazier ever managed. You admire it until someone reminds you it is on the inside.
+- **26 · AGE 26 · CHOICE:** Your couplet wins the room and, somehow, the argument. The clerk copies it into the roll, where it will embarrass someone for a century.
+- **27 · AGE 27 · QUIET KINDNESS:** Someone carries a lantern to a sick neighbour after the chapel closes. There is no audience for the walk home.
+- **27 · YEARS LATER:** A choice made during parent and child bears fruit three years later.
+- **27 · AGE 27 · CHOICE:** You say it plainly and mean it, and you say it before they have decided, when it still costs you something to say.
+- **28 · AGE 28 · SABBATH:** You wore your best shoes to chapel. The mud wore them better.
+- **28 · AGE 28 · DAILY MISHAPS:** A stool gives way under the only person who had just called the meeting to order.
+- **28 · YEARS LATER:** Five years on, the family legacy of rivals rise is still remembered.
+- **28 · AGE 28 · CHOICE:** You never mention it. It sits there, and every time they tell a story afterwards you are listening for it.
+- **29 · AGE 29 · FORTUNE:** A merchant overpaid you by mistake and rode off. You said nothing. Wise.
+- **29 · AGE 29 · CHOICE:** You pick the one who is more likely to win and start honouring his orders. Half the guild does the same and the other half does the opposite.
+- **30 · AGE 30 · GOSSIP:** A friar preached fasting while smelling powerfully of pudding. The village noticed.
+- **30 · AGE 30 · QUIET KINDNESS:** Someone leaves a glowing coal ready for your cold hearth. You never learn who; the room warms anyway.
+- **30 · AGE 30 · CHOICE:** You say the words. Four households now consider you party to the bargain. In Swineford that is as binding as a seal and rather harder to break.
+- **31 · AGE 31 · WEDDING GOSSIP:** The clerk reads marriage banns so softly that only the objections can be heard.
+- **31 · AGE 31 · VICE:** You found dice under a chapel pew. Someone has been praying for sixes.
+- **31 · AGE 31 · CHOICE:** You sell shovels at heroic prices. The moat is poor; your purse is excellent.
+- **32 · AGE 32 · WISDOM:** A monk explains division with three apples. The lesson becomes subtraction when somebody eats the example.
+- **32 · AGE 32 · COURTSHIP GOSSIP:** A suitor praises someone’s fine judgement, then spends an hour explaining why they should choose him.
+- **32 · AGE 32 · CHOICE:** You stand surety in person for three carts on nothing but your own name. It works, it takes nine days, and your name is worth more at Lynn afterwards than it is at home.
+- **33 · AGE 33 · DAILY MISHAPS:** Fresh rushes make the floor look respectable. The missing spoon is still under the old respectability.
+- **33 · AGE 33 · UNEXPECTED SIGHTS:** The sun darkens briefly. Someone bangs a pan at it. When daylight returns, he looks unbearable.
+- **33 · AGE 33 · CHOICE:** They are at the burial and they bring their own children, who know the house and know the way in without being shown.
+- **34 · AGE 34 · LAW:** The reeve banned suspicious whistling. You whistled innocently and learned nothing.
+- **34 · AGE 34 · CHOICE:** You lose some strength to the detour and gain a little faith in the value of reaching your destination.
+- **35 · AGE 35 · REMEMBRANCE:** You find a ribbon you meant to throw away years ago. It returns to its box without any firmer decision.
+- **35 · AGE 35 · FORTUNE:** Found a shiny coin in the mud. It is mostly mud, but it spends.
+- **35 · AGE 35 · CHOICE:** The answer is longer and worse than the original grievance and involves three other people. You had no idea about any of it.
+- **36 · AGE 36 · PARISH LIFE:** The sacristan straightens a candle after every prayer. Disorder is the one sin he can reliably put right.
+- **36 · AGE 36 · RELIC:** A relic seller passed through with Saint Nobody's elbow. It bent suspiciously.
+- **36 · AGE 36 · CHOICE:** You say nothing. They work it out in March, badly, in front of the whole lane.
+- **37 · AGE 37 · RELIGIOUS HYPOCRISY:** A friar consults three calendars before deciding whether today requires him to refuse the cheese.
+- **37 · AGE 37 · COURTSHIP GOSSIP:** The matchmaker judges a prospect by the state of their shoes. “Love walks,” she says. “Debt sends a messenger.”
+- **37 · AGE 37 · CHOICE:** You gain wit and lose Gilbert’s patience. The book remains impressively dry.
+- **38 · AGE 38 · OFFICIAL VANITY:** The bailiff’s new hat is too tall for the courthouse door. He makes everyone wait while authority enters sideways.
+- **38 · YEARS LATER:** Five years on, the family legacy of parent and child is still remembered.
+- **38 · YEARS LATER:** A choice made during friendship test bears fruit three years later.
+- **38 · AGE 38 · CHOICE:** The borough pays well for a document that ceases to exist the moment it is paid for. You are twenty-five shillings richer and the guild is smaller forever.
+- **39 · AGE 39 · BELLS:** The church bell rang at the wrong hour. Everyone arrived tired and morally early.
+- **39 · AGE 39 · UNEXPECTED SIGHTS:** A traveller displays a sea creature’s enormous rib. The butcher asks after the rest before believing the story.
+- **39 · AGE 39 · CHOICE:** You say it out loud, which neither of you has ever done. It is excruciating and it works, and you are both slightly different people afterwards.
+- **40 · AGE 40 · REMEMBRANCE:** An old hymn brings back a voice you had almost forgotten. You lose the next verse trying to hear it again.
+- **40 · AGE 40 · CHOICE:** The contracts are cancelled for fifteen gold. Everybody leaves unmarried. The family counts this as the evening’s first clear success.
+- **41 · AGE 41 · GETTING OLDER:** You wake before the bell and remember a time when waking was somebody else’s responsibility.
+- **41 · THE CROWN:** Rowena is recognised as ruler. recognition by the surviving council after the royal line failed.
+- **41 · AGE 41 · CHOICE:** Sealed by Whitsun. The guild is lawful, undisputed, and paying the Crown eight marks a year in 1390 for a quarrel settled in 1352.
+- **42 · AGE 42 · SABBATH:** You wore your best shoes to chapel. The mud wore them better.
+- **42 · AGE 42 · CHOICE:** Everyone goes indoors. The ewes stay where they are, the pot comes back to you, and two households stop speaking for a generation.
+- **43 · AGE 43 · ROADS:** A cartwheel returns to the same rut so faithfully that the driver accuses it of having relatives there.
+- **43 · AGE 43 · CHOICE:** The court admires your humility. The painter admits he painted the cabbage from memory. It hangs in the great hall for the rest of your life.
+- **44 · AGE 44 · LEARNING:** A sundial gives a precise answer until a cloud arrives. You appreciate an instrument willing to admit it does not know.
+- **44 · AGE 44 · PRIVATE SECRETS:** You notice how often people glance at a chest after insisting there is nothing in it.
+- **44 · AGE 44 · CHOICE:** They are at your table at Christmas for the next twenty years and at your burial at the end of it, and they tell that alehouse story at the wake.
+- **45 · AGE 45 · ALE:** A tavern proverb named you wise. By dawn nobody remembered the proverb, only the ale.
+- **45 · AGE 45 · FAMILY:** Rowena finds an old family warning against trusting smiling millers. The warning is written on the back of an unpaid milling bill.
+- **45 · AGE 45 · CHOICE:** You eat neatly with bread and gain a little judgement. The idle guest remains the only person waiting on the spoon.
+- **46 · AGE 46 · WISDOM:** A hermit teaches you the words on a milestone. His complaints about visitors become easier to understand.
+- **46 · THE CROWN:** Alys is recognised as ruler. recognition by the surviving council after the royal line failed.
+- **46 · AGE 46 · CHOICE:** Nobody writes it down. Inside a generation the guild is confidently telling a version in which nothing much went wrong at all.
+- **47 · AGE 47 · MARKET LIFE:** A cobbler promises shoes that will outlast their owner. An elderly customer asks for a more cheerful recommendation.
+- **47 · AGE 47 · MILL:** The miller measured your flour with a scoop that looked hungry.
+- **47 · AGE 47 · CHOICE:** It is a complete and accurate explanation. They listen to all of it and say, evenly, that they know.
+- **48 · AGE 48 · RELIC:** A relic seller passed through with Saint Nobody's elbow. It bent suspiciously.
+- **48 · AGE 48 · DAILY MISHAPS:** The well rope catches on a sleeve. A vigorous argument follows about which of the two is supposed to go down.
+- **48 · THE CROWN:** Rowena is recognised as ruler. recognition by the surviving council after the royal line failed.
+- **48 · AGE 48 · CHOICE:** The bells ring bright over a frightened village. For a moment people breathe easier, and afterwards they remember who chose the sound of that year.
+- **49 · AGE 49 · WISDOM:** A monk explains division with three apples. The lesson becomes subtraction when somebody eats the example.
+- **49 · YEARS LATER:** Five years on, the family legacy of friendship test is still remembered.
+- **49 · AGE 49 · CHOICE:** You put them under the floor of the byre. They are worth nothing until the day they are worth a great deal.
+- **50 · AGE 50 · GOSSIP:** A bard fits your name into a song by adding two syllables and a crime you have never committed.
+- **50 · AGE 50 · DAILY MISHAPS:** A stool gives way under the only person who had just called the meeting to order.
+- **50 · AGE 50 · CHOICE:** Two men, an afternoon, and a written valuation. It is scrupulously fair and it turns the division of your parent’s bed into an accounting exercise.
+- **51 · AGE 51 · WEATHER:** The procession for rain ends in a downpour. The priest claims success from beneath the only dry canopy.
+- **51 · AGE 51 · CHOICE:** He wanted a post, a purse, and your cousin's hand. You give him none and keep your spoon.
+- **52 · AGE 52 · PARISH LIFE:** The bell rope wears smooth where generations of hands have pulled it. You hold the same place for a moment.
+- **52 · AGE 52 · COURTSHIP GOSSIP:** Two courting neighbours speak through a fence. Their chaperone listens from the gate, complaining that the acoustics are poor.
+- **52 · AGE 52 · CHOICE:** You decline the forgery. Walter moves on to people who have more to forgive and less to lose.
+- **53 · AGE 53 · WISDOM:** A monk leaves a space in his sums to show you how nothing can have a place. You think about that on the way home.
+- **53 · AGE 53 · CHOICE:** A great deal more, most of it about Emma and none of it kinder. They have been carrying all of it alone since the funeral.
+- **54 · AGE 54 · REMEMBRANCE:** You still leave room at the table for someone who will not be coming. This year you notice the space before setting out the bowl.
+- **54 · AGE 54 · CHOICE:** The fever breaks. Rowena credits your company before discussing anybody’s theology.
+- **55 · AGE 55 · CORRUPT OFFICIALS:** An official says his hands are clean. The new gloves are quite fine.
+- **55 · AGE 55 · BLESSING:** You lit a candle at the chapel. You feel holier and slightly singed.
+- **55 · THE CROWN:** Ralf is recognised as ruler. the documented succession.
+- **55 · AGE 55 · CHOICE:** The treasurer loses the seal. The guilds recognise an injustice considerably faster than the council recognises a sum.
+- **56 · AGE 56 · LOCAL JUSTICE:** A witness clears his throat every time the clerk reaches the useful part. The testimony is eventually adjourned for water.
+- **56 · AGE 56 · WEDDING GOSSIP:** A bride’s veil catches on the chapel door. Her aunt calls it an omen; the carpenter calls it a nail.
+- **56 · YEARS LATER:** A choice made during blood between siblings bears fruit three years later.
+- **56 · AGE 56 · CHOICE:** They go back to the sheaves. The quarrel keeps its teeth for whoever asks next.
+- **57 · AGE 57 · FAMILY TABLE:** The soup bone is being used for a second day. It has begun to look less like an ingredient than a guest.
+- **57 · AGE 57 · CHOICE:** Your couplet wins the room and, somehow, the argument. The clerk copies it into the roll, where it will embarrass someone for a century.
+- **58 · AGE 58 · COURT:** A travelling clerk sketches Sir Quackbeard in the margin of an account. For once the most forceful opinion on the page needs no signature.
+- **58 · AGE 58 · WEATHER:** A neighbour hangs washing in a rare patch of sun. Half the lane turns to watch it, as though warmth were a public performance.
+- **58 · AGE 58 · CHOICE:** The seal returns to your keeping. The missing gold does not. The dismissed official takes the grievance home.
+- **59 · AGE 59 · PLAGUE:** A sickness scare packed the chapel. The coughs harmonized terribly.
+- **59 · AGE 59 · MARKET LIFE:** The locksmith locks his own stall to demonstrate a new bolt. His apprentice has the key and the afternoon off.
+- **59 · AGE 59 · THE END:** You died at 59. Killed in a fall while testing a condemned rope.
+- **59 · THE CROWN:** Wat is recognised as ruler. recognition by the surviving council after the royal line failed.
+
+## After — landed_noble — seed 840012
+
+premium; died aged 63; Died of a winter chill and a tired heart.
+
+- **0 · YEAR 0 · BORN:** You arrive beneath painted ancestors. Walter promises to preserve their land; Avice quietly sells a jewel to pay the wet nurse.
+- **0 · YEAR 0 · TRAIT:** 😈 From the cradle you are Heathen. Skips chapel, questions everything, sleeps fine.
+- **1 · AGE 1 · INFANCY:** A winter cough keeps you awake. Avice warms your blanket by the hearth and stays until your breathing settles.
+- **2 · AGE 2 · QUIET KINDNESS:** Avice forgets the end of your lullaby and hums instead. You know the missing part and fall asleep waiting.
+- **2 · AGE 2 · CHOICE:** A sibling is born anyway. You sulk magnificently, but the baby grips your finger and your cold heart thaws a little.
+- **3 · AGE 3 · INFANCY:** Sir Quackbeard inspects your cradle with the severity of a constable. He objects to the blanket and loses the argument.
+- **3 · AGE 3 · MISHAP:** You slip beside the watering trough. A bystander offers advice after you have stopped needing it.
+- **3 · AGE 3 · CHOICE:** The bowl catches a little water. Your guardian praises the help and moves your bedding somewhere dry.
+- **4 · AGE 4 · FORTUNE:** Found a shiny coin in the mud. It is mostly mud, but it spends.
+- **4 · AGE 4 · WEATHER:** A neighbour hangs washing in a rare patch of sun. Half the lane turns to watch it, as though warmth were a public performance.
+- **4 · AGE 4 · CHOICE:** Your household gains a small voice in its nightly accounting. The cups remain easier to count than the debts.
+- **5 · AGE 5 · DAILY MISHAPS:** Fresh rushes make the floor look respectable. The missing spoon is still under the old respectability.
+- **5 · AGE 5 · CHOICE:** The family record settles precedence without an insult. Your cousin has less reason to press another grievance.
+- **6 · AGE 6 · SABBATH:** You wore your best shoes to chapel. The mud wore them better.
+- **6 · AGE 6 · WEATHER:** You build a snow lord with an enormous nose. The thaw removes his authority before anyone can collect rent.
+- **6 · AGE 6 · CHOICE:** You make a meal of the disputed evidence. The household gains food; no prediction is proved merely because you are fed.
+- **7 · AGE 7 · CHILDHOOD:** You build a miniature house in the mud and give it a very small door. Visitors will have to be polite enough to shrink.
+- **7 · AGE 7 · STATION:** A poet praises your noble bearing in a verse whose longest word is your title. The short lines cost just as much.
+- **7 · AGE 7 · CHOICE:** The hidden petition is found. The tenants blame your household for a refusal it never openly made.
+- **8 · AGE 8 · CHILDHOOD:** Sir Quackbeard lets you sit nearby while he preens. It is a quiet friendship with rather strict terms of admission.
+- **8 · AGE 8 · CHOICE:** You get the fire-hooks off the church wall and drag the whole roof into the lane. It is the right answer, it saves the row, and it takes the skin off your hands.
+- **9 · AGE 9 · WISDOM:** A monk leaves a space in his sums to show you how nothing can have a place. You think about that on the way home.
+- **9 · AGE 9 · FAMILY TABLE:** For once the soup is thick enough to hold a spoon upright. You eat before anyone mistakes it for building material.
+- **9 · AGE 9 · CHOICE:** Four nights in the cold before you see who has the key. You know, now, and knowing turns out to be considerably harder than not knowing was.
+- **10 · AGE 10 · QUIET KINDNESS:** Someone leaves a glowing coal ready for your cold hearth. You never learn who; the room warms anyway.
+- **10 · AGE 10 · DAILY MISHAPS:** Your borrowed boots reach the puddle before you do and leave considerably later.
+- **10 · AGE 10 · CHOICE:** Six people where six lived. The food goes twice as fast, nobody sleeps well, and not one of them is out of doors when the frost comes.
+- **11 · AGE 11 · RELIGIOUS HYPOCRISY:** A friar consults three calendars before deciding whether today requires him to refuse the cheese.
+- **11 · AGE 11 · CHOICE:** The reeve is obliged to record it and does so with visible reluctance. The child is amerced twopence their family cannot pay, and everyone involved feels precisely as bad as they should.
+- **12 · AGE 12 · ROADS:** You take a familiar uneven step without looking. Your foot remembers a street your head was too busy to notice.
+- **12 · AGE 12 · LOCAL JUSTICE:** Someone has put a cushion in the stocks. The gaoler removes it, on the grounds that punishment should not attract regulars.
+- **12 · AGE 12 · CHOICE:** You cough loudly while he rescues dessert. He blesses you with grateful crumbs and, more usefully, owes you a silence of your own one day.
+- **13 · AGE 13 · MILL:** The miller measured your flour with a scoop that looked hungry.
+- **13 · AGE 13 · CHOICE:** Three shillings and eightpence each and the ring drawn for. It is not lawful and nobody in that lane ever raises the point.
+- **14 · AGE 14 · WEDDING GOSSIP:** The chapel echoes a groom’s promise to obey. His family looks alarmed at having heard it twice.
+- **14 · AGE 14 · RELIGIOUS HYPOCRISY:** A dispute over a saint’s feast ends when both sides discover that the cook has already served it.
+- **14 · AGE 14 · CHOICE:** You shut the door. The child is taken in three doors down by people with less than you, and Swineford counts the doors.
+- **15 · AGE 15 · LAW:** The reeve banned suspicious whistling. You whistled innocently and learned nothing.
+- **15 · AGE 15 · PUBLIC VANITY:** A lover recites a moving poem. The minstrel listening behind him remembers writing it for someone else.
+- **15 · AGE 15 · CHOICE:** It goes at a good price to a buyer three villages off who does not open the sacks in your presence. You are paid and you are not proud of it.
+- **16 · AGE 16 · PLAGUE:** A sickness scare packed the chapel. The coughs harmonized terribly.
+- **16 · AGE 16 · CHOICE:** The family that can find twelve shillings is roofed first, which is how it is normally done and is the reason the poorest family is the poorest family.
+- **17 · AGE 17 · ROADS:** A cartwheel returns to the same rut so faithfully that the driver accuses it of having relatives there.
+- **17 · AGE 17 · CHOICE:** The fever digs in for the long haul. This sickness will not pass quickly.
+- **18 · AGE 18 · WAR NEWS:** An envoy arrives with a dove embroidered on his sleeve and enough armed men to protect it.
+- **18 · SICKNESS:** The sickness lingers in your bones. You waste another year away.
+- **18 · COMING OF AGE:** You enter adulthood with no formal qualification. The people of your household will remember how you got here. Later study remains open.
+- **18 · COMING OF AGE:** You are a grown soul now. You set yourself a life's ambition: Become Monarch — Claim the crown itself.
+- **18 · AGE 18 · CHOICE:** You read the whole account to the household including the sharing and the theft. It is a difficult evening and the granary is never short again.
+- **19 · AGE 19 · HOUSEHOLD ACCOUNTS:** You count what you owe instead of sheep. The sheep would at least have had the decency to jump away.
+- **19 · AGE 19 · PARISH LIFE:** The chapel door whistles through the sermon. It is the only interruption the priest cannot ask to leave.
+- **19 · THE CROWN:** Elswyth is recognised as ruler. the documented succession.
+- **19 · SICKNESS:** The sickness lingers in your bones. You waste another year away.
+- **19 · AGE 19 · CHOICE:** The child stands in the gateway and picks. It takes a long time and everybody has to watch.
+- **20 · AGE 20 · MISHAP:** A tethered goat loops its rope around your ankle. It watches you untie the knot as though reviewing your work.
+- **20 · SICKNESS:** The sickness lingers in your bones. You waste another year away.
+- **20 · AGE 20 · CHOICE:** You receive the advance and create a genuine forgery charge. The soap has left a wonderfully clear impression on the evidence.
+- **21 · AGE 21 · LEARNING:** A monk draws a tiny sleeping clerk beside a solemn passage on vigilance. You wonder who the book was meant for.
+- **21 · AGE 21 · COURT LIFE:** A lord describes his hunt without mentioning the groom who found his horse or the ditch that found his boot.
+- **21 · SICKNESS:** The sickness lingers in your bones. You waste another year away.
+- **21 · AGE 21 · CHOICE:** Your confession shortens the hearing, though not the memory of it.
+- **22 · AGE 22 · COURTSHIP GOSSIP:** Two courting neighbours speak through a fence. Their chaperone listens from the gate, complaining that the acoustics are poor.
+- **22 · SICKNESS:** The sickness lingers in your bones. You waste another year away.
+- **22 · AGE 22 · CHOICE:** You ask why anyone should carry turnips for free. The crowd drifts away. Edwin is left guarding two sacks and an excellent bow.
+- **23 · AGE 23 · COURT LIFE:** A lord calls thirty guests a small supper. The people carrying it do not dispute the adjective until they reach the kitchen.
+- **23 · SICKNESS:** The sickness lingers in your bones. You waste another year away.
+- **23 · AGE 23 · CHOICE:** You add a second forgery charge. Cuthbert now has a much more complicated account to remember.
+- **24 · AGE 24 · FAMILY TABLE:** The soup bone is being used for a second day. It has begun to look less like an ingredient than a guest.
+- **24 · SICKNESS:** The sickness lingers in your bones. You waste another year away.
+- **24 · AGE 24 · CHOICE:** The court rejects your defence and orders imprisonment.
+- **25 · AGE 25 · WEDDING GOSSIP:** The jeweller explains that a wedding ring can be made smaller. The listening couples look briefly hopeful.
+- **25 · AGE 25 · MARKET LIFE:** A cobbler promises shoes that will outlast their owner. An elderly customer asks for a more cheerful recommendation.
+- **25 · SICKNESS:** The sickness lingers in your bones. You waste another year away.
+- **25 · AGE 25 · CHOICE:** You put a basket on their step yourself. It costs you a fortnight of stores and buys you something the stores could not.
+- **26 · AGE 26 · LOCAL JUSTICE:** A witness clears his throat every time the clerk reaches the useful part. The testimony is eventually adjourned for water.
+- **26 · AGE 26 · COURT LIFE:** A courtier recognises you warmly, then checks who is watching before deciding how warmly.
+- **26 · SICKNESS:** The sickness lingers in your bones. You waste another year away.
+- **26 · AGE 26 · CHOICE:** You avoid a false claim at a small cost to public dignity. The family’s reputation for honesty improves.
+- **27 · AGE 27 · MARKET LIFE:** The locksmith locks his own stall to demonstrate a new bolt. His apprentice has the key and the afternoon off.
+- **27 · AGE 27 · PETTY CRIME:** A cutpurse takes one look at your empty purse and moves along with professional disappointment.
+- **27 · RECOVERED:** The lingering sickness finally breaks. You feel like a person again.
+- **27 · AGE 27 · CHOICE:** You improve your own vegetable patch and fill the store cupboard. No patron required. No badge either, which is a mercy.
+- **28 · AGE 28 · REMEMBRANCE:** A household recipe says “as much as seems right.” Whoever wrote it took the quantity with them.
+- **28 · AGE 28 · CHOICE:** They have thought about it far more than you expected and the answer is specific, plausible and expensive.
+- **29 · AGE 29 · LAW:** The reeve banned suspicious whistling. You whistled innocently and learned nothing.
+- **29 · AGE 29 · CHOICE:** You admit the truth and gain faith. The admission does not settle debts or erase charges; it merely stops the priest waiting for the missing part.
+- **30 · AGE 30 · ROADS:** You take a familiar uneven step without looking. Your foot remembers a street your head was too busy to notice.
+- **30 · AGE 30 · CHOICE:** You need the hands and you say so honestly, which does not make it land any better. The smith takes another boy.
+- **31 · AGE 31 · SABBATH:** You wore your best shoes to chapel. The mud wore them better.
+- **31 · AGE 31 · QUIET KINDNESS:** An old bowl is mended with neat metal staples. Someone decided it was worth keeping, cracks and all.
+- **31 · AGE 31 · CHOICE:** You question the sellers. Each heard the tale from Edwin, who received a sealed note from Beatrice. You keep the note.
+- **32 · AGE 32 · DESK WORK:** The silk cord on a decree costs more than the matter it settles. The councillors discuss the cord first.
+- **32 · AGE 32 · HOUSEHOLD ACCOUNTS:** A tally stick splits neatly into two matching accounts. You wish every disagreement could be settled by breaking a stick correctly.
+- **32 · AGE 32 · CHOICE:** You spend your strength rather than money and gain faith. Godwin loses a customer but cannot lengthen your road.
+- **33 · AGE 33 · QUIET KINDNESS:** Someone carries a lantern to a sick neighbour after the chapel closes. There is no audience for the walk home.
+- **33 · AGE 33 · CHOICE:** You show Edwin both notes. They read the wage offer twice, then call Leofric a name usually reserved for diseased turnips.
+- **34 · AGE 34 · FAMILY:** Avice finds an old family warning against trusting smiling millers. The warning is written on the back of an unpaid milling bill.
+- **34 · AGE 34 · DAILY MISHAPS:** A cat walks over a freshly copied page. Its contribution is darker, clearer and much less expensive than the scribe’s.
+- **34 · YEARS LATER:** A choice made during rivals rise bears fruit three years later.
+- **34 · AGE 34 · CHOICE:** You forbid it clearly. It continues, considerably more carefully, and you are now outside a conversation you used to be inside.
+- **35 · AGE 35 · FORTUNE:** Found a shiny coin in the mud. It is mostly mud, but it spends.
+- **35 · AGE 35 · FALSE RELICS:** The relic’s case is polished so brightly that nobody can see the bone. The keeper thinks this has improved attendance.
+- **35 · AGE 35 · CHOICE:** The fever breaks. Avice credits your company before discussing anybody’s theology.
+- **36 · AGE 36 · PLAGUE:** During the sickness scare you avoid the crowded stalls. You miss the company more than the haggling.
+- **36 · AGE 36 · OFFICIAL VANITY:** A clerk refuses an unsigned complaint that the official seal has been stolen.
+- **36 · AGE 36 · CHOICE:** You listen for an hour and discover the true villain is a missing cheese. Word spreads that you will actually hear a case, which is going to cost you every future afternoon.
+- **37 · AGE 37 · PRIVATE SECRETS:** You check that a certain chest is locked. It is. You check again, discovering that secrecy is mostly unpaid work.
+- **37 · AGE 37 · PARISH LIFE:** The bell rope wears smooth where generations of hands have pulled it. You hold the same place for a moment.
+- **37 · AGE 37 · CHOICE:** The clerk writes it without looking up. Your family gains a member and a set of complications, in that order.
+- **38 · AGE 38 · COURT LIFE:** A councillor calls his support unwavering. The ink is still wet where he altered the recipient’s name.
+- **38 · AGE 38 · CHOICE:** You ask the priest to hold up the clapper while Avice repeats the accusation. They cannot finish. You have won, and made the humiliation needlessly thorough.
+- **39 · AGE 39 · COURT PRECEDENCE:** A noble introduces himself by five titles. His creditor waits patiently to use the shortest name.
+- **39 · AGE 39 · COURTSHIP GOSSIP:** A widow moves her bench into the sun. Three men offer to carry it; she asks the one who brought a cushion.
+- **39 · AGE 39 · CHOICE:** You ask to see the guarantee in writing. Tomas discovers a pressing appointment with someone who has not asked that question.
+- **40 · AGE 40 · PARISH LIFE:** The sacristan straightens a candle after every prayer. Disorder is the one sin he can reliably put right.
+- **40 · AGE 40 · CHOICE:** You go and look. The child is well fed, entirely alone, and has not been outside the precinct since it could walk.
+- **41 · AGE 41 · WEDDING GOSSIP:** The jeweller explains that a wedding ring can be made smaller. The listening couples look briefly hopeful.
+- **41 · AGE 41 · CHOICE:** You take it in the child’s own words with the date and two witnesses. It is either the most valuable page in the parish or a piece of paper.
+- **42 · AGE 42 · BELLS:** The church bell rang at the wrong hour. Everyone arrived tired and morally early.
+- **42 · AGE 42 · CHOICE:** You send them to kin at Barton for the summer. The household concerned calms down, and the two who are protecting the secret work out exactly who moved the child.
+- **43 · AGE 43 · LOCAL JUSTICE:** Someone has put a cushion in the stocks. The gaoler removes it, on the grounds that punishment should not attract regulars.
+- **43 · AGE 43 · CHOICE:** You keep your accounts precise and your accusations provable. Your family has learned the same lesson, at the cost of many uncomfortable dinners.
+- **44 · AGE 44 · GETTING OLDER:** Your oldest coat fits differently now. You blame the mending, which has no voice with which to object.
+- **44 · AGE 44 · REMEMBRANCE:** You still leave room at the table for someone who will not be coming. This year you notice the space before setting out the bowl.
+- **44 · AGE 44 · CHOICE:** You restore the sign and gain local standing. Hilda calls this a waste of an unusually successful theft.
+- **45 · AGE 45 · PETTY CRIME:** A cutpurse takes one look at your empty purse and moves along with professional disappointment.
+- **45 · AGE 45 · WAR NEWS:** An envoy arrives with a dove embroidered on his sleeve and enough armed men to protect it.
+- **45 · AGE 45 · CHOICE:** You collect twenty gold and increase household wealth. Existing debts are not erased by the takings, and Gilbert trusts you less for pricing the frightened child’s answers.
+- **46 · AGE 46 · WEATHER:** A neighbour hangs washing in a rare patch of sun. Half the lane turns to watch it, as though warmth were a public performance.
+- **46 · AGE 46 · CHOICE:** You say what the rector needs said. The dream is condemned from the pulpit, the family leaves the parish by spring, and you are on very good terms with the church.
+- **47 · AGE 47 · COURT LIFE:** A lord describes his hunt without mentioning the groom who found his horse or the ditch that found his boot.
+- **47 · AGE 47 · CHOICE:** You will not stand up at all. They find two oath-helpers elsewhere inside a day, neither of whom was anywhere near your hearth.
+- **48 · AGE 48 · MARKET LIFE:** The locksmith locks his own stall to demonstrate a new bolt. His apprentice has the key and the afternoon off.
+- **48 · YEARS LATER:** Five years on, the family legacy of rivals rise is still remembered.
+- **48 · AGE 48 · CHOICE:** It is a better story than the truth and considerably kinder to everybody in it, including you. They know it is not right and do not press.
+- **49 · AGE 49 · DAILY MISHAPS:** A stool gives way under the only person who had just called the meeting to order.
+- **49 · AGE 49 · OFFICIAL VANITY:** A clerk refuses an unsigned complaint that the official seal has been stolen.
+- **49 · THE CROWN:** Agnes is recognised as ruler. the documented succession.
+- **49 · AGE 49 · CHOICE:** One more at the table and a very large unanswered question living under your roof. The household adjusts and the question does not go away.
+- **50 · AGE 50 · WISDOM:** A hermit teaches you the words on a milestone. His complaints about visitors become easier to understand.
+- **50 · AGE 50 · COURT LIFE:** A lord calls thirty guests a small supper. The people carrying it do not dispute the adjective until they reach the kitchen.
+- **50 · TRAIT GAINED:** You are now Devoted Parent. Your line will remember your name fondly.
+- **50 · AGE 50 · CHOICE:** You shift the beds to the dry end and put a pot under the wet one. Everybody sleeps in one room until March and nobody says a word about it.
+- **51 · AGE 51 · PUBLIC VANITY:** A herald draws a family tree so broad that several disputed ancestors have to stand in the margin.
+- **51 · AGE 51 · CHOICE:** The child is taken south within the week, well-horsed and well-attended, and is never heard of in this shire again by anybody.
+- **52 · AGE 52 · QUIET KINDNESS:** Someone carries a lantern to a sick neighbour after the chapel closes. There is no audience for the walk home.
+- **52 · AGE 52 · VICE:** You found dice under a chapel pew. Someone has been praying for sixes.
+- **52 · AGE 52 · CHOICE:** You ask in front of the steward. He answers with total confidence and gets it wrong, and the court goes very quiet indeed.
+- **53 · AGE 53 · LEARNING:** A sundial gives a precise answer until a cloud arrives. You appreciate an instrument willing to admit it does not know.
+- **53 · AGE 53 · PLAGUE:** During the sickness scare you avoid the crowded stalls. You miss the company more than the haggling.
+- **53 · AGE 53 · CHOICE:** You decline the vows and offer practical service. The abbot accepts an honest answer more readily than a beautiful promise.
+- **54 · AGE 54 · UNEXPECTED SIGHTS:** A traveller teaches you a greeting in a distant tongue. You repeat it until it sounds like a place you might reach.
+- **54 · YEARS LATER:** A choice made during royal bastard bears fruit three years later.
+- **54 · AGE 54 · CHOICE:** A post under the beam and a prayer. It holds for thirteen years. Nobody who signed it expected five.
+- **55 · AGE 55 · MARKET LIFE:** The baker stamps every loaf with his initials. Nobody has asked to sign the small ones.
+- **55 · AGE 55 · CHOICE:** You give them the payments, the men, the lie, all of it. They think for three days and choose to stay exactly who they are, which was always the better claim.
+- **56 · AGE 56 · DAILY MISHAPS:** The soap seller’s hands are cleaner than anyone’s in the square. He keeps dropping the money.
+- **56 · AGE 56 · CHOICE:** Your household gains wealth from the disputed use, and you acquire a fraud charge. The stone is silent; the witnesses are not.
+- **57 · AGE 57 · UNEXPECTED SIGHTS:** A traveller displays a sea creature’s enormous rib. The butcher asks after the rest before believing the story.
+- **57 · AGE 57 · CHOICE:** The court rejects your defence and orders imprisonment.
+- **58 · AGE 58 · SABBATH:** You wore your best shoes to chapel. The mud wore them better.
+- **58 · AGE 58 · CHOICE:** It is your roof, factually. You are warm all winter and the arrangement is discussed in the lane for considerably longer than the winter lasts.
+- **59 · AGE 59 · DAILY MISHAPS:** Fresh rushes make the floor look respectable. The missing spoon is still under the old respectability.
+- **59 · AGE 59 · CHOICE:** You miss the busy part of the market and lose a little work performance. Your feet remain on the useful side of the river.
+- **60 · AGE 60 · REMEMBRANCE:** An old hymn brings back a voice you had almost forgotten. You lose the next verse trying to hear it again.
+- **60 · AGE 60 · COURT LIFE:** A councillor calls his support unwavering. The ink is still wet where he altered the recipient’s name.
+- **60 · AGE 60 · CHOICE:** He is dismissed inside the week and the roll stands uncorrected, because correcting it would mean admitting it was wrong. Justice, administratively.
+- **61 · AGE 61 · LOCAL JUSTICE:** The watch changes its password. By dusk everybody knows it except the man who chose it.
+- **61 · AGE 61 · QUIET KINDNESS:** A stranger leaves bread beside the poor box and goes before anyone can praise the gift.
+- **61 · AGE 61 · CHOICE:** You cite the custom of the manor on timber-right for repairs. It is real, and he had plainly assumed nobody in Swineford could quote it. Half the oak comes back.
+- **62 · AGE 62 · MISHAP:** A loose thread undid half your tunic in the market. The tailor called it ventilation.
+- **62 · AGE 62 · BLESSING:** You lit a candle at the chapel. You feel holier and slightly singed.
+- **62 · AGE 62 · CHOICE:** You give them a month, then you stop giving them months. They say it badly, to the wrong people, and it costs them everything it would have cost you.
+- **63 · AGE 63 · COURT PRECEDENCE:** A noble introduces himself by five titles. His creditor waits patiently to use the shortest name.
+- **63 · AGE 63 · THE END:** You died at 63. Died of a winter chill and a tired heart.
+
+## After — monarch — seed 840013
+
+premium; died aged 61; Died of a winter chill and a tired heart.
+
+- **0 · YEAR 0 · BORN:** The herald traces your claim through Wulfric. Isolde dismisses him before he reaches the disputed marriages. You receive a cradle, guards and a place behind your sibling. Two palace households dispute your elder sibling’s precedence; loyalty is already divided.
+- **0 · YEAR 0 · TRAIT:** 🍀 From the cradle you are Born Lucky. Fortune simply favours you, and it shows.
+- **1 · AGE 1 · FAMILY TABLE:** You discover that dropping a spoon makes an adult fetch it. An excellent arrangement, briefly.
+- **2 · AGE 2 · GROWING UP:** Isolde marks your height on the doorpost. You are now taller than last year’s debt notice.
+- **2 · AGE 2 · CHOICE:** Your guardian folds the dry blanket around you. The roof will require a less comfortable remedy.
+- **3 · AGE 3 · INFANCY:** A winter cough keeps you awake. Isolde warms your blanket by the hearth and stays until your breathing settles.
+- **3 · AGE 3 · CHOICE:** The cat refuses to join the crockery. Your household repeats the word more slowly.
+- **4 · AGE 4 · FORTUNE:** Found a shiny coin in the mud. It is mostly mud, but it spends.
+- **5 · AGE 5 · DAILY MISHAPS:** Your borrowed boots reach the puddle before you do and leave considerably later.
+- **5 · AGE 5 · MARKET LIFE:** The baker stamps every loaf with his initials. Nobody has asked to sign the small ones.
+- **5 · AGE 5 · CHOICE:** Your sibling pays three gold for the nursery key. The guards change the locks and your household’s opinion of you.
+- **6 · AGE 6 · WEATHER:** You build a snow lord with an enormous nose. The thaw removes his authority before anyone can collect rent.
+- **6 · AGE 6 · GROWING UP:** The children play at holding court. The judge is chosen because she owns the stool; the prisoner owns the biscuits.
+- **6 · AGE 6 · CHOICE:** You make a meal of the disputed evidence. The household gains food; no prediction is proved merely because you are fed.
+- **7 · AGE 7 · LEARNING:** A sundial gives a precise answer until a cloud arrives. You appreciate an instrument willing to admit it does not know.
+- **7 · AGE 7 · UNEXPECTED SIGHTS:** A rope walker crosses the square above your heads. The crowd holds its breath; his wife holds the collecting bowl steady.
+- **7 · AGE 7 · CHOICE:** The goose offers no instruction and requires no parchment. You enjoy the company, though the writing remains unread.
+- **8 · AGE 8 · QUIET KINDNESS:** An old bowl is mended with neat metal staples. Someone decided it was worth keeping, cracks and all.
+- **8 · AGE 8 · PARISH LIFE:** The bell rope wears smooth where generations of hands have pulled it. You hold the same place for a moment.
+- **8 · AGE 8 · CHOICE:** You ask why anyone should carry turnips for free. The crowd drifts away. Elswyth is left guarding two sacks and an excellent bow.
+- **9 · AGE 9 · ROADS:** You take a familiar uneven step without looking. Your foot remembers a street your head was too busy to notice.
+- **9 · AGE 9 · MARKET LIFE:** A cobbler promises shoes that will outlast their owner. An elderly customer asks for a more cheerful recommendation.
+- **9 · AGE 9 · CHOICE:** You improve your own vegetable patch and fill the store cupboard. No patron required. No badge either, which is a mercy.
+- **10 · AGE 10 · LOCAL JUSTICE:** Someone has put a cushion in the stocks. The gaoler removes it, on the grounds that punishment should not attract regulars.
+- **10 · AGE 10 · CHOICE:** Every bucket in the house onto your own thatch. Your roof survives, theirs does not, and both of those facts are noted in the lane.
+- **11 · AGE 11 · MARKET:** Someone sold hats for goats. No one agreed whether the hats were for goats or from goats.
+- **11 · AGE 11 · CHOICE:** You sleep like a blessed log. The bell ringer fears you may be part stone.
+- **12 · AGE 12 · MISHAP:** You slip beside the watering trough. A bystander offers advice after you have stopped needing it.
+- **12 · AGE 12 · CHOICE:** A penny a week for the byre, which is honest, sheltered and cold. They take it and they pay it and something between you never quite comes back.
+- **13 · AGE 13 · LAW:** The reeve banned suspicious whistling. You whistled innocently and learned nothing.
+- **13 · AGE 13 · BLESSING:** You lit a candle at the chapel. You feel holier and slightly singed.
+- **13 · AGE 13 · CHOICE:** Nine shillings and a ring you never wear. Whoever it belonged to knows it was in that row, and one day may work out who did the raking.
+- **14 · AGE 14 · RELIGIOUS HYPOCRISY:** A dispute over a saint’s feast ends when both sides discover that the cook has already served it.
+- **14 · AGE 14 · CHOICE:** You offer the account of a person nobody in the room has met. The priest hears you out, and you keep a secret about the omission.
+- **15 · AGE 15 · LEARNING:** A monk draws a tiny sleeping clerk beside a solemn passage on vigilance. You wonder who the book was meant for.
+- **15 · AGE 15 · ALE:** A tavern proverb named you wise. By dawn nobody remembered the proverb, only the ale.
+- **15 · AGE 15 · CHOICE:** They are under a roof by Martinmas. The other two wait until spring and say, mostly, that it was right, and mean it, mostly.
+- **16 · AGE 16 · COURT LIFE:** A lord describes his hunt without mentioning the groom who found his horse or the ditch that found his boot.
+- **16 · AGE 16 · CHOICE:** You question the sellers. Each heard the tale from Elswyth, who received a sealed note from Lord Aldric. You keep the note.
+- **17 · AGE 17 · MISHAP:** A loose thread undid half your tunic in the market. The tailor called it ventilation.
+- **17 · AGE 17 · CHOICE:** You fix the banner and earn respect from everyone who can read cloth.
+- **18 · AGE 18 · RELIGIOUS HYPOCRISY:** A hermit complains that visitors interrupt his solitude, then asks whether anyone mentioned his new cave.
+- **18 · AGE 18 · WAR NEWS:** An envoy arrives with a dove embroidered on his sleeve and enough armed men to protect it.
+- **18 · COMING OF AGE:** You enter adulthood with no formal qualification. The people of your household will remember how you got here. Later study remains open.
+- **18 · COMING OF AGE:** You are a grown soul now. You set yourself a life's ambition: Amass a Fortune — Hold 150 gold at once.
+- **18 · AGE 18 · CHOICE:** Your money, no bond, no lender. It is cleaner and it makes you the creditor, which changes something between you that neither of you names.
+- **18 · THE CROWN:** Hugh is recognised as ruler. Narrative audit cohort: recognised adult royal claimant.
+- **19 · AGE 19 · WISDOM:** A monk explains division with three apples. The lesson becomes subtraction when somebody eats the example.
+- **19 · YEARS LATER:** A choice made during rivals rise bears fruit three years later.
+- **19 · AGE 19 · CHOICE:** Isolde reads the claim aloud, adding objections in the margins. Your household keeps its goods; Wulfric acquires a personal reason to dislike you.
+- **20 · AGE 20 · COURTSHIP GOSSIP:** A suitor praises someone’s fine judgement, then spends an hour explaining why they should choose him.
+- **20 · AGE 20 · CHOICE:** You send both notes to the guild clerk. The wage-cut scheme collapses. Elswyth blames you for exposing how easily they were fooled.
+- **21 · AGE 21 · MARTIAL:** A passing knight explains that the dent in his helm saved his life. His squire says the doorway was never in much danger.
+- **21 · AGE 21 · MILL:** The miller measured your flour with a scoop that looked hungry.
+- **21 · AGE 21 · CHOICE:** You offer a truce: no more rumours, no pressure on either household, and one public apology each. Elswyth agrees. The priest takes his clapper home.
+- **22 · AGE 22 · WISDOM:** A monk leaves a space in his sums to show you how nothing can have a place. You think about that on the way home.
+- **22 · AGE 22 · CHOICE:** Nine gold buys an end to this claim, together with a secret about how readily your name can be priced.
+- **23 · AGE 23 · FAMILY:** Isolde finds an old family warning against trusting smiling millers. The warning is written on the back of an unpaid milling bill.
+- **23 · AGE 23 · CHOICE:** They go red and apologise properly, which is rare, and tell the story again eighteen months later.
+- **24 · AGE 24 · DAILY MISHAPS:** The soap seller’s hands are cleaner than anyone’s in the square. He keeps dropping the money.
+- **24 · AGE 24 · CHOICE:** You preserve your purse while damp consumes part of the household’s food and furnishings. The economy is mostly imaginary.
+- **25 · AGE 25 · QUIET KINDNESS:** Someone leaves a glowing coal ready for your cold hearth. You never learn who; the room warms anyway.
+- **25 · AGE 25 · CHOICE:** You and Elswyth jointly challenge a trader’s false weights. The trader looks at both of you and quietly fetches the honest scales.
+- **26 · AGE 26 · MARKET LIFE:** A cobbler promises shoes that will outlast their owner. An elderly customer asks for a more cheerful recommendation.
+- **26 · AGE 26 · CHOICE:** You get both men to write down what they hold. Neither text is heresy and neither man will say that about the other one.
+- **27 · AGE 27 · COURT LIFE:** A lord calls thirty guests a small supper. The people carrying it do not dispute the adjective until they reach the kitchen.
+- **27 · AGE 27 · LAW:** The reeve banned suspicious whistling. You whistled innocently and learned nothing.
+- **27 · AGE 27 · CHOICE:** Your household gains wealth from the disputed use, and you acquire a fraud charge. The stone is silent; the witnesses are not.
+- **28 · AGE 28 · FORTUNE:** Found a shiny coin in the mud. It is mostly mud, but it spends.
+- **28 · AGE 28 · PARISH LIFE:** The chapel door whistles through the sermon. It is the only interruption the priest cannot ask to leave.
+- **28 · AGE 28 · CHOICE:** Your defence exposes enough doubt for the charge to fail.
+- **29 · AGE 29 · WEATHER:** Full granaries lower the price of bread. You buy a little extra and need no better reason to enjoy it.
+- **29 · AGE 29 · CHOICE:** You avoid the expense and lose Emma’s respect. The unfinished duty is smaller than your explanation for leaving it.
+- **30 · AGE 30 · OFFICIAL VANITY:** The bailiff’s new hat is too tall for the courthouse door. He makes everyone wait while authority enters sideways.
+- **30 · YEARS LATER:** Five years on, the family legacy of rivals rise is still remembered.
+- **30 · AGE 30 · CHOICE:** A plainer screen and nine shillings to the flooded. Neither party is satisfied and both can live with it. That is what a settlement is for.
+- **31 · AGE 31 · LOCAL JUSTICE:** The court dog sleeps through an argument over ownership. Both claimants lower their voices rather than wake it.
+- **31 · AGE 31 · PARISH LIFE:** The bell rope wears smooth where generations of hands have pulled it. You hold the same place for a moment.
+- **31 · AGE 31 · CHOICE:** All four have time to think about what they will say. Two of them are very careful and two of them are not, and the difference shows.
+- **32 · AGE 32 · WEDDING GOSSIP:** A bride’s veil catches on the chapel door. Her aunt calls it an omen; the carpenter calls it a nail.
+- **32 · AGE 32 · COURTSHIP GOSSIP:** The matchmaker judges a prospect by the state of their shoes. “Love walks,” she says. “Debt sends a messenger.”
+- **32 · AGE 32 · CHOICE:** You challenge the charge and lose Thomas’s affection. Your own reputation improves for making the objection before anyone starts the story.
+- **33 · AGE 33 · CORRUPT OFFICIALS:** An official says his hands are clean. The new gloves are quite fine.
+- **33 · AGE 33 · DAILY MISHAPS:** Fresh rushes make the floor look respectable. The missing spoon is still under the old respectability.
+- **33 · AGE 33 · CHOICE:** The answer is longer and worse than the original grievance and involves three other people. You had no idea about any of it.
+- **34 · AGE 34 · LOCAL JUSTICE:** A witness clears his throat every time the clerk reaches the useful part. The testimony is eventually adjourned for water.
+- **34 · YEARS LATER:** A choice made during divided parish bears fruit three years later.
+- **34 · AGE 34 · CHOICE:** It is true, it is unflattering to everybody equally, and it deprives both priests of a cause. The archdeacon accepts it with visible relief.
+- **35 · AGE 35 · DAILY MISHAPS:** The well rope catches on a sleeve. A vigorous argument follows about which of the two is supposed to go down.
+- **35 · AGE 35 · FALSE RELICS:** The relic’s case is polished so brightly that nobody can see the bone. The keeper thinks this has improved attendance.
+- **35 · AGE 35 · CHOICE:** Three children and an old man out through the smoke, and the row goes up behind you. Everyone lives. Nothing else does.
+- **36 · AGE 36 · PUBLIC VANITY:** A lover recites a moving poem. The minstrel listening behind him remembers writing it for someone else.
+- **36 · AGE 36 · WEDDING GOSSIP:** The jeweller explains that a wedding ring can be made smaller. The listening couples look briefly hopeful.
+- **36 · YEARS LATER:** A choice made during friendship test bears fruit three years later.
+- **36 · AGE 36 · CHOICE:** Maud refuses the proposal and the relationship deteriorates. You keep the goods, together with the saw’s excellent negotiating reputation.
+- **37 · AGE 37 · PLAGUE:** During the sickness scare you avoid the crowded stalls. You miss the company more than the haggling.
+- **37 · AGE 37 · CHOICE:** A penny a week for the byre, which is honest, sheltered and cold. They take it and they pay it and something between you never quite comes back.
+- **38 · AGE 38 · PRIVATE SECRETS:** You check that a certain chest is locked. It is. You check again, discovering that secrecy is mostly unpaid work.
+- **38 · AGE 38 · CHOICE:** The parish goes back to arguing about the churchyard wall, which is the correct thing for a parish to argue about.
+- **39 · AGE 39 · WEDDING GOSSIP:** The chapel echoes a groom’s promise to obey. His family looks alarmed at having heard it twice.
+- **39 · AGE 39 · STATION:** A poet praises your noble bearing in a verse whose longest word is your title. The short lines cost just as much.
+- **39 · AGE 39 · CHOICE:** You refuse the false testimony. Simon loses trust in your usefulness; your own legal record remains untouched.
+- **40 · AGE 40 · LEARNING:** A sundial gives a precise answer until a cloud arrives. You appreciate an instrument willing to admit it does not know.
+- **40 · AGE 40 · BLESSING:** You lit a candle at the chapel. You feel holier and slightly singed.
+- **40 · AGE 40 · CHOICE:** You go down before the pour and call the numbers. It becomes a habit neither of you ever names, and it lasts five years.
+- **41 · AGE 41 · MISHAP:** A loose thread undid half your tunic in the market. The tailor called it ventilation.
+- **41 · AGE 41 · PERSONAL GRUDGES:** Maud wishes you excellent health with the expression of someone cancelling a small celebration.
+- **41 · AGE 41 · CHOICE:** Three Sundays and no claimant. It goes to the parish chest for the rebuilding, lawfully, and everybody knows you could have kept it.
+- **42 · AGE 42 · OFFICIAL VANITY:** A clerk refuses an unsigned complaint that the official seal has been stolen.
+- **42 · AGE 42 · CHOICE:** You say it kindly and completely. They do not argue, which tells you they had reached the same place, and you walk out of the same door separately.
+- **43 · AGE 43 · COURT LIFE:** A food taster asks whether he may object to the cooking on ordinary grounds.
+- **43 · AGE 43 · VICE:** You found dice under a chapel pew. Someone has been praying for sixes.
+- **43 · YEARS LATER:** Five years on, the family legacy of divided parish is still remembered.
+- **43 · AGE 43 · CHOICE:** He is embarrassed, blames a servant, and the measure is corrected before Lady Day without one word said in public. Nobody is punished and everybody eats.
+- **44 · AGE 44 · REMEMBRANCE:** A household recipe says “as much as seems right.” Whoever wrote it took the quantity with them.
+- **44 · AGE 44 · QUIET KINDNESS:** A servant brings water before you ask. Among so many people waiting to be noticed, you notice the one who was watching.
+- **44 · AGE 44 · CHOICE:** Three bad roofs instead of one good one. All three leak, all three stand, and nobody spends the winter in somebody else’s byre.
+- **45 · AGE 45 · WEATHER:** Frost draws a finer window than the glazier ever managed. You admire it until someone reminds you it is on the inside.
+- **45 · AGE 45 · COURTSHIP GOSSIP:** Two courting neighbours speak through a fence. Their chaperone listens from the gate, complaining that the acoustics are poor.
+- **45 · AGE 45 · CHOICE:** He starts cutting his mark into the crown of each bell where only the founder would look. Within two years the wardens have noticed.
+- **46 · AGE 46 · WAR NEWS:** An envoy arrives with a dove embroidered on his sleeve and enough armed men to protect it.
+- **46 · AGE 46 · CHOICE:** Two days on the roof with old reed and borrowed spars. It will hold. It will hold in the way that things hold when you are the one who fixed them.
+- **47 · AGE 47 · COURT LIFE:** A lord calls thirty guests a small supper. The people carrying it do not dispute the adjective until they reach the kitchen.
+- **47 · AGE 47 · CHOICE:** You gain a little health by resting. Any existing eye condition remains; the spoon’s recovery proves nothing about yours.
+- **48 · AGE 48 · FALSE RELICS:** The relic’s case is polished so brightly that nobody can see the bone. The keeper thinks this has improved attendance.
+- **48 · AGE 48 · CHOICE:** You read the weights out in the churchyard in front of the wardens. The guild pays for the recast and does not forget who made them.
+- **49 · AGE 49 · LOCAL JUSTICE:** The watch changes its password. By dusk everybody knows it except the man who chose it.
+- **49 · AGE 49 · CHOICE:** You put your name at the head of the roll so that poorer households do not have to be the first to bend. It costs you nothing but the sight of your own signature.
+- **50 · AGE 50 · MARKET LIFE:** A rope seller demonstrates the strength of his wares by tying up his assistant. The assistant negotiates his wages from there.
+- **50 · AGE 50 · CHOICE:** You gain wit and lose Agnes’s patience. The book remains impressively dry.
+- **51 · AGE 51 · FORTUNE:** Found a shiny coin in the mud. It is mostly mud, but it spends.
+- **51 · AGE 51 · CHOICE:** It was the man who is now the churchwarden. He pays for the beam rather than have it discussed, and he is never civil to you again.
+- **52 · AGE 52 · WEDDING GOSSIP:** The chapel echoes a groom’s promise to obey. His family looks alarmed at having heard it twice.
+- **52 · AGE 52 · GETTING OLDER:** You choose a seat by how easy it will be to stand up again. There are forms of wisdom nobody puts in books.
+- **52 · AGE 52 · CHOICE:** You receive the advance and create a genuine forgery charge. The soap has left a wonderfully clear impression on the evidence.
+- **53 · AGE 53 · BLESSING:** You lit a candle at the chapel. You feel holier and slightly singed.
+- **53 · AGE 53 · COURT LIFE:** A courtier recognises you warmly, then checks who is watching before deciding how warmly.
+- **53 · AGE 53 · CHOICE:** The court rejects your defence and orders imprisonment.
+- **54 · AGE 54 · WEATHER:** A neighbour hangs washing in a rare patch of sun. Half the lane turns to watch it, as though warmth were a public performance.
+- **54 · AGE 54 · CHOICE:** They sign. There is a clause about a chair by the fire and the right to watch the pours, and it is honoured until the second winter.
+- **55 · AGE 55 · LEARNING:** A monk draws a tiny sleeping clerk beside a solemn passage on vigilance. You wonder who the book was meant for.
+- **55 · AGE 55 · COURTSHIP GOSSIP:** A suitor praises someone’s fine judgement, then spends an hour explaining why they should choose him.
+- **55 · AGE 55 · CHOICE:** You trade a little dignity for a better laugh. Mabel remembers why the original story was worth keeping.
+- **56 · AGE 56 · GETTING OLDER:** Your joints announce the weather before the sky does. They offer no useful advice about what to do with it.
+- **56 · AGE 56 · RELIC:** A relic seller passed through with Saint Nobody's elbow. It bent suspiciously.
+- **56 · AGE 56 · CHOICE:** You name the churchwarden who has been selling tithe hay on the side. It is entirely true, it satisfies the clerk completely, and it ends a family in this parish.
+- **57 · AGE 57 · STATION:** A servant waits for you to finish speaking before retrieving the bowl you are blocking. Rank has made people patient in inconvenient ways.
+- **57 · AGE 57 · CHOICE:** A rota, drawn publicly, changed every Sunday. It is fair, everybody grumbles about it, and there is not one serious quarrel all winter.
+- **58 · AGE 58 · ROADS:** You take a familiar uneven step without looking. Your foot remembers a street your head was too busy to notice.
+- **58 · AGE 58 · GETTING OLDER:** You wake before the bell and remember a time when waking was somebody else’s responsibility.
+- **58 · AGE 58 · CHOICE:** The seller has not consulted the landlord. You gain judgement while the leeches continue to make a much simpler living.
+- **59 · AGE 59 · LOCAL JUSTICE:** The clerk corrects a spelling in a warrant with more care than he gives the accusation beneath it.
+- **59 · AGE 59 · CHOICE:** Three spars, moved after dark, from a pile of forty. Nobody counts them and you spend the next five years expecting somebody to.
+- **60 · AGE 60 · MISHAP:** You slip beside the watering trough. A bystander offers advice after you have stopped needing it.
+- **60 · AGE 60 · VICE:** You found dice under a chapel pew. Someone has been praying for sixes.
+- **60 · AGE 60 · CHOICE:** His mark, on the crown, in daylight, at last. The master does not come to the ringing and everyone notices the empty place.
+- **61 · AGE 61 · COURT:** A travelling clerk sketches Sir Quackbeard in the margin of an account. For once the most forceful opinion on the page needs no signature.
+- **61 · AGE 61 · THE END:** You died at 61. Died of a winter chill and a tired heart.
+- **61 · THE CROWN:** Hugh is recognised as ruler. the documented succession.
+

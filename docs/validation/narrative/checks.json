@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-31",
+  "timezone": "Europe/London",
+  "baseline": "fc98b1a",
+  "validatedRuntimeAndAudit": "4980471",
+  "typecheck": {
+    "command": "npm run typecheck",
+    "passed": true
+  },
+  "jest": {
+    "command": "npm test -- --runInBand",
+    "suites": 89,
+    "tests": 872,
+    "passed": true
+  },
+  "extended": {
+    "command": "MLS_FULL_SOAK=1 npm test -- --runInBand src/__tests__/persistentWorldFullSoak.test.ts --testNamePattern='three-generation|reload'",
+    "selectedTestsPassed": 3,
+    "dynasties": 100,
+    "generations": 3,
+    "depthReloadSeeds": 21
+  },
+  "productionExport": {
+    "command": "NODE_ENV=production EXPO_OFFLINE=1 npx expo export --platform all",
+    "platforms": [
+      "web",
+      "android",
+      "ios"
+    ],
+    "passed": true
+  },
+  "browser": {
+    "statesPassed": 32,
+    "errors": 0,
+    "widths": [
+      280,
+      320,
+      390,
+      768
+    ],
+    "enlargedText": 1.35,
+    "details": "browser.json"
+  },
+  "physicalNativeDevicesTested": false
+}

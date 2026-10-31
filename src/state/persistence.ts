@@ -1,3 +1,4 @@
+import {recoverLegacyLegalHearing} from '@/engine/legalEngine';
 import {retireAuthoredState} from '@/engine/singleYearNarrative';
 import { initializeCourt } from '@/engine/courtEngine';
 import { initializeLifeDepth } from '@/engine/lifeDepthState';
@@ -299,6 +300,7 @@ export function normalizeGameState(parsed: GameState): GameState {
     // An unavailable opponent must never strand the mission overlay.
     normalized.rpg.mission.phase = 'choice';
   }
+  recoverLegacyLegalHearing(normalized);
   retireAuthoredState(normalized);
   return syncPlayerFromWorld(normalized);
 }

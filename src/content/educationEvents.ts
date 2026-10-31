@@ -51,10 +51,10 @@ export const EDUCATION_EVENTS: GameEvent[] = Object.entries(LESSONS).flatMap(([t
 })));
 const ORIGIN_ENCOUNTERS: [BirthOriginId, string, string, string][] = [
   ['peasant', 'THE BAILIFF’S FOURTH CHICKEN', 'The bailiff demands a hen that your household has never owned. Your family contact has the old rent tally.', 'You and your neighbour prove the tally. The hen remains imaginary; the debt does not grow.'],
-  ['artisan', 'THE GUILD’S SMALL PRINT', 'Your family’s commission includes a penalty for hammer noise after compline. The church commissioned the bell.', 'Your guild contact finds the exemption. The household keeps its fee.'],
+  ['artisan', 'THE GUILD’S SMALL PRINT', 'Your family’s commission includes a penalty for hammer noise after compline. The church commissioned the bell.', 'The guild contact finds the exemption. The collector departs without the fee and with a much lower opinion of children being taught to read.'],
   ['merchant', 'THE RIVAL’S SHORT BUSHEL', 'The household’s rival sells grain in a bushel with a false bottom. Your parent asks you to watch the measure.', 'You bring witnesses and protect the household’s buyers. The rival now knows your name.'],
   ['church', 'THE LAY SCRIBE’S BABY', 'A visiting friar mistakes your lay scribe parent for a vowed cleric and prepares a scandal of magnificent proportions.', 'The marriage entry settles it. The friar must find his scandal elsewhere.'],
-  ['military', 'THE RATION HEIR', 'The garrison refuses to feed a soldier’s child until the child can carry a spear. The spear is taller than the clerk.', 'Your household contact quotes the service oath. You receive bread and an enemy in the stores.'],
+  ['military', 'THE RATION HEIR', 'The garrison refuses to feed a soldier’s child until the child can carry a spear. The spear is taller than the clerk.', 'Your household receives its bread. The stores clerk hands over each loaf as though personally surrendering a small fort.'],
   ['noble', 'THE COUSIN’S LITTLE MAP', 'A cousin has drawn the family boundary through your nursery. The steward offers to charge you rent.', 'You compare the charter with the stones. The cousin loses a field and a little affection.'],
   ['royal', 'THE NURSERY PRECEDENT', 'Your older sibling claims the whole nursery under a succession custom invented before breakfast.', 'Your guardian divides the room. The throne remains undivided and very far away.'],
 ];
@@ -181,7 +181,7 @@ const HOUSEHOLD_RESULTS: [string,string][] = [
   ['The reopened ditch saves seed on both strips. {{contact}} records your household’s share of the labour.', 'Your false claim wins a few coins and leaves {{guardian}} to repair the damaged neighbourly agreement.'],
   ['The common gate stands through winter. {{contact}} delivers the promised fallen wood.', 'The missing timber leaves the common gate open. {{contact}} charges your household for its replacement.'],
   ['The witnessed deposit pays for material before the customer can dispute the order.', 'The copied seal is discovered on the second order. {{contact}} keeps it as evidence against your household.'],
-  ['The modest sample gives the workshop a place at the feast without emptying its supper pot.', 'The borrowed trial piece is recognised. Your workshop pays the entry fee and loses the guild’s trust.'],
+  ['The workshop’s sample is admired, tasted and promptly requested in a larger quantity. Your household still has supper when the important guests finish theirs.', 'The borrowed trial piece is recognised. Your workshop pays the entry fee and loses the guild’s trust.'],
   ['Both wagons share the safe crossing and split the fee. The shipment arrives with its partners intact.', '{{contact}} finds the dangerous ford and learns who gave the directions. Your household loses a trading partner.'],
   ['The recount establishes what was delivered. The rival must challenge a witnessed account.', 'The missing ledger page becomes the rival’s strongest evidence. Your household bears the cost of your bargain.'],
   ['The dried leaves and careful copies satisfy the priory. Your lay household retains its access to the books.', 'The visiting household produces witnesses. Your own household pays for the damaged manuscript.'],
@@ -189,9 +189,9 @@ const HOUSEHOLD_RESULTS: [string,string][] = [
   ['The pay clerk acknowledges the old receipt and credits the service household.', 'The extra ration is refused when {{contact}} checks the muster. Your household’s genuine claim is delayed.'],
   ['The checked girth holds and the garrison records your household’s help.', 'The quartermaster finds your false account beside the harness. Your household loses standing with the stores.'],
   ['The accounts show what can be spent on tutors after seed is reserved. Your guardian trusts you with the next petition.', 'The hidden petition is found. The tenants blame your household for a refusal it never openly made.'],
-  ['The family record settles precedence without an insult. Your cousin has less reason to press another grievance.', 'The altered genealogy reaches {{contact}}. The cousin keeps a copy and begins a more serious challenge.'],
+  ['The cousin receives the proper seat. It is less comfortable than the disputed one, but much harder to call an outrage.', 'The altered genealogy reaches {{contact}}. The cousin keeps a copy and begins a more serious challenge.'],
   ['Both nursery seals reach the guardian. Conflicting orders are corrected before the guards choose sides.', 'The two palace factions compare your stories. Both now have grounds to distrust your household’s word.'],
-  ['The shared lesson gives the guards no wager to collect. Your guardian records a rare quiet agreement between heirs.', 'The purchased rumour reaches your sibling. A nursery quarrel acquires a guard willing to repeat it.'],
+  ['The guards return their wagers and watch both heirs share a lesson. Nobody is willing to bet on the peace lasting, but the lesson gets finished.', 'The purchased rumour reaches your sibling. A nursery quarrel acquires a guard willing to repeat it.'],
 ];
 ORIGIN_CHILDHOOD_EVENTS.filter(e => e.id.includes('_extra_')).forEach((event,i) => {
   event.choices[0].outcome!.text = HOUSEHOLD_RESULTS[i][0]; event.choices[1].outcome!.text = HOUSEHOLD_RESULTS[i][1];

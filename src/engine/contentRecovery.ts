@@ -1,3 +1,4 @@
+import {recoverLegacyLegalHearing} from './legalEngine';
 import {retireAuthoredState} from './singleYearNarrative';
 import { GameState, StoryInstance, WorldCharacter, WorldHistoryEntry } from '@/types/game';
 import { CONTENT_ALIASES, CONTENT_MIGRATIONS, CURRENT_CONTENT_VERSION } from '@/content/contentVersion';
@@ -126,6 +127,7 @@ export function recoverSavedContent(state: GameState): RecoveryResult {
 
   if (applyCharacterAliases(state) || applyCareerAliases(state)) recovered = true;
 
+  recoverLegacyLegalHearing(state);
   while (state.world.contentVersion < CURRENT_CONTENT_VERSION) {
     const migration = CONTENT_MIGRATIONS[state.world.contentVersion];
     if (migration) {

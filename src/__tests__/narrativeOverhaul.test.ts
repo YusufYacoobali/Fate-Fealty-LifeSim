@@ -45,12 +45,12 @@ it('all authored branches execute, and every declared major scenario can change 
  for(const e of newEncounters){
   const base=fixture(e);base.pendingEvent={eventId:e.id,bindings:runWithWorldRng(base.world,()=>bindEventActors(base,e))};
   let major=false;
-  for(const c of e.choices)for(const roll of c.outcome?[1]:[0,1]){
+  for(const c of e.choices)for(const roll of c.outcome?[1]:c.catastrophe?[0,1,2]:[0,1]){
    const s=cloneState(base);if(!isChoiceEnabled(s,c))continue;
    const p=s.world.characters[s.playerCharacterId],spouse=p.spouseId,job=s.occupation.careerId,status=p.legalState!.status,sentence=p.legalState!.sentenceYearsRemaining,alive=Object.values(s.world.characters).filter(x=>x.alive).length;
-   const chosen={...c,successChance:roll};
+   const chosen={...c,successChance:roll===1?1:0,catastropheChance:roll===2?1:0};
    runWithWorldRng(s.world,()=>applyChoice(s,e,chosen));
-   const effects=(c.outcome??(roll?c.success:c.failure))!.effects!;
+   const effects=(c.outcome??(roll===2?c.catastrophe:roll===1?c.success:c.failure))!.effects!;
    if(effects.killKin){const id=base.pendingEvent!.bindings?.[effects.killKin]??effects.killKin;expect({id:e.id,alive:s.world.characters[id]?.alive}).toEqual({id:e.id,alive:false});}
    if(effects.endMarriage)expect(p.spouseId).toBeUndefined();
    if(effects.employment==='dismiss')expect(s.occupation.careerId).toBeNull();

@@ -255,13 +255,14 @@ describe('legal trials', () => {
     expect(state.world.characters[state.playerCharacterId].legalState!.charges[0].resolved).toBe(false);
   });
 
-  it('consumes the charge once the trial is actually opened', () => {
+  it('keeps the charge open in a named hearing until the player answers', () => {
     const state = accused();
     beginLegalTrial(state);
     const legal = state.world.characters[state.playerCharacterId].legalState!;
-    expect(legal.charges[0].resolved).toBe(true);
+    expect(legal.charges[0].resolved).toBe(false);
+    expect(legal.hearing?.chargeIds).toContain(legal.charges[0].id);
     expect(legal.status).toBe('awaiting_trial');
-    expect(dueLegalEvent(state)).toBeNull();
+    expect(dueLegalEvent(state)?.id).toBe('system_legal_trial');
   });
 
   it('reaches the player as a resolvable event', () => {

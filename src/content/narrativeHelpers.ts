@@ -16,7 +16,7 @@ export function reply(id: string, label: string, text: string, effects: Effects,
 }
 export function scene(id: string, category: GameEvent['category'], domain: GameEvent['domain'], title: string, text: string, choices: Choice[], options: Partial<GameEvent> = {}): GameEvent {
   const event: GameEvent = { id, category, domain, title, text, choices, ageMin: 16, stakes: 'meaningful', actorRoles: { other: ADULT }, repetitionGroup: 'local_disputes', ...options };
-  for (const choice of choices) for (const outcome of [choice.outcome,choice.success,choice.failure]) {
+  for (const choice of choices) for (const outcome of [choice.outcome,choice.success,choice.failure,choice.catastrophe]) {
     const role = outcome?.effects?.familyFeud?.role;
     if (role && event.actorRoles?.[role]) event.actorRoles[role] = { ...event.actorRoles[role], outsideFamily: true };
   }

@@ -219,6 +219,7 @@ export interface HealthConditionState {
 
 export type LegalStatus = 'free' | 'accused' | 'awaiting_trial' | 'imprisoned' | 'exiled' | 'outlawed';
 export interface LegalCharge {
+  verdict?: 'acquitted'|'convicted';
   id: string;
   offence: string;
   severity: number;
@@ -229,6 +230,7 @@ export interface LegalCharge {
   resolved: boolean;
 }
 export interface LegalState {
+  hearing?: {id:string;chargeIds:string[];openedYear:number;resolved:boolean;verdict?:string};
   status: LegalStatus;
   suspicion: number;
   notoriety: number;
@@ -495,6 +497,7 @@ export interface PlayerRunState {
 }
 
 export interface PendingEvent {
+  incidentId?: string;
   eventId: string;
   storyInstanceId?: string;
   bindings?: Record<string, string>;
@@ -599,6 +602,7 @@ export interface HoldingUpgradeDef {
 // ---------------------------------------------------------------------------
 
 export interface Effects {
+  legalVerdict?: 'acquit'|'convict'|'confess'|'bribed'|'exposed';
   bond?: { role: string; affinity?: number; trust?: number; respect?: number; clearRivalry?: boolean; flag?: 'rival' | 'feud' | 'friend' };
   familyFeud?: { role: string; reason: string };
   endMarriage?: boolean;
@@ -742,6 +746,9 @@ export interface Outcome {
 export interface DuelStakes { win: Effects; lose: Effects; summary: string }
 
 export interface Choice {
+  /** Conditional on failure; exceptional catastrophe after the ordinary setback roll. */
+  catastropheChance?: number;
+  catastrophe?: Outcome;
   challenge?: { role: string; stakes: DuelStakes };
   disabledReason?: string;
   /** Stable content id used by story transitions and save-safe history. */

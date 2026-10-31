@@ -1,3 +1,4 @@
+import {beginCourtScandal} from './courtIncidents';
 import { tickCourt } from './courtEngine';
 import { tickEducation } from './educationEngine';
 /**
@@ -113,7 +114,7 @@ export function ageUp(s: GameState): GameState {
     // Only commit the trial's charge once the popup is genuinely being opened.
     if (!s.pendingEvent) {
       if (directed.isLegal) beginLegalTrial(s);
-      s.pendingEvent = { eventId: directed.event.id, bindings: bindDirectedEvent(s, directed) };
+      s.pendingEvent = { eventId: directed.event.id, incidentId:directed.event.id==='royal_creative_accounts'?beginCourtScandal(s):undefined, bindings: bindDirectedEvent(s, directed) };
     }
     s.world.pacing.quietYearsSinceStory = 0;
   } else {

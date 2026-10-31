@@ -36,7 +36,7 @@ const MAX_SHARED_OUTCOME_TEXT = 6;
 const SIMPLE_STATS = new Set(['health', 'charm', 'wits', 'faith', 'gold', 'rankProgress', 'reputation']);
 
 function outcomes(event: GameEvent): Effects[] {
-  return event.choices.flatMap((choice) => [choice.outcome, choice.success, choice.failure])
+  return event.choices.flatMap((choice) => [choice.outcome, choice.success, choice.failure, choice.catastrophe])
     .map((outcome) => outcome?.effects)
     .filter((effects): effects is Effects => Boolean(effects));
 }
@@ -81,7 +81,7 @@ export function validateContent(): ContentValidationIssue[] {
   for (const event of ALL_EVENTS.filter(e=>!e.legacyNarrative)) {
     for (const choice of event.choices) {
       choiceLabelUses.set(choice.label, [...(choiceLabelUses.get(choice.label) ?? []), event.id]);
-      for (const outcome of [choice.outcome, choice.success, choice.failure]) {
+      for (const outcome of [choice.outcome, choice.success, choice.failure, choice.catastrophe]) {
         if (!outcome?.text) continue;
         outcomeTextUses.set(outcome.text, [...(outcomeTextUses.get(outcome.text) ?? []), event.id]);
       }
@@ -124,10 +124,11 @@ export function validateContent(): ContentValidationIssue[] {
       else if (choiceIds.has(choice.id)) error('duplicate_choice_id', event.id, `Duplicate choice id ${choice.id}.`);
       else choiceIds.add(choice.id);
       if (!choice.outcome && (!choice.success || !choice.failure)) error('unsafe_choice', event.id, `Choice ${choice.id ?? choice.label} has no complete outcome.`);
+      if(choice.catastrophe && (!choice.failure || choice.catastropheChance == null || choice.catastropheChance <= 0 || choice.catastropheChance > 1))error('invalid_catastrophe',event.id,'Catastrophe needs a complete ordinary failure and a probability in (0,1].');
       if (!choice.forecast) warn('missing_forecast', event.id, `Choice ${choice.id ?? choice.label} has no qualitative forecast.`);
       // Domain curation drops uncurated selectable events from the registry, so
       // a chain can be broken by rebalancing quotas rather than by editing it.
-      for (const outcome of [choice.outcome, choice.success, choice.failure]) {
+      for (const outcome of [choice.outcome, choice.success, choice.failure, choice.catastrophe]) {
         if (outcome?.next && !EVENTS_BY_ID[outcome.next]) error('dangling_next', event.id, `Choice ${choice.id ?? choice.label} continues to missing event ${outcome.next}.`);
       }
     }
@@ -144,7 +145,7 @@ export function validateContent(): ContentValidationIssue[] {
   }
   for(const event of ALL_EVENTS.filter(e=>!e.legacyNarrative)) {
     if(event.chain||event.callback)error('authored_chapter',event.id,'Live scenes cannot carry chapter or callback scheduling.');
-    for(const choice of event.choices)for(const outcome of [choice.outcome,choice.success,choice.failure]) {
+    for(const choice of event.choices)for(const outcome of [choice.outcome,choice.success,choice.failure,choice.catastrophe]) {
       if(outcome?.nextWhen==='nextYear')error('future_chapter',event.id,'No authored next-year continuation is allowed.');
       if(outcome?.next){
         const next=EVENTS_BY_ID[outcome.next];

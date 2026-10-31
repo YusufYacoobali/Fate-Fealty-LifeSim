@@ -2,7 +2,7 @@ import type { GameEvent } from '@/types/game';
 import { scene, reply, risk, fraud } from './narrativeHelpers';
 export const NARRATIVE_FAITH_EVENTS: GameEvent[] = [
   scene('life_saint_two_skulls','faith','politics','THE SAINT’S SMALLER SKULL','{{other}} displays a saint’s skull beside a smaller skull said to belong to the saint as a child. The keeper has anticipated the obvious objection and looks tired of it.',[
-    reply('question','Ask for the history of both objects','You expose the weak account without inventing a miracle. Your reputation improves and {{other}} becomes less welcoming to questions.',{wits:3,reputation:3,bond:{role:'other',trust:-10}}),
+    reply('question','Ask for the history of both objects','{{other}} moves the smaller skull behind the larger one. The saint has become considerably older in the time it takes to ask one question.',{wits:3,reputation:3,bond:{role:'other',trust:-10}}),
     reply('quiet','Leave the objects and give alms instead (4g)','You give four gold toward relief rather than the display. Your faith and family standing improve without acquiring an extra saint.',{gold:-4,faith:4,familyReputation:{delta:2}},{costGold:4}),
     reply('endorse','Write an endorsement you know is false','You lend your name to the false display and create a fraud charge. The smaller skull has acquired an adult witness.',{legal:fraud('Knowingly endorsing false relics'),createSecret:{type:'false_lineage',severity:30}}),
   ],{repetitionGroup:'false_relics'}),
@@ -27,7 +27,7 @@ export const NARRATIVE_FAITH_EVENTS: GameEvent[] = [
   ],{repetitionGroup:'family_remembrance'}),
   scene('life_chapel_key','faith','household','THE KEY TO CHARITY','{{other}} holds the key to a food chest and insists it cannot be opened until the donors’ names are read. Hungry people are waiting through an exceptionally generous list.',[
     reply('open','Offer to read the names while food is served','You help the distribution without emptying your own household stores. Church standing and {{other}}’s trust improve.',{faction:{factionId:'church',playerStanding:5},bond:{role:'other',trust:6}}),
-    reply('donate','Supply food from your own household reserve','Your household gives up food and gains reputation. {{other}} sees a donation delivered without first hearing its name.',{householdState:{food:-8},familyReputation:{delta:5},bond:{role:'other',respect:7}}),
+    reply('donate','Supply food from your own household reserve','The food reaches the hungry before {{other}} can announce the giver. For once, the chewing gets to interrupt the important names.',{householdState:{food:-8},familyReputation:{delta:5},bond:{role:'other',respect:7}}),
     reply('record','Make a public account of the delay','You record the hungry households waiting outside. {{other}} discovers that a key can keep a door shut without keeping an account private.',{faction:{factionId:'commons',playerStanding:5},bond:{role:'other',trust:-16,flag:'rival'}}),
   ],{repetitionGroup:'parish_charity'}),
   scene('life_miracle_roof','faith','household','THE MIRACLE OF THE DRY PARCHMENT','Rain avoids the shrine’s best account book because {{other}} keeps it under the only sound section of roof. The rest of the room is being called a test of faith.',[
@@ -36,7 +36,7 @@ export const NARRATIVE_FAITH_EVENTS: GameEvent[] = [
   ],{repetitionGroup:'religious_hypocrisy'}),
   scene('life_pilgrim_bridge','faith','health','THE BRIDGE THAT REQUIRES FAITH','{{other}} promises that a saint protects those crossing a broken footbridge. A long detour exists, which has made the promise commercially inconvenient.',[
     reply('detour','Take the long, safe road','You arrive tired by the longer road. {{other}} cannot deny that the destination improves a pilgrimage considerably.',{health:-3,faith:2,bond:{role:'other',affinity:-3}}),
-    risk('cross','Trust the damaged bridge (risk drowning)',0.5,'You cross safely and gain a modest reputation for nerve. The missing boards have not been repaired by your example.',{reputation:5,health:-4},'The bridge gives way over deep water. The assurance of protection cannot keep you afloat.',{death:'Drowned after choosing to cross a visibly broken bridge.'}),
+    risk('cross','Trust the damaged bridge (risk drowning)',0.5,'You cross safely and gain a modest reputation for nerve. The missing boards have not been repaired by your example.',{reputation:5,health:-4},"The plank breaks near the bank. You crawl out coughing, having reached the far side of your confidence rather than the river.",{health:-12,healthCondition:{conditionId:'deep_cut',severity:20}},{catastropheChance:0.1,catastrophe:{text:"The bridge gives way over deep water. The assurance of protection cannot keep you afloat.",effects:{death:"Drowned after choosing to cross a visibly broken bridge."},tone:'bad'}}),
     reply('warn','Warn travellers and refuse to endorse the assurance','You point out the missing boards. {{other}} acquires a rival with a distressingly detailed knowledge of the miracle’s construction.',{worldConditions:{publicOrder:3},bond:{role:'other',trust:-18,flag:'rival'}}),
   ],{repetitionGroup:'dangerous_bargains',stakes:'major'}),
   scene('life_sermon_own_sin','faith','politics','THE SERMON WITH YOUR MEASURES IN IT','{{other}} has proposed a sermon against dishonest measures using details suspiciously close to your neighbours’ accounts. You are asked to confirm the names.',[
@@ -46,7 +46,7 @@ export const NARRATIVE_FAITH_EVENTS: GameEvent[] = [
   ],{repetitionGroup:'false_witnesses'}),
   scene('life_silent_brother','faith','family','THE BROTHER WHO WILL NOT SPEAK','A visiting brother remains silent while {{other}} tries to extract a public blessing. The brother quietly helps an exhausted porter lift a load instead.',[
     reply('help','Help carry the load without arranging a ceremony','You take up the practical work. {{other}} joins you after discovering nobody is left to admire the refusal to speak.',{health:-2,faith:5,bond:{role:'other',trust:6}}),
-    reply('observe','Let the useful silence remain useful','You gain understanding without demanding a sign. {{other}} is less annoyed once no one is watching the disappointment.',{wits:3,bond:{role:'other',affinity:3}}),
+    reply('observe','Let the useful silence remain useful','You sit quietly long enough for {{other}} to stop performing silence at you. The remainder of the afternoon becomes much more peaceful.',{wits:3,bond:{role:'other',affinity:3}}),
   ],{repetitionGroup:'quiet_service'}),
   scene('life_saint_dog_bone','faith','politics','THE RELIC WITH TOOTH MARKS','{{other}} asks you to help identify a sacred bone. The household dog identifies it first and is proving difficult to cross-examine.',[
     reply('withdraw','Withdraw the claim until there is evidence','You withdraw the claim. {{other}} regards the dog as a neglected witness for the defence, though it appears principally interested in the bone.',{faction:{factionId:'church',playerStanding:3},bond:{role:'other',trust:-4}}),

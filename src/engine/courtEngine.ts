@@ -1,3 +1,4 @@
+import {currentCourtScandal,identifyCourtScandals} from './courtIncidents';
 import { allianceUnavailable } from './courtAlliances';
 import { beginOfficePetition, councilAdvice, reactToDecree, tickCourtOpposition, addCourtOpposition } from './courtPolitics';
 import type { CourtOffice, Effects, GameState, WorldCharacter } from '@/types/game';
@@ -123,8 +124,8 @@ export function performCourtAction(state: GameState, action: CourtAction, target
     }
     case 'advise': p.factionInfluence = clamp((p.factionInfluence ?? 0) + 5); world.prosperity = clamp(world.prosperity + 2); state.world.factions.crown.playerStanding = clamp(state.world.factions.crown.playerStanding + 3, -100, 100); text = 'Your correction removes a duplicate levy from the decree. The realm gains a little prosperity and you gain a little influence.'; break;
     case 'expose': {
-      const scandal = court.scandals.find(s => !s.resolved);
-      if (scandal) { scandal.exposed = true; scandal.resolved = true; if (court.offices[scandal.office] === scandal.actorId) delete court.offices[scandal.office]; court.treasury += Math.floor(scandal.amount / 2); applyRelationshipShift(state, scandal.actorId, { trust: -20 }, { affinity: -25 }); court.legitimacy = clamp(court.legitimacy + 5); text = `Your investigation removes ${state.world.characters[scandal.actorId]?.name ?? 'the official'} and recovers ${Math.floor(scandal.amount / 2)} treasury gold. The remainder is rather permanent horseflesh.`; }
+      identifyCourtScandals(state);const scandal = currentCourtScandal(state);
+      if (scandal) { scandal.exposed = true; scandal.resolved = true; scandal.resolvedYear=state.world.currentYear; if (court.offices[scandal.office] === scandal.actorId) delete court.offices[scandal.office]; court.treasury += Math.floor(scandal.amount / 2); applyRelationshipShift(state, scandal.actorId, { trust: -20 }, { affinity: -25 }); court.legitimacy = clamp(court.legitimacy + 5); text = `Your investigation removes ${state.world.characters[scandal.actorId]?.name ?? 'the official'} and recovers ${Math.floor(scandal.amount / 2)} treasury gold. The missing portion has already been spent.`; }
       else { world.publicOrder = clamp(world.publicOrder + 2); text = 'Your audit finds no missing funds. You publish the accounts instead of manufacturing an accusation.'; }
       p.factionInfluence = clamp((p.factionInfluence ?? 0) + 6); break;
     }
@@ -201,7 +202,7 @@ export function tickCourt(state: GameState): void {
     const corrupt = traits.some(t => ['cunning','cruel','ambitious'].includes(t)) && !traits.includes('loyal');
     if (corrupt && court.treasury >= 12 && !court.scandals.some(s => s.actorId === councillor.id && !s.resolved) && chance(0.08)) {
       const amount = Math.min(40, court.treasury); court.treasury -= amount; councillor.gold += amount;
-      court.scandals.push({ office: office.id, actorId: councillor.id, amount, exposed: false }); court.legitimacy = clamp(court.legitimacy - 4);
+      court.scandals.push({ id:`court_scandal_${state.nextId++}`,openedYear:state.world.currentYear,office: office.id, actorId: councillor.id, amount, exposed: false }); court.legitimacy = clamp(court.legitimacy - 4);
       court.records.push({ year: state.world.currentYear, kind: 'corruption', actorId: councillor.id, detail: 'Funds diverted through a household account.' });
     }
     if (councillor.stats.wits < 35) { state.world.conditions.prosperity = clamp(state.world.conditions.prosperity - 2); court.legitimacy = clamp(court.legitimacy - 1); }
@@ -262,16 +263,17 @@ export function tickCourt(state: GameState): void {
     }
     court.records.push({ year: state.world.currentYear, kind: 'claimant_backing', actorId: backer.id, targetId: claimant.id, detail: `${backer.name} backs ${claimant.name}'s competing claim.` });
   }
-  court.scandals = court.scandals.slice(-30);
+  court.scandals = [...court.scandals.filter(q=>q.resolved).slice(-30),...court.scandals.filter(q=>!q.resolved)];
   court.records = court.records.slice(-150);
 }
 
 export function applyCourtScandal(state: GameState, decision: NonNullable<Effects['courtScandal']>): void {
   const court = state.world.court;
   if (!court || court.rulerId !== state.playerCharacterId || !state.lifetimeUnlocked) return;
-  const scandal = court.scandals.find(s => !s.resolved);
+  identifyCourtScandals(state);const scandal = currentCourtScandal(state);
   if (!scandal) return;
-  scandal.resolved = true;
+  if(state.pendingEvent?.eventId==='royal_creative_accounts')state.pendingEvent.incidentId=scandal.id;
+  scandal.resolved = true; scandal.resolvedYear=state.world.currentYear;
   const official = state.world.characters[scandal.actorId];
   const remove = () => { if (court.offices[scandal.office] === scandal.actorId) delete court.offices[scandal.office]; };
   if (decision === 'investigate') {

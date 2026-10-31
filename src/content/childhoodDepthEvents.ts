@@ -143,7 +143,7 @@ export const CHILDHOOD_DEPTH_EVENTS:GameEvent[]=[
  ],{actorRoles:{teacher:TEACHER,peer:PEER}}),
  older('market_change','THE EXTRA COIN NOBODY HAS CLAIMED','{{other}} gives you too much change. {{peer}} calculates how long it would take an honest person to notice.',[
   reply('return','Return the extra coin','{{other}} checks the sum and thanks you without making a sermon of it. {{peer}} revises the calculation.',{education:{progress:2},bond:{role:'other',trust:8},familyReputation:{delta:2}}),
-  reply('keep','Keep the advantage','You gain two gold. {{peer}} learns exactly which sort of mistake you prefer not to correct.',{gold:2,education:{misconduct:6},bond:{role:'peer',trust:-4}}),
+  reply('keep','Keep the advantage','You pocket the extra coins. {{peer}} asks whether your arithmetic always improves when someone else is paying.',{gold:2,education:{misconduct:6},bond:{role:'peer',trust:-4}}),
  ],{actorRoles:{other:ADULT,peer:PEER}}),
  older('fence_dare','THE DARE WITH A WITNESS IN EVERY WINDOW','{{peer}} dares you over a forbidden fence. Every house overlooking it appears empty, except at the curtains.',[
   reply('refuse','Refuse the audience its entertainment','{{peer}} calls you cautious. The curtains remain disappointed and your coat remains whole.',{wits:2,bond:{role:'peer',respect:3},memory:{tag:'refused_fence_dare',weight:1}}),
@@ -195,7 +195,7 @@ export const CHILDHOOD_DEPTH_EVENTS:GameEvent[]=[
  ],{actorRoles:{carer:CARER},requires:{custom:s=>['merchant','artisan'].includes(s.world.characters[s.playerCharacterId].background?.origin??'')}}),
  youth('military_ration','THE RATION RETURN COUNTS YOU TWICE','{{carer}} finds two ration entries in your name. The quartermaster describes the second as an administrative child.',[
   reply('correct','Correct the duplicate before collecting','The quartermaster crosses out the child. {{carer}} praises your first successful reduction of an army.',{education:{progress:3},bond:{role:'carer',respect:8},familyReputation:{delta:3}}),
-  reply('collect','Collect for both children','You gain food and lose the advantage of a simple explanation. {{carer}} puts both signatures beside you at supper.',{householdState:{food:8},education:{misconduct:10},bond:{role:'carer',trust:-9}}),
+  reply('collect','Collect for both children','The extra food reaches supper before your explanation. {{carer}} puts both signatures beside your bowl and waits for you to discover which one you wrote.',{householdState:{food:8},education:{misconduct:10},bond:{role:'carer',trust:-9}}),
  ],{actorRoles:{carer:CARER},requires:{custom:s=>s.world.characters[s.playerCharacterId].background?.origin==='military'}}),
  youth('noble_precedence','THE CHAIR THAT OUTRANKS ITS OWNER','{{carer}} asks you to yield a chair to an important cousin. The cousin has brought a diagram establishing the chair’s ancestors.',[
   reply('yield','Move the chair and keep your wit private','{{carer}} sees the concession. The cousin spends supper defending the pedigree to a chair that cannot contradict it.',{bond:{role:'carer',trust:6},charm:2,familyReputation:{delta:2}}),

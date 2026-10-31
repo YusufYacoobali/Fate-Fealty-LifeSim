@@ -18,7 +18,7 @@ export function cloneWorldCharacter(character: WorldCharacter): WorldCharacter {
     personalityTraits: [...(character.personalityTraits ?? [])],
     worldMemories: (character.worldMemories ?? []).map((memory) => ({ ...memory, actorIds: [...memory.actorIds] })),
     healthConditions: (character.healthConditions ?? []).map((condition) => ({ ...condition })),
-    legalState: character.legalState ? { ...character.legalState, charges: character.legalState.charges.map((charge) => ({ ...charge, victimIds: [...charge.victimIds], witnessIds: [...charge.witnessIds] })) } : undefined,
+    legalState: character.legalState ? { ...character.legalState, hearing:character.legalState.hearing?{...character.legalState.hearing,chargeIds:[...character.legalState.hearing.chargeIds]}:undefined, charges: character.legalState.charges.map((charge) => ({ ...charge, victimIds: [...charge.victimIds], witnessIds: [...charge.witnessIds] })) } : undefined,
     secrets: (character.secrets ?? []).map((secret) => ({ ...secret, knownByIds: [...secret.knownByIds] })),
     guardianIds: [...(character.guardianIds ?? [])],
     childDevelopment: character.childDevelopment ? { ...character.childDevelopment, completedMilestones: [...character.childDevelopment.completedMilestones] } : undefined,

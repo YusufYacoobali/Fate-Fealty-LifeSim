@@ -5,6 +5,10 @@ import {CAREER_SPECIALIZATIONS} from '@/data/careerSpecializations';
 /** Pure preview: inspect every authored branch, never roll or infer effects from prose. */
 export function consequenceWarnings(e:Effects={}):string[] {
  const warnings:string[]=[];
+ if(e.courtScandal==='cover'||e.courtScandal==='scapegoat'||e.courtOpposition==='assert')warnings.push('Substantial political damage');
+ if(e.legalVerdict && ['convict','confess','exposed'].includes(e.legalVerdict))warnings.push('Imprisonment');
+ if(e.legalVerdict==='confess')warnings.push('Restitution');
+ if(e.legalVerdict==='bribed'||e.legalVerdict==='exposed')warnings.push('Large personal expense','Witness bribery');
  if(e.death)warnings.push('Death');
  if(e.killKin)warnings.push('A named person dies');
  if(e.prison || e.legal?.status==='imprisoned')warnings.push('Imprisonment');
@@ -37,7 +41,7 @@ export function consequenceWarnings(e:Effects={}):string[] {
  return warnings;
 }
 export function choiceRisk(choice:Choice):NonNullable<Choice['forecast']> {
- const outcomes=[choice.outcome,choice.success,choice.failure,...(choice.challenge?[{effects:choice.challenge.stakes.win},{effects:choice.challenge.stakes.lose}]:[])].filter(Boolean);
+ const outcomes=[choice.outcome,choice.success,choice.failure,choice.catastrophe,...(choice.challenge?[{effects:choice.challenge.stakes.win},{effects:choice.challenge.stakes.lose}]:[])].filter(Boolean);
  const negative=[...new Set(outcomes.flatMap(o=>consequenceWarnings(o!.effects)))];
  const uncertain=!!(choice.success||choice.failure);
  return {risk:negative.length?'high':uncertain||choice.costGold?'medium':'low',positive:[],negative,

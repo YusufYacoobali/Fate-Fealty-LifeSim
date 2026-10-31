@@ -39,7 +39,7 @@ export const NARRATIVE_ROMANCE_EVENTS: GameEvent[] = [
   scene('life_lovers_witness','family','crime','A WITNESS TO THE WRONG ROMANCE','{{other}} asks you to swear you saw a courting couple promise marriage. You saw two people quarrel over a borrowed cloak, but the fee for remembering otherwise is tempting.',[
     reply('truth','Describe exactly what you saw','{{other}} folds the proposed testimony. Your memory has failed to become useful, an imperfection they find very difficult to forgive.',{bond:{role:'other',affinity:-8},familyReputation:{delta:4}}),
     reply('lie','Sign the false testimony for a promised reward','The clerk records your oath and asks a second question. {{other}} remembers promising payment rather less clearly than you remember promising to have been there.',{legal:fraud('False testimony about marriage vows'),createSecret:{type:'hidden_debt',severity:45},bond:{role:'other',trust:5}}),
-    reply('warn','Warn the people whose names are being used','You publicly challenge the scheme. Your reputation rises while {{other}} acquires a specific grievance against you.',{reputation:5,bond:{role:'other',affinity:-18,flag:'rival'}}),
+    reply('warn','Warn the people whose names are being used','{{other}} spends supper explaining why nobody should believe you. The explanation repeats your warning to everyone who missed it.',{reputation:5,bond:{role:'other',affinity:-18,flag:'rival'}}),
   ],{repetitionGroup:'false_witnesses'}),
   scene('life_spouse_poem','family','family','THE PRACTICAL LOVE POEM','{{spouse}} discovers a poem you wrote early in the marriage. Your present skill at remembering where the firewood is stored compares poorly with your former devotion.',[
     reply('act','Fetch the wood before discussing the poem','The room warms and {{spouse}} accepts the new verse as an improvement. It has fewer adjectives and better fuel.',{householdState:{food:2},bond:{role:'spouse',affinity:10},health:-1}),
@@ -66,7 +66,7 @@ export const NARRATIVE_ROMANCE_EVENTS: GameEvent[] = [
   ],{repetitionGroup:'courtship_bargains'}),
   scene('life_wrong_serenade','family','family','THE SERENADE AT THE STOREROOM','{{other}} has been singing beneath a shutter that opens onto a storeroom. The household wants the flour left out of the next verse.',[
     reply('guide','Privately explain the mistake','You save {{other}} from a second performance and gain a grateful acquaintance. The flour remains unmoved.',{bond:{role:'other',trust:10,flag:'friend'},charm:2}),
-    reply('encore','Call loudly for an encore','{{other}} discovers the error in public. Your reputation for wit rises slightly; your reputation with the singer falls considerably.',{charm:4,bond:{role:'other',affinity:-18,flag:'rival'}}),
+    reply('encore','Call loudly for an encore','The street demands the refrain. {{other}} discovers that a love song can carry a name much farther when the person named wishes it would stop.',{charm:4,bond:{role:'other',affinity:-18,flag:'rival'}}),
     reply('shelter','Offer the singer a quiet cup indoors (3g)','You pay for a dry place to wait and close the door on the audience. {{other}} discovers that a little hospitality travels farther than the verse.',{gold:-3,bond:{role:'other',trust:14}},{costGold:3}),
   ],{repetitionGroup:'courtship_embarrassment'}),
   scene('life_spouse_guest','family','household','THE GUEST WHO CAME WITH THE MARRIAGE','{{spouse}} has invited a relation to stay. “A short visit” has now acquired a spare blanket and an opinion about the way you cook.',[

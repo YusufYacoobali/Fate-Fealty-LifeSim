@@ -62,7 +62,7 @@ export const SINGLE_YEAR_VILLAGE:GameEvent[]=[
  ],{ageMin:18,requires:{careerFamilies:['trade']},stakes:'major'}),
  village('apprentice_revolt','career','THE WORKDAY THAT RAN INTO TOMORROW','{{other}} brings a contract requiring apprentices to work after the permitted hours. The master has solved the problem by describing midnight as late afternoon.',[
   reply('refuse','Uphold the hours and take the smaller commission','You refuse the work that depends on the extra hours. {{other}} loses a commission and gains an example the apprentices can quote.',{gold:-5,work:{guildStanding:7},bond:{role:'other',respect:8},faction:{factionId:'commons',playerStanding:3}}),
-  reply('break','Take the cheap work and break the agreed hours','You earn twelve gold. {{other}} submits the hours, which look much longer when laid beside your signature.',{gold:12,legal:fraud('Breaking a witnessed labour ordinance'),work:{guildStanding:-10}}),
+  reply('break','Take the cheap work and break the agreed hours','Twelve gold reaches your purse. The apprentices reach the clerk before dawn, for once making excellent use of the hours you insisted were still afternoon.',{gold:12,legal:fraud('Breaking a witnessed labour ordinance'),work:{guildStanding:-10}}),
   reply('feed','Pay for food while the dispute is settled (8g)','The apprentices eat while the master finds a clock that agrees with the ordinance. {{other}} keeps the bread account separately from the speeches.',{gold:-8,bond:{role:'other',trust:12},householdState:{food:-3},familyReputation:{delta:3}},{costGold:8}),
  ],{requires:{careerFamilies:['craft','trade']}}),
  village('tithe_dispute','politics','THE BUSHEL WITH LESS INSIDE THAN OUT','{{other}} presents a tithe measure with a handsome outside and a remarkably high bottom. The steward calls the difference ecclesiastical space.',[
@@ -128,7 +128,7 @@ export const SALVAGED_VILLAGE_SCENES:GameEvent[]=[
  ],{convertedFrom:'chain:wounded_midwife',ageMin:16}),
  village('founder_mark','career','WHOSE NAME FITS ROUND THE BELL','{{other}} wants their name cast round a bell made by several hands. There is room for everyone’s mark, provided the patron’s titles lose a little weight.',[
   reply('names','Credit the makers as well as the patron','The inscription becomes less flattering and more accurate. {{other}} objects to having neighbours in bronze.',{work:{guildStanding:6},bond:{role:'other',respect:8,affinity:-4}}),
-  reply('flatter','Reserve the whole inscription for the payer','You earn eight gold for arranging an unusually exclusive alphabet. {{other}} calls the result historically inevitable.',{gold:8,work:{guildStanding:-5},familyReputation:{delta:-3}}),
+  reply('flatter','Reserve the whole inscription for the payer','The payer’s titles go all the way round the bell. Eight gold buys you the excellent opinion of someone now able to hear their own importance every hour.',{gold:8,work:{guildStanding:-5},familyReputation:{delta:-3}}),
  ],{convertedFrom:'chain:bellmakers_sight',requires:{careerFamilies:['craft']}}),
  village('forester_amnesty','crime','THE AMNESTY WITH A PRICE BESIDE EACH NAME','{{other}} offers to submit names for a poaching amnesty. The list includes a fee column that the royal notice appears to have forgotten.',[
   reply('notice','Compare the terms with the public notice','The fee column disappears. {{other}} complains that copying the law word for word leaves no room for initiative.',{reputation:4,bond:{role:'other',trust:-10},faction:{factionId:'commons',playerStanding:3}}),

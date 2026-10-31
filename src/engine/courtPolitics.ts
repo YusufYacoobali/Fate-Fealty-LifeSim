@@ -24,9 +24,10 @@ export function courtCandidatesFor(s: GameState, action: CourtAction): WorldChar
 }
 export function beginOfficePetition(s: GameState, office: CourtOffice): void {
   const c = s.world.court!, p = s.world.characters[s.playerCharacterId];
+  if(c.petition&&!c.petition.resolved)return;
   const rival = Object.values(s.world.characters).filter(x => x.alive && x.age >= 18 && x.id !== p.id && x.id !== c.rulerId && x.id !== 'goose' && !Object.values(c.offices).includes(x.id) && (x.education?.qualifications.includes('court_education') || x.rankIdx >= 3 || x.ambition === 'gain_status')).sort((a,b) => b.stats.wits - a.stats.wits || a.id.localeCompare(b.id))[0];
-  c.petition = { applicantId: p.id, rulerId: c.rulerId, office, incumbentId: c.offices[office], rivalId: rival?.id, year: s.world.currentYear, resolved: false };
-  s.pendingEvent = { eventId: 'court_office_contest', bindings: { ruler: c.rulerId, incumbent: c.offices[office] ?? c.rulerId, rival: rival?.id ?? c.rulerId } };
+  c.petition = { id:`petition_${s.nextId++}`,applicantId: p.id, rulerId: c.rulerId, office, incumbentId: c.offices[office], rivalId: rival?.id, year: s.world.currentYear, resolved: false };
+  s.pendingEvent = { eventId: 'court_office_contest', incidentId:c.petition.id, bindings: { ruler: c.rulerId, incumbent: c.offices[office] ?? c.rulerId, rival: rival?.id ?? c.rulerId } };
 }
 export function petitionProspects(s: GameState, route: 'merit' | 'patron'): { odds: number; detail: string } {
   const c = s.world.court!, p = s.world.characters[s.playerCharacterId], q = c.petition!;
@@ -47,6 +48,7 @@ function record(s: GameState, kind: string, detail: string, targetId?: string) {
 export function resolveOfficePetition(s: GameState, route: NonNullable<Effects['courtPetition']>): void {
   const c = s.world.court, q = c?.petition, p = s.world.characters[s.playerCharacterId];
   if (!c || !q || q.resolved || q.applicantId !== p.id) return;
+  if(s.pendingEvent?.incidentId&&s.pendingEvent.incidentId!==q.id)return;
   if (route === 'patron' && !petitionPatronEligible(s)) return;
   q.resolved = true;
   if (q.rulerId !== c.rulerId || q.incumbentId !== c.offices[q.office] || Object.values(c.offices).includes(p.id) || c.rulerId === p.id) { q.outcome = 'rejected'; record(s,'petition_lapsed','The court changed during your petition. The new ruler must consider a fresh request.'); return; }

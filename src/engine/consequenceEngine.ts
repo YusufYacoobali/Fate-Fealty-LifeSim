@@ -1,3 +1,4 @@
+import {resolveLegalHearing} from './legalEngine';
 import { resolveOfficePetition, resolveCourtOpposition } from './courtPolitics';
 import { applyHouseholdLesson } from './birthCircumstances';
 import { applyCourtScandal, applyRoyalTransition } from './courtEngine';
@@ -256,6 +257,7 @@ export function applyEffects(s: GameState, eff?: Effects): GameState {
     const character = s.world.characters[resolveCharacterId(eff.removeHealthCondition.targetId)];
     if (character) character.healthConditions = (character.healthConditions ?? []).filter((condition) => condition.conditionId !== eff.removeHealthCondition!.conditionId);
   }
+  if(eff.legalVerdict)resolveLegalHearing(s,eff.legalVerdict);
   if (eff.legal) {
     const character = s.world.characters[resolveCharacterId(eff.legal.targetId)];
     if (character) {

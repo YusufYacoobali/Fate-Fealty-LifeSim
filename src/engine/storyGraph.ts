@@ -31,7 +31,7 @@ function rollChance(s: GameState, ch: Choice): boolean {
 }
 
 function resolveOutcome(ch: Choice, s: GameState): Outcome | undefined {
-  const chosen = ch.outcome ?? (ch.success || ch.failure ? (rollChance(s, ch) ? ch.success : ch.failure) : undefined);
+  const chosen = ch.outcome ?? (ch.success || ch.failure ? (rollChance(s, ch) ? ch.success : ch.catastrophe && chance(ch.catastropheChance ?? 0) ? ch.catastrophe : ch.failure) : undefined);
   // Outcome text is the permanent record of what happened, so it names the
   // people it happened to. `Outcome.text` is a plain string, so the actor
   // tokens are substituted here rather than at authoring time.

@@ -23,7 +23,7 @@ export const NARRATIVE_FAMILY_EVENTS: GameEvent[] = [
   ],{ageMin:20,actorRoles:{child:{...CHILD,maxAge:10}},repetitionGroup:'parenting_trouble'}),
   scene('life_will_bed','family','family','THE BED IN THE WILL','{{sibling}} wants the better bed when your household divides its goods. The argument has reached the point of measuring old childhood injuries against the mattress.',[
     reply('share','Trade the bed for a fair division of other goods','You surrender the bed and keep the dispute from becoming a family occupation. {{sibling}} thanks you without listing the injuries again.',{householdState:{wealth:-6},boundKinRel:{role:'sibling',delta:14},familyReputation:{delta:2}}),
-    reply('saw','Offer to saw the bed exactly in half','{{sibling}} refuses the proposal and the relationship deteriorates. You keep the goods, together with the saw’s excellent negotiating reputation.',{bond:{role:'sibling',affinity:-14,trust:-12,flag:'rival'}}),
+    reply('saw','Offer to saw the bed exactly in half','{{sibling}} sits on the bed to end the demonstration. You are left holding a saw and the much smaller half of the conversation.',{bond:{role:'sibling',affinity:-14,trust:-12,flag:'rival'}}),
     reply('defer','Keep the goods together until there is actual need','The division waits. You use the intervening quiet to mend the bedding. It becomes easier to sleep on than the argument.',{householdState:{quality:5},boundKinRel:{role:'sibling',delta:4}}),
   ],{actorRoles:{sibling:SIBLING},repetitionGroup:'suspicious_inheritances'}),
   scene('life_portrait_heir','family','family','THE HEIR WITH THE WRONG FACE','{{parent}} commissions a little family portrait and asks that you be painted looking more like a prosperous relation. The painter has brought a ruler.',[

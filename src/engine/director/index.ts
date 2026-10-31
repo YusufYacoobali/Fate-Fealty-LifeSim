@@ -1,3 +1,4 @@
+import {routineCourtScandal} from '../courtIncidents';
 import { dueCourtEvent } from '../courtPolitics';
 import { birthBindings } from '../birthCircumstances';
 import { bindProfessionalEvent } from '../careerSpecializationEngine';
@@ -33,10 +34,7 @@ export function directYear(state: GameState): DirectedYear {
   if (courtEvent) { recordBeat(state,'thread'); return { event: eventById(courtEvent)!, kind: 'thread', isLegal: false }; }
   // Separate official scandals must not monopolise every year of a reign.
   // The existing court record survives reloads; manual audits remain available.
-  const court = state.world.court;
-  const lastAccountingYear = court?.records.filter(r => r.kind.startsWith('scandal_')).at(-1)?.year;
-  if (state.lifetimeUnlocked && court?.rulerId === state.playerCharacterId && court.scandals.some(s => !s.resolved)
-    && (lastAccountingYear === undefined || state.world.currentYear - lastAccountingYear >= 3)) {
+  if (routineCourtScandal(state)) {
     recordBeat(state, 'thread');
     return { event: eventById('royal_creative_accounts')!, kind: 'thread', isLegal: false };
   }

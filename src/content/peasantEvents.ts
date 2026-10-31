@@ -62,7 +62,7 @@ ranks: ['Peasant', 'Squire'],
 choices: [{
 label: "Remove the rat and mend the opening",
 outcome: {
-text: "You drive the rat out and repair the gap, losing a little blood to the work. Household stores and security improve under a watchman that is now a plank.",
+text: "The rat departs through the gap just before you close it. Your new watchman is a plank: silent, dependable and completely uninterested in the grain.",
 effects: {
 health: -4,
 charm: 6,
@@ -117,7 +117,7 @@ label: "Enter the uneven joust (5g; risk injury)",
 costGold: 5,
 successChance: 0.4,
 success: {
-text: "You unhorse the opponent and earn a net eight gold after the entry fee. The steward objects only to how many people saw the small horse win.",
+text: "The small horse wins. The steward hands over your net eight gold while studying the animal for evidence of a more respectable size.",
 effects: {
 gold: 8,
 charm: 12,
@@ -174,7 +174,7 @@ ageMin: 10,
 choices: [{
 label: "Confess the inconvenient part as well",
 outcome: {
-text: "You admit the truth and gain faith. The admission does not settle debts or erase charges; it merely stops the priest waiting for the missing part.",
+text: "The priest finally hears the missing part. He stops waiting for it and starts giving advice, which you find considerably less comfortable than the silence.",
 effects: {
 faith: 12,
 charm: -3,

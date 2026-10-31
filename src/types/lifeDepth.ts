@@ -86,9 +86,10 @@ export interface RoyalClaim {
   disinherited: boolean;
 }
 export interface CourtState {
+  lastRoutinePromptYear?:number;
   /** A critical reign cannot fall in an annual update until its ruler has answered. */
   crisis?: { rulerId: string; leaderId: string; challengerId: string; openedYear: number; responseYear?: number };
-  petition?: { applicantId: string; rulerId: string; office: CourtOffice; incumbentId?: string; rivalId?: string; year: number; resolved: boolean; outcome?: 'appointed' | 'rejected' | 'conditional' | 'withdrawn' | 'retained'; requiredStanding?: number };
+  petition?: { id?:string; applicantId: string; rulerId: string; office: CourtOffice; incumbentId?: string; rivalId?: string; year: number; resolved: boolean; outcome?: 'appointed' | 'rejected' | 'conditional' | 'withdrawn' | 'retained'; requiredStanding?: number };
   coalitions?: { leaderId: string; memberIds: string[]; claimantId?: string; strength: number; lastMoveYear: number; lastAudienceYear?: number }[];
 
   formerRegentId?: string;
@@ -104,5 +105,5 @@ export interface CourtState {
   actionsYear: number;
   actionsUsed: number;
   records: { year: number; kind: string; actorId: string; targetId?: string; detail: string }[];
-  scandals: { office: CourtOffice; actorId: string; amount: number; exposed: boolean; resolved?: boolean }[];
+  scandals: { id?:string;openedYear?:number;promptedYear?:number;resolvedYear?:number; office: CourtOffice; actorId: string; amount: number; exposed: boolean; resolved?: boolean }[];
 }

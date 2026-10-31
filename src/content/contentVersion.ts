@@ -47,7 +47,7 @@ function legacyChainTitleMap(): Record<string, string> {
 }
 
 /** Increment whenever persisted story/event identifiers or semantics change. */
-export const CURRENT_CONTENT_VERSION = 9;
+export const CURRENT_CONTENT_VERSION = 10;
 
 export interface ContentAliases {
   templates: Record<string, string>;
@@ -76,6 +76,7 @@ export type ContentMigration = (world: WorldState) => ContentMigrationResult;
 
 /** Sequential migrations are registered at the version being migrated FROM. */
 export const CONTENT_MIGRATIONS: Record<number, ContentMigration> = {
+  9: world => ({world:{...world,court:world.court?{...world.court,scandals:world.court.scandals.map((q,i)=>({...q,id:q.id??`legacy_scandal_${i}_${q.actorId}_${q.office}_${q.amount}`}))}:world.court},notices:[]}),
   8: world => ({world:retireAuthoredWorld(world),notices:[]}),
   7: world => {
     const repetitionLedger = { ...world.repetitionLedger };

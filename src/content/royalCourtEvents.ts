@@ -1,13 +1,14 @@
+import {scandalText,currentCourtScandal} from '@/engine/courtIncidents';
 import { petitionProspects, petitionPatronEligible, oppositionAudienceCoalition } from '@/engine/courtPolitics';
 import type { GameEvent } from '@/types/game';
 export const ROYAL_COURT_EVENTS: GameEvent[] = [
   { id: 'royal_creative_accounts', title: 'THE COUNCILLOR’S CREATIVE ACCOUNTS', category: 'noble', domain: 'politics', premium: true, arcNodeOnly: true, actorRoles: {},
-    text: s => { const scandal = s.world.court?.scandals.find(c => !c.resolved); const person = s.world.characters[scandal?.actorId ?? '']; return `${person?.name ?? 'Your councillor'}, your ${scandal?.office.replaceAll('_',' ') ?? 'official'}, has diverted ${scandal?.amount ?? 0} treasury gold. The account describes national security. The receipt describes decorative horses. A family ally asks whether the horses could be classified as cavalry.`; },
+    text: scandalText,
     choices: [
-      { label: 'Demand a public investigation', outcome: { text: 'The inquiry removes the responsible official and recovers half the missing funds. The household’s supporters take the dismissal personally.', effects: { courtScandal: 'investigate' }, tone: 'good' } },
-      { label: 'Cover up the accounts', outcome: { text: 'The official keeps the seal and owes you a favour. The original receipts remain in someone else’s hands.', effects: { courtScandal: 'cover' }, tone: 'bad' } },
-      { label: 'Blame the treasurer', requires: { custom: s => !!s.world.court?.offices.treasurer && s.world.court.offices.treasurer !== s.world.court.scandals.find(c => !c.resolved)?.actorId }, outcome: { text: 'The treasurer loses the seal. The guilds recognise an injustice considerably faster than the council recognises a sum.', effects: { courtScandal: 'scapegoat' }, tone: 'bad' } },
-      { label: 'Dismiss the official quietly', outcome: { text: 'The seal returns to your keeping. The missing gold does not. The dismissed official takes the grievance home.', effects: { courtScandal: 'dismiss' }, tone: 'plain' } },
+      { label: 'Demand a public investigation', outcome: { text: 'Half the missing gold returns; the official does not return to the chair. Their household departs slowly enough for every doorway to hear what a loyal servant has been lost.', effects: { courtScandal: 'investigate' }, tone: 'good' } },
+      { label: 'Cover up the accounts', outcome: { text: 'The official thanks you with both hands clamped round the seal. Outside the chamber, somebody is already explaining how generous you have been with other people’s money.', effects: { courtScandal: 'cover' }, tone: 'bad' } },
+      { label: 'Blame the treasurer', requires: { custom: s => !!s.world.court?.offices.treasurer && s.world.court.offices.treasurer !== currentCourtScandal(s)?.actorId }, outcome: { text: 'The innocent treasurer leaves without the seal. The real culprit thanks you a little too warmly for anybody to miss it.', effects: { courtScandal: 'scapegoat' }, tone: 'bad' } },
+      { label: 'Dismiss the official quietly', outcome: { text: 'The official asks whether a smaller chair might be available. You take back the seal; they take the insult and all the money they have not already spent.', effects: { courtScandal: 'dismiss' }, tone: 'plain' } },
     ],
   },
 ];

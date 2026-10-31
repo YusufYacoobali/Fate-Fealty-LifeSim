@@ -80,7 +80,7 @@ it('spaces separate royal accounting prompts using saved court decisions',()=>{
  expect(directYear(s).event?.id).not.toBe('royal_creative_accounts');
  syncPlayerToWorld(s);const loaded=normalizeGameState(JSON.parse(JSON.stringify(s)));
  expect(directYear(loaded).event?.id).not.toBe('royal_creative_accounts');
- loaded.world.currentYear+=2;
+ loaded.world.currentYear+=7;
  expect(directYear(loaded).event?.id).toBe('royal_creative_accounts');
 });
 

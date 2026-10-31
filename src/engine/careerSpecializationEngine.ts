@@ -1,6 +1,6 @@
 import { professionalClients } from './professionalClients';
 import { beginPatientCare, medicalAdviser, retainMedicalAdviser, provideMedicalCare, recordMedicalFamilyGrievance, reviewPatientCare } from './medicalPractice';
-import { PROFESSIONAL_STORIES, immediateProfessionalBranch } from '@/data/professionalStories';
+import { PROFESSIONAL_STORIES } from '@/data/professionalStories';
 import type { CareerFamily, Effects, GameState, ProfessionalRecord, WorldCharacter } from '@/types/game';
 import { CAREER_SPECIALIZATIONS, CareerSpecialization } from '@/data/careerSpecializations';
 import { careerById } from '@/data/careers';
@@ -24,7 +24,7 @@ export function specializationAvailability(state: GameState, id: string): string
   if (!career || career.family !== def.family) return 'Requires this profession';
   if (career.premium && !state.lifetimeUnlocked) return 'Requires Premium access';
   if (def.story && (state.world.characters[state.playerCharacterId].professionalHistory?.[def.family]?.completedActions.length ?? 0) < 2) return 'Complete two professional milestones first';
-  if (def.story && state.world.characters[state.playerCharacterId].professionalHistory?.[def.family]?.matters.some(m => m.id === id && m.resolved)) return 'This matter is concluded';
+  if (def.story && state.world.characters[state.playerCharacterId].professionalHistory?.[def.family]?.matters.some(m => m.id === id && m.resolved && !m.retired)) return 'This matter is concluded';
   if (state.gold < def.cost) return `Needs ${def.cost}g`;
   const record = state.world.characters[state.playerCharacterId].professionalHistory?.[def.family];
   if (record?.actionsYear === state.world.currentYear && record.actionsUsed >= 3) return 'Three professional matters per year';
@@ -232,7 +232,7 @@ export function applyProfessionalEffect(state: GameState, effect: NonNullable<Ef
     if (matter.stage !== 0) return;
     matter.decision = String(effect.choice); matter.stage = 1;
     if (effect.choice === 1) applyRelationshipShift(state, client.id, { trust: -4 }, { trust: -8 });
-    if (immediateProfessionalBranch(story.id, effect.choice)) applyProfessionalEffect(state, { ...effect, stage: 'finish', choice: 0 });
+    applyProfessionalEffect(state, { ...effect, stage: 'finish', choice: 0 });
     return;
   }
   if (matter.stage !== 1) return;
@@ -281,17 +281,10 @@ export function applyProfessionalEffect(state: GameState, effect: NonNullable<Ef
   const family = state.world.families[p.birthFamilyId ?? ''];
   if (family) { family.reputation = clamp(family.reputation + (honest ? 5 : -5), -100, 100); family.inheritedMemories = appendFamilyMemory(family.inheritedMemories, { id: `legacy_${state.nextId++}`, year: state.world.currentYear, type: milestone, sentiment: honest ? 25 : -25, salience: 4, summary: text }); }
   if (state.world.court) state.world.court.treasury = clamp(state.world.court.treasury, 0, 5000);
-  pushFeed(state, 'PROFESSIONAL LEGACY', '#7a4f9a', text, honest ? 'good' : 'bad');
+  if(state.pendingEvent?.eventId!==`profession_${story.id}`)pushFeed(state, 'PROFESSIONAL LEGACY', '#7a4f9a', text, honest ? 'good' : 'bad');
 }
 
-export function dueProfessionalEventId(state: GameState): string | undefined {
-  const p = state.world.characters[state.playerCharacterId];
-  for (const r of Object.values(p.professionalHistory ?? {})) {
-    const matter = r.matters.find(m => !m.resolved && (m.stage === 0 || state.world.currentYear > (m.openedYear ?? state.world.currentYear - 1)));
-    if (matter?.kind === 'practice') return `practice_${matter.id}`;
-    if (matter) return `profession_${matter.id}${matter.stage === 1 ? '_verdict' : ''}`;
-  }
-}
+export function dueProfessionalEventId(_state:GameState):string|undefined { return undefined; }
 export function bindProfessionalEvent(state: GameState, eventId: string): Record<string, string> | undefined {
   if (eventId.startsWith('practice_')) {
     const id = eventId.slice(9), def = CAREER_SPECIALIZATIONS.find(a => a.id === id); if (!def) return;

@@ -163,6 +163,11 @@ export function performEducationAction(state: GameState, action: EducationAction
   return state;
 }
 export function tickEducation(state: GameState): void {
+  // Childhood company exists outside paid schooling too. Keep an actual,
+  // persistent child in the world; eligibility probes never invent actors.
+  if (state.age >= 5 && state.age <= 17 && !Object.values(state.world.characters).some(c => c.id !== state.playerCharacterId && c.id !== 'goose' && c.alive && c.age >= 5 && c.age < 18 && Math.abs(c.age - state.age) <= 3)) {
+    spawnKin(state, { kind: 'acquaintance', age: state.age, role: 'Childhood companion', bio: 'A fellow child of the neighbourhood, with opinions about fair shares and a good memory for unfair ones.' });
+  }
   for (const c of Object.values(state.world.characters)) {
     if (!c.alive) continue;
     const e = educationOf(c);

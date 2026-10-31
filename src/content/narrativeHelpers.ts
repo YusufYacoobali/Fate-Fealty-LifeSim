@@ -1,3 +1,4 @@
+import {completeForecast} from '@/engine/choiceRisk';
 import type { Choice, Effects, EventActorRole, GameEvent } from '@/types/game';
 
 export const ADULT: EventActorRole = { minAge: 18, alive: true, excludePlayer: true, missingActor: 'clear_event' };
@@ -10,13 +11,8 @@ export const LORD: EventActorRole = { ...ADULT, rankAtLeast: 3 };
 
 /** Formatting only: every premise, decision and outcome is individually authored. */
 export function reply(id: string, label: string, text: string, effects: Effects, options: Partial<Choice> = {}): Choice {
-  const negative = [
-    effects.death ? 'Death' : '', effects.prison ? 'Imprisonment' : '',
-    effects.endMarriage ? 'The marriage ends' : '', effects.employment ? 'Loss of employment' : '',
-    effects.legal?.charge ? 'A legal charge' : '', effects.healthCondition ? 'Illness or lasting injury' : '',
-    effects.debt ? 'A debt remains to be repaid' : '', effects.familyFeud ? 'A lasting family feud' : '',
-  ].filter(Boolean);
-  return { id, label, forecast:{ risk:negative.length ? 'high' : 'low', positive:[], negative, warnsDelayedConsequence:Boolean(effects.createSecret || effects.familyFeud) }, outcome: { text, effects, tone: effects.death || effects.prison || effects.endMarriage ? 'bad' : 'plain' }, ...options };
+  const choice:Choice={id,label,outcome:{text,effects,tone:effects.death||effects.prison||effects.endMarriage?'bad':'plain'},...options};
+  choice.forecast=completeForecast(choice);return choice;
 }
 export function scene(id: string, category: GameEvent['category'], domain: GameEvent['domain'], title: string, text: string, choices: Choice[], options: Partial<GameEvent> = {}): GameEvent {
   const event: GameEvent = { id, category, domain, title, text, choices, ageMin: 16, stakes: 'meaningful', actorRoles: { other: ADULT }, repetitionGroup: 'local_disputes', ...options };
@@ -28,5 +24,6 @@ export function scene(id: string, category: GameEvent['category'], domain: GameE
 }
 export const fraud = (offence: string, victim = 'other'): Effects['legal'] => ({ suspicion: 38, charge: { offence, severity: 35, evidence: 55, victimIds: [], witnessIds: [victim] } });
 export function risk(id: string, label: string, chance: NonNullable<Choice['successChance']>, good: string, gain: Effects, bad: string, loss: Effects, options: Partial<Choice> = {}): Choice {
-  return { id, label, successChance:chance, success:{text:good,effects:gain,tone:'good'}, failure:{text:bad,effects:loss,tone:'bad'}, forecast:{risk:'high',positive:[],negative:[],warnsDelayedConsequence:!!loss.legal}, ...options };
+  const choice:Choice={id,label,successChance:chance,success:{text:good,effects:gain,tone:'good'},failure:{text:bad,effects:loss,tone:'bad'},...options};
+  choice.forecast=completeForecast(choice);return choice;
 }

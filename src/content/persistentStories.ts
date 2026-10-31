@@ -181,7 +181,7 @@ const EXPANSION_STORY_TEMPLATES: StoryTemplate[] = [
   domainStory('secret_brotherhood', 'medium', { type: 'age', min: 18 }, true),
 ];
 
-export const PERSISTENT_STORY_TEMPLATES: StoryTemplate[] = [
+export const LEGACY_STORY_TEMPLATES: StoryTemplate[] = [
   flagshipStory('rivals_rise', 'story_rival', { type: 'age', min: 8, max: 30 }, {
     rival: { selector: { excludePlayer: true, minAge: 7, alive: true, importance: ['core', 'supporting'] }, missingActor: substituteAdult },
     patron: { selector: { excludePlayer: true, minAge: 25, alive: true, importance: ['core', 'supporting'] }, missingActor: substituteAdult },
@@ -207,7 +207,7 @@ export const PERSISTENT_STORY_TEMPLATES: StoryTemplate[] = [
   ...EXPANSION_STORY_TEMPLATES,
 ];
 
-export const STORY_TEMPLATE_BY_ID = Object.fromEntries(PERSISTENT_STORY_TEMPLATES.map((template) => [template.id, template]));
+export const STORY_TEMPLATE_BY_ID = Object.fromEntries(LEGACY_STORY_TEMPLATES.map((template) => [template.id, template]));
 
 export function storyEligibilityReasons(state: GameState, templateId: string): string[] {
   const template = STORY_TEMPLATE_BY_ID[templateId];
@@ -257,3 +257,6 @@ export function deriveLifeRole(state: GameState): LifeRole {
   if (state.rankIdx >= 1) return 'martial';
   return 'commoner';
 }
+
+/** Legacy definitions only support historical saves; no new plots are scheduled. */
+export const PERSISTENT_STORY_TEMPLATES: StoryTemplate[] = [];

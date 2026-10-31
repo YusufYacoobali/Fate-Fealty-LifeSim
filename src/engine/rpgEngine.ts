@@ -53,7 +53,7 @@ export function careerBranchFor(s: GameState): CareerBranch | null {
 export function branchRequirement(s: GameState, id: CareerBranch): string | null {
   if (careerBranchFor(s) !== id) return `Requires a ${id === 'mercenary' ? 'martial' : id === 'caravan' ? 'trade' : 'court'} career`;
   const progress = s.rpg.branches[id];
-  if (progress.chapter >= 3) return 'All three chapters completed';
+  if (progress.chapter >= 3) return 'All three career commissions completed';
   const minAge = Math.max(CAREER_MISSIONS[id][progress.chapter].minAge, careerById(s.occupation.careerId)?.minAge ?? 0);
   if (s.age < minAge) return `Requires age ${minAge}`;
   const level = [1, 3, 6][progress.chapter];

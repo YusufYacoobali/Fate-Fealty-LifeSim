@@ -15,7 +15,7 @@ import { countLivingKin, hasLivingKin } from './gameState';
 import { dominantPath } from './pathProgression';
 import { pick, pickWeighted } from './random';
 import { deriveLifeRole } from '@/content/persistentStories';
-import { MAX_OPEN_THREADS, noteChainBeatResolved, openThreads } from './director/threads';
+import { noteChainBeatResolved } from './director/threads';
 import { skillLevel } from './rpgProgress';
 import { MaterialId, SkillId } from '@/types/rpg';
 
@@ -139,6 +139,7 @@ function isDirected(e: GameEvent): boolean {
  * exclusions on top (see isEventEligible).
  */
 export function isEventPlayable(s: GameState, e: GameEvent): boolean {
+  if (e.legacyNarrative) return false;
   if (e.callback && !callbackSource(s,e)) return false;
   if (e.premium && !s.lifetimeUnlocked) return false;
   if (e.once && s.firedOnce.includes(e.id)) return false;
@@ -166,11 +167,7 @@ export function isEventPlayable(s: GameState, e: GameEvent): boolean {
 
 export function isEventEligible(s: GameState, e: GameEvent): boolean {
   if (isDirected(e)) return false;
-  // Opening a chain is a promise to finish it, so the lottery may not open one
-  // while the board is full. Without this the cap only governed persistent
-  // stories, chains piled up eleven deep, and each was served too rarely to
-  // ever reach its ending.
-  if (e.chain && e.chain.index === 0 && openThreads(s).length >= MAX_OPEN_THREADS) return false;
+  if (e.legacyNarrative) return false;
   return isEventPlayable(s, e);
 }
 
@@ -199,10 +196,14 @@ export function isChoiceEnabled(s: GameState, ch: Choice): boolean {
 function eventWeight(s: GameState, e: GameEvent, counts: Partial<Record<ContentDomain,number>>): number {
   let w = (e.weight ?? 1) / (e.domain ? counts[e.domain] || 1 : 1);
   const path = dominantPath(s);
+  const previous=s.world.contentLedger[e.id];
+  if(previous&&previous.lastYear>=s.playerRun.startedYear)w*=0.06;
+  else w*=1.4;
 
 
   if (e.paths && e.paths.includes(path)) w *= 2.2;
-  if (e.requires?.careerFamilies) w *= 2;
+  if (e.requires?.careerFamilies) w *= 3;
+  if (e.requires?.hasHealthCondition || e.requires?.legalStatuses || e.requires?.hasKnownSecret) w *= 2.2;
   if (e.requires?.hasKinOfKind || Object.values(e.actorRoles ?? {}).some(r => !!r.relation)) w *= 1.6;
   if (e.requires?.roles) w *= 1.4;
   if (e.callback) w *= 4;
@@ -237,12 +238,14 @@ function actorCandidates(s: GameState, role: EventActorRole) {
     if (role.excludePlayer !== false && character.id === s.playerCharacterId) return false;
     if (role.gender && character.gender !== role.gender) return false;
     const p = s.world.characters[s.playerCharacterId];
+    if (role.familyRelation && !s.world.families[p.birthFamilyId??'']?.[role.familyRelation==='enemy'?'enemyFamilyIds':'allyFamilyIds'].includes(character.birthFamilyId??''))return false;
     if (role.outsideFamily && (!character.birthFamilyId || !s.world.families[character.birthFamilyId] || character.birthFamilyId === p.birthFamilyId)) return false;
     if (role.rankAtLeast != null && character.rankIdx < role.rankAtLeast) return false;
     if (role.careerFamilies && !role.careerFamilies.includes(careerById(character.occupation.careerId)?.family!)) return false;
     if (role.legalStatuses && !role.legalStatuses.includes(character.legalState?.status ?? 'free')) return false;
     if (role.unmarried && character.spouseId) return false;
     if (role.romanceEligible && !isRomanceEligible(s,character)) return false;
+    if (role.relation === 'carer' && ![...(p.parentIds??[]),...(p.guardianIds??[])].includes(character.id))return false;
     if (role.relation === 'parent' && !p.parentIds?.includes(character.id)) return false;
     if (role.relation === 'child' && !character.parentIds?.includes(p.id)) return false;
     if (role.relation === 'spouse' && p.spouseId !== character.id) return false;
@@ -261,12 +264,17 @@ function actorCandidates(s: GameState, role: EventActorRole) {
 function assignEventCast(s: GameState, event: GameEvent, random: boolean): Record<string,string> | undefined {
   const roles = Object.entries(event.actorRoles ?? {}).map(([id,role]) => ({ id, candidates: actorCandidates(s,role) })).sort((a,b) => a.candidates.length - b.candidates.length);
   const bindings: Record<string,string> = {}, used = new Set<string>();
+  const recent=random?s.world.history.filter(h=>h.actorBindings&&s.world.currentYear-h.year<=6).slice(-6):[];
   const visit = (index:number): boolean => {
     if (index === roles.length) return true;
     const {id,candidates} = roles[index];
     const remaining = candidates.filter(c => !used.has(c.id));
     while (remaining.length) {
-      const actor = random ? pick(remaining) : remaining[0];
+      const role=event.actorRoles?.[id];
+      const generic=random&&!role?.relation&&!role?.characterId&&!role?.familyRelation;
+      const fresh=generic?remaining.filter(c=>!recent.some(h=>Object.values(h.actorBindings??{}).includes(c.id))):[];
+      const pool=fresh.length?fresh:remaining;
+      const actor = random ? (pickWeighted(pool,c=>generic?Math.pow(0.25,recent.filter(h=>Object.values(h.actorBindings??{}).includes(c.id)).length):1) ?? pool[0]) : remaining[0];
       remaining.splice(remaining.indexOf(actor),1);
       bindings[id] = actor.id; used.add(actor.id);
       if (visit(index+1)) return true;

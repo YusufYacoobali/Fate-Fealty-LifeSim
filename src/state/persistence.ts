@@ -1,3 +1,4 @@
+import {retireAuthoredState} from '@/engine/singleYearNarrative';
 import { initializeCourt } from '@/engine/courtEngine';
 import { initializeLifeDepth } from '@/engine/lifeDepthState';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -298,6 +299,7 @@ export function normalizeGameState(parsed: GameState): GameState {
     // An unavailable opponent must never strand the mission overlay.
     normalized.rpg.mission.phase = 'choice';
   }
+  retireAuthoredState(normalized);
   return syncPlayerFromWorld(normalized);
 }
 

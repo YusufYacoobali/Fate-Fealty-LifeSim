@@ -56,7 +56,7 @@ text: "Your liege calls a muster over a disputed river crossing. The written cla
 ageMin: 18,
 ranks: ['Knight', 'Noble'],
 choices: [
-      { label: 'Ride to war for your liege', outcome: { text: 'You don your armour and ride out. The road to glory is muddy and smells of fear.', effects: { addTags: ['at_war'], path: { martial: 3 }, faith: 2 }, tone: 'plain', next: 'arc_war_1', nextWhen: 'now' } },
+      { label: 'Ride to war for your liege', outcome: { text: 'You don your armour and ride out. The road to glory is muddy and smells of fear.', effects: { addTags: ['at_war'], path: { martial: 3 }, faith: 2 }, tone: 'plain', next: 'arc_war_2', nextWhen: 'now' } },
       { label: 'Send coin in your stead (20g)', costGold: 20, outcome: { text: 'You paid scutage to avoid the muster. Pragmatic, if not glorious. Some call it cowardice.', effects: { gold: -20, reputation: -5, charm: -3 }, tone: 'plain' } },
     ]
 },

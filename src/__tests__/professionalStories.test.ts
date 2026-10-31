@@ -18,13 +18,9 @@ describe('branching professional commissions', () => {
       const event = eventById(s.pendingEvent!.eventId)!;
       s = gameReducer(s, { type: 'CHOOSE', choice: event.choices[choice] });
       expect(s.pendingEvent).toBeNull();
-      if (!immediateProfessionalBranch(story.id,choice)) {
-      s.world.currentYear++;
-      const directed = directYear(s);
-      expect(directed.event?.id).toBe(`profession_${story.id}_verdict`);
-      s.pendingEvent = { eventId: directed.event!.id };
-      s = gameReducer(s, { type: 'CHOOSE', choice: eventById(s.pendingEvent.eventId)!.choices[0] });
-      }
+      expect(s.activeArcs).toEqual([]);
+      expect(s.world.currentYear).toBe(s.bornYear);
+      expect(directYear(s).event?.id).not.toBe(`profession_${story.id}_verdict`);
       const r = s.world.characters[s.playerCharacterId].professionalHistory![story.family]!;
       expect(r.matters.find(m => m.id === story.id)?.resolved).toBe(true);
       expect(r.milestones).toContain(choice === 1 ? `${story.milestone}_ruthless` : story.milestone);

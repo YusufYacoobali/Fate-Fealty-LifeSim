@@ -319,8 +319,7 @@ addKin: { kind: 'spouse' },
 memory: { tag: 'married', weight: 3 }
 },
 tone: 'good',
-next: 'arc_marriage_2',
-nextWhen: 'nextYear'
+
 }
 },
 { label: 'Hold out for nobility', requires: { statAtLeast: { charm: 50 } }, outcome: { text: 'You spurned the match, eyes fixed on a grander union. Ambitious. Possibly foolish.', effects: { charm: 2, path: { court: 2 } }, tone: 'plain' } },

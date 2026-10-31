@@ -190,7 +190,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       s.settings = proLockedSettings(s.settings, s.lifetimeUnlocked);
       if (s.pendingEvent && !eventById(s.pendingEvent.eventId)) s.pendingEvent = null;
       if (s.world.recoveryNotice) {
-        pushFeed(s, 'CHRONICLE · RECOVERED', '#7a4f9a', 'Some unfinished tales were safely concluded after the game was updated.', 'plain', {}, 'world', 'world');
+        pushFeed(s, 'CHRONICLE · RECOVERED', '#7a4f9a', 'Earlier choices remain in your chronicle. Unfinished tales were closed without assuming an ending.', 'plain', {}, 'world', 'world');
         s.world.recoveryNotice = false;
       }
       refreshWorkBoard(s);

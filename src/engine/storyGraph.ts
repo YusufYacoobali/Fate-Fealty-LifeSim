@@ -1,16 +1,6 @@
-import { callbackSource } from './narrativeCallbacks';
 import { startDuel } from './duelEngine';
-/**
- * Story graph + choice resolution.
- *
- * A choice resolves to an Outcome. The outcome applies effects, writes to the
- * feed, and may point to a `next` node (another GameEvent in the same arc):
- *   - next + nextWhen 'now'      -> open the follow-up popup immediately.
- *   - next + nextWhen 'nextYear' -> queue it to fire on a later age-up.
- *
- * Queued arcs live in state.activeArcs and are checked first by the Life
- * Director, so a story always continues before a fresh random event fires.
- */
+/** Current-year choice resolution. At most one immediate additional scene may open.
+ * Pre-v9 next-year pointers are ignored; the world retains the real effects. */
 
 import { feedbackSnapshot, feedbackChanges } from './choiceFeedback';
 import { Choice, GameEvent, GameState, Outcome } from '@/types/game';
@@ -59,7 +49,7 @@ export interface ChoiceResult {
  * open immediately (multi-popup story continuing in the same turn).
  */
 export function applyChoice(s: GameState, event: GameEvent, ch: Choice): ChoiceResult {
-  if (!isChoiceEnabled(s, ch)) return { openNow: null };
+  if (s.pendingEvent?.eventId !== event.id || !isChoiceEnabled(s, ch)) return { openNow: null };
   // Mark the parent event as fired-once if applicable.
   if (event.once && !s.firedOnce.includes(event.id)) {
     s.firedOnce = [...s.firedOnce, event.id];
@@ -73,11 +63,6 @@ export function applyChoice(s: GameState, event: GameEvent, ch: Choice): ChoiceR
   if (outcome) {
     const before = feedbackSnapshot(s);
     applyEffects(s, outcome.effects);
-    if (s.dead || s.stats.health <= 0) {
-      checkDeath(s);
-      s.pendingEvent = null;
-      return { openNow: null };
-    }
     pushFeed(
       s,
       outcome.tag ?? `AGE ${s.age} · CHOICE`,
@@ -87,9 +72,8 @@ export function applyChoice(s: GameState, event: GameEvent, ch: Choice): ChoiceR
       { changes: feedbackChanges(before, s) },
     );
     const participantIds = [s.playerCharacterId, ...Object.values(s.pendingEvent?.bindings ?? {})];
-    const source = callbackSource(s,event);
     appendWorldHistory(s, {
-      eventId: event.id, resolvedChoiceId: ch.id, actorBindings: { ...s.pendingEvent?.bindings }, callbackForHistoryId: source?.id,
+      eventId: event.id, resolvedChoiceId: ch.id, actorBindings: { ...s.pendingEvent?.bindings },
       id: `history_choice_${s.nextId++}`,
       year: s.world.currentYear,
       type: outcome.tone === 'bad' ? 'failure' : 'choice',
@@ -99,7 +83,7 @@ export function applyChoice(s: GameState, event: GameEvent, ch: Choice): ChoiceR
       choiceId: `${event.id}:${ch.label}`,
       causes: [event.title],
       summary: outcome.text,
-      salience: s.pendingEvent?.storyInstanceId ? 4 : 2,
+      salience: s.pendingEvent?.storyInstanceId||event.stakes==='major' ? 4 : 2,
     });
     for (const actorId of Object.values(s.pendingEvent?.bindings ?? {})) {
       const actor = s.world.characters[actorId];
@@ -112,18 +96,18 @@ export function applyChoice(s: GameState, event: GameEvent, ch: Choice): ChoiceR
         storyInstanceId: s.pendingEvent?.storyInstanceId,
         choiceId: ch.label,
         sentiment: outcome.tone === 'bad' ? -30 : outcome.tone === 'good' ? 25 : 0,
-        salience: s.pendingEvent?.storyInstanceId ? 4 : 2,
-        inherited: persistentStory?.scale === 'major',
+        salience: s.pendingEvent?.storyInstanceId||event.stakes==='major' ? 4 : 2,
+        inherited: persistentStory?.scale === 'major'||event.stakes==='major',
         summary: outcome.text,
       });
     }
 
+    if(s.dead||s.stats.health<=0){checkDeath(s);s.pendingEvent=null;s.world.pacing.immediateChainDepth=0;return {openNow:null};}
+
     if (outcome.next) {
       const nextNode = eventById(outcome.next);
       if (nextNode) {
-        if (outcome.nextWhen === 'nextYear') {
-          queueArc(s, nextNode.arc ?? nextNode.id, nextNode.id);
-        } else {
+        if (outcome.nextWhen !== 'nextYear' && !nextNode.legacyNarrative && (s.world.pacing.immediateChainDepth ?? 0) < 1 && isEventPlayable(s,nextNode)) {
           openNow = nextNode;
         }
       }
@@ -140,32 +124,12 @@ export function applyChoice(s: GameState, event: GameEvent, ch: Choice): ChoiceR
   onPersistentStoryChoiceResolved(s, ch.id ?? ch.label);
 
   // Definitions remain static content; only the follow-up id enters state.
-  if (openNow) s.pendingEvent = { eventId: openNow.id };
-  else s.pendingEvent = null;
+  if (openNow) { s.world.pacing.immediateChainDepth = (s.world.pacing.immediateChainDepth ?? 0) + 1; s.pendingEvent = { eventId: openNow.id, bindings: { ...s.pendingEvent?.bindings } }; }
+  else { s.pendingEvent = null; s.world.pacing.immediateChainDepth = 0; }
   if (ch.challenge && challengeOpponent && !openNow && !s.dead) startDuel(s, challengeOpponent, 'duel', false, ch.challenge.stakes);
   return { openNow };
 }
 
-export function queueArc(s: GameState, arc: string, nextNodeId: string): GameState {
-  // Replace any existing entry for this arc.
-  s.activeArcs = [
-    ...s.activeArcs.filter((a) => a.arc !== arc),
-    { arc, nextNodeId, startedAge: s.age },
-  ];
-  return s;
-}
-
-/**
- * If a queued arc is ready to continue, pop it and return its node. Called by
- * the Life Director before picking a fresh random event.
- */
-export function popReadyArc(s: GameState): GameEvent | null {
-  if (s.activeArcs.length === 0) return null;
-  // Continue the oldest queued arc that started before this year.
-  for (const ready of s.activeArcs.filter(a => a.startedAge < s.age)) {
-    s.activeArcs = s.activeArcs.filter(a => a.arc !== ready.arc);
-    const event = eventById(ready.nextNodeId);
-    if (event && isEventPlayable(s,event)) return event;
-  }
-  return null;
-}
+/** Compatibility API: authored future chapters are no longer queued or resumed. */
+export function queueArc(s:GameState,_arc:string,_nextNodeId:string):GameState { return s; }
+export function popReadyArc(s:GameState):GameEvent|null { s.activeArcs=[];return null; }

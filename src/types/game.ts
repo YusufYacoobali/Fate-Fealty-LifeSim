@@ -383,7 +383,7 @@ export interface ConditionModifier {
 
 export type LifeRole = 'commoner' | 'artisan_merchant' | 'clergy' | 'martial' | 'landed_noble' | 'monarch' | 'outlaw';
 export type StoryScale = 'major' | 'medium' | 'relationship';
-export type StoryStatus = 'active' | 'paused' | 'completed' | 'failed' | 'cancelled';
+export type StoryStatus = 'active' | 'paused' | 'completed' | 'failed' | 'cancelled' | 'retired';
 
 export interface StoryInstance {
   id: string;
@@ -777,10 +777,11 @@ export type EventCategory =
   | 'arc';
 
 export interface EventActorRole {
+  familyRelation?: 'enemy' | 'ally';
   characterId?: string;
   gender?: GenderIdentity;
   outsideFamily?: boolean;
-  relation?: 'parent' | 'spouse' | 'child' | 'sibling' | 'rival';
+  relation?: 'carer' | 'parent' | 'spouse' | 'child' | 'sibling' | 'rival';
   rankAtLeast?: number;
   careerFamilies?: CareerFamily[];
   legalStatuses?: LegalStatus[];
@@ -807,6 +808,10 @@ export interface EventChainRef {
 }
 
 export interface GameEvent {
+  /** Read-only compatibility passage: never offered in a new life. */
+  legacyNarrative?: boolean;
+  /** Reviewed source storyline, for conversion accounting. */
+  convertedFrom?: string;
   stakes?: 'minor' | 'meaningful' | 'major';
   callback?: { eventId: string; choiceIds: string[]; minYears?: number; maxYears?: number; inherited?: boolean; roleMap?: Record<string,string> };
   id: string;

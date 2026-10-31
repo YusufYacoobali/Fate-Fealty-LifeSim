@@ -1,3 +1,4 @@
+import {retireAuthoredState} from './singleYearNarrative';
 import { GameState, StoryInstance, WorldCharacter, WorldHistoryEntry } from '@/types/game';
 import { CONTENT_ALIASES, CONTENT_MIGRATIONS, CURRENT_CONTENT_VERSION } from '@/content/contentVersion';
 import { ActorSelector, STORY_TEMPLATE_BY_ID } from '@/content/persistentStories';
@@ -136,6 +137,9 @@ export function recoverSavedContent(state: GameState): RecoveryResult {
     recovered = true;
   }
 
+  const hadAuthoredQueue=state.activeArcs.length>0||!!state.world.threads?.length||state.world.activeStories.some(s=>['active','paused'].includes(s.status));
+  retireAuthoredState(state);
+  if(hadAuthoredQueue)recovered=true;
   if (state.pendingEvent) {
     state.pendingEvent.eventId = CONTENT_ALIASES.events[state.pendingEvent.eventId] ?? state.pendingEvent.eventId;
     if (!eventById(state.pendingEvent.eventId)) {
@@ -143,7 +147,7 @@ export function recoverSavedContent(state: GameState): RecoveryResult {
         ? state.world.activeStories.find((item) => item.id === state.pendingEvent!.storyInstanceId)
         : undefined;
       state.pendingEvent = null;
-      if (story) {
+      if (story && ['active','paused'].includes(story.status)) {
         const template = STORY_TEMPLATE_BY_ID[story.templateId];
         if (template?.recovery.recoveryBeatId && template.beats[template.recovery.recoveryBeatId]) story.currentBeatId = template.recovery.recoveryBeatId;
         story.nextEligibleYear = state.world.currentYear;
@@ -153,8 +157,10 @@ export function recoverSavedContent(state: GameState): RecoveryResult {
   }
 
   for (const story of state.world.activeStories) {
-    if (!['active', 'paused'].includes(story.status)) continue;
     story.templateId = CONTENT_ALIASES.templates[story.templateId] ?? story.templateId;
+    story.currentBeatId=CONTENT_ALIASES.beats[story.templateId]?.[story.currentBeatId]??story.currentBeatId;
+    for(const role of Object.keys(story.bindings))story.bindings[role]=CONTENT_ALIASES.characters[story.bindings[role]]??story.bindings[role];
+    if (!['active', 'paused'].includes(story.status)) continue;
     const template = STORY_TEMPLATE_BY_ID[story.templateId];
     if (!template) {
       cancelStory(state, story, 'An unfinished tale faded from Swineford history.');
@@ -201,7 +207,10 @@ export function recoverSavedContent(state: GameState): RecoveryResult {
   if (state.pendingEvent?.storyInstanceId) {
     const story = state.world.activeStories.find((item) => item.id === state.pendingEvent!.storyInstanceId);
     const beat = story ? STORY_TEMPLATE_BY_ID[story.templateId]?.beats[story.currentBeatId] : undefined;
-    if (!story || story.status !== 'active' || !beat || !eventById(beat.eventId)) {
+    if (story?.status === 'retired') {
+      // Keep the already-visible, validated passage and its saved cast. The
+      // historical beat pointer cannot reopen or replace it after retirement.
+    } else if (!story || story.status !== 'active' || !beat || !eventById(beat.eventId)) {
       state.pendingEvent = null;
       recovered = true;
     } else if (state.pendingEvent.eventId !== beat.eventId) {
@@ -221,7 +230,7 @@ export function recoverSavedContent(state: GameState): RecoveryResult {
 
   if (recovered) {
     state.world.recoveryNotice = true;
-    notices.push('Some unfinished tales were safely concluded after the game was updated.');
+    notices.push('Earlier choices were preserved; unfinished tales were closed without assuming an ending.');
   }
   validateWorldIntegrity(state);
   return { state, recovered, notices };

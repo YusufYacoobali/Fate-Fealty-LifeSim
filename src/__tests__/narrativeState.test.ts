@@ -54,21 +54,16 @@ it('reserves the goose for explicitly authored goose roles, even in old worlds',
  expect(isEventPlayable(s,event)).toBe(true);
  expect(bindEventActors(s,event)).toEqual({other:'goose'});
 });
-it('offers a short callback with the original actor after reload and records its source',()=>{
- let s=adult();const source=eventById('peasant_quack_doctor')!;
- s.pendingEvent={eventId:source.id,bindings:{other:'merek'}};
+it('preserves the earlier choice while a new circumstance resolves without callback provenance',()=>{
+ let s=adult();const source=eventById('peasant_quack_doctor')!;s.pendingEvent={eventId:source.id,bindings:{other:'merek'}};
  s=gameReducer(s,{type:'CHOOSE',choice:source.choices[0]});
- const history=s.world.history.find(h=>h.eventId===source.id)!;
- expect(history.actorBindings).toEqual({other:'merek'});
- s.world.currentYear++;syncPlayerToWorld(s);
- const untouched=cloneState(s);s=normalizeGameState(JSON.parse(JSON.stringify(s)));
- const echo=eventById('echo_cooling_stone')!;
- expect(isEventPlayable(s,echo)).toBe(true);expect(s.world.rngState).toEqual(untouched.world.rngState);
- expect(bindEventActors(s,echo)).toEqual({other:'merek'});
- s.pendingEvent={eventId:echo.id,bindings:bindEventActors(s,echo)};
- s=gameReducer(s,{type:'CHOOSE',choice:echo.choices[0]});
- expect(s.world.history.find(h=>h.eventId===echo.id)?.callbackForHistoryId).toBe(history.id);
- expect(isEventPlayable(s,echo)).toBe(false);
+ const old=s.world.history.find(h=>h.eventId===source.id)!;expect(old.actorBindings).toEqual({other:'merek'});
+ syncPlayerToWorld(s);s=normalizeGameState(JSON.parse(JSON.stringify(s)));
+ s.world.currentYear+=5;s.age+=5;
+ const current=eventById('circumstance_cooling_stone')!;expect(isEventPlayable(s,current)).toBe(true);
+ s.pendingEvent={eventId:current.id,bindings:{other:'merek'}};s=gameReducer(s,{type:'CHOOSE',choice:current.choices[0]});
+ expect(s.world.history.find(h=>h.eventId===current.id)?.callbackForHistoryId).toBeUndefined();
+ expect(s.world.history.some(h=>h.id===old.id)).toBe(true);expect(s.activeArcs).toEqual([]);
 });
 it('preserves old history through the only essential title correction and leaves chain titles intact',()=>{
  const s=adult();s.world.history=[{id:'old',year:1320,type:'choice',participantIds:[],familyIds:[],causes:['MAUD TAKES ILL','AT THE CHURCH DOOR'],summary:'An old decision',salience:2}];
@@ -115,14 +110,12 @@ it('carries recent legacy event years into shared thematic cooldowns without con
  const before=JSON.stringify(s.world.rngState),migrated=CONTENT_MIGRATIONS[7](s.world).world;
  expect(migrated.repetitionLedger.public_vanity).toBe(s.world.currentYear-1);expect(JSON.stringify(migrated.rngState)).toBe(before);
 });
-it('keeps saved due dates while scheduling the next urgent beat within two years',()=>{
- const {noteChainBeatResolved}=require('@/engine/director/threads');
- const s=adult();s.world.threads=[{id:'winter_roof',beatIndex:0,total:5,nextDueYear:s.world.currentYear+6,openedYear:s.world.currentYear}];
+it('archives saved due dates and never schedules another urgent beat',()=>{
+ const {noteChainBeatResolved}=require('@/engine/director/threads');const s=adult();
+ s.world.threads=[{id:'winter_roof',beatIndex:0,total:4,nextDueYear:s.world.currentYear+6,openedYear:s.world.currentYear}];
  syncPlayerToWorld(s);const loaded=normalizeGameState(JSON.parse(JSON.stringify(s)));
- expect(loaded.world.threads![0].nextDueYear).toBe(s.world.currentYear+6);
- runWithWorldRng(loaded.world,()=>noteChainBeatResolved(loaded,eventById('quality_winter_roof_2')));
- expect(loaded.world.threads![0].nextDueYear-loaded.world.currentYear).toBeGreaterThanOrEqual(1);
- expect(loaded.world.threads![0].nextDueYear-loaded.world.currentYear).toBeLessThanOrEqual(2);
+ expect(loaded.world.threads).toEqual([]);noteChainBeatResolved(loaded,eventById('quality_winter_roof_2'));
+ expect(loaded.world.threads).toEqual([]);expect(loaded.world.history.some(h=>h.type==='narrative_retired')).toBe(true);
 });
 
 it('does not summon a dead Roderick, and real forgiveness clears his personal rivalry',()=>{

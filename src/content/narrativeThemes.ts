@@ -12,3 +12,14 @@ export function legacyNarrativeTheme(id:string): string | undefined {
   if (/friar_pudding|bishop_fish|pardoner_sale/.test(id)) return 'religious_hypocrisy';
   if (/war_arrow_inventory|war_backwards_banner|war_cowardly_drum/.test(id)) return 'military_supply';
 }
+
+/** Shared themes for converted premises as well as the older one-shot banks. */
+export function singleYearTheme(id:string):string|undefined {
+ if(/tithe|levy|miller.*measure|burial_tally|coffin_toll|false_death_fee/.test(id))return 'corrupt_taxes';
+ if(/saints_bone|scholar_bone|relic_hunter|feather_seller|relic_skulls/.test(id))return 'false_relics';
+ if(/inheritance|foreign_advance/.test(id))return 'suspicious_inheritances';
+ if(/charity_names|saint_donations/.test(id))return 'religious_hypocrisy';
+ if(/blank_pardon|soap_seal|missing_not/.test(id))return 'forged_documents';
+ if(/scaffold|furnace|quarry/.test(id))return 'unsafe_work';
+ return undefined;
+}

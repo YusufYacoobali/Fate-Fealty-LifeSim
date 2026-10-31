@@ -29,6 +29,8 @@ export interface ForgeRun {
   bonusEligible: boolean; bonusXp: number; bonusIron: number;
 }
 export interface TradeJourney {
+  /** Independent commissions already settled; chapter is the legacy completion count. */
+  completedCommissions?: number[];
   chapter: number; assignments: number; clientId?: string;
   choices: string[]; lastYear?: number;
   ending?: 'trusted' | 'prosperous' | 'independent';

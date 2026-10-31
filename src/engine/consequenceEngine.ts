@@ -326,7 +326,7 @@ export function killPlayer(s: GameState, cause: string): GameState {
 /** Convenience used by the death screen / legacy summary. */
 export function legacyScore(s: GameState): number {
   const statSum = s.stats.health + s.stats.charm + s.stats.wits + s.stats.faith;
-  const professionalLegacy = Math.max(0, ...Object.values(s.world.characters[s.playerCharacterId].professionalHistory ?? {}).map(r => Math.max(0, r.reputation) * 4 + Math.min(8, r.milestones.length) * 35 + r.matters.filter(m => m.resolved && (m.kind !== 'practice' || m.success)).length * 40));
+  const professionalLegacy = Math.max(0, ...Object.values(s.world.characters[s.playerCharacterId].professionalHistory ?? {}).map(r => Math.max(0, r.reputation) * 4 + Math.min(8, r.milestones.length) * 35 + r.matters.filter(m => m.resolved && !m.retired && (m.kind !== 'practice' || m.success)).length * 40));
   return Math.round(professionalLegacy + s.rankIdx * 120 + s.gold * 2 + statSum + s.reputation + s.memories.length * 4);
 }
 

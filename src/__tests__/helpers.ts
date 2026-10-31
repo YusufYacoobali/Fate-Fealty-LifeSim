@@ -3,9 +3,9 @@ import { legacyStatus } from '@/engine/lifeDepthState';
 import { GameState, Difficulty } from '@/types/game';
 import { createLife } from '@/engine/gameState';
 
-/** A deterministic-ish base state for tests (overrides the random stats). */
+/** Stable ordinary birth with both parents; scenario tests can override it. */
 export function makeState(overrides: Partial<GameState> = {}, difficulty: Difficulty = 'Normal'): GameState {
-  const s = createLife({ birthOrigin: 'peasant', settings: { autoScroll: true, difficulty, liveForever: false, haptics: false, soundEffects: false } });
+  const s = createLife({ worldSeed: 42, birthOrigin: 'peasant', settings: { autoScroll: true, difficulty, liveForever: false, haptics: false, soundEffects: false } });
   s.stats = { health: 60, charm: 50, wits: 50, faith: 50 };
   s.gold = 20;
   s.holding = freshHolding();

@@ -105,7 +105,7 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
         <PixelText font="pixel" size={8} color={C.blueDark}>THY WORKING LIFE</PixelText>
         <PixelText font="body" size={19} color={C.textBrown} style={{ marginTop: 6 }}>{career?.title ?? 'No current occupation'}</PixelText>
         <PixelText font="body" size={16} color={C.textBrown}>Professional advancement follows experience and ability. Social station has its own ladder.</PixelText>
-        {!!professional.chapter && <PixelText font="body" size={17} color={C.blueDark} style={{ marginTop: 6 }}>{professional.ending ? `Legacy: ${TRADE_ENDINGS[professional.ending]}` : `A mark of your own: ${professional.chapter}/4 chapters completed`}</PixelText>}
+        {!!professional.chapter && <PixelText font="body" size={17} color={C.blueDark} style={{ marginTop: 6 }}>{professional.ending ? `Legacy: ${TRADE_ENDINGS[professional.ending]}` : `${professional.chapter} professional commissions completed`}</PixelText>}
       </View>
       {/* path to nobility */}
       <PixelText font="pixel" size={8} color={C.blueDeep} style={{ marginTop: 13, marginBottom: 8 }}>

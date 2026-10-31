@@ -1,3 +1,4 @@
+import { retireAuthoredWorld } from '@/engine/singleYearNarrative';
 import { legacyNarrativeTheme } from './narrativeThemes';
 import { WorldState } from '@/types/game';
 import { QUALITY_CHAIN_SPECS } from './qualityAmbientEvents';
@@ -46,7 +47,7 @@ function legacyChainTitleMap(): Record<string, string> {
 }
 
 /** Increment whenever persisted story/event identifiers or semantics change. */
-export const CURRENT_CONTENT_VERSION = 8;
+export const CURRENT_CONTENT_VERSION = 9;
 
 export interface ContentAliases {
   templates: Record<string, string>;
@@ -75,6 +76,7 @@ export type ContentMigration = (world: WorldState) => ContentMigrationResult;
 
 /** Sequential migrations are registered at the version being migrated FROM. */
 export const CONTENT_MIGRATIONS: Record<number, ContentMigration> = {
+  8: world => ({world:retireAuthoredWorld(world),notices:[]}),
   7: world => {
     const repetitionLedger = { ...world.repetitionLedger };
     for (const [id,record] of Object.entries(world.contentLedger ?? {})) {
@@ -125,7 +127,7 @@ export const CONTENT_MIGRATIONS: Record<number, ContentMigration> = {
     return {
       world: { ...world, history },
       notices: rewritten
-        ? ['Village tales that were part-told have been matched to their rewritten chapters.']
+        ? ['Earlier village choices have been preserved in the historical record.']
         : [],
     };
   },

@@ -10,7 +10,7 @@ import { checkLifeGoal } from './goalEngine';
 import { stableHash } from './random';
 import { grantSkillXp, skillLevel } from './rpgProgress';
 import { pushFeed } from './gameState';
-import { resolveTradeChoice, TRADE_CHAPTERS, tradeAvailability, tradeProgress } from './tradeJourney';
+import { resolveTradeChoice, TRADE_CHAPTERS, tradeAvailability, tradeProgress, completedTradeCommissions } from './tradeJourney';
 
 export const FORGE_BONUS_LIMIT = 3;
 export function forgeAllowance(s: GameState): number {
@@ -33,8 +33,8 @@ export function forgeAvailability(s: GameState, task: ForgeTask): string | null 
     if (careerById(s.occupation.careerId)?.family !== 'craft') return 'Take a craft occupation for paid forge work';
     return careerActionAvailability(s, 'work').reason ?? (s.actionClock.used >= s.actionClock.cap ? 'No actions remain this year' : null);
   }
-  if (tradeProgress(s).chapter !== task.chapter || !TRADE_CHAPTERS[task.chapter]?.choices.some((c) => c.id === task.choiceId && c.forge)) return 'This commission cannot use the forge';
-  return tradeAvailability(s, task.choiceId);
+  if (completedTradeCommissions(s).includes(task.chapter) || !TRADE_CHAPTERS[task.chapter]?.choices.some((c) => c.id === task.choiceId && c.forge)) return 'This commission cannot use the forge';
+  return tradeAvailability(s, task.choiceId,task.chapter);
 }
 
 /** Commit the original task once. The forge can add a bonus, never reroll its result. */

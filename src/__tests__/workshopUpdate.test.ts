@@ -47,7 +47,7 @@ describe('optional forge', () => {
     expect(tradeProgress(forged).chapter).toBe(1);
     const gold = forged.gold; forged = gameReducer(forged, commission);
     expect(forged.gold).toBe(gold); expect(tradeProgress(forged).chapter).toBe(1);
-    expect(forged.world.scheduledConsequences.filter((c) => c.sourceChoiceId === 'trade:0:fit')).toHaveLength(1);
+    expect(forged.world.scheduledConsequences.filter((c) => c.sourceChoiceId === 'trade:0:fit')).toHaveLength(0);
   });
   it('commits exactly the quick-craft result before hammer work and never charges again', () => {
     const s = ready();
@@ -130,25 +130,36 @@ describe('optional forge', () => {
 });
 
 describe('professional life', () => {
+  it('allows independently eligible commissions in any order during the same year', () => {
+    const s = ready(), year = s.world.currentYear;
+    for (let n = 0; n < 6; n++) recordTradeWork(s);
+    expect(resolveTradeChoice(s, 2, 'commons')).toBe(true);
+    expect(resolveTradeChoice(s, 0, 'fit')).toBe(true);
+    expect(resolveTradeChoice(s, 1, 'recall')).toBe(true);
+    expect(resolveTradeChoice(s, 3, 'trusted')).toBe(true);
+    expect(s.world.currentYear).toBe(year);
+    expect(tradeProgress(s).completedCommissions).toEqual([2, 0, 1, 3]);
+    expect(s.world.scheduledConsequences).toEqual([]);
+  });
   it.each(['trusted', 'prosperous', 'independent'])('reaches the %s legacy without a noble title', (ending) => {
     const s = ready(); s.rankIdx = 0;
     expect(resolveTradeChoice(s, 0, 'fit')).toBe(true);
     const clientId = tradeProgress(s).clientId;
     expect(clientId).toBeTruthy();
-    expect(tradeAvailability(s)).toContain('next year');
-    nextYear(s); expect(tradeAvailability(s)).toContain('2 paid work');
+    expect(tradeAvailability(s)).toContain('2 paid work');
+    expect(s.world.currentYear).toBe(s.bornYear+s.age);
     recordTradeWork(s); recordTradeWork(s); expect(resolveTradeChoice(s, 1, 'recall')).toBe(true);
-    nextYear(s); recordTradeWork(s); recordTradeWork(s); expect(resolveTradeChoice(s, 2, 'commons')).toBe(true);
-    nextYear(s); recordTradeWork(s); recordTradeWork(s); expect(resolveTradeChoice(s, 3, ending)).toBe(true);
+    recordTradeWork(s); recordTradeWork(s); expect(resolveTradeChoice(s, 2, 'commons')).toBe(true);
+    recordTradeWork(s); recordTradeWork(s); expect(resolveTradeChoice(s, 3, ending)).toBe(true);
     expect(tradeProgress(s)).toMatchObject({ chapter: 4, ending, clientId });
     expect(s.memories.some((m) => m.tag === `trade_legacy_${ending}`)).toBe(true);
     expect(s.rankIdx).toBe(0);
     const gold = s.gold; expect(resolveTradeChoice(s, 3, ending)).toBe(false); expect(s.gold).toBe(gold);
   });
-  it('pays a delayed callback once, replaces a deceased client, and keeps independent cloned progress', () => {
+  it('settles the commission now, replaces a deceased client, and keeps independent cloned progress', () => {
     const s = ready(); resolveTradeChoice(s, 0, 'fit'); const gold = s.gold;
-    nextYear(s); resolveScheduledConsequences(s); expect(s.gold).toBe(gold + 4);
-    resolveScheduledConsequences(s); expect(s.gold).toBe(gold + 4);
+    expect(s.gold).toBe(210);nextYear(s); resolveScheduledConsequences(s); expect(s.gold).toBe(gold);
+    resolveScheduledConsequences(s); expect(s.gold).toBe(gold);
     const old = tradeProgress(s).clientId!; s.world.characters[old].alive = false;
     recordTradeWork(s); recordTradeWork(s);
     const copy = cloneState(s); resolveTradeChoice(copy, 1, 'deny');
@@ -157,7 +168,7 @@ describe('professional life', () => {
     expect(copy.feed.some((e) => e.tag === 'A NEW BUYER')).toBe(true);
     nextYear(copy); recordTradeWork(copy); recordTradeWork(copy); resolveTradeChoice(copy, 2, 'commons');
     nextYear(copy); recordTradeWork(copy); recordTradeWork(copy);
-    expect(tradeAvailability(copy, 'trusted')).toContain('Settle honestly');
+    expect(tradeAvailability(copy, 'trusted')).toContain('guild standing of 5');
   });
   it('keeps callbacks personal rather than paying them to an heir', () => {
     const s = ready(); resolveTradeChoice(s, 0, 'fit');
@@ -200,8 +211,8 @@ describe('clearer stories and feedback', () => {
     const s = ready(); s.gold = 3;
     const choice: Choice = { label: 'Pay', costGold: 4, outcome: { text: 'Paid.', effects: { gold: -4, health: 50 } } };
     const event: GameEvent = { id: 'test', title: 'Test', category: 'arc', text: 'Test', choices: [choice] };
-    const before = JSON.stringify(s); expect(choiceStakes(choice)).toContain('Costs 4g'); applyChoice(s, event, choice); expect(JSON.stringify(s)).toBe(before);
-    s.gold = 8; s.stats.health = 90; applyChoice(s, event, choice);
+    s.pendingEvent={eventId:event.id};const before = JSON.stringify(s); expect(choiceStakes(choice)).toContain('Costs 4g'); applyChoice(s, event, choice); expect(JSON.stringify(s)).toBe(before);
+    s.gold = 8; s.stats.health = 90; s.pendingEvent={eventId:event.id};applyChoice(s, event, choice);
     expect(s.gold).toBe(4); expect(s.feed.find((e) => e.text === 'Paid.')?.changes).toEqual(['Gold −4', 'Health +10']);
   });
   it('never collapses family deaths, major world events or player choices', () => {

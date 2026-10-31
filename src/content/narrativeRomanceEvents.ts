@@ -37,8 +37,8 @@ export const NARRATIVE_ROMANCE_EVENTS: GameEvent[] = [
     reply('demand','Demand payment for the humiliation','You make an enemy of someone who had merely declined you. The wrapping is now the kindest part of the exchange.',{bond:{role:'other',affinity:-22,trust:-20,flag:'rival'},reputation:-4}),
   ],single),
   scene('life_lovers_witness','family','crime','A WITNESS TO THE WRONG ROMANCE','{{other}} asks you to swear you saw a courting couple promise marriage. You saw two people quarrel over a borrowed cloak, but the fee for remembering otherwise is tempting.',[
-    reply('truth','Describe exactly what you saw','You refuse the false testimony. {{other}} loses trust in your usefulness; your own legal record remains untouched.',{bond:{role:'other',affinity:-8},familyReputation:{delta:4}}),
-    reply('lie','Sign the false testimony for a promised reward','You accept a promise of payment and acquire a real perjury charge. The promised money is still only a promise.',{legal:fraud('False testimony about marriage vows'),createSecret:{type:'hidden_debt',severity:45},bond:{role:'other',trust:5}}),
+    reply('truth','Describe exactly what you saw','{{other}} folds the proposed testimony. Your memory has failed to become useful, an imperfection they find very difficult to forgive.',{bond:{role:'other',affinity:-8},familyReputation:{delta:4}}),
+    reply('lie','Sign the false testimony for a promised reward','The clerk records your oath and asks a second question. {{other}} remembers promising payment rather less clearly than you remember promising to have been there.',{legal:fraud('False testimony about marriage vows'),createSecret:{type:'hidden_debt',severity:45},bond:{role:'other',trust:5}}),
     reply('warn','Warn the people whose names are being used','You publicly challenge the scheme. Your reputation rises while {{other}} acquires a specific grievance against you.',{reputation:5,bond:{role:'other',affinity:-18,flag:'rival'}}),
   ],{repetitionGroup:'false_witnesses'}),
   scene('life_spouse_poem','family','family','THE PRACTICAL LOVE POEM','{{spouse}} discovers a poem you wrote early in the marriage. Your present skill at remembering where the firewood is stored compares poorly with your former devotion.',[
@@ -62,16 +62,16 @@ export const NARRATIVE_ROMANCE_EVENTS: GameEvent[] = [
   ],wed),
   scene('life_chaperone_bill','family','family','THE CHAPERONE’S EXPENSES','{{other}} brings an itemised account for supervising two people’s courtship. “Looking away at suitable moments” is the largest charge.',[
     reply('question','Ask the supervised couple to review the account','You expose the exaggerated bill without inventing a romantic scandal. {{other}} dislikes the new interest in arithmetic.',{bond:{role:'other',trust:-8},reputation:3}),
-    reply('pay','Pay to spare the couple an argument (5g)','You pay for discretion and dubious eyesight. {{other}} is pleased to find affection has a solvent friend.',{gold:-5,bond:{role:'other',affinity:7}},{costGold:5}),
+    reply('pay','Pay to spare the couple an argument (5g)','{{other}} accepts payment for having seen less. The bill is exceptionally legible for work conducted in such poor light.',{gold:-5,bond:{role:'other',affinity:7}},{costGold:5}),
   ],{repetitionGroup:'courtship_bargains'}),
   scene('life_wrong_serenade','family','family','THE SERENADE AT THE STOREROOM','{{other}} has been singing beneath a shutter that opens onto a storeroom. The household wants the flour left out of the next verse.',[
     reply('guide','Privately explain the mistake','You save {{other}} from a second performance and gain a grateful acquaintance. The flour remains unmoved.',{bond:{role:'other',trust:10,flag:'friend'},charm:2}),
     reply('encore','Call loudly for an encore','{{other}} discovers the error in public. Your reputation for wit rises slightly; your reputation with the singer falls considerably.',{charm:4,bond:{role:'other',affinity:-18,flag:'rival'}}),
-    reply('shelter','Offer the singer a quiet cup indoors (3g)','You pay for a little hospitality and the humiliation passes without an audience. {{other}} remembers the door that actually opened.',{gold:-3,bond:{role:'other',trust:14}},{costGold:3}),
+    reply('shelter','Offer the singer a quiet cup indoors (3g)','You pay for a dry place to wait and close the door on the audience. {{other}} discovers that a little hospitality travels farther than the verse.',{gold:-3,bond:{role:'other',trust:14}},{costGold:3}),
   ],{repetitionGroup:'courtship_embarrassment'}),
   scene('life_spouse_guest','family','household','THE GUEST WHO CAME WITH THE MARRIAGE','{{spouse}} has invited a relation to stay. “A short visit” has now acquired a spare blanket and an opinion about the way you cook.',[
     reply('agree','Agree on a leaving date together','You and {{spouse}} settle the invitation without a public quarrel. Household trust improves and the spare blanket remains only a blanket.',{bond:{role:'spouse',trust:10},householdState:{status:2}}),
-    reply('support','Fund another week’s food (9g)','You pay for the visit and improve the food reserve. {{spouse}} appreciates generosity that does not arrive attached to a complaint.',{gold:-9,householdState:{food:8},bond:{role:'spouse',affinity:8}},{costGold:9}),
+    reply('support','Fund another week’s food (9g)','The food is bought before the visit becomes an argument. {{spouse}} welcomes a contribution that has not brought its own speech.',{gold:-9,householdState:{food:8},bond:{role:'spouse',affinity:8}},{costGold:9}),
     reply('expel','Order the guest out and blame your spouse','The household loses harmony and {{spouse}} loses trust in you. Winning the doorway has cost you something farther inside.',{bond:{role:'spouse',trust:-20,affinity:-12},holding:{loyalty:-5}}),
   ],wed),
   scene('life_matchmaker_rival','family','family','THE MATCHMAKER’S UNHELPFUL RECOMMENDATION','{{other}} recommends you for a marriage by praising your ability to withstand disappointment. You would prefer the compliment not to need so many examples.',[

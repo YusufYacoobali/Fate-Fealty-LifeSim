@@ -8,7 +8,7 @@ import { scheduleOnRN } from 'react-native-worklets';
 import { useGame } from '@/state/GameContext';
 import { ForgeTask } from '@/types/rpg';
 import { forgeAllowance, forgeAvailability, forgeGrade, forgeWindow } from '@/engine/forgeEngine';
-import { TRADE_CHAPTERS, TRADE_ENDINGS, isTradeProfessional, tradeAvailability, tradeProgress } from '@/engine/tradeJourney';
+import { TRADE_CHAPTERS, TRADE_ENDINGS, isTradeProfessional, tradeAvailability, tradeProgress, nextTradeCommission } from '@/engine/tradeJourney';
 import { skillsOf } from '@/engine/rpgProgress';
 import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
@@ -30,7 +30,7 @@ export function ForgePlayButton({ task, label = 'MAKE AT THE ANVIL · SAME COST'
 
 export function TradeJourneyPanel() {
   const { state, dispatch } = useGame();
-  const progress = tradeProgress(state), chapter = TRADE_CHAPTERS[progress.chapter];
+  const progress = tradeProgress(state), commissionIndex=nextTradeCommission(state), chapter = TRADE_CHAPTERS[commissionIndex];
   if (!isTradeProfessional(state) && !progress.chapter) return null;
   return <View style={{ padding: 12, marginBottom: 12, backgroundColor: C.parch, borderWidth: 2, borderColor: C.parchBorder }}>
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}><RpgIcon name="careers" /><PixelText font="pixel" size={9} color={C.blueDark}>A MARK OF YOUR OWN</PixelText></View>
@@ -41,11 +41,11 @@ export function TradeJourneyPanel() {
       <PixelText font="body" size={17} color={C.textBrown}>{chapter.text}</PixelText>
       {chapter.choices.map((choice) => { const reason = tradeAvailability(state, choice.id); return <View key={choice.id} style={{ marginTop: 12 }}>
         <PixelText font="body" size={16} color={C.textBrown}>{choice.stakes} Uses 1 action.</PixelText>
-        <PixelButton disabled={!!reason} bg={C.lightFill} shadow={C.paleEdge} onPress={() => dispatch({ type: 'TRADE_CHOOSE', chapter: progress.chapter, choiceId: choice.id })} innerStyle={{ padding: 12, minHeight: 44 }}>
+        <PixelButton disabled={!!reason} bg={C.lightFill} shadow={C.paleEdge} onPress={() => dispatch({ type: 'TRADE_CHOOSE', chapter: commissionIndex, choiceId: choice.id })} innerStyle={{ padding: 12, minHeight: 44 }}>
           <PixelText font="body" size={17} color={C.blueDark}>{choice.label} · quick</PixelText>
           {reason && <PixelText font="body" size={14} color={C.textMuted}>{reason}</PixelText>}
         </PixelButton>
-        {choice.forge && <ForgePlayButton task={{ kind: 'commission', chapter: progress.chapter, choiceId: choice.id }} />}
+        {choice.forge && <ForgePlayButton task={{ kind: 'commission', chapter: commissionIndex, choiceId: choice.id }} />}
       </View>; })}
     </>}
   </View>;

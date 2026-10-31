@@ -120,10 +120,10 @@ describe('persistent stories and update recovery', () => {
       expect(template.beats.beat_3.transitions).toHaveLength(2);
       for (const beat of Object.values(template.beats)) expect(eventById(beat.eventId)).toBeDefined();
     }
-    expect(PERSISTENT_STORY_TEMPLATES.filter((template) => template.id.startsWith('role_'))).toHaveLength(7);
+    expect(Object.values(STORY_TEMPLATE_BY_ID).filter((template) => template.id.startsWith('role_'))).toHaveLength(7);
   });
 
-  it('cancels a removed template safely without advancing RNG or removing world consequences', () => {
+  it('retires a removed template without advancing RNG or discarding real consequences', () => {
     const state = createLife({ worldSeed: 818 });
     state.world.activeStories.push({ id: 'removed_story', templateId: 'removed_template', scale: 'major', status: 'active', bindings: {}, variables: {}, currentBeatId: 'gone', startedYear: 1320, nextEligibleYear: 1321, lastBeatYear: 1320, generationStarted: 1 });
     state.world.scheduledConsequences.push(
@@ -133,22 +133,22 @@ describe('persistent stories and update recovery', () => {
     const before = { ...state.world.rngState };
     const result = recoverSavedContent(state);
     expect(result.recovered).toBe(true);
-    expect(state.world.activeStories[0].status).toBe('cancelled');
-    expect(state.world.scheduledConsequences.map((item) => item.id)).toEqual(['world']);
+    expect(state.world.activeStories[0].status).toBe('retired');
+    expect(state.world.scheduledConsequences.map((item) => item.id)).toEqual(['private','world']);
     expect(state.world.rngState).toEqual(before);
   });
 
-  it('repairs a missing actor deterministically without consuming the RNG stream', () => {
+  it('archives a missing actor without inventing a substitute or consuming RNG', () => {
     const state = createLife({ worldSeed: 8118 });
     state.world.activeStories.push({ id: 'rival_story', templateId: 'rivals_rise', scale: 'major', status: 'active', bindings: { rival: 'removed_actor', patron: 'aldric' }, variables: {}, currentBeatId: 'beat_2', startedYear: 1320, nextEligibleYear: 1321, lastBeatYear: 1320, generationStarted: 1 });
     const before = { ...state.world.rngState };
     recoverSavedContent(state);
-    expect(state.world.activeStories[0].bindings.rival).not.toBe('removed_actor');
-    expect(state.world.characters[state.world.activeStories[0].bindings.rival]).toBeDefined();
+    expect(state.world.activeStories[0].bindings.rival).toBe('removed_actor');
+    expect(state.world.activeStories[0].status).toBe('retired');
     expect(state.world.rngState).toEqual(before);
   });
 
-  it('routes choices through distinct flagship branches and endings', () => {
+  it('lets an already visible legacy choice finish without opening another branch', () => {
     const state = createLife({ worldSeed: 9191 });
     state.age = 20;
     const story = { id: 'branch_story', templateId: 'rivals_rise', scale: 'major' as const, status: 'active' as const, bindings: { rival: 'roderick', patron: 'aldric' }, variables: {}, currentBeatId: 'beat_3', startedYear: 1320, nextEligibleYear: 1320, lastBeatYear: 1319, generationStarted: 1 };
@@ -156,13 +156,15 @@ describe('persistent stories and update recovery', () => {
     state.pendingEvent = { eventId: 'story_rival_3', storyInstanceId: story.id, bindings: story.bindings };
     const branchEvent = eventById('story_rival_3')!;
     applyChoice(state, branchEvent, branchEvent.choices.find((choice) => choice.id === 'bold')!);
-    expect(story.currentBeatId).toBe('beat_4_bold');
+    expect(story.currentBeatId).toBe('beat_3');
+    expect(state.pendingEvent).toBeNull();
 
     story.currentBeatId = 'beat_5';
     state.pendingEvent = { eventId: 'story_rival_5', storyInstanceId: story.id, bindings: story.bindings };
     const decisionEvent = eventById('story_rival_5')!;
     applyChoice(state, decisionEvent, decisionEvent.choices.find((choice) => choice.id === 'reconcile')!);
-    expect(story.currentBeatId).toBe('beat_6_reconciled');
+    expect(story.currentBeatId).toBe('beat_5');
+    expect(state.pendingEvent).toBeNull();
   });
 
   it('recovers missing beats, pending events and unknown consequences without RNG draws', () => {
@@ -174,7 +176,8 @@ describe('persistent stories and update recovery', () => {
     const before = { ...state.world.rngState };
     recoverSavedContent(state);
     expect(state.pendingEvent).toBeNull();
-    expect(story.currentBeatId).toBe('beat_6_hard');
+    expect(state.world.activeStories[0].status).toBe('retired');
+    expect(state.world.activeStories[0].currentBeatId).toBe('removed_beat');
     expect(state.world.scheduledConsequences).toHaveLength(0);
     expect(state.world.rngState).toEqual(before);
   });

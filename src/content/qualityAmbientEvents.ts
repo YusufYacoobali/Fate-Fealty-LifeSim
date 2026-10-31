@@ -90,6 +90,7 @@ const URGENT_CHAINS = new Set(['millers_fever','wounded_midwife','winter_roof','
 
 function eventFor(spec: ChainSpec, beat: Beat, stage: number, previous?: Beat): GameEvent {
   return defineEvent({
+    legacyNarrative:true,
     id: `quality_${spec.id}_${stage + 1}`,
     category: categoryFor(spec.domain),
     domain: spec.domain,

@@ -1,109 +1,35 @@
-import { EVENTS_BY_ID } from '@/content';
-import { resolveRpgEncounter } from './rpgSoakHelpers';
-import { createLife } from '@/engine/gameState';
-import { ageUp } from '@/engine/lifeDirector';
-import { applyChoice } from '@/engine/storyGraph';
-import { QUALITY_CHAIN_SPECS } from '@/content/qualityAmbientEvents';
-import { MAX_OPEN_THREADS, openThreads } from '@/engine/director/threads';
-import { RHYTHM } from '@/engine/director/rhythm';
-import { isChoiceEnabled, isEventEligible, isEventPlayable } from '@/engine/eventPicker';
-
+import {EVENTS_BY_ID,ALL_EVENTS} from '@/content';
+import {createLife} from '@/engine/gameState';
+import {ageUp} from '@/engine/lifeDirector';
+import {applyChoice} from '@/engine/storyGraph';
+import {isChoiceEnabled,isEventEligible,isEventPlayable} from '@/engine/eventPicker';
+import {resolveRpgEncounter} from './rpgSoakHelpers';
+import {RHYTHM} from '@/engine/director/rhythm';
 jest.setTimeout(600000);
 
-interface Run {
-  deepest: Record<string, number>;
-  quietRunMax: number;
-  maxOpenThreads: number;
-  threadYears: number;
-  oneOffYears: number;
-  years: number;
-}
-
-function playLife(): Run {
-  let s = createLife();
-  const run: Run = { deepest: {}, quietRunMax: 0, maxOpenThreads: 0, threadYears: 0, oneOffYears: 0, years: 0 };
-  let quietRun = 0;
-  while (!s.dead && s.age < 130) {
-    resolveRpgEncounter(s);
-    s = ageUp(s);
-    run.years += 1;
-    run.maxOpenThreads = Math.max(run.maxOpenThreads, openThreads(s).length);
-    if (s.pendingEvent) {
-      const event = EVENTS_BY_ID[s.pendingEvent.eventId];
-      if (event.chain) {
-        run.deepest[event.chain.id] = Math.max(run.deepest[event.chain.id] ?? 0, event.chain.index + 1);
-      }
-      if ((event.chain?.index ?? 0) > 0 || event.arcNodeOnly) run.threadYears += 1; else run.oneOffYears += 1;
-      const choice = event.choices.find((candidate) => isChoiceEnabled(s, candidate));
-      if (!choice) throw new Error(`No playable choice in ${event.id}`);
-      applyChoice(s, event, choice);
-      s.pendingEvent = null;
-      quietRun = 0;
-    } else {
-      quietRun += 1;
-      run.quietRunMax = Math.max(run.quietRunMax, quietRun);
-    }
+describe('the director offers complete yearly encounters',()=>{
+ const runs=Array.from({length:40},(_,index)=>{
+  let s=createLife({worldSeed:18000+index}),quiet=0,quietMax=0,popups=0,years=0;const ids=new Set<string>(),converted=new Set<string>();
+  while(!s.dead&&s.age<130){
+   resolveRpgEncounter(s);s=ageUp(s);years++;
+   let current=0;
+   while(s.pendingEvent&&!s.dead&&current++<3){
+    const e=EVENTS_BY_ID[s.pendingEvent.eventId];
+    expect(e.legacyNarrative).not.toBe(true);expect(e.chain).toBeUndefined();expect(e.callback).toBeUndefined();
+    const year=s.world.currentYear;const choice=e.choices.find(c=>isChoiceEnabled(s,c));if(!choice)throw Error('No response in '+e.id);
+    applyChoice(s,e,choice);expect(s.world.currentYear).toBe(year);ids.add(e.id);if(e.convertedFrom)converted.add(e.id);popups++;
+   }
+   expect(s.pendingEvent).toBeNull();expect(current).toBeLessThanOrEqual(2);
+   expect(s.activeArcs).toEqual([]);expect(s.world.threads??[]).toEqual([]);expect(s.world.activeStories.some(story=>['active','paused'].includes(story.status))).toBe(false);
+   quiet=current?0:quiet+1;quietMax=Math.max(quietMax,quiet);
   }
-  return run;
-}
-
-describe('the director keeps its promises', () => {
-  const runs = Array.from({ length: 40 }, playLife);
-
-  it('finishes most of the threads it opens', () => {
-    let started = 0;
-    let finished = 0;
-    for (const spec of QUALITY_CHAIN_SPECS) {
-      for (const run of runs) {
-        const depth = run.deepest[spec.id] ?? 0;
-        if (depth > 0) started += 1;
-        if (depth >= spec.beats.length) finished += 1;
-      }
-    }
-    // Before the director, chains were drawn from the ambient lottery rather
-    // than scheduled: they reached an average depth of 2.4 and finished about
-    // 15% of the time. A half-told story is worse than no story.
-    expect(started).toBeGreaterThan(100);
-    expect(finished / started).toBeGreaterThan(0.5);
-  });
-
-  it('finishes even the longest chains, which never once completed before', () => {
-    const longest = QUALITY_CHAIN_SPECS.filter((spec) => spec.beats.length >= 7);
-    expect(longest.length).toBeGreaterThan(0);
-    for (const spec of longest) {
-      expect(runs.some((run) => (run.deepest[spec.id] ?? 0) >= spec.beats.length)).toBe(true);
-    }
-  });
-
-  it('never leaves the player with two dead years running', () => {
-    for (const run of runs) expect(run.quietRunMax).toBeLessThanOrEqual(RHYTHM.MAX_QUIET_RUN + 1);
-  });
-
-  it('holds the open-thread cap so nothing is starved', () => {
-    for (const run of runs) expect(run.maxOpenThreads).toBeLessThanOrEqual(MAX_OPEN_THREADS);
-  });
-
-  it('keeps one-off events a real share of the years', () => {
-    const thread = runs.reduce((n, r) => n + r.threadYears, 0);
-    const oneOff = runs.reduce((n, r) => n + r.oneOffYears, 0);
-    expect(oneOff / (thread + oneOff)).toBeGreaterThan(0.3);
-  });
-});
-
-describe('directed content stays out of the lottery', () => {
-  it('a chain continuation is never offered by the random picker', () => {
-    const state = createLife();
-    const continuations = Object.values(EVENTS_BY_ID).filter((event) => (event.chain?.index ?? 0) > 0);
-    expect(continuations.length).toBeGreaterThan(50);
-    for (const event of continuations) expect(isEventEligible(state, event)).toBe(false);
-  });
-
-  it('but the director may still play one when its turn comes', () => {
-    // `isEventPlayable` is the check the director uses; it ignores the lottery
-    // exclusions and only asks whether the event is legal right now.
-    const opener = EVENTS_BY_ID.quality_granary_rats_1;
-    const state = createLife();
-    state.age = 30;
-    expect(isEventPlayable(state, opener)).toBe(true);
-  });
+  return {years,popups,quietMax,ids,converted};
+ });
+ it('has a meaningful encounter in most years',()=>{expect(runs.reduce((n,r)=>n+r.popups,0)/runs.reduce((n,r)=>n+r.years,0)).toBeGreaterThan(0.8);});
+ it('retains the safeguard against long silent runs',()=>{for(const r of runs)expect(r.quietMax).toBeLessThanOrEqual(RHYTHM.MAX_QUIET_RUN+1);});
+ it('actually encounters converted writing across separate lives',()=>{expect(new Set(runs.flatMap(r=>[...r.converted])).size).toBeGreaterThan(30);expect(new Set(runs.flatMap(r=>[...r.ids])).size).toBeGreaterThan(150);});
+ it('never offers a retired opening, continuation or callback',()=>{
+  const state=createLife();state.age=30;const retired=ALL_EVENTS.filter(e=>e.legacyNarrative);expect(retired.length).toBeGreaterThan(300);
+  for(const e of retired){expect(isEventEligible(state,e)).toBe(false);expect(isEventPlayable(state,e)).toBe(false);}
+ });
 });

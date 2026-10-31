@@ -30,7 +30,7 @@ export function EventModal({ state, event, onChoose, onProfessionalClient }: Pro
   const adviser = client?.definition.family === 'medicine' && client.selected ? medicalAdviser(state,client.record,client.selected.id) : undefined;
   const choices = event.choices.filter((c) => isChoiceAvailable(state, c));
   const story = state.pendingEvent?.storyInstanceId
-    ? state.world.activeStories.find((item) => item.id === state.pendingEvent!.storyInstanceId)
+    ? state.world.activeStories.find((item) => item.id === state.pendingEvent!.storyInstanceId && item.status === 'active')
     : undefined;
 
   // Completion belongs to this passage and its cast. Keying the reveal avoids

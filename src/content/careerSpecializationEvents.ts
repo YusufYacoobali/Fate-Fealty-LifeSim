@@ -1,18 +1,18 @@
 import { CAREER_SPECIALIZATIONS } from '@/data/careerSpecializations';
 import { PRACTICE_DECISIONS, PRACTICE_PROBLEMS, PRACTICE_RESPONSES } from '@/data/practiceDecisions';
 import type { GameEvent } from '@/types/game';
-import { PROFESSIONAL_STORIES, immediateProfessionalBranch } from '@/data/professionalStories';
+import { PROFESSIONAL_STORIES } from '@/data/professionalStories';
 export const CAREER_SPECIALIZATION_EVENTS: GameEvent[] = PROFESSIONAL_STORIES.flatMap(story => [
   {
     id: `profession_${story.id}`, title: story.title, text: story.text, category: 'peasant', domain: 'career', arcNodeOnly: true, actorRoles: {},
     choices: story.choices.map((label, i) => ({
       id: `approach_${i}`, label, costGold: i === 2 ? 8 : undefined,
-      outcome: { text: i === 0 ? 'You take the evidence and make the agreement openly. Its consequences will be tested next year.' : i === 1 ? 'You accept the profitable shortcut. Your client agrees to keep the papers; your rival knows where they are.' : 'You pay eight gold to retain an assistant. Their work will be tested with yours.',
-        effects: { gold: i === 2 ? -8 : 0, professional: { family: story.family, caseId: story.id, stage: 'approach', choice: i } }, next: `profession_${story.id}_verdict`, nextWhen: 'nextYear' as const, tone: i === 1 ? 'bad' as const : 'plain' as const },
+      outcome: { text: story.ending[i],
+        effects: { gold: i === 2 ? -8 : 0, professional: { family: story.family, caseId: story.id, stage: 'approach', choice: i } }, tone: i === 1 ? 'bad' as const : 'plain' as const },
     })),
   },
   {
-    id: `profession_${story.id}_verdict`, title: `${story.title} · THE RECKONING`, text: story.followup, category: 'peasant', domain: 'career', arcNodeOnly: true, actorRoles: {},
+    legacyNarrative:true, id: `profession_${story.id}_verdict`, title: `${story.title} · THE RECKONING`, text: story.followup, category: 'peasant', domain: 'career', arcNodeOnly: true, actorRoles: {},
     choices: [
       { id: 'honour', label: 'Stand by the agreement', outcome: { text: 'The hearing records your decision and its consequences.', effects: { professional: { family: story.family, caseId: story.id, stage: 'finish', choice: 0 } }, tone: 'plain' } },
       { id: 'reconsider', label: 'Retract the shortcut and make restitution (6g)', costGold: 6, outcome: { text: 'You pay restitution and place the evidence before the hearing.', effects: { professional: { family: story.family, caseId: story.id, stage: 'finish', choice: 1 } }, tone: 'plain' } },
@@ -36,8 +36,6 @@ const ACCOUNTS: Record<string, [string, string, string, string, string]> = {
 };
 for (const story of PROFESSIONAL_STORIES) {
   const texts = ACCOUNTS[story.id];
-  const opening = CAREER_SPECIALIZATION_EVENTS.find(e => e.id === `profession_${story.id}`)!;
-  opening.choices.forEach((choice, i) => { choice.outcome!.text = texts[i]; if (immediateProfessionalBranch(story.id, i)) { delete choice.outcome!.next; delete choice.outcome!.nextWhen; } });
   const verdict = CAREER_SPECIALIZATION_EVENTS.find(e => e.id === `profession_${story.id}_verdict`)!;
   verdict.choices[0].label = texts[3]; verdict.choices[1].label = `${texts[4]} (6g)`;
   verdict.choices[0].outcome!.text = `Your account enters the record: ${story.title.toLowerCase()}. The recorded agreement determines who pays and who is believed.`;

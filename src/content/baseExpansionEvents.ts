@@ -564,7 +564,7 @@ ageMin: 16,
 requires: { missingTags: ['at_war'] },
 choices: [
       { label: 'Fix it before muster', outcome: { text: 'You fix the banner and earn respect from everyone who can read cloth.', effects: { wits: 4, reputation: 3, path: { martial: 1 } }, tone: 'good' } },
-      { label: 'Call it strategy', outcome: { text: 'The captain loves it. Confusion, he says, is half of war and most of command.', effects: { charm: 4, addTags: ['at_war'], path: { martial: 2 } }, tone: 'plain', next: 'arc_war_1', nextWhen: 'now' } },
+      { label: 'Call it strategy', outcome: { text: 'The captain loves it. Confusion, he says, is half of war and most of command.', effects: { charm: 4, addTags: ['at_war'], path: { martial: 2 } }, tone: 'plain', next: 'arc_war_2', nextWhen: 'now' } },
     ]
 },
   {

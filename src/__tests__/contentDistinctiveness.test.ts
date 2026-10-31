@@ -16,7 +16,7 @@ import { DOMAIN_STORY_COPY } from '@/content/stories/domains';
 describe('content distinctiveness', () => {
   it('no choice label is offered by more than six events', () => {
     const uses = new Map<string, string[]>();
-    for (const event of ALL_EVENTS) {
+    for (const event of ALL_EVENTS.filter(e=>!e.legacyNarrative)) {
       for (const choice of event.choices) {
         uses.set(choice.label, [...(uses.get(choice.label) ?? []), event.id]);
       }
@@ -27,7 +27,7 @@ describe('content distinctiveness', () => {
 
   it('no outcome passage is reused by more than six events', () => {
     const uses = new Map<string, number>();
-    for (const event of ALL_EVENTS) {
+    for (const event of ALL_EVENTS.filter(e=>!e.legacyNarrative)) {
       for (const choice of event.choices) {
         for (const outcome of [choice.outcome, choice.success, choice.failure]) {
           if (outcome?.text) uses.set(outcome.text, (uses.get(outcome.text) ?? 0) + 1);
@@ -68,7 +68,7 @@ describe('house style', () => {
         }
       }
     }
-    for (const event of ALL_EVENTS) {
+    for (const event of ALL_EVENTS.filter(e=>!e.legacyNarrative)) {
       out.push([event.id, event.title]);
       if (typeof event.text === 'string') out.push([event.id, event.text]);
       for (const choice of event.choices) {
@@ -129,7 +129,7 @@ describe('house style', () => {
 describe('chain integrity', () => {
   it('event titles are unique — chain gating matches on them', () => {
     const counts = new Map<string, number>();
-    for (const event of ALL_EVENTS) counts.set(event.title, (counts.get(event.title) ?? 0) + 1);
+    for (const event of ALL_EVENTS.filter(e=>!e.legacyNarrative)) counts.set(event.title, (counts.get(event.title) ?? 0) + 1);
     expect([...counts].filter(([, n]) => n > 1).map(([title]) => title)).toEqual([]);
   });
 
@@ -153,33 +153,14 @@ describe('chain integrity', () => {
   });
 });
 
-describe('story branch reachability', () => {
-  // Guards against writing an ending nobody can reach: the graph looks fine,
-  // but no choice on the deciding beat ever sets the variable it reads.
-  it('every branch transition is produced by a choice on its own beat', () => {
-    const branching = PERSISTENT_STORY_TEMPLATES.flatMap((story) =>
-      Object.values(story.beats).filter((beat) => (beat.transitions ?? []).length > 0),
-    );
-    // If this drops to zero the reachability check below is passing vacuously.
-    expect(branching.length).toBeGreaterThan(20);
-  });
-
-  it('reaches both endings of every story from its deciding beat', () => {
-    const byId = new Map(ALL_EVENTS.map((event) => [event.id, event]));
-    const unreachable: string[] = [];
-    for (const story of PERSISTENT_STORY_TEMPLATES) {
-      for (const beat of Object.values(story.beats)) {
-        const event = byId.get(beat.eventId);
-        if (!event) continue;
-        for (const transition of beat.transitions ?? []) {
-          const produced = event.choices.some((choice) => [choice.outcome, choice.success, choice.failure].some((outcome) => {
-            const value = outcome?.effects?.storyVariables?.[transition.when.variable];
-            return transition.when.truthy ? Boolean(value) : value === transition.when.equals;
-          }));
-          if (!produced) unreachable.push(`${story.id}/${beat.id} -> ${transition.beatId}`);
-        }
-      }
-    }
-    expect(unreachable).toEqual([]);
-  });
+describe('single-year branch coverage',()=>{
+ it('has a non-vacuous reviewed conversion for every persistent template',()=>{
+  const converted=ALL_EVENTS.filter(e=>!e.legacyNarrative&&e.convertedFrom&&!e.convertedFrom.includes(':'));
+  expect(converted).toHaveLength(29);
+  for(const e of converted){expect(e.choices.length).toBeGreaterThanOrEqual(2);expect(new Set(e.choices.map(c=>c.outcome?.text??c.success?.text)).size).toBe(e.choices.length);}
+ });
+ it('contains no continuation edge in any converted scene',()=>{
+  const converted=ALL_EVENTS.filter(e=>!e.legacyNarrative&&e.convertedFrom);expect(converted.length).toBeGreaterThan(100);
+  for(const e of converted)for(const c of e.choices)for(const o of [c.outcome,c.success,c.failure])expect(o?.next).toBeUndefined();
+ });
 });

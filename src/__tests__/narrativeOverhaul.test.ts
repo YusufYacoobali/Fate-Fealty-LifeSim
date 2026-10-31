@@ -1,3 +1,4 @@
+import {singleYearFixture} from './singleYearFixtures';
 import { ALL_EVENTS, EVENTS_BY_ID } from '@/content';
 import { CAREERS } from '@/data/careers';
 import { createLife, cloneState, syncPlayerToWorld } from '@/engine/gameState';
@@ -60,14 +61,13 @@ it('all authored branches execute, and every declared major scenario can change 
   if(e.stakes==='major')expect({id:e.id,major}).toEqual({id:e.id,major:true});
  }
 });
-it('every callback names a real source choice; expired or deceased actors cannot be substituted',()=>{
- for(const e of ALL_EVENTS.filter(e=>e.callback)){
-  const spec=e.callback!,source=EVENTS_BY_ID[spec.eventId];expect(source).toBeDefined();
-  for(const choiceId of spec.choiceIds)expect(source.choices.some(c=>c.id===choiceId)).toBe(true);
-  const s=fixture(e);s.world.history.push({id:'past',year:s.world.currentYear-1,type:'choice',eventId:source.id,resolvedChoiceId:spec.choiceIds[0],actorBindings:{[spec.roleMap?.other??'other']:'merek'},participantIds:[s.playerCharacterId,'merek'],familyIds:[s.world.characters[s.playerCharacterId].birthFamilyId!],causes:[source.title],summary:'A specific past choice',salience:3});
-  const bindings=bindEventActors(s,e);expect(bindings).toEqual({other:'merek'});
-  s.world.characters.merek.alive=false;expect(isEventPlayable(s,e)).toBe(false);
-  s.world.characters.merek.alive=true;s.world.currentYear+=20;expect(isEventPlayable(s,e)).toBe(false);
+it('converts all callback premises into current circumstances without a source-choice timer',()=>{
+ const old=ALL_EVENTS.filter(e=>e.callback);expect(old).toHaveLength(48);
+ for(const e of old){
+  expect(e.legacyNarrative).toBe(true);const current=ALL_EVENTS.find(c=>c.convertedFrom==='callback:'+e.id)!;
+  expect(current).toBeDefined();expect(current.callback).toBeUndefined();
+  const s=singleYearFixture(current);expect(isEventPlayable(s,current)).toBe(true);
+  s.world.currentYear+=20;expect(isEventPlayable(s,current)).toBe(true);
  }
 });
 it('retains Premium gates in both new royal scenes and their callbacks',()=>{

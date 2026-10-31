@@ -1,5 +1,11 @@
-import { legacyNarrativeTheme } from './narrativeThemes';
-import { NARRATIVE_CALLBACK_EVENTS } from './narrativeCallbackEvents';
+import {CHILDHOOD_DEPTH_EVENTS} from './childhoodDepthEvents';
+import {SINGLE_YEAR_STORIES} from './singleYearStories';
+import {SINGLE_YEAR_VILLAGE,SALVAGED_VILLAGE_SCENES} from './singleYearVillage';
+import {CIRCUMSTANCE_EVENTS} from './circumstanceEvents';
+import {LEGACY_CALLBACK_EVENTS} from './legacyCallbackEvents';
+import {completeForecast} from '@/engine/choiceRisk';
+import { singleYearTheme, legacyNarrativeTheme } from './narrativeThemes';
+import {sharedNarrativeTheme} from './sharedNarrativeThemes';
 import { NARRATIVE_RARE_EVENTS } from './narrativeRareEvents';
 import { NARRATIVE_HEALTH_EVENTS } from './narrativeHealthEvents';
 import { NARRATIVE_FAITH_EVENTS } from './narrativeFaithEvents';
@@ -38,7 +44,7 @@ import { ACTIVITY_CONSEQUENCE_EVENTS } from './activityConsequenceEvents';
 import { LEGAL_SYSTEM_EVENTS } from '@/engine/legalEngine';
 
 const RAW_EVENTS: GameEvent[] = [
-  ...NARRATIVE_CALLBACK_EVENTS,
+  ...CHILDHOOD_DEPTH_EVENTS, ...LEGACY_CALLBACK_EVENTS, ...CIRCUMSTANCE_EVENTS, ...SINGLE_YEAR_STORIES, ...SINGLE_YEAR_VILLAGE, ...SALVAGED_VILLAGE_SCENES,
   ...NARRATIVE_FAMILY_EVENTS, ...NARRATIVE_ROMANCE_EVENTS, ...NARRATIVE_CRIME_EVENTS, ...NARRATIVE_WORK_EVENTS, ...NARRATIVE_POLITICS_EVENTS, ...NARRATIVE_FAITH_EVENTS, ...NARRATIVE_HEALTH_EVENTS, ...NARRATIVE_RARE_EVENTS,
   ...ROYAL_COURT_EVENTS,
   ...CAREER_SPECIALIZATION_EVENTS,
@@ -98,23 +104,24 @@ function normaliseEvent(event: GameEvent): GameEvent {
   } : undefined);
   return {
     ...event,
+    legacyNarrative: event.legacyNarrative || event.id.startsWith('story_') || !!event.chain || ['arc_marriage_2','arc_war_1'].includes(event.id),
     domain,
     rarity: event.rarity ?? (event.premium ? 'rare' : 'common'),
     cooldownYears: event.cooldownYears ?? 15,
-    repetitionGroup: event.repetitionGroup ?? legacyNarrativeTheme(event.id) ?? `${domain}:${event.arc ?? event.id}`,
+    repetitionGroup: sharedNarrativeTheme(event.id,typeof event.text==='string'?event.text:'') ?? singleYearTheme(event.id) ?? event.repetitionGroup ?? legacyNarrativeTheme(event.id) ?? `${domain}:${event.arc ?? event.id}`,
     actorRoles,
     editorialScore: event.editorialScore ?? (event.once || event.arc ? 4 : 3),
     choices: event.choices.map((choice, index) => ({
       ...choice,
       id: choice.id ?? `${event.id}_choice_${index + 1}`,
-      forecast: choice.forecast ?? { risk: choice.successChance != null ? 'medium' : 'low', positive: ['A distinct response'], negative: choice.costGold ? [`Costs ${choice.costGold} gold`] : ['The outcome may be remembered'] },
+      forecast: completeForecast(choice),
     })),
   };
 }
 
 const NORMALISED_EVENTS = RAW_EVENTS.map(normaliseEvent);
-const selectable = NORMALISED_EVENTS.filter((event) => !event.arcNodeOnly);
-const internal = NORMALISED_EVENTS.filter((event) => event.arcNodeOnly);
+const selectable = NORMALISED_EVENTS.filter((event) => !event.arcNodeOnly && !event.legacyNarrative);
+const internal = NORMALISED_EVENTS.filter((event) => event.arcNodeOnly || event.legacyNarrative);
 
 for (const [domain, floor] of Object.entries(DOMAIN_FLOORS) as Array<[ContentDomain, number]>) {
   const count = selectable.filter((event) => event.domain === domain).length;

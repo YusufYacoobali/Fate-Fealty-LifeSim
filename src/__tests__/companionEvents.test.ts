@@ -47,7 +47,7 @@ describe('companion events add people to the Kin tab', () => {
   it('choosing to rejoice adds a living sibling', () => {
     const ev = EVENTS_BY_ID['family_sibling_born'];
     const s = makeState({ age: 5 });
-    applyChoice(s, ev, ev.choices[0]);
+    s.pendingEvent={eventId:ev.id};applyChoice(s, ev, ev.choices[0]);
     expect(living(s, 'sibling')).toBe(1);
   });
 
@@ -63,7 +63,7 @@ describe('companion events add people to the Kin tab', () => {
     const ev = EVENTS_BY_ID['child_first_friend'];
     const s = makeState({ age: 9 });
     const before = living(s, 'friend');
-    applyChoice(s, ev, ev.choices[0]);
+    s.pendingEvent={eventId:ev.id};applyChoice(s, ev, ev.choices[0]);
     expect(living(s, 'friend')).toBe(before + 1);
   });
 
@@ -81,7 +81,7 @@ describe('companion events add people to the Kin tab', () => {
   it('letting the cooper stew creates a named rival', () => {
     const ev = EVENTS_BY_ID['peasant_jealous_rival'];
     const s = makeState({ age: 20, reputation: 10 });
-    applyChoice(s, ev, ev.choices[1]);
+    s.pendingEvent={eventId:ev.id};applyChoice(s, ev, ev.choices[1]);
     expect(s.kin.some((k) => k.alive && k.kind === 'foe' && k.name === 'Aldwin')).toBe(true);
   });
 
@@ -92,7 +92,7 @@ describe('companion events add people to the Kin tab', () => {
 
     const knight = makeState({ age: 25, rankIdx: 2 });
     expect(isEventEligible(knight, ev)).toBe(true);
-    applyChoice(knight, ev, ev.choices[0]);
+    knight.pendingEvent={eventId:ev.id};applyChoice(knight, ev, ev.choices[0]);
     expect(living(knight, 'liege')).toBe(1);
     // Sworn once: a second oath is no longer eligible.
     knight.firedOnce = []; // even ignoring `once`, the cap alone blocks it

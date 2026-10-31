@@ -23,10 +23,12 @@ const root: GameEvent = {
   ],
 };
 
+function present(s:ReturnType<typeof makeState>,event:GameEvent,choice:GameEvent['choices'][number]){s.pendingEvent={eventId:event.id};return applyChoice(s,event,choice);}
+
 describe('storyGraph.applyChoice', () => {
   it('applies a deterministic outcome and closes the event', () => {
     const s = makeState({ gold: 10 });
-    applyChoice(s, leaf, leaf.choices[0]);
+    present(s, leaf, leaf.choices[0]);
     expect(s.stats.wits).toBe(51);
     expect(s.pendingEvent).toBeNull();
     expect(s.feed[s.feed.length - 1].text).toBe('done');
@@ -34,30 +36,30 @@ describe('storyGraph.applyChoice', () => {
 
   it('honours successChance 1 (success) and 0 (failure)', () => {
     const win = makeState({ gold: 10 });
-    applyChoice(win, root, root.choices[0]);
+    present(win, root, root.choices[0]);
     expect(win.gold).toBe(15);
 
     const lose = makeState({ gold: 10 });
-    applyChoice(lose, root, root.choices[1]);
+    present(lose, root, root.choices[1]);
     expect(lose.gold).toBe(5);
   });
 
   it('records once-events in firedOnce', () => {
     const s = makeState();
-    applyChoice(s, root, root.choices[0]);
+    present(s, root, root.choices[0]);
     expect(s.firedOnce).toContain('test_root');
   });
 });
 
 describe('storyGraph arc queueing', () => {
-  it('queueArc + popReadyArc only releases on a later year', () => {
+  it('legacy queueArc cannot create a future chapter', () => {
     const s = makeState({ age: 5 });
     queueArc(s, 'war', 'arc_war_1');
     // Same year: not ready yet.
     expect(popReadyArc(s)).toBeNull();
     s.age = 6;
     const node = popReadyArc(s);
-    expect(node?.id).toBe('arc_war_1');
+    expect(node).toBeNull();
     // Consumed.
     expect(s.activeArcs.length).toBe(0);
   });
@@ -68,8 +70,8 @@ describe('storyGraph arc queueing', () => {
     const { ALL_EVENTS } = require('@/content');
     const oath: GameEvent = ALL_EVENTS.find((e: GameEvent) => e.id === 'knight_oath');
     const rideChoice = oath.choices[0];
-    const result = applyChoice(s, oath, rideChoice);
-    expect(result.openNow?.id).toBe('arc_war_1');
-    expect(s.pendingEvent?.eventId).toBe('arc_war_1');
+    const result = present(s, oath, rideChoice);
+    expect(result.openNow?.id).toBe('arc_war_2');
+    expect(s.pendingEvent?.eventId).toBe('arc_war_2');
   });
 });

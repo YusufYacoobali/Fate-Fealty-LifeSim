@@ -61,7 +61,7 @@ export interface ProfessionalRecord {
   actionsYear: number;
   actionsUsed: number;
   lastWorkedYear: number;
-  matters: { kind?: 'practice'; ownerId?: string; requiredPremium?: boolean; success?: boolean; id: string; actorId: string; stage: number; openedYear?: number; decision?: string; resolved: boolean }[];
+  matters: { retired?: boolean; kind?: 'practice'; ownerId?: string; requiredPremium?: boolean; success?: boolean; id: string; actorId: string; stage: number; openedYear?: number; decision?: string; resolved: boolean }[];
 }
 export interface PatientCareRecord {
   id: string;

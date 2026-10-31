@@ -67,7 +67,7 @@ describe('specified life-depth acceptance scenarios', () => {
     expect(s.occupation.careerId).toBe('physician');
     expect(s.world.characters[s.playerCharacterId].professionalHistory!.medicine!.milestones).toContain('recognised_practice');
   });
-  it('B: a merchant heir inherits household credit, the same rival and an unfinished commercial dispute', () => {
+  it('B: a merchant heir inherits household credit and the same rival without an unfinished commercial chapter', () => {
     let s = born('merchant'); s.age = 25; s.occupation.careerId = 'hawker';
     for (let year = 0; year < 8; year++) {
       for (const id of ['negotiate_deal','commercial_rival']) s = act(s, { type: 'CAREER_ACTION',action: 'specialize',careerId: id });
@@ -82,11 +82,11 @@ describe('specified life-depth acceptance scenarios', () => {
     const record = s.world.characters[heir.id].professionalHistory!.trade!;
     expect(record.rivalId).toBe(old.rivalId);
     expect(record.reputation).toBe(Math.floor(old.reputation / 2));
-    expect(record.matters.find(m => m.id === 'wool_mark')!.resolved).toBe(false);
-    s = nextYear(s);
-    expect(dueProfessionalEventId(s)).toBe('profession_wool_mark_verdict');
-    s.pendingEvent = { eventId: dueProfessionalEventId(s)! }; s = resolve(s);
-    expect(s.world.characters[heir.id].professionalHistory!.trade!.milestones).toContain('commercial_legacy');
+    expect(old.matters.find(m=>m.id==='wool_mark')?.resolved).toBe(true);
+    expect(old.milestones).toContain('commercial_legacy');
+    expect(record.matters.some(m=>!m.resolved)).toBe(false);
+    s=nextYear(s);expect(dueProfessionalEventId(s)).toBeUndefined();
+    expect(s.world.characters[heir.id].professionalHistory!.trade!.rivalId).toBe(old.rivalId);
   });
   it('C: a noble school rival becomes the same rival in adult court work', () => {
     let s = born('noble'); while (s.age < 5) s = nextYear(s);

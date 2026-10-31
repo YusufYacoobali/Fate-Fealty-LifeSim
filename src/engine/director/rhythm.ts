@@ -4,7 +4,7 @@ import { chance, rnd } from '../random';
 /**
  * What kind of year this is going to be.
  *
- * The old director asked one question — "is a story beat due, and if not, roll
+ * The original director asked one question — "is a story beat due, and if not, roll
  * 0.34 for a random event" — which produced a flat, memoryless sequence. A year
  * felt the same at eighteen as at sixty, nothing built, and nothing was ever
  * owed to the player. This decides the *shape* of the year first and only then
@@ -98,34 +98,10 @@ export function chooseBeatKind(
 ): BeatKind {
   const rhythm = readRhythm(state);
 
-  // A life closing out owes the player its endings before anything else.
-  if (options.nearingEnd && options.hasDueThread) return 'thread';
-
-  // Guarantee: never two silent years running.
-  const mustAct = rhythm.quietRun >= RHYTHM.MAX_QUIET_RUN;
-
-  // The dopamine beat. Fires on a variable schedule, and the longer it is
-  // overdue the harder it pulls, so a cold streak self-corrects.
+  // Old thread counters are historical only. Fresh situations fill that space.
   if (chance(rewardPressure(rhythm))) return 'reward';
-
-  // Hard release valve, and it has to come before every other thread branch.
-  // With the slots full there is nearly always a beat due, so an unguarded
-  // "serve a thread if one is waiting" fallback further down turned whole lives
-  // into an unbroken queue of chapters — measured at fifty-six in a row.
-  if (rhythm.threadRun >= RHYTHM.MAX_THREAD_RUN) {
-    return options.canOpen && state.age >= RHYTHM.CHILDHOOD_UNTIL && chance(0.4) ? 'opening' : 'standalone';
-  }
-
-  // Continuing beats starting, but only up to the cap above.
-  if (options.hasDueThread) return 'thread';
-
-  if (options.canOpen && state.age >= RHYTHM.CHILDHOOD_UNTIL) {
-    // Opening is likelier when little is in flight, so the board refills.
-    if (chance(mustAct ? 0.75 : 0.45)) return 'opening';
-  }
-
-  if (mustAct) return 'standalone';
-  return chance(0.62) ? 'standalone' : 'quiet';
+  if (rhythm.quietRun >= RHYTHM.MAX_QUIET_RUN) return 'standalone';
+  return chance(state.age < 5 ? 0.82 : 0.98) ? 'standalone' : 'quiet';
 }
 
 /** Fold this year's outcome back into the rhythm counters. */

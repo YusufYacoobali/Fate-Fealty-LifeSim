@@ -1,10 +1,12 @@
+import {QUALITY_CHAIN_SPECS} from './qualityAmbientEvents';
+import {LEGACY_CALLBACK_EVENTS} from './legacyCallbackEvents';
 import { ANNUAL_MESSAGES } from './annualMessages';
 import { ACTIVITY_DEFS } from '@/data/activities';
 import { CAREERS } from '@/data/careers';
 import { ContentDomain, Effects, GameEvent } from '@/types/game';
 import { ALL_EVENTS, AMBIENT_EVENTS, EVENTS_BY_ID } from './index';
 import { HEALTH_CONDITIONS } from './healthConditions';
-import { PERSISTENT_STORY_TEMPLATES } from './persistentStories';
+import { LEGACY_STORY_TEMPLATES, PERSISTENT_STORY_TEMPLATES } from './persistentStories';
 
 export interface ContentValidationIssue {
   level: 'error' | 'warning';
@@ -43,8 +45,8 @@ function createsLastingChange(event: GameEvent): boolean {
   return outcomes(event).some((effects) => Object.keys(effects).some((key) => !SIMPLE_STATS.has(key)));
 }
 
-function callbackEvent(event: GameEvent): boolean {
-  return Boolean(event.callback || event.requires?.hasWorldMemoryType?.length || event.requires?.hasKnownSecret || event.requires?.hasHealthCondition?.length);
+function circumstanceEvent(event: GameEvent): boolean {
+  return Boolean(event.convertedFrom?.startsWith('callback:') || event.callback || event.requires?.hasWorldMemoryType?.length || event.requires?.hasKnownSecret || event.requires?.hasHealthCondition?.length);
 }
 
 function tokensFrom(event: GameEvent): string[] {
@@ -68,19 +70,15 @@ export function validateContent(): ContentValidationIssue[] {
   if (actorBound < 100) error('actor_binding_floor', 'ambient', `Only ${actorBound} events bind recurring actors.`);
   const lasting = AMBIENT_EVENTS.filter(createsLastingChange).length;
   if (lasting < 90) error('lasting_effect_floor', 'ambient', `Only ${lasting} events declare a lasting effect.`);
-  const callbacks = AMBIENT_EVENTS.filter(callbackEvent).length;
-  if (callbacks < 50) error('callback_floor', 'ambient', `Only ${callbacks} events deliberately follow earlier state.`);
-  for (const domain of Object.keys(DOMAIN_FLOORS) as ContentDomain[]) {
-    const chainGroups = new Set(AMBIENT_EVENTS.filter((event) => event.domain === domain && (event.requires?.hasWorldMemoryType?.length || event.id.startsWith('quality_'))).map((event) => event.repetitionGroup));
-    if (chainGroups.size < 3) error('domain_chain_floor', domain, `Only ${chainGroups.size} interconnected chains are present.`);
-  }
+  const circumstances = AMBIENT_EVENTS.filter(circumstanceEvent).length;
+  if (circumstances < 50) error('circumstance_floor', 'ambient', `Only ${circumstances} events deliberately respond to current world state.`);
 
   // Distinctiveness. A count contract alone rewards bulk generation, so the
   // shape of the writing is checked too: a choice the player is offered in forty
   // different situations is not a choice, it is a shrug.
   const choiceLabelUses = new Map<string, string[]>();
   const outcomeTextUses = new Map<string, string[]>();
-  for (const event of ALL_EVENTS) {
+  for (const event of ALL_EVENTS.filter(e=>!e.legacyNarrative)) {
     for (const choice of event.choices) {
       choiceLabelUses.set(choice.label, [...(choiceLabelUses.get(choice.label) ?? []), event.id]);
       for (const outcome of [choice.outcome, choice.success, choice.failure]) {
@@ -97,7 +95,7 @@ export function validateContent(): ContentValidationIssue[] {
   }
 
   const seenEvents = new Set<string>();
-  for (const event of ALL_EVENTS) {
+  for (const event of ALL_EVENTS.filter(e=>!e.legacyNarrative)) {
     if (seenEvents.has(event.id)) error('duplicate_event', event.id, 'Duplicate event id.');
     seenEvents.add(event.id);
     if (!event.arcNodeOnly && (!event.cooldownYears || event.cooldownYears < 1)) error('missing_cooldown', event.id, 'Selectable events require a cooldown.');
@@ -139,55 +137,21 @@ export function validateContent(): ContentValidationIssue[] {
     }
   }
 
-  const freeStories = PERSISTENT_STORY_TEMPLATES.filter((story) => !story.premium);
-  const count = (scale: 'major' | 'medium' | 'relationship') => freeStories.filter((story) => story.scale === scale).length;
-  if (count('major') !== 8) error('major_story_total', 'stories', `Expected 8 free major stories, found ${count('major')}.`);
-  if (count('medium') !== 12) error('medium_story_total', 'stories', `Expected 12 free medium stories, found ${count('medium')}.`);
-  if (count('relationship') !== 6) error('relationship_story_total', 'stories', `Expected 6 free relationship stories, found ${count('relationship')}.`);
-  const premiumStories = PERSISTENT_STORY_TEMPLATES.filter((story) => story.premium).length;
-  if (premiumStories !== 3) error('premium_story_total', 'stories', `Expected 3 premium stories, found ${premiumStories}.`);
-
-  const seenStories = new Set<string>();
-  for (const story of PERSISTENT_STORY_TEMPLATES) {
-    if (seenStories.has(story.id)) error('duplicate_story', story.id, 'Duplicate story id.');
-    seenStories.add(story.id);
-    if (!story.beats[story.initialBeatId]) error('missing_initial_beat', story.id, `Initial beat ${story.initialBeatId} does not exist.`);
-    const reachable = new Set<string>();
-    const queue = [story.initialBeatId];
-    while (queue.length) {
-      const id = queue.shift()!;
-      if (reachable.has(id)) continue;
-      reachable.add(id);
-      const beat = story.beats[id];
-      if (!beat) continue;
-      if (beat.nextBeatId) queue.push(beat.nextBeatId);
-      for (const transition of beat.transitions ?? []) queue.push(transition.beatId);
-    }
-    for (const beat of Object.values(story.beats)) {
-      if (!EVENTS_BY_ID[beat.eventId]) error('missing_story_event', story.id, `Beat ${beat.id} references missing event ${beat.eventId}.`);
-      if (!reachable.has(beat.id)) error('unreachable_beat', story.id, `Beat ${beat.id} is unreachable.`);
-      if (beat.nextBeatId && !story.beats[beat.nextBeatId]) error('missing_next_beat', story.id, `Beat ${beat.id} points to ${beat.nextBeatId}.`);
-      for (const transition of beat.transitions ?? []) if (!story.beats[transition.beatId]) error('missing_transition_beat', story.id, `Beat ${beat.id} points to ${transition.beatId}.`);
-
-      // A branch is only structurally reachable. It is actually reachable only
-      // if some choice on this beat sets the variable the transition reads —
-      // otherwise the beat always falls through to its default and half the
-      // story is written, shipped, and never seen by anybody.
-      const branchEvent = EVENTS_BY_ID[beat.eventId];
-      if (!branchEvent) continue;
-      for (const transition of beat.transitions ?? []) {
-        const produced = branchEvent.choices.some((choice) => [choice.outcome, choice.success, choice.failure]
-          .some((outcome) => {
-            const value = outcome?.effects?.storyVariables?.[transition.when.variable];
-            if (transition.when.truthy) return Boolean(value);
-            return value === transition.when.equals;
-          }));
-        if (!produced) {
-          error('unreachable_branch', story.id, `Beat ${beat.id} branches to ${transition.beatId} on ${transition.when.variable}=${String(transition.when.equals ?? 'truthy')}, but no choice in ${beat.eventId} sets it.`);
-        }
+  if(PERSISTENT_STORY_TEMPLATES.length)error('active_story_templates','stories','Authored multi-year templates must remain retired.');
+  for(const source of [...LEGACY_STORY_TEMPLATES.map(t=>t.id),...QUALITY_CHAIN_SPECS.map(c=>'chain:'+c.id),...LEGACY_CALLBACK_EVENTS.map(e=>'callback:'+e.id)]) {
+    const converted=ALL_EVENTS.filter(e=>!e.legacyNarrative&&e.convertedFrom===source);
+    if(!converted.length)error('missing_conversion',source,'Legacy content needs a reviewed standalone conversion.');
+  }
+  for(const event of ALL_EVENTS.filter(e=>!e.legacyNarrative)) {
+    if(event.chain||event.callback)error('authored_chapter',event.id,'Live scenes cannot carry chapter or callback scheduling.');
+    for(const choice of event.choices)for(const outcome of [choice.outcome,choice.success,choice.failure]) {
+      if(outcome?.nextWhen==='nextYear')error('future_chapter',event.id,'No authored next-year continuation is allowed.');
+      if(outcome?.next){
+        const next=EVENTS_BY_ID[outcome.next];
+        if(next?.legacyNarrative)error('legacy_continuation',event.id,'New play cannot open retired content.');
+        if(next?.choices.some(c=>[c.outcome,c.success,c.failure].some(o=>!!o?.next)))error('long_immediate_chain',event.id,'At most one additional scene is allowed.');
       }
     }
-    if (story.recovery.recoveryBeatId && !story.beats[story.recovery.recoveryBeatId]) error('invalid_recovery', story.id, `Recovery beat ${story.recovery.recoveryBeatId} does not exist.`);
   }
 
   const annualIds = new Set<string>();

@@ -1,0 +1,16 @@
+{
+  "before": {
+    "independentResolutions": 51185,
+    "distinctIndependent": 49490,
+    "repeatedIndependentResolutions": 1695,
+    "repeatedIndependentShare": 0.03311517046009573,
+    "directedOrCallbackResolutions": 62395
+  },
+  "after": {
+    "independentResolutions": 96692,
+    "distinctIndependent": 96301,
+    "repeatedIndependentResolutions": 391,
+    "repeatedIndependentShare": 0.004043767840152236,
+    "directedOrCallbackResolutions": 10231
+  }
+}

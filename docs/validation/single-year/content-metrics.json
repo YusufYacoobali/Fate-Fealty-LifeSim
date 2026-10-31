@@ -1,0 +1,21 @@
+{
+  "registered": 877,
+  "live": 520,
+  "legacy": 357,
+  "independent": 427,
+  "liveFree": 483,
+  "livePremium": 37,
+  "byDomain": {
+    "family": 174,
+    "politics": 105,
+    "household": 30,
+    "career": 128,
+    "crime": 38,
+    "health": 32,
+    "rare": 13
+  },
+  "converted": 114,
+  "childhood": 48,
+  "liveFutureEdges": 0,
+  "validation": []
+}

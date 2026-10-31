@@ -1,0 +1,530 @@
+[
+  {
+    "id": "life_sibling_guarantor",
+    "choiceId": "settle",
+    "before": "You pay to retire the claim before it spreads. {{sibling}} is relieved; your trust in that relief is sharply reduced.",
+    "after": "The lender cancels the claim. {{sibling}} offers to sign a note of gratitude; you suggest leaving the pen where it is."
+  },
+  {
+    "id": "life_family_ladder",
+    "choiceId": "gift",
+    "before": "You lose some household wealth but gain a grateful neighbour. The lower shelves produce fewer requests for help.",
+    "after": "{{other}} takes the ladder home permanently. You lower the shelves and stop receiving requests to borrow your furniture’s only means of escape."
+  },
+  {
+    "id": "life_wet_mattress",
+    "choiceId": "repair",
+    "before": "You pay for the roof repair. The household’s shelter improves and supper no longer requires moving the bowls between drops.",
+    "after": "The bowls return to holding supper instead of rain. The repairer leaves with your money and, at last, the household’s weather."
+  },
+  {
+    "id": "life_wet_mattress",
+    "choiceId": "ignore",
+    "before": "You preserve your purse while damp consumes part of the household’s food and furnishings. The economy is mostly imaginary.",
+    "after": "You move the bowls and keep the coin. The damp eats part of the stores without once presenting an estimate."
+  },
+  {
+    "id": "life_child_witness",
+    "choiceId": "return",
+    "before": "You pay restitution and restore your child’s trust. The explanation is harder than the payment.",
+    "after": "You return the goods and pay the loss. {{child}} watches you admit the lesson before asking whether adults have to practise it too."
+  },
+  {
+    "id": "life_lovers_witness",
+    "choiceId": "truth",
+    "before": "You refuse the false testimony. {{other}} loses trust in your usefulness; your own legal record remains untouched.",
+    "after": "{{other}} folds the proposed testimony. Your memory has failed to become useful, an imperfection they find very difficult to forgive."
+  },
+  {
+    "id": "life_lovers_witness",
+    "choiceId": "lie",
+    "before": "You accept a promise of payment and acquire a real perjury charge. The promised money is still only a promise.",
+    "after": "The clerk records your oath and asks a second question. {{other}} remembers promising payment rather less clearly than you remember promising to have been there."
+  },
+  {
+    "id": "life_chaperone_bill",
+    "choiceId": "pay",
+    "before": "You pay for discretion and dubious eyesight. {{other}} is pleased to find affection has a solvent friend.",
+    "after": "{{other}} accepts payment for having seen less. The bill is exceptionally legible for work conducted in such poor light."
+  },
+  {
+    "id": "life_wrong_serenade",
+    "choiceId": "shelter",
+    "before": "You pay for a little hospitality and the humiliation passes without an audience. {{other}} remembers the door that actually opened.",
+    "after": "You pay for a dry place to wait and close the door on the audience. {{other}} discovers that a little hospitality travels farther than the verse."
+  },
+  {
+    "id": "life_spouse_guest",
+    "choiceId": "support",
+    "before": "You pay for the visit and improve the food reserve. {{spouse}} appreciates generosity that does not arrive attached to a complaint.",
+    "after": "The food is bought before the visit becomes an argument. {{spouse}} welcomes a contribution that has not brought its own speech."
+  },
+  {
+    "id": "life_shadow_rent",
+    "choiceId": "pay",
+    "before": "You pay seven gold for sunlight you were not using. {{other}} accepts the money without conceding the existence of clouds.",
+    "after": "{{other}} accepts seven gold for the shade. A cloud passes over the transaction without paying anything."
+  },
+  {
+    "id": "life_branding_substitute",
+    "choiceId": "refuse",
+    "before": "You keep your arm unmarked and disappoint {{other}}. It is an exceptionally affordable disappointment.",
+    "after": "{{other}} improves the offer, apparently believing your skin has failed to understand the first price. Your arm leaves the negotiation unchanged."
+  },
+  {
+    "id": "life_evidence_laundry",
+    "choiceId": "preserve",
+    "before": "You preserve the evidence and anger {{other}}. Your reputation improves for resisting a surprisingly domestic form of fraud.",
+    "after": "The stain stays on the cloth and out of the wash. {{other}} calls this an unreasonable use of cleanliness as evidence."
+  },
+  {
+    "id": "life_cell_supper",
+    "choiceId": "hoard",
+    "before": "You preserve your strength at the cost of your cellmate’s affection. The list remains remarkably well fed.",
+    "after": "You eat your share in full. {{other}} watches the bowl empty with an expression that will be present at the next division."
+  },
+  {
+    "id": "life_borrowed_alibi",
+    "choiceId": "decline",
+    "before": "You refuse the story and retain a clear legal record. {{other}} resents the accuracy of your memory.",
+    "after": "{{other}} asks whether you are quite certain you remember correctly. You remain inconveniently certain."
+  },
+  {
+    "id": "life_prison_key_copy",
+    "choiceId": "reveal",
+    "before": "You improve your public standing by surrendering the plan. {{other}} now regards you as a rival; your cell door is still locked.",
+    "after": "The gaoler takes the plan and examines the drawing. {{other}} now regards you as a rival; the drawing has still opened more conversation than doors."
+  },
+  {
+    "id": "life_innocent_fine",
+    "choiceId": "pay",
+    "before": "You pay the disputed amount without creating a criminal conviction. The receipt is more certain than the accusation ever was.",
+    "after": "The disputed fine is paid and a receipt supplied. {{other}} has settled the amount without once managing to establish the offence."
+  },
+  {
+    "id": "life_smuggler_coffin",
+    "choiceId": "inspect",
+    "before": "You refuse blind involvement in the smuggling. {{other}} withdraws the offer and a little of their goodwill.",
+    "after": "You ask to inspect the contents. {{other}} withdraws both the offer and the claim that curiosity is a virtue."
+  },
+  {
+    "id": "life_public_apology",
+    "choiceId": "pay",
+    "before": "You pay for a statement worth reading aloud. Your reputation improves; the document does not pardon a single offence.",
+    "after": "The clerk produces a statement worth reading. {{other}} looks relieved until you insist on reading the useful part aloud too."
+  },
+  {
+    "id": "life_prison_names",
+    "choiceId": "name",
+    "before": "You gain no automatic release. Instead, you add a false-testimony charge to the record and make {{other}} party to a dangerous confidence.",
+    "after": "The clerk adds your false statement to the file. {{other}} has supplied an entirely genuine reason for both of you to be questioned again."
+  },
+  {
+    "id": "life_prison_names",
+    "choiceId": "petition",
+    "before": "You pay for a truthful petition and gain public standing. The prison sentence continues while the complaint is considered.",
+    "after": "Your petition is lodged and receipted. {{other}} agrees that paper travels remarkably well through a door neither of you can open."
+  },
+  {
+    "id": "life_apprentice_left_handed",
+    "choiceId": "learn",
+    "before": "You gain practical experience by risking the appearance of not already knowing everything. {{other}} watches you put down the rulebook.",
+    "after": "You put down the rulebook and try the joint. {{other}} has the kindness not to mention how long the rulebook delayed this discovery."
+  },
+  {
+    "id": "life_shipment_dry_rain",
+    "choiceId": "delay",
+    "before": "You pay the booking fee and keep the capital out of the river. {{other}} dislikes your caution until it rains harder.",
+    "after": "The booking fee is lost; the goods remain dry. {{other}} begins to respect your caution at exactly the rate the rain increases."
+  },
+  {
+    "id": "life_shipment_dry_rain",
+    "choiceId": "cover",
+    "before": "You pay for better protection and gain trading experience without inventing a guaranteed profit. {{other}} trusts your terms more than the forecast.",
+    "after": "The covering is paid for and the terms recorded. {{other}} finds a contract rather less responsive to the weather than a promise."
+  },
+  {
+    "id": "life_merchant_silent_partner",
+    "choiceId": "terms",
+    "before": "You improve your working judgement and lose a little of {{other}}’s enthusiasm. Silence turns out to have conditions.",
+    "after": "{{other}} reads the limits on “silent” twice. The second reading is noticeably quieter."
+  },
+  {
+    "id": "life_wool_moths",
+    "choiceId": "reject",
+    "before": "You refuse damaged goods and gain experience. {{other}} says you are missing an opportunity; the moths are already taking theirs.",
+    "after": "{{other}} says you are missing an opportunity. A moth leaves the sample at that moment, having taken its share already."
+  },
+  {
+    "id": "life_wool_moths",
+    "choiceId": "salvage",
+    "before": "You pay for the damaged lot and gain craft experience sorting what can be used. No miraculous resale profit arrives with it.",
+    "after": "You buy the usable remnants and sort the damage honestly. {{other}} objects to your description chiefly because it explains the price."
+  },
+  {
+    "id": "life_field_rent_eel",
+    "choiceId": "petition",
+    "before": "You gain standing with neighbouring households and experience managing rents. {{other}} resents being asked to price the impossible.",
+    "after": "The neighbours sign your petition. {{other}} is asked to explain which part of the impossible eel can be accepted in payment."
+  },
+  {
+    "id": "life_plough_saint_day",
+    "choiceId": "repair",
+    "before": "You spend your rest on the repair and gain husbandry experience. The field’s prospects improve without altering the calendar.",
+    "after": "You repair the plough during the rest day. {{other}} praises the work after confirming that admiration does not count as joining it."
+  },
+  {
+    "id": "life_plough_saint_day",
+    "choiceId": "wait",
+    "before": "You gain faith and lose some work performance. {{other}} approves of a sacrifice you are both able to measure.",
+    "after": "The field waits and you keep the observance. {{other}} approves a sacrifice for which the accounts can supply an exact measure."
+  },
+  {
+    "id": "life_lawyer_missing_not",
+    "choiceId": "copy",
+    "before": "You keep the text honest and improve your professional standing. {{other}} pays you in displeasure rather than praise.",
+    "after": "You restore “not”. {{other}} discovers that the smallest word on the page has become the largest difficulty in the case."
+  },
+  {
+    "id": "life_lawyer_missing_not",
+    "choiceId": "omit",
+    "before": "You gain twelve gold and a forgery charge. One missing word has found a remarkably large place in the evidence.",
+    "after": "Twelve gold buys one absent word. The clerk makes room for it again beneath the heading for forgery."
+  },
+  {
+    "id": "life_lawyer_two_originals",
+    "choiceId": "investigate",
+    "before": "You gain experience from a slower, sounder inquiry. {{other}} must wait for a result that can survive being read twice.",
+    "after": "You compare the hands, dates and seals. {{other}} has to wait for an answer capable of surviving a second copy."
+  },
+  {
+    "id": "life_physician_certificate",
+    "choiceId": "examine",
+    "before": "You improve your professional performance by refusing to diagnose a date. {{other}} trusts your work more than your convenience.",
+    "after": "You insist on examining a person rather than a date. {{other}} looks offended until asked which one they would prefer treated."
+  },
+  {
+    "id": "life_physician_certificate",
+    "choiceId": "refuse",
+    "before": "You keep your record clean and lose a little client affection. The unexamined patient remains unexamined, whatever the letter wanted.",
+    "after": "The convenient certificate remains unsigned. {{other}} must find a physician whose memory can be hired separately from their eyes."
+  },
+  {
+    "id": "life_physician_jar",
+    "choiceId": "separate",
+    "before": "You gain experience and improve the client’s trust without inventing a diagnosis. The jar is now a problem of disposal rather than medicine.",
+    "after": "You label the jar and separate it from the diagnosis. {{other}} admits the patient may require more attention than the container."
+  },
+  {
+    "id": "life_poet_treason",
+    "choiceId": "refuse",
+    "before": "You preserve your freedom and lose the patron’s favour. The unfinished rhyme is an unusually safe silence.",
+    "after": "The patron takes back the underlined verse. For once your safest line is the one nobody will hear you recite."
+  },
+  {
+    "id": "life_soldier_boot_contract",
+    "choiceId": "reject",
+    "before": "You improve your performance and gain the company’s respect. {{other}} has to find a buyer with less demanding feet.",
+    "after": "The company inspects the boots and starts laughing with both feet. {{other}} seeks a buyer less committed to having a left and a right."
+  },
+  {
+    "id": "life_soldier_boot_contract",
+    "choiceId": "modify",
+    "before": "You gain practical experience and lose some health to the long repair. The men can march, though no one praises the shape.",
+    "after": "You work through the repair with sore hands. The men can march; praise is confined to the admirable discovery of two directions."
+  },
+  {
+    "id": "life_outlaw_fair_share",
+    "choiceId": "correct",
+    "before": "You improve your working judgement and the band’s trust. Arithmetic proves useful even in an irregular profession.",
+    "after": "You remove the goods nobody has stolen yet. {{other}} concedes that an honest account is a useful precaution in a dishonest profession."
+  },
+  {
+    "id": "life_outlaw_fair_share",
+    "choiceId": "advance",
+    "before": "You gain favour and record a real fourteen-gold obligation. The debt is the first item in the account to become entirely genuine.",
+    "after": "The band approves the advance. Fourteen gold is entered as your obligation, the first entirely genuine item on the page."
+  },
+  {
+    "id": "life_outlaw_fair_share",
+    "choiceId": "skim",
+    "before": "You gain ten gold and acquire a feud with {{other}}. An outlaw’s account can be corrected without consulting a court.",
+    "after": "You take ten gold. {{other}} corrects the account without a clerk, beginning with a very clear description of you."
+  },
+  {
+    "id": "life_falcon_supper",
+    "choiceId": "admit",
+    "before": "You pay for compensation and improve your family’s reputation for candour. {{other}} is relieved that the bird’s final journey need not become a border dispute.",
+    "after": "The compensation is paid. {{other}} accepts an honest account of the bird’s final journey, while the cook quietly removes the remaining wing."
+  },
+  {
+    "id": "life_falcon_supper",
+    "choiceId": "record",
+    "before": "You preserve an honest account and gain Crown standing. {{other}} loses some affection for the witness who refused to improve the story.",
+    "after": "You insist on an accurate account. {{other}} signs it with the expression of someone being asked to recognise dinner as a diplomatic document."
+  },
+  {
+    "id": "life_portrait_kneel",
+    "choiceId": "bow",
+    "before": "You gain favour with {{other}} at a small cost to your own dignity. The portrait accepts the salute without keeping score.",
+    "after": "{{other}} is delighted by your salute. The portrait accepts it with rather less need for encouragement."
+  },
+  {
+    "id": "life_portrait_kneel",
+    "choiceId": "refuse",
+    "before": "You preserve your reputation for independence and make a rival. {{other}} finds the portrait’s visitors much easier to manage.",
+    "after": "{{other}} becomes your rival. The portrait has acquired a considerably more agreeable social circle than its owner."
+  },
+  {
+    "id": "life_noble_flooded_cellar",
+    "choiceId": "repair",
+    "before": "You pay for the work. Household shelter and food reserves improve, and {{other}} accepts a useful alteration to custom.",
+    "after": "The stores are raised and the water kept out. {{other}} accepts a change in custom once custom has stopped smelling of wet grain."
+  },
+  {
+    "id": "life_noble_flooded_cellar",
+    "choiceId": "neglect",
+    "before": "You preserve your cash while the household loses stored food and wealth. The right to an empty cellar remains unimpaired.",
+    "after": "You keep the money. The household keeps its ancient right to a cellar now occupied chiefly by water."
+  },
+  {
+    "id": "life_noble_flooded_cellar",
+    "choiceId": "challenge",
+    "before": "You gain Commons standing and lose favour with {{other}}. The household’s current stores are not miraculously moved by the petition.",
+    "after": "The neighbours support the complaint. {{other}} asks whether the accumulated rights can also be expected to carry the buckets."
+  },
+  {
+    "id": "life_noble_empty_chapel",
+    "choiceId": "roof",
+    "before": "You improve the household’s shelter and keep the memorial on paper. {{other}} finds the living family’s gratitude less artistically satisfying.",
+    "after": "The living household receives a better roof. {{other}} keeps the memorial drawing dry beneath it and finds the arrangement artistically disappointing."
+  },
+  {
+    "id": "life_noble_empty_chapel",
+    "choiceId": "memorial",
+    "before": "You pay for the dedication and gain family reputation. Your existing rooms do not become drier because a mason spells your name correctly.",
+    "after": "The dedication is paid for. A mason spells your name correctly while rain continues to have difficulty recognising it at home."
+  },
+  {
+    "id": "life_noble_empty_chapel",
+    "choiceId": "wait",
+    "before": "You preserve the coin and lose a little favour with {{other}}. The rain continues to make its own argument.",
+    "after": "{{other}} leaves with both estimates. The rain submits its own argument without waiting for your patronage."
+  },
+  {
+    "id": "life_crown_sale_heir",
+    "choiceId": "reject",
+    "before": "You improve Crown standing and make a rival of {{other}}. The funeral improvements are returned without comment.",
+    "after": "You publish the offer and return the funeral improvements. {{other}} discovers how awkward it is to accuse a ruler of refusing a bribe."
+  },
+  {
+    "id": "life_crown_counterfeit_coin",
+    "choiceId": "refuse",
+    "before": "You improve public order and Crown standing. {{other}} abandons the suggestion that your face could replace a metal.",
+    "after": "The standard remains. {{other}} withdraws the suggestion that your face could be made to circulate in place of silver."
+  },
+  {
+    "id": "life_crown_counterfeit_coin",
+    "choiceId": "relief",
+    "before": "You spend twenty treasury gold on relief and improve food security. {{other}} sees money leave the account without becoming any lighter.",
+    "after": "Twenty treasury gold buys relief. {{other}} watches the money leave without finding any opportunity to make it lighter."
+  },
+  {
+    "id": "life_crown_private_trial",
+    "choiceId": "hear",
+    "before": "You refuse the execution and improve public order. {{other}} loses trust in your willingness to make justice convenient.",
+    "after": "The petition must wait for evidence. {{other}} is distressed to discover that the witnesses have been invited to contribute something."
+  },
+  {
+    "id": "life_fast_fish",
+    "choiceId": "object",
+    "before": "You gain public wit and lose {{other}}’s affection. The argument is not improved by your willingness to test it.",
+    "after": "{{other}} is asked whether the animal must swim before the classification takes effect. The argument becomes much less comfortable near the trough."
+  },
+  {
+    "id": "life_fast_fish",
+    "choiceId": "fast",
+    "before": "You keep your own observance and improve your relationship with {{other}} by declining to turn a meal into a trial.",
+    "after": "You keep your own observance and let the meal remain a meal. {{other}} puts away a defence longer than the animal’s pedigree."
+  },
+  {
+    "id": "life_ordeal_oven",
+    "choiceId": "refuse",
+    "before": "You refuse the ordeal, gain public standing and lose {{other}}’s favour. The oven remains available for bread.",
+    "after": "You ask which part of the oven can identify a liar. {{other}} objects to your tone; the baker would like the bread space back."
+  },
+  {
+    "id": "life_ordeal_oven",
+    "choiceId": "delay",
+    "before": "You pay to have your objection heard through ordinary testimony. Crown standing improves without the heat being mistaken for evidence.",
+    "after": "Your petition asks for ordinary testimony. {{other}} dislikes an objection that can be examined without warming the room."
+  },
+  {
+    "id": "life_pilgrim_miles",
+    "choiceId": "walk",
+    "before": "You spend your strength rather than money and gain faith. {{other}} loses a customer but cannot lengthen your road.",
+    "after": "You take the modest road yourself. {{other}} loses a customer and the power to add another mile whenever your purse is mentioned."
+  },
+  {
+    "id": "life_chapel_key",
+    "choiceId": "record",
+    "before": "You improve Commons standing and make {{other}} a rival. The key’s owner learns that waiting can be recorded too.",
+    "after": "You record the hungry households waiting outside. {{other}} discovers that a key can keep a door shut without keeping an account private."
+  },
+  {
+    "id": "life_miracle_roof",
+    "choiceId": "repair",
+    "before": "You improve your household’s standing through the contribution and gain Church favour. The work is paid for by coin, without claiming an unbuilt roof has already risen.",
+    "after": "Your contribution pays for the work. {{other}} records the coin, which has achieved rather more than the dry parchment did."
+  },
+  {
+    "id": "life_miracle_roof",
+    "choiceId": "observe",
+    "before": "You gain wit and lose {{other}}’s patience. The book remains impressively dry.",
+    "after": "You inspect the wonderfully dry record while the roof drips nearby. {{other}} finds your choice of comparison unhelpful."
+  },
+  {
+    "id": "life_pilgrim_bridge",
+    "choiceId": "detour",
+    "before": "You lose some strength to the detour and gain a little faith in the value of reaching your destination.",
+    "after": "You arrive tired by the longer road. {{other}} cannot deny that the destination improves a pilgrimage considerably."
+  },
+  {
+    "id": "life_pilgrim_bridge",
+    "choiceId": "warn",
+    "before": "You improve public order by challenging the dangerous claim. {{other}} acquires a rival who knows exactly which boards are missing.",
+    "after": "You point out the missing boards. {{other}} acquires a rival with a distressingly detailed knowledge of the miracle’s construction."
+  },
+  {
+    "id": "life_sermon_own_sin",
+    "choiceId": "evidence",
+    "before": "You improve public standing and lose {{other}}’s confidence in your willingness to make an example of someone.",
+    "after": "The allegation is left out for want of evidence. {{other}} must deliver the moral point without the convenient pleasure of naming you."
+  },
+  {
+    "id": "life_sermon_own_sin",
+    "choiceId": "general",
+    "before": "You preserve the moral point and improve Church standing. {{other}} discovers that an argument can survive without a named victim.",
+    "after": "The sermon keeps its argument and loses its named victim. {{other}} is disappointed by how well it still works."
+  },
+  {
+    "id": "life_silent_brother",
+    "choiceId": "help",
+    "before": "You spend some strength and gain faith. {{other}} joins you after finding there is nobody left to applaud.",
+    "after": "You take up the practical work. {{other}} joins you after discovering nobody is left to admire the refusal to speak."
+  },
+  {
+    "id": "life_saint_dog_bone",
+    "choiceId": "withdraw",
+    "before": "You improve Church standing by declining to manufacture certainty. {{other}} is disappointed that the dog will not be treated as a witness for the defence.",
+    "after": "You withdraw the claim. {{other}} regards the dog as a neglected witness for the defence, though it appears principally interested in the bone."
+  },
+  {
+    "id": "life_scaffold_blessing",
+    "choiceId": "secure",
+    "before": "You spend the time securing the work and gain practical experience. {{other}} concedes that the blessing need not do every part of the job.",
+    "after": "You fit the peg before climbing. {{other}} allows that a blessing need not be required to do the carpenter’s part as well."
+  },
+  {
+    "id": "life_scaffold_blessing",
+    "choiceId": "leave",
+    "before": "You keep your health and lose a little favour with {{other}}. The peg remains admirably available.",
+    "after": "{{other}} objects to your lack of confidence. The loose peg lies beside the platform, displaying admirable patience with both of you."
+  },
+  {
+    "id": "life_eye_cure",
+    "choiceId": "question",
+    "before": "You improve public standing by challenging the claim. {{other}} learns that a polished spoon is not a testimonial.",
+    "after": "You ask when the polished spoon last needed to recognise its family. {{other}} finds the demonstration less persuasive under questioning."
+  },
+  {
+    "id": "life_fever_work",
+    "choiceId": "work",
+    "before": "You lose health and the lung fever becomes more severe. {{other}} is impressed by an effort your body has not endorsed.",
+    "after": "The effort worsens the fever. {{other}} praises your determination until asked whether determination will also lift you out of bed."
+  },
+  {
+    "id": "life_quarry_shortcut",
+    "choiceId": "road",
+    "before": "You spend strength on the safe route and lose some favour with the guide. The road continues to justify its existence.",
+    "after": "You take the ordinary road. {{other}} calls it timid while walking over a surface that has the courtesy to remain underfoot."
+  },
+  {
+    "id": "life_furnace_quick_lime",
+    "choiceId": "wait",
+    "before": "You gain practical judgement and a little trust. {{other}} discovers that impatience is cheaper than a burn only until someone obeys it.",
+    "after": "You wait for the safe handling. {{other}} concedes that impatience is cheaper than a burn only until somebody obeys it."
+  },
+  {
+    "id": "life_boat_fare",
+    "choiceId": "unload",
+    "before": "You pay for a safer arrangement and gain {{other}}’s respect. The ferryman reluctantly accepts that cargo can miss a crossing.",
+    "after": "You pay to leave a bundle behind. The ferryman reluctantly accepts that cargo can survive the inconvenience of missing a crossing."
+  },
+  {
+    "id": "life_herbal_labels",
+    "choiceId": "discard",
+    "before": "You pay for ordinary food rather than an exciting diagnosis. {{other}} accepts the loss of the herbs.",
+    "after": "You buy ordinary food and discard the doubtful herbs. {{other}} laments a supper that will produce no medical discovery."
+  },
+  {
+    "id": "life_cough_false_warranty",
+    "choiceId": "buy",
+    "before": "You pay for a useless tonic and lose a little health. No disease is removed, and the guarantee remains admirably difficult to invoke.",
+    "after": "The tonic is useless and makes you feel worse. {{other}} points to the guarantee’s requirement that a deceased customer claim in person."
+  },
+  {
+    "id": "life_sickroom_witness",
+    "choiceId": "false",
+    "before": "You gain a little performance at the cost of health and a fraud charge. The declaration has not repaired the body it describes.",
+    "after": "The declaration reaches the employer before your strength does. The fraud complaint is much more capable of standing up than you are."
+  },
+  {
+    "id": "life_lightning_rod",
+    "choiceId": "refuse",
+    "before": "You preserve your life and gain public standing. {{other}} calls the crowd’s new distance a failure of confidence.",
+    "after": "You step away and describe the danger. {{other}} calls the crowd’s increasing distance a disappointing failure of confidence."
+  },
+  {
+    "id": "life_unclaimed_fortune",
+    "choiceId": "verify",
+    "before": "You refuse the unsupported claim and improve your judgement. {{other}} is suddenly less certain which country contains the fortune.",
+    "after": "You ask for the estate’s name before paying. {{other}} becomes less certain which country contains the fortune."
+  },
+  {
+    "id": "life_distant_chess",
+    "choiceId": "learn",
+    "before": "You gain judgement and a friendly bond with {{other}}. The little king is allowed to remain a piece of wood.",
+    "after": "{{other}} shows you why the wooden king cannot simply order the board rearranged. You learn more than either of you intended about government."
+  },
+  {
+    "id": "life_distant_chess",
+    "choiceId": "compare",
+    "before": "You gain charm and make a rival of {{other}}, who did not intend the lesson to require a defence before witnesses.",
+    "after": "Your comparison amuses the audience. {{other}} had not expected a wooden monarch to require a public defence."
+  },
+  {
+    "id": "life_escaped_pageant",
+    "choiceId": "pay",
+    "before": "You spend nine gold to help settle the dispute and improve public standing. The devil returns to work on unusually reasonable terms.",
+    "after": "The devil is paid and returns to work. {{other}} finds nine gold a surprisingly efficient instrument of salvation."
+  },
+  {
+    "id": "life_escaped_pageant",
+    "choiceId": "rewrite",
+    "before": "You gain performance skill and help the show continue without claiming anyone has been paid. {{other}} discovers that goodness can be made to quarrel with itself.",
+    "after": "You give the remaining virtues a quarrel among themselves. {{other}} discovers that goodness can fill an afternoon without paying a devil."
+  },
+  {
+    "id": "life_paper_castle",
+    "choiceId": "mock",
+    "before": "You gain a little wit and damage the acquaintance. {{other}} closes a gate that, for once, could not have kept you out.",
+    "after": "{{other}} shuts the tiny gate. It is the first part of the castle that has actually managed to keep you out."
+  },
+  {
+    "id": "life_traveller_last_word",
+    "choiceId": "listen",
+    "before": "You gain understanding and a deeper bond. {{other}} eventually stops translating and asks for more bread.",
+    "after": "{{other}} explains the word slowly, then stops translating and asks for more bread. You understand that part without help."
+  }
+]

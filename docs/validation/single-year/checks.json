@@ -1,0 +1,87 @@
+{
+  "date": "2026-10-31",
+  "implementation": "3e9c134",
+  "baseline": "d5506a0",
+  "controllerVersion": 4,
+  "controllerSha256": "552a5d9e0c2c2ea90062d475e1fa9b6d586ebcf2fa764bf1d83e9a977d0f7727",
+  "themeProbeSha256": "9271b11a32ea28cbf5d0dfca7d3b117976362b35e56d1d00e516887cb392eb84",
+  "baselineControllerMatches": true,
+  "baselineThemeProbeMatches": true,
+  "typecheck": {
+    "command": "npm run typecheck",
+    "result": "passed"
+  },
+  "unitAndSoakSuite": {
+    "command": "npm test -- --runInBand",
+    "result": "passed",
+    "suites": 92,
+    "tests": 912
+  },
+  "dynasties": {
+    "command": "MLS_FULL_SOAK=1 npm test -- --runInBand src/__tests__/persistentWorldFullSoak.test.ts -t 'three-generation dynasties'",
+    "result": "passed",
+    "dynasties": 100,
+    "generations": 3
+  },
+  "productionExport": {
+    "command": "NODE_ENV=production EXPO_OFFLINE=1 npx expo export --platform all --output-dir /tmp/fate-single-year-production",
+    "result": "passed",
+    "platforms": [
+      "web",
+      "ios",
+      "android"
+    ]
+  },
+  "browser": {
+    "result": "passed",
+    "states": 40,
+    "widths": [
+      280,
+      320,
+      390,
+      768
+    ],
+    "enlargedCases": 3,
+    "typewriterCases": 1,
+    "evidence": "browser.json"
+  },
+  "navigation": {
+    "result": "passed",
+    "tabs": 6,
+    "width": 280,
+    "textScale": 1.35,
+    "evidence": "navigation.json"
+  },
+  "writing": {
+    "exactOutcomeRevisions": 88,
+    "unchangedEffectChecks": 88,
+    "reportExamples": 11
+  },
+  "releaseConfiguration": {
+    "command": "npm run release:check",
+    "result": "blocked",
+    "reason": "Previously documented missing published Android TERMS_OF_USE_URL."
+  },
+  "remainingChecks": [
+    "Signed iOS/Android device acceptance",
+    "Real OS text scaling/reduced motion and sound/haptics",
+    "Purchase and restore acceptance",
+    "Existing account, privacy and store configuration"
+  ],
+  "cohorts": {
+    "controllerVersion": 4,
+    "seed": 840000,
+    "lastSeed": 842099,
+    "beforeLives": 2100,
+    "afterLives": 2100,
+    "afterAuthoredSchedules": 0,
+    "afterOpenAtDeath": 0,
+    "afterReloadComparisons": 5340,
+    "afterReloadInconsistencies": 0,
+    "afterThemeRecurrences": 0,
+    "deterministicPrefixReplayLives": 21,
+    "deterministicSampleHistoriesMatched": 14,
+    "beforeReportSha256": "26728086ba8a628f69dc1078270d3c1c5c370fe38ef0398847e1a9720bbd636d",
+    "afterReportSha256": "a713cf25bbfe66dfee145b57013bd3181911bea42f4fc902e5d21a37229fe9a1"
+  }
+}

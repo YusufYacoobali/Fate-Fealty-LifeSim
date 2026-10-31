@@ -1,0 +1,41 @@
+{
+  "results": [
+    {
+      "tab": "LIFE",
+      "width": 280,
+      "textEnlargement": 1.35,
+      "overflow": false
+    },
+    {
+      "tab": "DO",
+      "width": 280,
+      "textEnlargement": 1.35,
+      "overflow": false
+    },
+    {
+      "tab": "PEOPLE",
+      "width": 280,
+      "textEnlargement": 1.35,
+      "overflow": false
+    },
+    {
+      "tab": "HOLD",
+      "width": 280,
+      "textEnlargement": 1.35,
+      "overflow": false
+    },
+    {
+      "tab": "SHOP",
+      "width": 280,
+      "textEnlargement": 1.35,
+      "overflow": false
+    },
+    {
+      "tab": "ME",
+      "width": 280,
+      "textEnlargement": 1.35,
+      "overflow": false
+    }
+  ],
+  "errors": []
+}

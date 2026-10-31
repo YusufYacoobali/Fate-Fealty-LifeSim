@@ -1,0 +1,500 @@
+{
+  "browser": "Chromium production export",
+  "results": [
+    {
+      "id": "young_goat_headmaster",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Test Peer",
+        "Test Teacher"
+      ],
+      "overflow": false,
+      "choice": "teacher",
+      "reloadPreserved": true
+    },
+    {
+      "id": "young_goat_headmaster",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Test Peer",
+        "Test Teacher"
+      ],
+      "overflow": false,
+      "choice": "teacher",
+      "reloadPreserved": true
+    },
+    {
+      "id": "young_goat_headmaster",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Test Peer",
+        "Test Teacher"
+      ],
+      "overflow": false,
+      "choice": "teacher",
+      "reloadPreserved": true
+    },
+    {
+      "id": "young_goat_headmaster",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Test Peer",
+        "Test Teacher"
+      ],
+      "overflow": false,
+      "choice": "teacher",
+      "reloadPreserved": true
+    },
+    {
+      "id": "single_story_disputed_inheritance",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Mab"
+      ],
+      "overflow": false,
+      "choice": "contest",
+      "reloadPreserved": true
+    },
+    {
+      "id": "single_story_disputed_inheritance",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Mab"
+      ],
+      "overflow": false,
+      "choice": "contest",
+      "reloadPreserved": true
+    },
+    {
+      "id": "single_story_disputed_inheritance",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Mab"
+      ],
+      "overflow": false,
+      "choice": "contest",
+      "reloadPreserved": true
+    },
+    {
+      "id": "single_story_disputed_inheritance",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Mab"
+      ],
+      "overflow": false,
+      "choice": "contest",
+      "reloadPreserved": true
+    },
+    {
+      "id": "single_story_marriage_strain",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Constance"
+      ],
+      "overflow": false,
+      "choice": "agree",
+      "reloadPreserved": true
+    },
+    {
+      "id": "single_story_marriage_strain",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Constance"
+      ],
+      "overflow": false,
+      "choice": "agree",
+      "reloadPreserved": true
+    },
+    {
+      "id": "single_story_marriage_strain",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Constance"
+      ],
+      "overflow": false,
+      "choice": "agree",
+      "reloadPreserved": true
+    },
+    {
+      "id": "single_story_marriage_strain",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Constance"
+      ],
+      "overflow": false,
+      "choice": "agree",
+      "reloadPreserved": true
+    },
+    {
+      "id": "single_chain_caravan_partnership",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Leofric"
+      ],
+      "overflow": false,
+      "choice": "terms",
+      "reloadPreserved": true
+    },
+    {
+      "id": "single_chain_caravan_partnership",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Leofric"
+      ],
+      "overflow": false,
+      "choice": "terms",
+      "reloadPreserved": true
+    },
+    {
+      "id": "single_chain_caravan_partnership",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Leofric"
+      ],
+      "overflow": false,
+      "choice": "terms",
+      "reloadPreserved": true
+    },
+    {
+      "id": "single_chain_caravan_partnership",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Leofric"
+      ],
+      "overflow": false,
+      "choice": "terms",
+      "reloadPreserved": true
+    },
+    {
+      "id": "circumstance_shadow_household",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Wulfric"
+      ],
+      "overflow": false,
+      "choice": "mediate",
+      "reloadPreserved": true
+    },
+    {
+      "id": "circumstance_shadow_household",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Wulfric"
+      ],
+      "overflow": false,
+      "choice": "mediate",
+      "reloadPreserved": true
+    },
+    {
+      "id": "circumstance_shadow_household",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Wulfric"
+      ],
+      "overflow": false,
+      "choice": "mediate",
+      "reloadPreserved": true
+    },
+    {
+      "id": "circumstance_shadow_household",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Wulfric"
+      ],
+      "overflow": false,
+      "choice": "mediate",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_living_corpse",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Emma",
+        "Lord Aldric"
+      ],
+      "overflow": false,
+      "choice": "testify",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_living_corpse",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Emma",
+        "Lord Aldric"
+      ],
+      "overflow": false,
+      "choice": "testify",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_living_corpse",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Emma",
+        "Lord Aldric"
+      ],
+      "overflow": false,
+      "choice": "testify",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_living_corpse",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Emma",
+        "Lord Aldric"
+      ],
+      "overflow": false,
+      "choice": "testify",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_crown_private_trial",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Mab"
+      ],
+      "overflow": false,
+      "choice": "hear",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_crown_private_trial",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Mab"
+      ],
+      "overflow": false,
+      "choice": "hear",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_crown_private_trial",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Mab"
+      ],
+      "overflow": false,
+      "choice": "hear",
+      "reloadPreserved": true
+    },
+    {
+      "id": "life_crown_private_trial",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Mab"
+      ],
+      "overflow": false,
+      "choice": "hear",
+      "reloadPreserved": true
+    },
+    {
+      "id": "profession_bell_crack",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Percival",
+        "Joan"
+      ],
+      "overflow": false,
+      "choice": "approach_0",
+      "reloadPreserved": true
+    },
+    {
+      "id": "profession_bell_crack",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Percival",
+        "Joan"
+      ],
+      "overflow": false,
+      "choice": "approach_0",
+      "reloadPreserved": true
+    },
+    {
+      "id": "profession_bell_crack",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Percival",
+        "Joan"
+      ],
+      "overflow": false,
+      "choice": "approach_0",
+      "reloadPreserved": true
+    },
+    {
+      "id": "profession_bell_crack",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Percival",
+        "Joan"
+      ],
+      "overflow": false,
+      "choice": "approach_0",
+      "reloadPreserved": true
+    },
+    {
+      "id": "war_levy",
+      "width": 280,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Edwin"
+      ],
+      "overflow": false,
+      "choice": "war_levy_choice_1",
+      "reloadPreserved": true
+    },
+    {
+      "id": "war_levy",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Edwin"
+      ],
+      "overflow": false,
+      "choice": "war_levy_choice_1",
+      "reloadPreserved": true
+    },
+    {
+      "id": "war_levy",
+      "width": 390,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Edwin"
+      ],
+      "overflow": false,
+      "choice": "war_levy_choice_1",
+      "reloadPreserved": true
+    },
+    {
+      "id": "war_levy",
+      "width": 768,
+      "textEnlargement": 1,
+      "animated": false,
+      "actors": [
+        "Edwin"
+      ],
+      "overflow": false,
+      "choice": "war_levy_choice_1",
+      "reloadPreserved": true
+    },
+    {
+      "id": "young_goat_headmaster",
+      "width": 280,
+      "textEnlargement": 1.35,
+      "animated": false,
+      "actors": [
+        "Test Peer",
+        "Test Teacher"
+      ],
+      "overflow": false,
+      "choice": "teacher",
+      "reloadPreserved": true
+    },
+    {
+      "id": "single_story_disputed_inheritance",
+      "width": 280,
+      "textEnlargement": 1.35,
+      "animated": false,
+      "actors": [
+        "Mab"
+      ],
+      "overflow": false,
+      "choice": "contest",
+      "reloadPreserved": true
+    },
+    {
+      "id": "single_story_marriage_strain",
+      "width": 280,
+      "textEnlargement": 1.35,
+      "animated": false,
+      "actors": [
+        "Constance"
+      ],
+      "overflow": false,
+      "choice": "agree",
+      "reloadPreserved": true
+    },
+    {
+      "id": "young_goat_headmaster",
+      "width": 320,
+      "textEnlargement": 1,
+      "animated": true,
+      "actors": [
+        "Test Peer",
+        "Test Teacher"
+      ],
+      "overflow": false,
+      "choice": "teacher",
+      "reloadPreserved": true
+    }
+  ],
+  "errors": []
+}

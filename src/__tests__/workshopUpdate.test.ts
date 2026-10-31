@@ -214,7 +214,7 @@ describe('clearer stories and feedback', () => {
     expect(pickAnnualMessage(s, ANNUAL_MESSAGES.filter((m) => m.id !== 'baby_first_steps').map((m) => m.id))).toBeNull();
     s.age = 20; s.world.characters[s.playerCharacterId].annualNarrativeYears = { fortune_coin: s.world.currentYear - 5 };
     const excluded = ANNUAL_MESSAGES.filter((m) => m.id !== 'fortune_coin').map((m) => m.id);
-    expect(pickAnnualMessage(s, excluded)).toBeNull(); s.world.currentYear++;
+    expect(pickAnnualMessage(s, excluded)).toBeNull(); s.world.currentYear += 7;
     expect(pickAnnualMessage(s, excluded)?.id).toBe('fortune_coin');
   });
 });

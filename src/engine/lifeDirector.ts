@@ -56,10 +56,13 @@ export function ageUp(s: GameState): GameState {
     if (!msg) continue;
     annualMessageIds.push(msg.id);
     (s.world.characters[s.playerCharacterId].annualNarrativeYears ??= {})[msg.id] = s.world.currentYear;
+    (s.world.characters[s.playerCharacterId].annualThemeYears ??= {})[msg.theme] = s.world.currentYear;
     applyEffects(s, msg.effects);
+    // A flavour observation cannot decide a death before the year's actual hazards.
+    s.stats.health = Math.max(1, s.stats.health);
     pushFeed(s, `AGE ${s.age} · ${msg.tag}`, msg.tagColor, msg.text, msg.tone);
     checkDeath(s);
-    if (s.dead) return s; // a flavour beat can, rarely, be fatal
+    if (s.dead) return s;
   }
 
   // --- 3. attrition of age + ongoing world states ---

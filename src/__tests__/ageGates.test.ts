@@ -69,9 +69,11 @@ describe('annual message age gates', () => {
   it('does not pick an annual beat excluded earlier in the same year', () => {
     const s = makeState({ age: 2 });
     const eligible = ANNUAL_MESSAGES.filter((message) => meetsCondition(s, message.requires));
-    const allowed = eligible[0];
-    const picked = pickAnnualMessage(s, eligible.slice(1).map((message) => message.id));
-    expect(picked?.id).toBe(allowed.id);
+    const first = eligible[0];
+    const picked = pickAnnualMessage(s, [first.id]);
+    expect(picked).not.toBeNull();
+    expect(picked?.id).not.toBe(first.id);
+    expect(picked?.theme).not.toBe(first.theme);
   });
 
   it('adult beats cannot fire for a toddler', () => {

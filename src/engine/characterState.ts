@@ -8,6 +8,7 @@ export function cloneWorldCharacter(character: WorldCharacter): WorldCharacter {
     socialStatus: character.socialStatus ? { ...character.socialStatus, titles: [...character.socialStatus.titles], grants: [...character.socialStatus.grants] } : undefined,
     professionalHistory: character.professionalHistory ? JSON.parse(JSON.stringify(character.professionalHistory)) : undefined,
     tradeJourney: character.tradeJourney ? { ...character.tradeJourney, choices: [...character.tradeJourney.choices] } : undefined,
+    annualThemeYears: character.annualThemeYears ? { ...character.annualThemeYears } : undefined,
     annualNarrativeYears: character.annualNarrativeYears ? { ...character.annualNarrativeYears } : undefined,
     skills: character.skills ? Object.fromEntries(Object.entries(character.skills).map(([id, value]) => [id, { ...value }])) as typeof character.skills : undefined,
     pronouns: { ...character.pronouns }, stats: { ...character.stats }, traits: [...character.traits],

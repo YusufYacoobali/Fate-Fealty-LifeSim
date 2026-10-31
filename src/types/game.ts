@@ -150,6 +150,7 @@ export interface CharacterCore {
   professionalHistory?: import('./lifeDepth').ProfessionalHistory;
   tradeJourney?: import('./rpg').TradeJourney;
   annualNarrativeYears?: Record<string, number>;
+  annualThemeYears?: Record<string, number>;
   skills?: import('./rpg').Skills;
   id: string;
   name: string;

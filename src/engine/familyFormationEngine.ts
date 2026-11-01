@@ -1,3 +1,5 @@
+import {activeSpouse} from './characterState';
+import {queueChildNaming} from './childNaming';
 import { GameState, ExpectedChild, WorldCharacter } from '@/types/game';
 import { spawnKin } from './kinFactory';
 import { namesForGender } from '@/data/names';
@@ -22,8 +24,8 @@ function removeFromGeneratedHome(state: GameState, child: WorldCharacter, origin
 }
 
 function resolveExpectedChild(state: GameState, expected: ExpectedChild): void {
-  const parents = expected.parentIds.map((id) => state.world.characters[id]).filter((parent): parent is WorldCharacter => Boolean(parent?.alive));
-  if (!parents.length) {
+  const parents = expected.parentIds.map((id) => state.world.characters[id]).filter((parent): parent is WorldCharacter => Boolean(parent));
+  if (!parents.some(parent=>parent.alive)) {
     expected.status = 'cancelled';
     return;
   }
@@ -74,7 +76,7 @@ function resolveExpectedChild(state: GameState, expected: ExpectedChild): void {
   removeFromGeneratedHome(state, child, expected.route === 'wardship' ? undefined : generatedFamilyId, generatedHouseholdId);
 
   if (expected.route === 'pregnancy' || expected.route === 'illegitimate') {
-    const mother = parents.find((parent) => parent.gender === 'woman');
+    const mother = parents.find((parent) => parent.alive && parent.gender === 'woman');
     const food = household?.storedFood ?? household?.foodSecurity ?? 50;
     const risk = clamp(8 + state.world.conditions.diseasePressure / 5 + Math.max(0, 35 - food) / 3 + (mother && mother.age > 36 ? 8 : 0), 4, 45) / 100;
     if (mother && chance(risk)) {
@@ -89,12 +91,19 @@ function resolveExpectedChild(state: GameState, expected: ExpectedChild): void {
       child.healthConditions.push({ id: `health_${state.nextId++}`, conditionId: 'winter_fever', kind: 'illness', severity: 35, diagnosed: false, startedYear: state.world.currentYear, nextReviewYear: state.world.currentYear + 1, sourceId: expected.id });
     }
   }
+  if (child.background) child.background.guardianIds=parents.filter(p=>p.alive).map(p=>p.id);
   expected.status = 'resolved';
   const routeText = expected.route === 'pregnancy' ? 'is born'
     : expected.route === 'illegitimate' ? 'is born outside marriage'
       : expected.route === 'adoption' ? 'is adopted into the household' : 'enters the household as a ward';
   pushFeed(state, 'WORLD · FAMILY', C.good, `${child.name} ${routeText}. The household changes around a new young life.`, 'good', {}, child.id, 'world');
+  const arrivalFeedId=state.feed.at(-1)?.id;
+  const arrivalHistoryId=`history_child_${state.nextId}`;
   appendWorldHistory(state, { id: `history_child_${state.nextId++}`, year: state.world.currentYear, type: expected.route, participantIds: [child.id, ...parents.map((parent) => parent.id)], familyIds: Array.from(new Set([expected.familyId, child.birthFamilyId].filter((id): id is string => Boolean(id)))), causes: [expected.sourceChoiceId ?? 'family formation'], summary: `${child.name} ${routeText}.`, salience: 4 });
+  if (playerRaisesChild) {
+    queueChildNaming(state,child.id);
+    (state.childNaming!.arrivals??={})[child.id]={feedId:arrivalFeedId,historyId:arrivalHistoryId,feedSuffix:` ${routeText}. The household changes around a new young life.`,historySuffix:` ${routeText}.`};
+  }
 }
 
 function maybeExpectCarePlacement(state: GameState): void {
@@ -104,7 +113,7 @@ function maybeExpectCarePlacement(state: GameState): void {
   const household = pick(households);
   const head = household.headId ? state.world.characters[household.headId] : undefined;
   if (!head?.alive || head.age < 18) return;
-  const parentIds = [head.id, ...(head.spouseId && state.world.characters[head.spouseId]?.alive ? [head.spouseId] : [])];
+  const parentIds = [head.id, ...(activeSpouse(state,head.id) ? [activeSpouse(state,head.id)!.id] : [])];
   if (state.world.expectedChildren.some((expected) => expected.status === 'expected' && expected.parentIds.some((id) => parentIds.includes(id)))) return;
   const route: ExpectedChild['route'] = head.childIds?.length ? 'wardship' : 'adoption';
   state.world.expectedChildren.push({
@@ -116,7 +125,7 @@ function maybeExpectCarePlacement(state: GameState): void {
 function maybeExpectNpcChild(state: GameState): void {
   const living = Object.values(state.world.characters).filter((character) => character.alive).length;
   if (living >= 55) return;
-  const mothers = Object.values(state.world.characters).filter((character) => character.alive && character.gender === 'woman' && character.age >= 18 && character.age <= 42 && character.spouseId && state.world.characters[character.spouseId]?.alive);
+  const mothers = Object.values(state.world.characters).filter((character) => character.alive && character.gender === 'woman' && character.age >= 18 && character.age <= 42 && activeSpouse(state,character.id));
   for (const mother of mothers) {
     if (state.world.expectedChildren.some((expected) => expected.status === 'expected' && expected.parentIds.includes(mother.id))) continue;
     if (!chance(0.09)) continue;
@@ -157,7 +166,7 @@ export function childbearingPartner(state: GameState, partnerId: string): WorldC
  */
 export function familyPlanningRoute(state: GameState, partnerId: string): 'pregnancy' | 'adoption' | null {
   const partner = state.world.characters[partnerId];
-  if (!partner?.alive || partner.spouseId !== state.playerCharacterId) return null;
+  if (!partner?.alive || activeSpouse(state)?.id !== partner.id) return null;
   if (state.age < 18 || partner.age < 18) return null;
   if (hasPendingArrival(state, [state.playerCharacterId, partnerId])) return null;
   return childbearingPartner(state, partnerId) ? 'pregnancy' : 'adoption';

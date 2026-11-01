@@ -1,3 +1,5 @@
+import {ChildNamingModal} from '@/components/modals/ChildNamingModal';
+import {namingChildId,suggestedChildName} from '@/engine/childNaming';
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -126,7 +128,9 @@ export function GameScreen() {
     newAchievements.length === 0;
   // Exactly one low-priority prompt may be visible. This prevents circular
   // "hide when the other is open" checks from leaving every prompt hidden.
-  const passivePrompt: 'trialEnded' | 'daily' | 'rumour' | 'review' | 'shop' | null = !passivePromptsAllowed
+  const childId=namingChildId(state);
+  const namingVisible=loaded && passivePromptsAllowed && Boolean(childId);
+  const passivePrompt: 'trialEnded' | 'daily' | 'rumour' | 'review' | 'shop' | null = !passivePromptsAllowed || namingVisible
     ? null
     : proTrialNoticeVisible
       ? 'trialEnded'
@@ -144,10 +148,10 @@ export function GameScreen() {
   // existing return/review prompts. Once the screen is clear, consume the cue
   // and open the same Royal Shop the player can reach manually.
   useEffect(() => {
-    if (!launchPaywallVisible || !passivePromptsAllowed || passivePrompt !== null) return;
+    if (!launchPaywallVisible || !passivePromptsAllowed || namingVisible || passivePrompt !== null) return;
     resolveLaunchPaywall();
     setCartOpen(true);
-  }, [launchPaywallVisible, passivePromptsAllowed, passivePrompt, resolveLaunchPaywall]);
+  }, [launchPaywallVisible, passivePromptsAllowed, namingVisible, passivePrompt, resolveLaunchPaywall]);
 
   // Promotion/death haptics ride on engine transitions.
   useGameFeedback(state);
@@ -202,6 +206,7 @@ export function GameScreen() {
               onOpen={(id) => dispatch({ type: 'OPEN_KIN', id })}
               onBack={() => dispatch({ type: 'CLOSE_KIN' })}
               onInteract={(id, action) => dispatch({ type: 'KIN_INTERACT', id, action })}
+              onRenameChild={id=>dispatch({type:'OPEN_CHILD_NAMING',id})}
             />
           )}
           {state.tab === 'hold' && (
@@ -273,6 +278,13 @@ export function GameScreen() {
         </View>
 
         {/* overlays */}
+        {namingVisible && childId && <ChildNamingModal key={childId}
+          suggestedName={suggestedChildName(state,childId)} currentName={state.world.characters[childId].name}
+          renaming={state.childNaming?.renameId===childId}
+          onSuggest={()=>dispatch({type:'SUGGEST_CHILD_NAME',id:childId})}
+          onConfirm={name=>dispatch({type:'CONFIRM_CHILD_NAME',id:childId,name})}
+          onKeep={()=>dispatch({type:'CONFIRM_CHILD_NAME',id:childId,name:state.childNaming?.renameId===childId?state.world.characters[childId].name:suggestedChildName(state,childId)})} />}
+
         {state.rpg.forge && !state.dead && <ForgeModal />}
         {currentMission && !state.dead && !state.duel && <EventModal key={currentMission.id} state={state} event={currentMission} onChoose={(choice) => dispatch({ type: 'MISSION_CHOOSE', missionId: currentMission.id, optionId: choice.id! })} />}
         {currentEvent && !state.dead && (

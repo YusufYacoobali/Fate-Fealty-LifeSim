@@ -16,6 +16,7 @@ function marriedState(overrides: Partial<GameState> = {}): GameState {
   let state = makeState({ age: 24, gold: 60, attraction: 'women', ...overrides });
   const candidate = state.kin.find((kin) => kin.id === 'agnes')!;
   candidate.age = 24;
+  candidate.attraction=state.gender==='woman'?'women':'men';
   state.world.proposalFromId = candidate.id;
   state = gameReducer(state, { type: 'KIN_INTERACT', id: candidate.id, action: 'accept_proposal' });
   return state;

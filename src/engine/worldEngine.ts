@@ -7,7 +7,7 @@ import { addTag, pushFeed } from './gameState';
 import { spawnKin } from './kinFactory';
 import { maybeCreateNpcProposal } from './relationshipEngine';
 import { C } from '@/theme/theme';
-import { unlinkSpouse } from './characterState';
+import { activeSpouse, linkSpouses, unlinkSpouse } from './characterState';
 
 function view(value: number, attraction = 0): RelationshipPerspective {
   return { affinity: value, trust: value, respect: value, attraction };
@@ -87,7 +87,7 @@ function simulateNpcCareer(state: GameState, npc: KinMember, budget: { left: num
   npc.occupation.performance = clamp(npc.occupation.performance + rnd(-3, 7));
   if (career.healthRisk && chance(career.healthRisk / 35)) npc.stats.health = clamp(npc.stats.health - rnd(2, 8));
   if (npc.stats.health <= 0) {
-    unlinkSpouse(state, npc.id);
+    unlinkSpouse(state, npc.id, 'death');
     npc.alive = false;
     npc.deathYear = state.world.currentYear;
     npc.healthTags.push('died_from_health');
@@ -98,7 +98,7 @@ function simulateNpcCareer(state: GameState, npc: KinMember, budget: { left: num
 }
 
 function simulateNpcSocialLife(state: GameState): void {
-  const adults = Object.values(state.world.characters).filter((npc) => npc.id !== state.playerCharacterId && npc.alive && npc.age >= 18 && npc.kind !== 'spouse' && npc.id !== 'goose');
+  const adults = Object.values(state.world.characters).filter((npc) => npc.id !== state.playerCharacterId && npc.alive && npc.age >= 18 && activeSpouse(state)?.id !== npc.id && npc.id !== 'goose');
   if (adults.length < 2) return;
   for (let i = 0; i < Math.min(5, adults.length); i++) {
     const a = pick(adults);
@@ -125,7 +125,7 @@ function simulateNpcSocialLife(state: GameState): void {
   }
 
   if (!chance(0.16)) return;
-  const singles = adults.filter((npc) => !npc.spouseId && !Object.values(state.world.relationships).some((rel) => rel.flags.includes('spouse') && (rel.aId === npc.id || rel.bId === npc.id)));
+  const singles = adults.filter((npc) => !activeSpouse(state,npc.id));
   if (singles.length < 2) return;
   const a = pick(singles);
   const b = pick(singles.filter((npc) => npc.id !== a.id));
@@ -134,8 +134,7 @@ function simulateNpcSocialLife(state: GameState): void {
   relation.flags.push('spouse', 'family');
   relation.aToB = { affinity: 75, trust: 68, respect: 62, attraction: 72 };
   relation.bToA = { affinity: 75, trust: 68, respect: 62, attraction: 72 };
-  a.spouseId = b.id;
-  b.spouseId = a.id;
+  linkSpouses(state,a.id,b.id);
   const sharedHouseholdId = a.householdId ?? b.householdId ?? `house_${a.id}`;
   let sharedHousehold = state.world.households.find((household) => household.id === sharedHouseholdId);
   if (!sharedHousehold) {

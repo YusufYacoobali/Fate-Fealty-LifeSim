@@ -1,3 +1,4 @@
+import {queueChildNaming} from './childNaming';
 import { reconcileCourt } from './courtEngine';
 import { emptyEducation, legacyStatus } from './lifeDepthState';
 /**
@@ -12,7 +13,7 @@ import { pick, rnd } from './random';
 import { defaultPronouns } from '@/data/identity';
 import { ENTRY_CAREERS } from '@/data/careers';
 import { makePlayerRelationship } from './relationshipState';
-import { unlinkSpouse } from './characterState';
+import { activeSpouse, linkSpouses, unlinkSpouse } from './characterState';
 import { freshSkills } from '@/data/rpg';
 
 interface KindDefaults {
@@ -95,6 +96,7 @@ const DEFAULTS: Record<KinKind, KindDefaults> = {
 
 /** Create and append a new kin member, returning it. Mutates `s`. */
 export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
+  if (spec.kind === 'spouse') { const current=activeSpouse(s); if (current) return current; }
   const d = DEFAULTS[spec.kind];
   // A spouse arriving through an event must still be someone the player could
   // plausibly have married; a random roll produced marriages that contradicted
@@ -135,7 +137,7 @@ export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
   const familyId = ['child', 'sibling'].includes(spec.kind) && player?.birthFamilyId
     ? player.birthFamilyId
     : `family_${member.id}`;
-  const spouse = Object.values(s.world.characters).find((character) => character.spouseId === s.playerCharacterId && character.alive);
+  const spouse = activeSpouse(s);
   // Genealogy has to match the label. A `sibling` with no parents used to be
   // family in the kin list and a stranger in the family tree.
   const parentIds = spec.kind === 'child'
@@ -187,11 +189,10 @@ export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
     player?.childIds?.push(member.id);
     if (spouse) spouse.childIds = Array.from(new Set([...(spouse.childIds ?? []), member.id]));
   }
-  if (spec.kind === 'spouse' && player && !player.spouseId) {
+  if (spec.kind === 'spouse' && player && !activeSpouse(s)) {
     // Without this link the marriage existed only as a label: family planning,
     // inheritance and the kinship graph all read `spouseId`, not `kind`.
-    player.spouseId = member.id;
-    member.spouseId = player.id;
+    linkSpouses(s,player.id,member.id);
     member.attraction = s.gender === 'woman' ? 'women' : 'men';
     if (!s.tags.includes('married')) s.tags = [...s.tags, 'married'];
   }
@@ -203,6 +204,7 @@ export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
   }
   const relationship = makePlayerRelationship(s.playerCharacterId, member, s.age);
   s.world.relationships[relationship.id] = relationship;
+  if (spec.kind === 'child') queueChildNaming(s,member.id);
   return member;
 }
 
@@ -212,9 +214,9 @@ export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
  */
 export function killKin(s: GameState, selector: string): KinMember | null {
   let target = Object.values(s.world.characters).find((k) => k.id !== s.playerCharacterId && k.id === selector && k.alive);
-  if (!target) target = Object.values(s.world.characters).find((k) => k.id !== s.playerCharacterId && k.kind === (selector as KinKind) && k.alive);
+  if (!target) target = selector === 'spouse' ? activeSpouse(s) ?? undefined : Object.values(s.world.characters).find((k) => k.id !== s.playerCharacterId && k.kind === (selector as KinKind) && k.alive);
   if (!target) return null;
-  unlinkSpouse(s, target.id);
+  unlinkSpouse(s, target.id, 'death');
   target.alive = false;
   target.deathYear = s.world.currentYear;
   const worldTarget = s.world.characters[target.id];

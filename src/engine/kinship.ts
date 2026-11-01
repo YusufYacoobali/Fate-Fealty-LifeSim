@@ -1,3 +1,4 @@
+import {activeSpouse} from './characterState';
 /**
  * Who someone actually is to the player.
  *
@@ -182,7 +183,7 @@ export function kinshipMap(state: GameState): Record<string, KinshipTie> {
   }
 
   // Marriage ties, before blood so blood can override an odd overlap.
-  const spouseId = player.spouseId;
+  const spouseId = activeSpouse(state)?.id;
   if (spouseId) {
     for (const id of parentsOf(spouseId)) set(id, 'in_law');
     for (const parentId of parentsOf(spouseId)) {
@@ -247,7 +248,7 @@ export function kinshipTo(state: GameState, characterId: string): KinshipTie {
   const parentsOf = (id: string): string[] => state.world.characters[id]?.parentIds ?? [];
   const childrenOf = (id: string): string[] => state.world.characters[id]?.childIds ?? [];
 
-  if (player.spouseId === characterId) return 'spouse';
+  if (activeSpouse(state)?.id === characterId) return 'spouse';
 
   const playerParents = parentsOf(player.id);
   if (playerParents.includes(characterId)) return gendered(genderOf(characterId), 'mother', 'father');

@@ -1,3 +1,5 @@
+import {activeSpouse,reconcileMaritalState} from '@/engine/characterState';
+import {anotherChildName,canNameChild,confirmChildName,namingBlocked,namingChildId,normalizeChildNaming} from '@/engine/childNaming';
 import { selectProfessionalClient } from '@/engine/professionalClients';
 import { CourtAction, courtAvailability, performCourtAction, reconcileCourt } from '@/engine/courtEngine';
 import type { CourtOffice } from '@/types/game';
@@ -41,6 +43,9 @@ import { beginForge, closeForge, finishForge, startForge, strikeForge } from '@/
 import { resolveTradeChoice } from '@/engine/tradeJourney';
 
 export type GameAction =
+  | {type:'OPEN_CHILD_NAMING'; id:string}
+  | {type:'CONFIRM_CHILD_NAME'; id:string; name:string}
+  | {type:'SUGGEST_CHILD_NAME'; id:string}
   | { type: 'PROFESSIONAL_CLIENT'; characterId: string }
   | { type: 'COURT'; counsel?: 'consult' | 'override'; action: CourtAction; targetId?: string; office?: CourtOffice }
   | { type: 'EDUCATION'; action: EducationAction; track?: EducationTrackId; funding?: import('@/types/game').SponsorshipKind; sponsorId?: string }
@@ -119,6 +124,8 @@ function timed(
 function finishEngineTransaction(state: GameState): GameState {
   if (state.dead) { state.rpg.forge = null; state.rpg.mission = null; state.rpg.expedition = null; }
   syncPlayerToWorld(state);
+  reconcileMaritalState(state);
+  normalizeChildNaming(state);
   reconcileCourt(state);
   refreshWorkBoard(state);
   syncKinToWorld(state);
@@ -137,6 +144,17 @@ function careerRoutineId(action: CareerAction): string | null {
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
+    case 'OPEN_CHILD_NAMING': {
+      if (namingBlocked(state) || !canNameChild(state,action.id)) return state;
+      const s=cloneState(state); normalizeChildNaming(s); s.childNaming!.renameId=action.id; delete s.childNaming!.suggestion; return s;
+    }
+    case 'SUGGEST_CHILD_NAME': {
+      if (namingBlocked(state) || namingChildId(state)!==action.id) return state;
+      const s=cloneState(state); anotherChildName(s,action.id); return s;
+    }
+    case 'CONFIRM_CHILD_NAME': {
+      const s=cloneState(state); return confirmChildName(s,action.id,action.name)?s:state;
+    }
     case 'FORGE_START':
     case 'FORGE_BEGIN':
     case 'FORGE_STRIKE':

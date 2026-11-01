@@ -1,3 +1,4 @@
+import {activeSpouse} from './characterState';
 /**
  * Activity resolution. Activities are the player-driven counterpart to the
  * Director's annual events: chosen freely, they nudge stats/gold and quietly
@@ -407,7 +408,7 @@ const ROLE_HANDLERS: Record<string, Handler> = {
     pushFeed(s, 'TEACH CHILD', C.blue, `You teach ${child.name} letters, figures, and when not to correct an elder in public.`, 'good');
   },
   courting: (s) => {
-    if (s.tags.includes('married')) return blocked(s, 'COURTING', 'Thou art already wed. Whatever this is, it is a different sort of tale.');
+    if (activeSpouse(s)) return blocked(s, 'COURTING', 'Thou art already wed. Whatever this is, it is a different sort of tale.');
     if (s.attraction === 'none') return blocked(s, 'COURTING', 'Thy heart is set on other things entirely, and the season passes quietly.');
 
     const prospects = s.kin.filter((kin) => isRomanceEligible(s, kin));

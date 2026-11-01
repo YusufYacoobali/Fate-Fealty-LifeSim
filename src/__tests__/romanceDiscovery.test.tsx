@@ -65,7 +65,7 @@ it('keeps close relatives out of the Romance category', () => {
 });
 
 it('preserves the existing affair route for a compatible married acquaintance', () => {
-  const fixture = knownPerson(); fixture.person.spouseId = 'roderick';
+  const fixture = knownPerson(); fixture.person.spouseId = 'roderick'; fixture.state.world.characters.roderick.spouseId=fixture.person.id;
   expect(courtshipUnavailableReason(fixture.state, fixture.person)).toContain('married to someone else');
   renderPerson(fixture);
   act(() => button('ROMANCE')!.props.onPress());

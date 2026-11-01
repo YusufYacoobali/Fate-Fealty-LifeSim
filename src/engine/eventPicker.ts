@@ -1,3 +1,4 @@
+import {activeSpouse} from './characterState';
 import { isRomanceEligible } from './relationshipEngine';
 import { callbackSource, callbackBindings } from './narrativeCallbacks';
 import { careerById } from '@/data/careers';
@@ -243,12 +244,12 @@ function actorCandidates(s: GameState, role: EventActorRole) {
     if (role.rankAtLeast != null && character.rankIdx < role.rankAtLeast) return false;
     if (role.careerFamilies && !role.careerFamilies.includes(careerById(character.occupation.careerId)?.family!)) return false;
     if (role.legalStatuses && !role.legalStatuses.includes(character.legalState?.status ?? 'free')) return false;
-    if (role.unmarried && character.spouseId) return false;
+    if (role.unmarried && activeSpouse(s,character.id)) return false;
     if (role.romanceEligible && !isRomanceEligible(s,character)) return false;
     if (role.relation === 'carer' && ![...(p.parentIds??[]),...(p.guardianIds??[])].includes(character.id))return false;
     if (role.relation === 'parent' && !p.parentIds?.includes(character.id)) return false;
     if (role.relation === 'child' && !character.parentIds?.includes(p.id)) return false;
-    if (role.relation === 'spouse' && p.spouseId !== character.id) return false;
+    if (role.relation === 'spouse' && activeSpouse(s)?.id !== character.id) return false;
     if (role.relation === 'sibling' && !character.parentIds?.some(id => p.parentIds?.includes(id))) return false;
     if (role.relation === 'rival' && !Object.values(s.world.relationships).some(r => ((r.aId === p.id && r.bId === character.id) || (r.bId === p.id && r.aId === character.id)) && r.flags.some(f => f === 'rival' || f === 'feud'))) return false;
     if (role.alive != null && character.alive !== role.alive) return false;

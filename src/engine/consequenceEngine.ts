@@ -1,3 +1,4 @@
+import {activeSpouse, unlinkSpouse} from './characterState';
 import {resolveLegalHearing} from './legalEngine';
 import { resolveOfficePetition, resolveCourtOpposition } from './courtPolitics';
 import { applyHouseholdLesson } from './birthCircumstances';
@@ -158,7 +159,7 @@ export function applyEffects(s: GameState, eff?: Effects): GameState {
   }
   if (eff.marryRole) {
     const partner = s.world.characters[resolveCharacterId(eff.marryRole)];
-    if (partner?.alive && !partner.spouseId && canProposeTo(s,partner)) performSystemicRelationshipAction(s,partner,'accept_proposal');
+    if (partner?.alive && !activeSpouse(s,partner.id) && canProposeTo(s,partner)) performSystemicRelationshipAction(s,partner,'accept_proposal');
   }
   if (eff.endMarriage) {
     const p = s.world.characters[s.playerCharacterId], spouse = s.world.characters[p.spouseId ?? ''];
@@ -301,7 +302,7 @@ export function applyEffects(s: GameState, eff?: Effects): GameState {
   }
   if (eff.expectChild) {
     const player = s.world.characters[s.playerCharacterId];
-    const spouseId = player?.spouseId;
+    const spouseId = activeSpouse(s)?.id;
     const parentIds = eff.expectChild.parentIds?.map((id) => resolveCharacterId(id)) ?? [s.playerCharacterId, ...(spouseId ? [spouseId] : [])];
     const householdId = player?.householdId ?? 'house_player';
     const familyId = player?.birthFamilyId ?? 'family_0';
@@ -322,6 +323,8 @@ export function killPlayer(s: GameState, cause: string): GameState {
   if (s.dead) return s;
   s.dead = true;
   s.deathCause = cause;
+  const player=s.world.characters[s.playerCharacterId];
+  if (player) { player.alive=false; player.deathYear=s.world.currentYear; player.deathCause=cause; unlinkSpouse(s,player.id,'death'); }
   return s;
 }
 

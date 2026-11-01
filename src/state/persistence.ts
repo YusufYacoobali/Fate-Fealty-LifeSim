@@ -1,3 +1,5 @@
+import {reconcileMarriages} from '@/engine/characterState';
+import {normalizeChildNaming} from '@/engine/childNaming';
 import {recoverLegacyLegalHearing} from '@/engine/legalEngine';
 import {retireAuthoredState} from '@/engine/singleYearNarrative';
 import { initializeCourt } from '@/engine/courtEngine';
@@ -190,7 +192,7 @@ export function normalizeGameState(parsed: GameState): GameState {
   for (const character of Object.values(characters)) {
     character.gender = normalizeGender(character.gender, character.id);
     character.pronouns = defaultPronouns(character.gender);
-    character.attraction = character.id === 'goose' ? 'none' : character.gender === 'woman' ? 'men' : 'women';
+    if (!['men','women','none'].includes(character.attraction)) character.attraction = character.id === 'goose' ? 'none' : character.gender === 'woman' ? 'men' : 'women';
     character.healthConditions ??= [];
     character.legalState ??= { status: character.healthTags?.includes('imprisoned') ? 'imprisoned' : 'free', suspicion: 0, notoriety: 0, charges: [], sentenceYearsRemaining: 0 };
     character.secrets ??= character.secret && character.secret !== 'none' ? [{ id: `secret_${character.id}`, type: character.secret, knownByIds: [], revealed: Boolean(character.secretRevealed), severity: 35, createdYear: parsed.world?.currentYear ?? 1320 }] : [];
@@ -300,6 +302,8 @@ export function normalizeGameState(parsed: GameState): GameState {
     // An unavailable opponent must never strand the mission overlay.
     normalized.rpg.mission.phase = 'choice';
   }
+  reconcileMarriages(normalized);
+  normalizeChildNaming(normalized);
   recoverLegacyLegalHearing(normalized);
   retireAuthoredState(normalized);
   return syncPlayerFromWorld(normalized);

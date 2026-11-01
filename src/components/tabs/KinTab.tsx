@@ -1,3 +1,5 @@
+import {canNameChild} from '@/engine/childNaming';
+import {activeSpouse} from '@/engine/characterState';
 import React from 'react';
 import { Image, ScrollView, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
@@ -20,6 +22,7 @@ interface Props {
   onOpen: (id: string) => void;
   onBack: () => void;
   onInteract: (id: string, action: KinAction) => void;
+  onRenameChild?: (id:string) => void;
 }
 
 const FILTERS: { id: RelationFilter; label: string }[] = [
@@ -99,7 +102,7 @@ const ACTION_META: Record<KinAction, ActionMeta> = {
   murder: { group: 'violent', label: 'KILL THEM', hint: 'there is no undoing this', bg: '#7a1f2a', sd: '#4a0f18' },
 };
 
-export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, onInteract }: Props) {
+export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, onInteract, onRenameChild }: Props) {
   const [treeOpen, setTreeOpen] = React.useState(false);
   const ties = React.useMemo(() => kinshipMap(state), [state]);
   if (detail) {
@@ -108,7 +111,7 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
     const career = careerById(detail.occupation.careerId);
     const actions = contextualActions(state, detail);
     const tie = ties[detail.id] ?? 'acquaintance';
-    const spouse = detail.spouseId ? state.world.characters[detail.spouseId] : undefined;
+    const spouse = activeSpouse(state,detail.id);
     const affair = relation.flags.includes('affair');
     const affairExposed = relation.sharedMemories.includes('affair_exposed');
     return (
@@ -144,6 +147,13 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
         </View>
 
         {detail.alive && <ActionBoard key={detail.id} state={state} actions={actions} kin={detail} onInteract={(action) => onInteract(detail.id, action)} />}
+        {onRenameChild && canNameChild(state,detail.id) && <View style={PANEL.parchCard}>
+          <PixelText font="pixel" size={7} color={C.blueDeep} style={{marginBottom:8}}>HOUSEHOLD</PixelText>
+          <PixelButton bg={C.lightFill} shadow={C.paleEdge} onPress={()=>onRenameChild(detail.id)} innerStyle={{paddingHorizontal:8,paddingVertical:10}}>
+            <PixelText font="pixel" size={7} color={C.blueDark}>RENAME CHILD</PixelText>
+            <PixelText font="body" size={16} color={C.textBrown}>Free · no action cost</PixelText>
+          </PixelButton>
+        </View>}
         <View style={PANEL.parchCard}>
           <PixelText font="pixel" size={7} color={C.amber}>MUTUAL RELATIONSHIP</PixelText>
           <Dimension label="YOUR AFFINITY" value={views.player.affinity} />
@@ -163,6 +173,7 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
           {!!detail.guardianIds?.length && <PixelText font="body" size={14} color={C.textMuted}>Guardians: {detail.guardianIds.map((id) => state.world.characters[id]?.name).filter(Boolean).join(', ')}</PixelText>}
           <PixelText font="body" size={14} color={C.textMuted}>Secret: {detail.secretRevealed ? detail.secret?.replaceAll('_', ' ') : 'Unknown'}</PixelText>
           {!!detail.parentIds?.length && <PixelText font="body" size={14} color={C.textMuted}>Parents: {detail.parentIds.map((id) => state.world.characters[id]?.name).filter(Boolean).join(', ')}</PixelText>}
+          {!!detail.marriages?.length && <PixelText font="body" size={14} color={C.textMuted}>Marriages: {detail.marriages.map(record=>`${state.world.characters[record.spouseId]?.name??'Recorded spouse'}${record.endReason?' (former)':''}`).join(', ')}</PixelText>}
           {!!detail.childIds?.length && <PixelText font="body" size={14} color={C.textMuted}>Children: {detail.childIds.map((id) => state.world.characters[id]?.name).filter(Boolean).join(', ')}</PixelText>}
           {!!detail.worldMemories?.length && <PixelText font="body" size={14} color={C.textMuted} style={{ marginTop: 5 }}>Remembers: {Array.from(new Set(detail.worldMemories.map((memory) => memory.summary))).slice(-2).join(' · ')}</PixelText>}
           {!!relation.sharedMemories.length && <PixelText font="body" size={14} color={C.textMuted} style={{ marginTop: 5 }}>Shared: {relation.sharedMemories.join(', ')}</PixelText>}
@@ -190,7 +201,7 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
         {!treeOpen && kin.map((person) => {
           const tie = ties[person.id] ?? 'acquaintance';
           const family = isFamilyTie(tie);
-          const spouse = person.spouseId ? state.world.characters[person.spouseId] : undefined;
+          const spouse = activeSpouse(state,person.id);
           const affair = isAffairWith(state, person.id);
           return <PixelButton key={person.id} bg={C.parch} shadow={C.parchSd} light={C.parchSl} outline={C.parchBorder} onPress={() => onOpen(person.id)} innerStyle={{ paddingHorizontal: 9, paddingVertical: 8 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 9 }}>
@@ -305,7 +316,7 @@ function ActionBoard({ state, actions, kin, onInteract }: { state: GameState; ac
  */
 function FamilyTree({ state, ties }: { state: GameState; ties: Record<string, KinshipTie> }) {
   const player = state.world.characters[state.playerCharacterId];
-  const family = Object.values(state.world.characters).filter((character) => isFamilyTie(ties[character.id] ?? 'acquaintance'));
+  const family = Object.values(state.world.characters).filter((character) => isFamilyTie(ties[character.id] ?? 'acquaintance') || ties[character.id]==='former_spouse');
 
   const inGeneration = (offset: number) => family.filter((character) => kinshipGeneration(ties[character.id]) === offset);
   const generations = [

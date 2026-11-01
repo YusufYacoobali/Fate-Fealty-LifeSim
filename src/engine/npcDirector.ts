@@ -88,6 +88,7 @@ function directAncestors(state: GameState): Set<string> {
 
 function archiveOldBackgroundCharacters(state: GameState): void {
   const retained = directAncestors(state);
+  for (const person of Object.values(state.world.characters)) for (const marriage of person.marriages??[]) retained.add(marriage.spouseId);
   const court = state.world.court;
   if (court) for (const id of [court.rulerId, court.heirId, court.regentId, court.crisis?.rulerId, court.crisis?.leaderId, court.crisis?.challengerId, ...Object.values(court.offices), ...court.claims.flatMap(c => [c.characterId, c.throughId]), ...court.scandals.map(s => s.actorId), ...[court.petition?.applicantId, court.petition?.rulerId, court.petition?.incumbentId, court.petition?.rivalId], ...(court.coalitions ?? []).flatMap(c => [c.leaderId, ...c.memberIds, c.claimantId])]) if (id) retained.add(id);
   for (const person of Object.values(state.world.characters)) {

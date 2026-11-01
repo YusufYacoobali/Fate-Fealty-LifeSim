@@ -183,6 +183,7 @@ export interface KinMember extends CharacterCore {
   parentIds?: string[];
   childIds?: string[];
   spouseId?: string;
+  marriages?: MarriageRecord[];
   personalityTraits?: string[];
   ambition?: NpcAmbition;
   secret?: NpcSecret;
@@ -299,6 +300,14 @@ export interface CharacterMemory {
   salience: 1 | 2 | 3 | 4 | 5;
   inherited: boolean;
   summary: string;
+}
+
+export interface MarriageRecord {
+  spouseId: string;
+  startedYear?: number;
+  endedYear?: number;
+  endReason?: 'death' | 'divorce' | 'elopement' | 'separation';
+  deceasedId?: string;
 }
 
 export interface RelationshipPerspective {
@@ -938,6 +947,14 @@ export interface ShopItem {
   minRankIdx?: number;
 }
 
+export interface ChildNamingState {
+  ownerId: string;
+  pendingIds: string[];
+  renameId?: string;
+  suggestion?: {childId: string; name: string; attempt: number};
+  arrivals?: Record<string,{feedId?: number; historyId?: string; feedSuffix: string; historySuffix: string}>;
+}
+
 export interface GameSettings {
   autoScroll: boolean;
   difficulty: Difficulty;
@@ -1033,6 +1050,7 @@ export interface GameState {
   questSection?: 'board' | 'explore' | 'craft' | 'careers';
   questRecipe?: string;
   selectedKinId: string | null;
+  childNaming?: ChildNamingState;
   settingsOpen: boolean;
 
   // --- life goal (assigned at coming-of-age) ---

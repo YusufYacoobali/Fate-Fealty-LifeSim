@@ -1,3 +1,5 @@
+import {activeSpouse,reconcileMarriages} from './characterState';
+import {normalizeChildNaming} from './childNaming';
 import { GameState } from '@/types/game';
 import { findRelationship } from './relationshipEngine';
 
@@ -12,6 +14,7 @@ export function worldIntegrityIssues(state: GameState): string[] {
   const issues: string[] = [];
   const characters = state.world.characters;
   if (!characters[state.playerCharacterId]) issues.push(`missing player ${state.playerCharacterId}`);
+  if (!state.dead && state.tags.includes('married')!==Boolean(activeSpouse(state))) issues.push('player marital tag disagrees with active marriage');
   for (const character of Object.values(characters)) {
     for (const parentId of character.parentIds ?? []) {
       if (!characters[parentId]) issues.push(`${character.id} has missing parent ${parentId}`);
@@ -22,7 +25,7 @@ export function worldIntegrityIssues(state: GameState): string[] {
       if (!characters[childId]) issues.push(`${character.id} has missing child ${childId}`);
       else if (!(characters[childId].parentIds ?? []).includes(character.id)) issues.push(`${character.id}/${childId} child-parent link is not reciprocal`);
     }
-    if (character.spouseId && characters[character.spouseId]?.spouseId !== character.id) issues.push(`${character.id}/${character.spouseId} spouse link is not reciprocal`);
+    if (character.spouseId && !activeSpouse(state,character.id)) issues.push(`${character.id}/${character.spouseId} spouse link is not reciprocal`);
     for (const guardianId of character.guardianIds ?? []) if (!characters[guardianId]) issues.push(`${character.id} has missing guardian ${guardianId}`);
     for (const secret of character.secrets ?? []) for (const witnessId of secret.knownByIds) if (!characters[witnessId]) issues.push(`${character.id} secret ${secret.id} has missing witness ${witnessId}`);
     for (const charge of character.legalState?.charges ?? []) {
@@ -97,13 +100,14 @@ function repairKinship(state: GameState): void {
 export function repairWorldIntegrity(state: GameState): GameState {
   const characters = state.world.characters;
   repairKinship(state);
+  reconcileMarriages(state);
+  normalizeChildNaming(state);
   for (const character of Object.values(characters)) {
     character.parentIds = Array.from(new Set(character.parentIds ?? [])).filter((id) => Boolean(characters[id]) && id !== character.id && !createsAncestryCycle(state, character.id, id));
     character.childIds = Array.from(new Set(character.childIds ?? [])).filter((id) => Boolean(characters[id]) && id !== character.id);
     for (const parentId of character.parentIds) characters[parentId].childIds = Array.from(new Set([...(characters[parentId].childIds ?? []), character.id]));
     for (const childId of character.childIds) characters[childId].parentIds = Array.from(new Set([...(characters[childId].parentIds ?? []), character.id]));
-    if (character.spouseId && !characters[character.spouseId]) delete character.spouseId;
-    if (character.spouseId) characters[character.spouseId].spouseId = character.id;
+
     character.guardianIds = Array.from(new Set(character.guardianIds ?? [])).filter((id) => Boolean(characters[id]) && id !== character.id);
     for (const secret of character.secrets ?? []) secret.knownByIds = Array.from(new Set(secret.knownByIds)).filter((id) => Boolean(characters[id]));
     for (const charge of character.legalState?.charges ?? []) {

@@ -15,7 +15,7 @@ import { pickNarrative } from './narrativeEngine';
 import { adoptChild, ADOPTION_COST, familyPlanningRoute, tryForAffairChild, tryForChild } from './familyFormationEngine';
 import { isCloseBlood, isFamilyTie, kinshipTo } from './kinship';
 import { duelAvailability, startDuel } from './duelEngine';
-import { unlinkSpouse } from './characterState';
+import { activeSpouse, linkSpouses, reconcileMaritalState, unlinkSpouse } from './characterState';
 import {
   assault,
   blackmail,
@@ -187,7 +187,7 @@ export type SystemicKinAction =
 /** Whether the player is actually wed to this person, by the link, not a label. */
 export function isPlayerSpouse(state: GameState, kin: KinMember): boolean {
   const player = state.world.characters[state.playerCharacterId];
-  return Boolean(player?.spouseId && player.spouseId === kin.id && kin.spouseId === player.id);
+  return activeSpouse(state)?.id === kin.id;
 }
 
 export function courtshipUnavailableReason(state: GameState, kin: KinMember): string | null {
@@ -200,8 +200,8 @@ export function courtshipUnavailableReason(state: GameState, kin: KinMember): st
   if (!attractionAllows(state.attraction, kin.gender)) return 'Your character’s attraction preferences do not include this person.';
   if (!attractionAllows(kin.attraction, state.gender)) return `${kin.name} is not romantically interested in your character’s gender. Friendship does not change that preference.`;
   const player = state.world.characters[state.playerCharacterId];
-  if (kin.spouseId && kin.spouseId !== state.playerCharacterId) return `${kin.name} is married to someone else. Ordinary courtship is unavailable.`;
-  if ((player?.spouseId && player.spouseId !== kin.id) || (state.tags.includes('married') && !isPlayerSpouse(state, kin))) return 'You are already married. Ordinary courtship with someone else is unavailable.';
+  if (activeSpouse(state,kin.id) && activeSpouse(state,kin.id)!.id !== state.playerCharacterId) return `${kin.name} is married to someone else. Ordinary courtship is unavailable.`;
+  if (activeSpouse(state) && !isPlayerSpouse(state,kin)) return 'You are already married. Ordinary courtship with someone else is unavailable.';
   return null;
 }
 
@@ -214,7 +214,7 @@ export function canProposeTo(state: GameState, kin: KinMember): boolean {
   if (!isRomanceEligible(state, kin)) return false;
   if (isPlayerSpouse(state, kin)) return false;
   const player = state.world.characters[state.playerCharacterId];
-  return !player?.spouseId && !state.tags.includes('married');
+  return !activeSpouse(state) && !activeSpouse(state,kin.id);
 }
 
 export function contextualActions(state: GameState, kin: KinMember): SystemicKinAction[] {
@@ -233,7 +233,7 @@ export function contextualActions(state: GameState, kin: KinMember): SystemicKin
   if (duelAvailability(state, kin.id, 'duel').available) result.push('duel');
   if (duelAvailability(state, kin.id, 'brawl').available) result.push('brawl');
   if (isOwnChild && kin.age < 18) result.push('educate_child');
-  if (isOwnChild && kin.age >= 14 && !kin.spouseId) result.push('arrange_marriage');
+  if (isOwnChild && kin.age >= 14 && !activeSpouse(state,kin.id)) result.push('arrange_marriage');
   if (isFamilyTie(tie) && (kin.stats.health < 70 || Boolean(kin.healthConditions?.length))) result.push('care_for_relative');
   if (kin.secrets?.some((secret) => !secret.revealed && secret.knownByIds.includes(state.playerCharacterId))) result.push('expose_secret');
   const affair = isAffairWith(state, kin.id);
@@ -269,7 +269,7 @@ export function contextualActions(state: GameState, kin: KinMember): SystemicKin
     if (route === 'adoption') result.push('adopt_child');
     result.push('divorce');
   }
-  if (state.world.proposalFromId === kin.id && !state.tags.includes('married')) {
+  if (state.world.proposalFromId === kin.id && canProposeTo(state,kin)) {
     result.unshift('accept_proposal', 'reject_proposal');
   }
   return result;
@@ -343,14 +343,13 @@ export function performSystemicRelationshipAction(state: GameState, kin: KinMemb
       pushFeed(state, 'TAUGHT A CHILD', C.faith, `You teach ${kin.name} letters, figures, and which family stories improve with silence.`, 'good');
       break;
     case 'arrange_marriage': {
-      const candidates = Object.values(state.world.characters).filter((candidate) => candidate.alive && candidate.id !== kin.id && candidate.id !== state.playerCharacterId && candidate.age >= 16 && !candidate.spouseId && candidate.gender !== kin.gender && !candidate.parentIds?.some((id) => kin.parentIds?.includes(id)));
+      const candidates = Object.values(state.world.characters).filter((candidate) => candidate.alive && candidate.id !== kin.id && candidate.id !== state.playerCharacterId && candidate.age >= 16 && !activeSpouse(state,candidate.id) && candidate.gender !== kin.gender && !candidate.parentIds?.some((id) => kin.parentIds?.includes(id)));
       const spouse = candidates.sort((a, b) => Math.abs(a.age - kin.age) - Math.abs(b.age - kin.age) || a.id.localeCompare(b.id))[0];
       if (!spouse) {
         pushFeed(state, 'MATCHMAKING', C.bad, `No suitable household will presently agree to a match with ${kin.name}.`, 'plain');
         break;
       }
-      kin.spouseId = spouse.id;
-      spouse.spouseId = kin.id;
+      linkSpouses(state,kin.id,spouse.id);
       const arranged: Relationship = { id: `rel_${kin.id}_${spouse.id}`, aId: kin.id, bId: spouse.id, aToB: neutral(48), bToA: neutral(48), flags: ['spouse', 'family'], lastInteractionAge: state.age, interactionsThisYear: 0, sharedMemories: [`arranged_marriage_${state.world.currentYear}`] };
       state.world.relationships[arranged.id] = arranged;
       kin.householdId = spouse.householdId;
@@ -519,8 +518,8 @@ export function performSystemicRelationshipAction(state: GameState, kin: KinMemb
     case 'elope': {
       const player = state.world.characters[state.playerCharacterId];
       const abandoned = affairStakes(state, kin.id);
-      if (player?.spouseId) unlinkSpouse(state, player.id);
-      if (kin.spouseId) unlinkSpouse(state, kin.id);
+      if (player?.spouseId) unlinkSpouse(state, player.id, 'elopement');
+      if (kin.spouseId) unlinkSpouse(state, kin.id, 'elopement');
       relation.flags = relation.flags.filter((flag) => flag !== 'affair' && flag !== 'feud');
       marry(state, kin, relation);
       state.reputation = clamp(state.reputation - rnd(8, 16), -100, 100);
@@ -582,15 +581,8 @@ export function performSystemicRelationshipAction(state: GameState, kin: KinMemb
       pushFeed(state, 'DISINHERITED', C.bad, `Thou strikes ${kin.name} from the inheritance. ${kin.pronouns.subject} will carry that for the rest of ${kin.pronouns.possessive} life.`, 'bad');
       break;
     case 'divorce':
-      relation.flags = relation.flags.filter((flag) => flag !== 'spouse');
-      relation.flags.push('former_spouse');
+      unlinkSpouse(state,state.playerCharacterId,'divorce');
       kin.kind = 'acquaintance';
-      if (state.world.characters[state.playerCharacterId]) delete state.world.characters[state.playerCharacterId].spouseId;
-      if (state.world.characters[kin.id]) {
-        delete state.world.characters[kin.id].spouseId;
-        state.world.characters[kin.id].kind = 'acquaintance';
-      }
-      removeTag(state, 'married');
       addTag(state, 'divorced');
       applyRelationshipShift(state, kin.id, { affinity: -12, trust: -12 }, { affinity: -18, trust: -20 });
       pushFeed(state, 'DIVORCE', C.bad, `You and ${kin.name} end the marriage. The village acquires opinions immediately.`, 'bad');
@@ -602,13 +594,14 @@ export function performSystemicRelationshipAction(state: GameState, kin: KinMemb
 function marry(state: GameState, kin: KinMember, relation: Relationship): void {
   const player = state.world.characters[state.playerCharacterId];
   const spouse = state.world.characters[kin.id];
-  if ((player?.spouseId && player.spouseId !== kin.id) || (spouse?.spouseId && spouse.spouseId !== state.playerCharacterId)) return;
+  if (!linkSpouses(state,state.playerCharacterId,kin.id)) return;
   kin.kind = 'spouse';
   kin.role = 'Thy Spouse';
   if (!relation.flags.includes('spouse')) relation.flags.push('spouse');
   if (!relation.flags.includes('family')) relation.flags.push('family');
   addTag(state, 'married');
   addTag(state, 'chose_marriage');
+  state.world.proposalFromId=null;
   addMemory(state, 'married', 3, kin.name);
   if (player) player.spouseId = kin.id;
   if (spouse) {
@@ -655,7 +648,7 @@ export function canSeduce(state: GameState, kin: KinMember): boolean {
   if (isCloseBlood(kinshipTo(state, kin.id))) return false;
   if (isPlayerSpouse(state, kin)) return false;
   const player = state.world.characters[state.playerCharacterId];
-  const someoneIsMarried = Boolean(player?.spouseId) || Boolean(kin.spouseId);
+  const someoneIsMarried = Boolean(activeSpouse(state)) || Boolean(activeSpouse(state,kin.id));
   if (!someoneIsMarried) return false;
   const existing = affairPartnerId(state);
   if (existing && existing !== kin.id) return false;
@@ -670,7 +663,7 @@ export function isAffairWith(state: GameState, kinId: string): boolean {
 function wrongedSpouses(state: GameState, partnerId: string): KinMember[] {
   const player = state.world.characters[state.playerCharacterId];
   const partner = state.world.characters[partnerId];
-  const ids = new Set([player?.spouseId, partner?.spouseId].filter((id): id is string => Boolean(id)));
+  const ids = new Set([activeSpouse(state)?.id, activeSpouse(state,partnerId)?.id].filter((id): id is string => Boolean(id)));
   ids.delete(state.playerCharacterId);
   ids.delete(partnerId);
   return [...ids]
@@ -745,8 +738,10 @@ export function tickAffairs(state: GameState): GameState {
 }
 
 export function maybeCreateNpcProposal(state: GameState): void {
-  if (state.world.proposalFromId || state.tags.includes('married') || state.age < 18) return;
-  const candidates = state.kin.filter((kin) => isRomanceEligible(state, kin)).filter((kin) => {
+  const pending=state.world.characters[state.world.proposalFromId??''];
+  if (state.world.proposalFromId && (!pending || !canProposeTo(state,pending))) state.world.proposalFromId=null;
+  if (state.world.proposalFromId || activeSpouse(state) || state.age < 18) return;
+  const candidates = state.kin.filter((kin) => canProposeTo(state, kin)).filter((kin) => {
     const other = perspectives(state, relationshipWith(state, kin.id)).other;
     return other.affinity >= 65 && other.trust >= 55 && other.attraction >= 55;
   });

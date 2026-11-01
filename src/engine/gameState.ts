@@ -1,3 +1,5 @@
+import {reconcileMarriages} from './characterState';
+import {normalizeChildNaming} from './childNaming';
 import { initializeCourt } from './courtEngine';
 import { initializeBirthOrigin } from './birthOriginEngine';
 import { initializeLifeDepth } from './lifeDepthState';
@@ -158,6 +160,8 @@ export function createLife(opts: FreshLifeOptions = {}): GameState {
   for (const person of Object.values(created.value.world.characters)) person.skills ??= freshSkills();
   initializeLifeDepth(created.value);
   initializeCourt(created.value);
+  reconcileMarriages(created.value);
+  normalizeChildNaming(created.value);
   return created.value;
 }
 
@@ -436,6 +440,7 @@ export function cloneState(s: GameState): GameState {
   const characters = Object.fromEntries(Object.entries(s.world.characters).map(([id, character]) => [id, cloneCharacter(character)]));
   const cloned = {
     ...s,
+    childNaming: s.childNaming ? JSON.parse(JSON.stringify(s.childNaming)) : undefined,
     rpg: JSON.parse(JSON.stringify(s.rpg ?? freshRpg())),
     stats: { ...s.stats },
     duel: s.duel ? { ...s.duel, log: [...s.duel.log], combat: s.duel.combat ? { ...s.duel.combat, ...(s.duel.combat.solo ? { solo: { ...s.duel.combat.solo } } : {}) } : undefined } : null,

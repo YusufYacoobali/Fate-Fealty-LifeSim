@@ -78,6 +78,7 @@ function applyCharacterAliases(state: GameState): boolean {
     character.childIds = (character.childIds ?? []).map(redirect);
     character.guardianIds = (character.guardianIds ?? []).map(redirect);
     if (character.spouseId) character.spouseId = redirect(character.spouseId);
+    for (const marriage of character.marriages??[]) { marriage.spouseId=redirect(marriage.spouseId); if (marriage.deceasedId) marriage.deceasedId=redirect(marriage.deceasedId); }
     for (const secret of character.secrets ?? []) secret.knownByIds = secret.knownByIds.map(redirect);
     for (const charge of character.legalState?.charges ?? []) {
       charge.victimIds = charge.victimIds.map(redirect);

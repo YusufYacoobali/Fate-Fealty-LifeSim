@@ -1,3 +1,4 @@
+import {reconcileMaritalState, unlinkSpouse} from './characterState';
 import { initializeLifeDepth, legacyStatus } from './lifeDepthState';
 import { reconcileCourt } from './courtEngine';
 import { settleRoyalSuccession } from './royalSuccessionEngine';
@@ -40,6 +41,7 @@ export function continueAsHeir(state: GameState, requestedHeirId?: string, lifet
   const formerCause = state.deathCause || 'the death of the previous player';
   if (formerPlayer) {
     formerPlayer.alive = false;
+    unlinkSpouse(state,formerPlayer.id,'death');
     formerPlayer.deathYear = state.world.currentYear;
     formerPlayer.deathCause = state.deathCause;
     formerPlayer.kind = formerPlayer.gender === 'woman' ? 'mother' : formerPlayer.gender === 'man' ? 'father' : 'acquaintance';
@@ -68,6 +70,7 @@ export function continueAsHeir(state: GameState, requestedHeirId?: string, lifet
   if (state.world.court?.rulerId === heir.id && !lifetimeUnlocked) settleRoyalSuccession(state, [heir.id]);
   heir.isHeir = true;
   state.playerCharacterId = heir.id;
+  state.childNaming={ownerId:heir.id,pendingIds:[]};
   if (state.rpg.stewardId === heir.id) state.rpg.stewardId = null;
   state.rpg.forge = null;
   state.rpg.forgeBonuses = { ownerId: heir.id, year: state.world.currentYear, used: 0 };
@@ -123,6 +126,7 @@ export function continueAsHeir(state: GameState, requestedHeirId?: string, lifet
     criticalYears: 0,
   };
 
+  reconcileMaritalState(state);
   reconcileCourt(state);
   syncKinToWorld(state);
   state.world.proposalFromId = null;

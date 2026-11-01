@@ -1,3 +1,4 @@
+import {activeSpouse} from './characterState';
 /**
  * Per-year "living world" upkeep that the Life Director runs each age-up:
  *   - kin mortality (spouses and parents grow old and die),
@@ -24,15 +25,13 @@ export function tickKinMortality(s: GameState): GameState {
     const risk = (k.age - 50) / 150;
     if (!chance(risk)) continue;
 
+    const wasSpouse=activeSpouse(s)?.id===k.id;
     killKin(s, k.id);
-    if (k.kind === 'spouse') {
-      removeTag(s, 'married');
-      addTag(s, 'widowed');
-      addMemory(s, 'widowed', 3);
+    if (wasSpouse) {
       pushFeed(s, 'BEREAVEMENT', C.bad, `${k.name}, your spouse, has passed away at ${k.age}. You are widowed.`, 'bad', {}, k.id, 'npc');
     } else {
       addMemory(s, `${k.kind}_died`, 2);
-      pushFeed(s, 'BEREAVEMENT', C.bad, `${k.name}, your ${k.kind}, has died at the age of ${k.age}.`, 'bad', {}, k.id, 'npc');
+      pushFeed(s, 'BEREAVEMENT', C.bad, `${k.name}, your ${k.kind==='spouse'?'former spouse':k.kind}, has died at the age of ${k.age}.`, 'bad', {}, k.id, 'npc');
     }
   }
   return s;

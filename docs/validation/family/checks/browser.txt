@@ -1,0 +1,17 @@
+PASS birth 280 1 false
+PASS birth 320 1 false
+PASS birth 390 1 false
+PASS birth 768 1 false
+PASS rename 280 1 false
+PASS rename 320 1 false
+PASS rename 390 1 false
+PASS rename 768 1 false
+PASS widowed 280 1 false
+PASS widowed 320 1 false
+PASS widowed 390 1 false
+PASS widowed 768 1 false
+PASS birth 280 1.35 false
+PASS rename 280 1.35 false
+PASS rename 280 1 true
+PASS heir 768 1 false
+PASS 16 family UI cases

@@ -1,0 +1,127 @@
+{
+  "date": "2026-11-01",
+  "baseline": "8630f6a803a82a77d45dce3ad0edade00e778372",
+  "implementationCommit": "acdebf0d0f2b84b410ea9327252f25ad66bf6321",
+  "jest": {
+    "suites": 95,
+    "tests": 954,
+    "passed": true
+  },
+  "typescript": {
+    "passed": true
+  },
+  "lives": {
+    "count": 2100,
+    "roles": {
+      "commoner": 300,
+      "artisan_merchant": 300,
+      "clergy": 300,
+      "martial": 300,
+      "outlaw": 300,
+      "landed_noble": 300,
+      "monarch": 300
+    },
+    "free": 525,
+    "premium": 1575,
+    "naturalMortality": true,
+    "meanDeathAge": 60.118095238095236,
+    "reloadChecks": 6017,
+    "reloadFailures": 0,
+    "stalls": 0,
+    "integrityFailures": 0,
+    "authoredSchedules": 0,
+    "unfinishedLives": 0
+  },
+  "dynasties": {
+    "count": 100,
+    "generations": 3,
+    "passed": true,
+    "scope": "Existing test: eight annual steps per generation and explicit heir transfer; not 300 full natural lives."
+  },
+  "wholeLife": {
+    "seed": 779023,
+    "naturalDeathAge": 55,
+    "heir": "D\u2019Arcy",
+    "namedAtAges": [
+      [
+        19,
+        "Named \u00c9lodie"
+      ],
+      [
+        21,
+        "Named O\u2019Neill"
+      ]
+    ],
+    "exactIndependentReplay": true,
+    "integrityFailures": 0
+  },
+  "ui": {
+    "cases": 16,
+    "widths": [
+      280,
+      320,
+      390,
+      768
+    ],
+    "textScale": 1.35,
+    "keyboardViewportResizeHeight": 430,
+    "trueFreeAndExhaustedActions": true,
+    "errors": [],
+    "nativeKeyboardVerified": false
+  },
+  "productionExports": {
+    "platforms": [
+      "web",
+      "ios",
+      "android"
+    ],
+    "passed": true
+  },
+  "unchangedSourceSha256": {
+    "src/engine/deathEngine.ts": "621c43d61cd40664491a54bb2e52d8d3170d6f88344d5203510be150b79f2356",
+    "src/components/NavBar.tsx": "c304a5679650ecfd0c81aedaec126a7cdef321a30ac7371bcd992a22511b5b01",
+    "src/components/modals/EventModal.tsx": "7fa3a29cf605855022c0ebb1239eb8740ebff08214ca7844e6908902543f75b3",
+    "src/components/modals/CharacterCreation.tsx": "9d2020cdc56e643c84672d31fc08ca9b83f7e5df96dba3898944eda334a0070b",
+    "src/theme/theme.ts": "7a5916ee82991ad5438d8930275ea877ee969f5f680a6f0b27b921dd6437f62f",
+    "src/services/haptics.ts": "21eb67e94fabbf5a68ade9f99d3ef929c37a5ee807a2969ab43a87979f0a4690",
+    "src/services/audioLogic.ts": "bc754e7753a8a7125e14d449f06c15a8c27b858c73bbe4ca834e563ac963d26d",
+    "src/state/hooks/useGameAudio.ts": "100d12d9a05302b4f152bb987ca581c050aba2b220d1d64e06bad9dd6a2bd94b"
+  },
+  "changedFiles": [
+    "scripts/auditFamilyLife.ts",
+    "scripts/createFamilyUiFixtures.ts",
+    "scripts/verifyFamilyUi.cjs",
+    "src/__tests__/childNamingModal.test.tsx",
+    "src/__tests__/childNamingRemarriage.test.ts",
+    "src/__tests__/familyPlanning.test.ts",
+    "src/__tests__/romanceDiscovery.test.tsx",
+    "src/components/modals/ChildNamingModal.tsx",
+    "src/components/tabs/KinTab.tsx",
+    "src/engine/activityEngine.ts",
+    "src/engine/birthCircumstances.ts",
+    "src/engine/characterState.ts",
+    "src/engine/childNaming.ts",
+    "src/engine/consequenceEngine.ts",
+    "src/engine/contentRecovery.ts",
+    "src/engine/eventPicker.ts",
+    "src/engine/familyFormationEngine.ts",
+    "src/engine/gameState.ts",
+    "src/engine/healthEngine.ts",
+    "src/engine/kinFactory.ts",
+    "src/engine/kinship.ts",
+    "src/engine/lifecycleEngine.ts",
+    "src/engine/npcDirector.ts",
+    "src/engine/relationshipEngine.ts",
+    "src/engine/successionEngine.ts",
+    "src/engine/worldEngine.ts",
+    "src/engine/worldIntegrity.ts",
+    "src/screens/GameScreen.tsx",
+    "src/state/gameReducer.ts",
+    "src/state/persistence.ts",
+    "src/types/game.ts"
+  ],
+  "releaseLimits": [
+    "Existing missing published Android TERMS_OF_USE_URL.",
+    "Real OS font scaling, soft keyboards, signed devices, sound/haptics, lifecycle and store purchase/restore remain manual checks."
+  ]
+}

@@ -1,0 +1,2677 @@
+{
+  "seed": 779023,
+  "deathAge": 55,
+  "deathCause": "Died of a winter chill and a tired heart.",
+  "originalPlayer": "player_1",
+  "firstSpouse": "kin_214",
+  "secondSpouse": "kin_241",
+  "children": [
+    "kin_224",
+    "kin_261"
+  ],
+  "heirId": "kin_224",
+  "heirName": "D’Arcy",
+  "marriages": [
+    {
+      "spouseId": "kin_214",
+      "startedYear": 1338,
+      "endReason": "death",
+      "endedYear": 1339,
+      "deceasedId": "kin_214"
+    },
+    {
+      "spouseId": "kin_241",
+      "startedYear": 1339,
+      "endReason": "death",
+      "endedYear": 1367,
+      "deceasedId": "kin_241"
+    }
+  ],
+  "childrenAfterContinuation": [
+    {
+      "id": "kin_224",
+      "name": "D’Arcy",
+      "role": "Guild Merchant",
+      "emoji": "🧒",
+      "trait": "Small and loud",
+      "bio": "A small, turnip-shaped continuation of your line. Bites when teething.",
+      "rel": 50,
+      "age": 36,
+      "kind": "child",
+      "alive": true,
+      "isHeir": true,
+      "gender": "woman",
+      "pronouns": {
+        "id": "she",
+        "subject": "she",
+        "object": "her",
+        "possessive": "her"
+      },
+      "attraction": "men",
+      "stats": {
+        "health": 11,
+        "charm": 34,
+        "wits": 53,
+        "faith": 35
+      },
+      "skills": {
+        "husbandry": {
+          "level": 1,
+          "xp": 0,
+          "mastered": false
+        },
+        "craftsmanship": {
+          "level": 1,
+          "xp": 0,
+          "mastered": false
+        },
+        "scholarship": {
+          "level": 3,
+          "xp": 52,
+          "mastered": false
+        },
+        "arms": {
+          "level": 1,
+          "xp": 0,
+          "mastered": false
+        }
+      },
+      "traits": [
+        "Small and loud"
+      ],
+      "gold": 2091,
+      "rankIdx": 0,
+      "occupation": {
+        "careerId": "merchant",
+        "experience": 84,
+        "performance": 56,
+        "workedThisYear": 0
+      },
+      "debts": [],
+      "healthTags": [],
+      "memories": [],
+      "householdId": "house_player",
+      "birthFamilyId": "family_kin_214",
+      "parentIds": [
+        "player_1",
+        "kin_214"
+      ],
+      "childIds": [],
+      "personalityTraits": [
+        "loyal",
+        "proud",
+        "independent"
+      ],
+      "ambition": "become_wealthy",
+      "secret": "hidden_debt",
+      "secretRevealed": false,
+      "vulnerability": "pride",
+      "importance": "supporting",
+      "worldMemories": [
+        {
+          "id": "memory_milestone_481",
+          "year": 1357,
+          "type": "development_18",
+          "actorIds": [
+            "player_1",
+            "kin_214"
+          ],
+          "sentiment": 20,
+          "salience": 3,
+          "inherited": false,
+          "summary": "D’Arcy was supported through a formative year."
+        },
+        {
+          "id": "memory_ambition_648",
+          "year": 1369,
+          "type": "ambition_become_wealthy",
+          "actorIds": [],
+          "sentiment": 10,
+          "salience": 2,
+          "inherited": false,
+          "summary": "D’Arcy pursued the ambition to become wealthy."
+        },
+        {
+          "id": "memory_choice_652",
+          "year": 1369,
+          "type": "choice_single_story_war_swineford",
+          "actorIds": [
+            "player_1"
+          ],
+          "choiceId": "Help make the muster fair",
+          "sentiment": 0,
+          "salience": 2,
+          "inherited": false,
+          "summary": "You insist on a public list and exemptions read aloud. D’Arcy objects to giving the levy quite so many opportunities to understand it."
+        }
+      ],
+      "healthConditions": [],
+      "legalState": {
+        "status": "free",
+        "suspicion": 0,
+        "notoriety": 0,
+        "charges": [],
+        "sentenceYearsRemaining": 0
+      },
+      "secrets": [],
+      "guardianIds": [],
+      "lineageStatus": "marital",
+      "childDevelopment": {
+        "completedMilestones": [
+          6,
+          12,
+          18
+        ],
+        "education": "none",
+        "investment": 0,
+        "favour": 0
+      },
+      "factionInfluence": 0,
+      "education": {
+        "track": null,
+        "classmateIds": [],
+        "progress": 0,
+        "misconduct": 0,
+        "actionsYear": -1,
+        "actionsUsed": 0,
+        "qualifications": [],
+        "history": [],
+        "encounters": [],
+        "scholarship": false,
+        "comingOfAge": false,
+        "mode": "childhood",
+        "activeClassmateIds": []
+      },
+      "professionalHistory": {
+        "trade": {
+          "reputation": 28,
+          "completedActions": [],
+          "milestones": [
+            "field_training"
+          ],
+          "contactIds": [],
+          "actionsYear": -1,
+          "actionsUsed": 0,
+          "lastWorkedYear": 1374,
+          "matters": [],
+          "shifts": 28
+        }
+      },
+      "socialStatus": {
+        "estate": "commoner",
+        "martialHonour": "none",
+        "titles": [],
+        "grants": [
+          "birthright"
+        ]
+      },
+      "background": {
+        "origin": "peasant",
+        "familyId": "family_0",
+        "guardianIds": [
+          "player_1",
+          "kin_214"
+        ],
+        "householdWealth": 23,
+        "inherited": false
+      }
+    },
+    {
+      "id": "kin_261",
+      "name": "O’Neill",
+      "role": "Court Poet",
+      "emoji": "🧒",
+      "trait": "Small and loud",
+      "bio": "A small, turnip-shaped continuation of your line. Bites when teething.",
+      "rel": 50,
+      "age": 29,
+      "kind": "child",
+      "alive": false,
+      "isHeir": true,
+      "gender": "man",
+      "pronouns": {
+        "id": "he",
+        "subject": "he",
+        "object": "him",
+        "possessive": "his"
+      },
+      "attraction": "women",
+      "stats": {
+        "health": 0,
+        "charm": 46,
+        "wits": 48,
+        "faith": 57
+      },
+      "skills": {
+        "husbandry": {
+          "level": 1,
+          "xp": 0,
+          "mastered": false
+        },
+        "craftsmanship": {
+          "level": 1,
+          "xp": 0,
+          "mastered": false
+        },
+        "scholarship": {
+          "level": 3,
+          "xp": 28,
+          "mastered": false
+        },
+        "arms": {
+          "level": 1,
+          "xp": 0,
+          "mastered": false
+        }
+      },
+      "traits": [
+        "Small and loud"
+      ],
+      "gold": 1374,
+      "rankIdx": 0,
+      "occupation": {
+        "careerId": "court_poet",
+        "experience": 60,
+        "performance": 59,
+        "workedThisYear": 0
+      },
+      "debts": [],
+      "healthTags": [
+        "died_from_health"
+      ],
+      "memories": [],
+      "householdId": "house_player",
+      "birthFamilyId": "family_kin_241",
+      "parentIds": [
+        "player_1",
+        "kin_241"
+      ],
+      "childIds": [],
+      "personalityTraits": [
+        "cunning",
+        "patient",
+        "independent"
+      ],
+      "ambition": "become_wealthy",
+      "secret": "hidden_debt",
+      "secretRevealed": false,
+      "vulnerability": "poverty",
+      "importance": "supporting",
+      "worldMemories": [
+        {
+          "id": "memory_milestone_506",
+          "year": 1359,
+          "type": "development_18",
+          "actorIds": [
+            "player_1",
+            "kin_241"
+          ],
+          "sentiment": 20,
+          "salience": 3,
+          "inherited": false,
+          "summary": "O’Neill was supported through a formative year."
+        },
+        {
+          "id": "memory_choice_612",
+          "year": 1366,
+          "type": "choice_single_story_ashes_household",
+          "actorIds": [
+            "player_1"
+          ],
+          "choiceId": "Patch a smaller room together",
+          "sentiment": 0,
+          "salience": 4,
+          "inherited": true,
+          "summary": "You save the usable timber and accept less space. O’Neill lends a hand after discovering that you intend to sleep under this work yourself."
+        }
+      ],
+      "healthConditions": [],
+      "legalState": {
+        "status": "free",
+        "suspicion": 0,
+        "notoriety": 0,
+        "charges": [],
+        "sentenceYearsRemaining": 0
+      },
+      "secrets": [],
+      "guardianIds": [],
+      "lineageStatus": "marital",
+      "childDevelopment": {
+        "completedMilestones": [
+          6,
+          12,
+          18
+        ],
+        "education": "none",
+        "investment": 0,
+        "favour": 0
+      },
+      "factionInfluence": 0,
+      "education": {
+        "track": null,
+        "classmateIds": [],
+        "progress": 0,
+        "misconduct": 0,
+        "actionsYear": -1,
+        "actionsUsed": 0,
+        "qualifications": [],
+        "history": [],
+        "encounters": [],
+        "scholarship": false,
+        "comingOfAge": false,
+        "mode": "childhood",
+        "activeClassmateIds": []
+      },
+      "professionalHistory": {
+        "entertainment": {
+          "reputation": 22,
+          "completedActions": [],
+          "milestones": [
+            "field_training"
+          ],
+          "contactIds": [],
+          "actionsYear": -1,
+          "actionsUsed": 0,
+          "lastWorkedYear": 1370,
+          "matters": [],
+          "shifts": 22
+        }
+      },
+      "socialStatus": {
+        "estate": "commoner",
+        "martialHonour": "none",
+        "titles": [],
+        "grants": [
+          "birthright"
+        ]
+      },
+      "background": {
+        "origin": "peasant",
+        "familyId": "family_0",
+        "guardianIds": [
+          "player_1",
+          "kin_241"
+        ],
+        "householdWealth": 25,
+        "inherited": false
+      },
+      "deathYear": 1370
+    }
+  ],
+  "trace": [
+    {
+      "label": "Annual checkpoint",
+      "age": 1,
+      "playerId": "player_1",
+      "children": [],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 3069041773,
+        "draws": 806
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 2,
+      "playerId": "player_1",
+      "children": [],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 3294501361,
+        "draws": 1050
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 3,
+      "playerId": "player_1",
+      "children": [],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 1688395136,
+        "draws": 1293
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 4,
+      "playerId": "player_1",
+      "children": [],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 210171305,
+        "draws": 1522
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 5,
+      "playerId": "player_1",
+      "children": [],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 1003525366,
+        "draws": 1771
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 6,
+      "playerId": "player_1",
+      "children": [],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 3756327634,
+        "draws": 2007
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 7,
+      "playerId": "player_1",
+      "children": [],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 382596793,
+        "draws": 2242
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 8,
+      "playerId": "player_1",
+      "children": [],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 1239892051,
+        "draws": 2484
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 9,
+      "playerId": "player_1",
+      "children": [],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 3360858649,
+        "draws": 2722
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 10,
+      "playerId": "player_1",
+      "children": [],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 1250799148,
+        "draws": 2953
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 11,
+      "playerId": "player_1",
+      "children": [],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 3179942155,
+        "draws": 3212
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 12,
+      "playerId": "player_1",
+      "children": [],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 1069882654,
+        "draws": 3443
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 13,
+      "playerId": "player_1",
+      "children": [],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 791388966,
+        "draws": 3675
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 14,
+      "playerId": "player_1",
+      "children": [],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 3480250037,
+        "draws": 3918
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 15,
+      "playerId": "player_1",
+      "children": [],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 1938085009,
+        "draws": 4154
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 16,
+      "playerId": "player_1",
+      "children": [],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 3491157134,
+        "draws": 4387
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 17,
+      "playerId": "player_1",
+      "children": [],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 2580827776,
+        "draws": 4621
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 18,
+      "playerId": "player_1",
+      "children": [],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 4133899901,
+        "draws": 4854
+      }
+    },
+    {
+      "label": "Married Avice",
+      "age": 18,
+      "playerId": "player_1",
+      "spouse": "kin_214",
+      "children": [],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 1542616024,
+        "draws": 4869
+      }
+    },
+    {
+      "label": "Named Élodie",
+      "age": 19,
+      "playerId": "player_1",
+      "spouse": "kin_214",
+      "children": [
+        "kin_224"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 2903864558,
+        "draws": 5123
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 19,
+      "playerId": "player_1",
+      "spouse": "kin_214",
+      "children": [
+        "kin_224"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 2903864558,
+        "draws": 5123
+      }
+    },
+    {
+      "label": "Widowed after event death",
+      "age": 19,
+      "playerId": "player_1",
+      "children": [
+        "kin_224"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 2903864558,
+        "draws": 5123
+      }
+    },
+    {
+      "label": "Reloaded widow",
+      "age": 19,
+      "playerId": "player_1",
+      "children": [
+        "kin_224"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 2903864558,
+        "draws": 5123
+      }
+    },
+    {
+      "label": "Married Hilda",
+      "age": 19,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 312580681,
+        "draws": 5138
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 20,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 3129324146,
+        "draws": 5367
+      }
+    },
+    {
+      "label": "Named O’Neill",
+      "age": 21,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 2659006867,
+        "draws": 5620
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 21,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 2659006867,
+        "draws": 5620
+      }
+    },
+    {
+      "label": "Renamed first child",
+      "age": 21,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 2659006867,
+        "draws": 5620
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 22,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 4276020189,
+        "draws": 5846
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 23,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 2165960688,
+        "draws": 6077
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 24,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 623795660,
+        "draws": 6313
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 25,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 1672914509,
+        "draws": 6534
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 26,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 2090197688,
+        "draws": 6757
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 27,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 3259622631,
+        "draws": 7032
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 28,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 3612964613,
+        "draws": 7262
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 29,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 3078706137,
+        "draws": 7522
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 30,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 2104435582,
+        "draws": 7763
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 31,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 2329895170,
+        "draws": 8007
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 32,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 3379014019,
+        "draws": 8228
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 33,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 133165572,
+        "draws": 8449
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 34,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 3517803510,
+        "draws": 8683
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 35,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 2479591758,
+        "draws": 8931
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 36,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 2960816134,
+        "draws": 9147
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 37,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 2810204840,
+        "draws": 9365
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 38,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 2027757876,
+        "draws": 9585
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 39,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 4148724474,
+        "draws": 9823
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 40,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 902876027,
+        "draws": 10044
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 41,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 2455948152,
+        "draws": 10277
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 42,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 3881137883,
+        "draws": 10524
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 43,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 2530796446,
+        "draws": 10739
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 44,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 3579915295,
+        "draws": 10960
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 45,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 1845926676,
+        "draws": 11217
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 46,
+      "playerId": "player_1",
+      "spouse": "kin_241",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 3398998801,
+        "draws": 11450
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 47,
+      "playerId": "player_1",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 3688399586,
+        "draws": 11687
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 48,
+      "playerId": "player_1",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 1834104873,
+        "draws": 11890
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 49,
+      "playerId": "player_1",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 2379270446,
+        "draws": 12099
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 50,
+      "playerId": "player_1",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 3556271689,
+        "draws": 12306
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 51,
+      "playerId": "player_1",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 2078047858,
+        "draws": 12535
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 52,
+      "playerId": "player_1",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 599824027,
+        "draws": 12764
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 53,
+      "playerId": "player_1",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 2912614216,
+        "draws": 12981
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 54,
+      "playerId": "player_1",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 994378306,
+        "draws": 13191
+      }
+    },
+    {
+      "label": "Annual checkpoint",
+      "age": 55,
+      "playerId": "player_1",
+      "children": [
+        "kin_224",
+        "kin_261"
+      ],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 4025674262,
+        "draws": 13195
+      }
+    },
+    {
+      "label": "Continued as named heir",
+      "age": 36,
+      "playerId": "kin_224",
+      "children": [],
+      "rng": {
+        "algorithm": "mulberry32-v1",
+        "state": 4025674262,
+        "draws": 13195
+      }
+    }
+  ],
+  "history": [
+    {
+      "eventId": "young_washing_judge",
+      "resolvedChoiceId": "help",
+      "actorBindings": {
+        "carer": "father"
+      },
+      "id": "history_choice_17",
+      "year": 1321,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "father"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "young_washing_judge:Hold the clean cloth yourself",
+      "causes": [
+        "THE LAUNDRY HEARING"
+      ],
+      "summary": "Simon gives you one corner. Your face becomes cleaner and the floor rather less so.",
+      "salience": 2
+    },
+    {
+      "eventId": "young_sleep_inspection",
+      "resolvedChoiceId": "call",
+      "actorBindings": {
+        "carer": "mother"
+      },
+      "id": "history_choice_30",
+      "year": 1322,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "mother"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "young_sleep_inspection:Call for the night inspection",
+      "causes": [
+        "THE NIGHT INSPECTOR"
+      ],
+      "summary": "Isolde arrives with one shoe on the wrong foot. The inspection passes; the inspector remains unsatisfied.",
+      "salience": 2
+    },
+    {
+      "id": "history_child_36",
+      "year": 1323,
+      "type": "adoption",
+      "participantIds": [
+        "kin_34",
+        "villager_23"
+      ],
+      "familyIds": [
+        "family_6"
+      ],
+      "causes": [
+        "family formation"
+      ],
+      "summary": "Wat is adopted into the household.",
+      "salience": 4
+    },
+    {
+      "eventId": "young_candle_shadow",
+      "resolvedChoiceId": "hide",
+      "actorBindings": {
+        "carer": "mother"
+      },
+      "id": "history_choice_42",
+      "year": 1323,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "mother"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "young_candle_shadow:Watch from beneath the blanket",
+      "causes": [
+        "THE EXTRA PERSON ON THE WALL"
+      ],
+      "summary": "Isolde moves the candle. The stranger goes home without requiring you to be brave for an audience.",
+      "salience": 2
+    },
+    {
+      "eventId": "young_blanket_trade",
+      "resolvedChoiceId": "keep",
+      "actorBindings": {
+        "carer": "father"
+      },
+      "id": "history_choice_49",
+      "year": 1324,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "father"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "young_blanket_trade:Hold on to the familiar corner",
+      "causes": [
+        "THE BLANKET EXCHANGE"
+      ],
+      "summary": "Simon washes the other end first. The compromise leaves you holding a small but recognised country.",
+      "salience": 2
+    },
+    {
+      "id": "history_faction_56",
+      "year": 1325,
+      "type": "faction_shift",
+      "participantIds": [
+        "mab"
+      ],
+      "familyIds": [],
+      "causes": [
+        "outlaws"
+      ],
+      "summary": "The Outlaws lost influence in Swineford.",
+      "salience": 2
+    },
+    {
+      "eventId": "young_river_boat",
+      "resolvedChoiceId": "charge",
+      "actorBindings": {
+        "peer": "kin_57"
+      },
+      "id": "history_choice_59",
+      "year": 1325,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "kin_57"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "young_river_boat:Charge spectators for the launch",
+      "causes": [
+        "THE BOAT THAT HAS NO INTEREST IN COMMAND"
+      ],
+      "summary": "Maud demands a refund on behalf of the spectators. The spectators are three children and one unmoved dog.",
+      "salience": 2
+    },
+    {
+      "eventId": "base_turnip_oracle",
+      "resolvedChoiceId": "base_turnip_oracle_choice_1",
+      "actorBindings": {
+        "other": "roderick"
+      },
+      "id": "history_choice_70",
+      "year": 1326,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "roderick"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "base_turnip_oracle:Study the crack rather than buy the prophecy",
+      "causes": [
+        "THE TURNIP ORACLE"
+      ],
+      "summary": "You learn how frost split the root and improve household food planning. The forecast is useful precisely because nobody claims it speaks.",
+      "salience": 2
+    },
+    {
+      "eventId": "young_measuring_door",
+      "resolvedChoiceId": "heels",
+      "actorBindings": {
+        "carer": "father"
+      },
+      "id": "history_choice_77",
+      "year": 1327,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "father"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "young_measuring_door:Improve the measurement with your heels",
+      "causes": [
+        "THE DOOR THAT RECORDS YOUR HEIGHT"
+      ],
+      "summary": "Simon marks the extra height with a tiny drawing of your feet. The record is accurate in a particularly inconvenient way.",
+      "salience": 2
+    },
+    {
+      "eventId": "base_pig_trial",
+      "resolvedChoiceId": "base_pig_trial_choice_2",
+      "actorBindings": {
+        "other": "villager_22"
+      },
+      "id": "history_choice_87",
+      "year": 1328,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "villager_22"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "base_pig_trial:Demand harsh justice",
+      "causes": [
+        "A PIG ON TRIAL"
+      ],
+      "summary": "The pig is sentenced to public shame. It appears immune.",
+      "salience": 2
+    },
+    {
+      "eventId": "peasant_quack_doctor",
+      "resolvedChoiceId": "peasant_quack_doctor_choice_2",
+      "actorBindings": {
+        "other": "oswin"
+      },
+      "id": "history_choice_102",
+      "year": 1329,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "oswin"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "peasant_quack_doctor:Ask what happens when the stone cools",
+      "causes": [
+        "THE QUACK DOCTOR"
+      ],
+      "summary": "Brother Oswin recommends another appointment. You decline with a better understanding of which part of the treatment needs constant warming.",
+      "salience": 2
+    },
+    {
+      "eventId": "peasant_sweating_sickness",
+      "resolvedChoiceId": "peasant_sweating_sickness_choice_2",
+      "actorBindings": {
+        "other": "mother"
+      },
+      "id": "history_choice_108",
+      "year": 1330,
+      "type": "failure",
+      "participantIds": [
+        "player_1",
+        "mother"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "peasant_sweating_sickness:Sweat it out and pray",
+      "causes": [
+        "THE SWEATING SICKNESS"
+      ],
+      "summary": "The fever digs in for the long haul. This sickness will not pass quickly.",
+      "salience": 2
+    },
+    {
+      "id": "royal_succession_112",
+      "year": 1331,
+      "type": "royal_succession",
+      "participantIds": [
+        "elswyth",
+        "aldric"
+      ],
+      "familyIds": [
+        "family_7"
+      ],
+      "causes": [
+        "the documented succession"
+      ],
+      "summary": "Elswyth is recognised as ruler: the documented succession.",
+      "salience": 5
+    },
+    {
+      "id": "history_child_118",
+      "year": 1331,
+      "type": "pregnancy",
+      "participantIds": [
+        "kin_116",
+        "mother",
+        "father"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "causes": [
+        "family formation"
+      ],
+      "summary": "Hugh is born.",
+      "salience": 4
+    },
+    {
+      "eventId": "base_bell_ringer",
+      "resolvedChoiceId": "base_bell_ringer_choice_2",
+      "actorBindings": {
+        "other": "agnes"
+      },
+      "id": "history_choice_123",
+      "year": 1331,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "agnes"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "base_bell_ringer:Ring it first",
+      "causes": [
+        "THE BELL RINGER'S BET"
+      ],
+      "summary": "You ring early. Half the village arrives angry, dressed, and spiritually confused.",
+      "salience": 2
+    },
+    {
+      "eventId": "single_chain_wounded_midwife",
+      "resolvedChoiceId": "fame",
+      "actorBindings": {
+        "other": "kin_25"
+      },
+      "id": "history_choice_144",
+      "year": 1333,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "kin_25"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "single_chain_wounded_midwife:Insist on the name you were promised",
+      "causes": [
+        "THE MIDWIFE’S INCONVENIENT HAND"
+      ],
+      "summary": "The midwife attempts too much and the care becomes less safe. Aelfric remembers your contribution to a problem you did not have to solve with your hands.",
+      "salience": 2
+    },
+    {
+      "eventId": "single_chain_strangers_map",
+      "resolvedChoiceId": "ask",
+      "actorBindings": {
+        "other": "joan"
+      },
+      "id": "history_choice_158",
+      "year": 1334,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "joan"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "single_chain_strangers_map:Ask permission and share any proceeds",
+      "causes": [
+        "THE TREASURE MAP ENDS UNDER A BED"
+      ],
+      "summary": "The neighbour admits there is an old cellar and lets you inspect it. Joan looks disappointed that the first tool you used was a question.",
+      "salience": 2
+    },
+    {
+      "eventId": "base_leeches_for_rent",
+      "resolvedChoiceId": "base_leeches_for_rent_choice_2",
+      "actorBindings": {
+        "other": "rowan"
+      },
+      "id": "history_choice_170",
+      "year": 1335,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "rowan"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "base_leeches_for_rent:Ask whether the landlord has agreed",
+      "causes": [
+        "THE DOCTOR'S CURE"
+      ],
+      "summary": "The seller has not consulted the landlord. You gain judgement while the leeches continue to make a much simpler living.",
+      "salience": 2
+    },
+    {
+      "eventId": "life_sermon_own_sin",
+      "resolvedChoiceId": "evidence",
+      "actorBindings": {
+        "other": "oswin"
+      },
+      "id": "history_choice_182",
+      "year": 1336,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "oswin"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "life_sermon_own_sin:Insist that accusations require evidence",
+      "causes": [
+        "THE SERMON WITH YOUR MEASURES IN IT"
+      ],
+      "summary": "The allegation is left out for want of evidence. Brother Oswin must deliver the moral point without the convenient pleasure of naming you.",
+      "salience": 2
+    },
+    {
+      "eventId": "young_forbidden_chapter",
+      "resolvedChoiceId": "study",
+      "actorBindings": {
+        "peer": "kin_57"
+      },
+      "id": "history_choice_195",
+      "year": 1337,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "kin_57"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "young_forbidden_chapter:Read it critically rather than circulate it",
+      "causes": [
+        "THE BOOK THAT SHOULD NOT BE THIS INTERESTING"
+      ],
+      "summary": "You identify the argument and its weaknesses. Maud is disappointed to discover that scandal can require homework.",
+      "salience": 2
+    },
+    {
+      "id": "history_faction_207",
+      "year": 1338,
+      "type": "faction_shift",
+      "participantIds": [
+        "mab"
+      ],
+      "familyIds": [],
+      "causes": [
+        "outlaws"
+      ],
+      "summary": "The Outlaws lost influence in Swineford.",
+      "salience": 2
+    },
+    {
+      "eventId": "life_herbal_labels",
+      "resolvedChoiceId": "refuse",
+      "actorBindings": {
+        "other": "villager_25"
+      },
+      "id": "history_choice_212",
+      "year": 1338,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "villager_25"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "life_herbal_labels:Leave both bundles untouched",
+      "causes": [
+        "THE TWO IDENTICAL HERB BUNDLES"
+      ],
+      "summary": "You refuse the gamble and gain some judgement. Not every uncertain meal needs a conclusive ending.",
+      "salience": 2
+    },
+    {
+      "id": "history_child_227",
+      "year": 1339,
+      "type": "pregnancy",
+      "participantIds": [
+        "kin_224",
+        "player_1",
+        "kin_214"
+      ],
+      "familyIds": [
+        "family_kin_214"
+      ],
+      "causes": [
+        "try_for_child"
+      ],
+      "summary": "Élodie is born.",
+      "salience": 4
+    },
+    {
+      "eventId": "life_scaffold_blessing",
+      "resolvedChoiceId": "leave",
+      "actorBindings": {
+        "other": "villager_28"
+      },
+      "id": "history_choice_238",
+      "year": 1339,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "villager_28"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "life_scaffold_blessing:Refuse to test the argument with your body",
+      "causes": [
+        "THE SCAFFOLD’S BLESSING"
+      ],
+      "summary": "Cuthbert objects to your lack of confidence. The loose peg lies beside the platform, displaying admirable patience with both of you.",
+      "salience": 4
+    },
+    {
+      "eventId": "single_chain_crown_levy",
+      "resolvedChoiceId": "redraw",
+      "actorBindings": {
+        "other": "beatrice"
+      },
+      "id": "history_choice_254",
+      "year": 1340,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "beatrice"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "single_chain_crown_levy:Demand a public drawing with exemptions read aloud",
+      "causes": [
+        "THE LOTS ARE DRAWN BEFORE THE DRAWING"
+      ],
+      "summary": "The list is remade before witnesses. Beatrice complains about delay while hiding the pen that predicted the first result.",
+      "salience": 2
+    },
+    {
+      "id": "history_child_264",
+      "year": 1341,
+      "type": "pregnancy",
+      "participantIds": [
+        "kin_261",
+        "player_1",
+        "kin_241"
+      ],
+      "familyIds": [
+        "family_kin_241"
+      ],
+      "causes": [
+        "try_for_child"
+      ],
+      "summary": "O’Neill is born.",
+      "salience": 4
+    },
+    {
+      "eventId": "life_saint_two_skulls",
+      "resolvedChoiceId": "question",
+      "actorBindings": {
+        "other": "villager_17"
+      },
+      "id": "history_choice_273",
+      "year": 1341,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "villager_17"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "life_saint_two_skulls:Ask for the history of both objects",
+      "causes": [
+        "THE SAINT’S SMALLER SKULL"
+      ],
+      "summary": "Aldric moves the smaller skull behind the larger one. The saint has become considerably older in the time it takes to ask one question.",
+      "salience": 2
+    },
+    {
+      "id": "history_faction_284",
+      "year": 1342,
+      "type": "faction_shift",
+      "participantIds": [
+        "elswyth"
+      ],
+      "familyIds": [],
+      "causes": [
+        "crown"
+      ],
+      "summary": "The Crown extended influence in Swineford.",
+      "salience": 2
+    },
+    {
+      "eventId": "life_jealous_petition",
+      "resolvedChoiceId": "talk",
+      "actorBindings": {
+        "spouse": "kin_241"
+      },
+      "id": "history_choice_287",
+      "year": 1342,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "kin_241"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "life_jealous_petition:Give a full account and change the arrangement",
+      "causes": [
+        "THE PETITION AGAINST YOUR EVENINGS"
+      ],
+      "summary": "You answer the question and make room for your spouse’s worry. Trust improves through a less entertaining use of the evening.",
+      "salience": 4
+    },
+    {
+      "eventId": "rival_wagered_challenge",
+      "resolvedChoiceId": "leave",
+      "actorBindings": {
+        "rival": "roderick"
+      },
+      "id": "history_choice_303",
+      "year": 1343,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "roderick"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "rival_wagered_challenge:Keep your gold and walk away",
+      "causes": [
+        "YOUR RIVAL HAS HIRED A DRUMMER"
+      ],
+      "summary": "You leave the wet-pillow debate to the experts. Your purse remains undefeated.",
+      "salience": 2
+    },
+    {
+      "eventId": "peasant_lords_tourney",
+      "resolvedChoiceId": "peasant_lords_tourney_choice_2",
+      "actorBindings": {
+        "other": "villager_22"
+      },
+      "id": "history_choice_316",
+      "year": 1344,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "villager_22"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "peasant_lords_tourney:Sell pies where the losers come down",
+      "causes": [
+        "THE LORD’S TOURNEY"
+      ],
+      "summary": "You earn nine gold supplying an audience with no shortage of dramatic landings. The best customers eat without taking their eyes off the field.",
+      "salience": 4
+    },
+    {
+      "eventId": "life_eye_cure",
+      "resolvedChoiceId": "question",
+      "actorBindings": {
+        "other": "oswin"
+      },
+      "id": "history_choice_326",
+      "year": 1345,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "oswin"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "life_eye_cure:Demand evidence from a patient rather than cutlery",
+      "causes": [
+        "THE MAN WHO CAN POLISH YOUR SIGHT"
+      ],
+      "summary": "You ask when the polished spoon last needed to recognise its family. Brother Oswin finds the demonstration less persuasive under questioning.",
+      "salience": 4
+    },
+    {
+      "eventId": "life_furnace_quick_lime",
+      "resolvedChoiceId": "wait",
+      "actorBindings": {
+        "other": "elswyth"
+      },
+      "id": "history_choice_335",
+      "year": 1346,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "elswyth"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "life_furnace_quick_lime:Wait for proper cooling and protection",
+      "causes": [
+        "THE WHITE DUST UNDER THE LID"
+      ],
+      "summary": "You wait for the safe handling. Elswyth concedes that impatience is cheaper than a burn only until somebody obeys it.",
+      "salience": 4
+    },
+    {
+      "eventId": "comic_rival_praise",
+      "resolvedChoiceId": "redirect",
+      "actorBindings": {
+        "other": "roderick"
+      },
+      "id": "history_choice_358",
+      "year": 1347,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "roderick"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "comic_rival_praise:Suggest a more modest first attempt",
+      "causes": [
+        "THE COMPLIMENT YOUR RIVAL BELIEVED"
+      ],
+      "summary": "Sir Roderick tries it and succeeds. You are left in the awkward position of having given useful advice.",
+      "salience": 2
+    },
+    {
+      "eventId": "life_taxed_chickens",
+      "resolvedChoiceId": "hearing",
+      "actorBindings": {
+        "other": "villager_28"
+      },
+      "id": "history_choice_366",
+      "year": 1348,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "villager_28"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "life_taxed_chickens:Challenge the expense list publicly",
+      "causes": [
+        "THE CHICKENS UNDER GUARD"
+      ],
+      "summary": "You make the claim difficult to defend and gain standing with the Commons. Cuthbert becomes a rival with a remarkably poultry-shaped grievance.",
+      "salience": 2
+    },
+    {
+      "eventId": "life_counterfeit_pardon",
+      "resolvedChoiceId": "report",
+      "actorBindings": {
+        "other": "merek"
+      },
+      "id": "history_choice_385",
+      "year": 1349,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "merek"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "life_counterfeit_pardon:Give the blank to the clerk as evidence",
+      "causes": [
+        "THE PARDON WITH ROOM FOR A NAME"
+      ],
+      "summary": "You expose the scheme and gain standing with the Crown. Merek knows exactly who supplied the paper.",
+      "salience": 2
+    },
+    {
+      "id": "history_faction_397",
+      "year": 1350,
+      "type": "faction_shift",
+      "participantIds": [
+        "oswin"
+      ],
+      "familyIds": [],
+      "causes": [
+        "church"
+      ],
+      "summary": "The Church extended influence in Swineford.",
+      "salience": 2
+    },
+    {
+      "eventId": "single_chain_grain_wall",
+      "resolvedChoiceId": "sort",
+      "actorBindings": {
+        "other": "villager_18"
+      },
+      "id": "history_choice_399",
+      "year": 1350,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "villager_18"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "single_chain_grain_wall:Sort and dry what can be saved",
+      "causes": [
+        "THE WALL THAT HID THE DAMP GRAIN"
+      ],
+      "summary": "You lose a day’s strength and rescue useful stores. Wulfric agrees that food improves a household’s appearance best from inside its occupants.",
+      "salience": 2
+    },
+    {
+      "id": "history_faction_419",
+      "year": 1352,
+      "type": "faction_shift",
+      "participantIds": [
+        "oswin"
+      ],
+      "familyIds": [],
+      "causes": [
+        "church"
+      ],
+      "summary": "The Church extended influence in Swineford.",
+      "salience": 2
+    },
+    {
+      "eventId": "life_spouse_guest",
+      "resolvedChoiceId": "agree",
+      "actorBindings": {
+        "spouse": "kin_241"
+      },
+      "id": "history_choice_421",
+      "year": 1352,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "kin_241"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "life_spouse_guest:Agree on a leaving date together",
+      "causes": [
+        "THE GUEST WHO CAME WITH THE MARRIAGE"
+      ],
+      "summary": "You and Hilda settle the invitation without a public quarrel. Household trust improves and the spare blanket remains only a blanket.",
+      "salience": 2
+    },
+    {
+      "eventId": "single_chain_bellmakers_sight",
+      "resolvedChoiceId": "claim",
+      "actorBindings": {
+        "other": "kin_7"
+      },
+      "id": "history_choice_432",
+      "year": 1353,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "kin_7"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "single_chain_bellmakers_sight:Take the credit for the whole casting",
+      "causes": [
+        "THE BELL FOUNDER CANNOT READ HIS MARK"
+      ],
+      "summary": "You collect a fee and the applause. Aelfric keeps the mould and the knowledge of who actually knew how to use it.",
+      "salience": 2
+    },
+    {
+      "eventId": "life_court_lie",
+      "resolvedChoiceId": "refuse",
+      "actorBindings": {
+        "other": "kin_152"
+      },
+      "id": "history_choice_445",
+      "year": 1354,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "kin_152"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "life_court_lie:Refuse to become the rehearsal’s witness",
+      "causes": [
+        "THE LIE EVERYONE PRACTISED"
+      ],
+      "summary": "You reject the falsehood and gain a reputation for independence. Emma loses trust in you as an accomplice.",
+      "salience": 4
+    },
+    {
+      "id": "history_faction_461",
+      "year": 1355,
+      "type": "faction_shift",
+      "participantIds": [
+        "leofric"
+      ],
+      "familyIds": [],
+      "causes": [
+        "commons"
+      ],
+      "summary": "The Commons extended influence in Swineford.",
+      "salience": 2
+    },
+    {
+      "eventId": "life_family_ladder",
+      "resolvedChoiceId": "charge",
+      "actorBindings": {
+        "other": "kin_350"
+      },
+      "id": "history_choice_463",
+      "year": 1355,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "kin_350"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "life_family_ladder:Charge for this year’s use (5g)",
+      "causes": [
+        "THE LADDER THAT IS NEVER HOME"
+      ],
+      "summary": "Mabel pays five gold and becomes much less neighbourly. The ladder has earned more than most apprentices.",
+      "salience": 2
+    },
+    {
+      "id": "history_faction_472",
+      "year": 1356,
+      "type": "faction_shift",
+      "participantIds": [
+        "beatrice"
+      ],
+      "familyIds": [],
+      "causes": [
+        "guilds"
+      ],
+      "summary": "The Guilds extended influence in Swineford.",
+      "salience": 2
+    },
+    {
+      "eventId": "life_saint_dog_bone",
+      "resolvedChoiceId": "withdraw",
+      "actorBindings": {
+        "other": "kin_116"
+      },
+      "id": "history_choice_474",
+      "year": 1356,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "kin_116"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "life_saint_dog_bone:Withdraw the claim until there is evidence",
+      "causes": [
+        "THE RELIC WITH TOOTH MARKS"
+      ],
+      "summary": "You withdraw the claim. Hugh regards the dog as a neglected witness for the defence, though it appears principally interested in the bone.",
+      "salience": 2
+    },
+    {
+      "eventId": "single_chain_spoon_claim",
+      "resolvedChoiceId": "price",
+      "actorBindings": {
+        "sibling": "kin_116"
+      },
+      "id": "history_choice_485",
+      "year": 1357,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "kin_116"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "single_chain_spoon_claim:Sell your claim for a fair payment",
+      "causes": [
+        "THE CHRISTENING SPOON IN THE WRONG SLEEVE"
+      ],
+      "summary": "Hugh pays five gold for the spoon and the right to stop describing your grandmother.",
+      "salience": 2
+    },
+    {
+      "eventId": "single_story_divided_parish",
+      "resolvedChoiceId": "relief",
+      "actorBindings": {
+        "other": "kin_57"
+      },
+      "id": "history_choice_492",
+      "year": 1358,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "kin_57"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "single_story_divided_parish:Fund parish food instead of another sermon (8g)",
+      "causes": [
+        "THE NAVE HAS ACQUIRED A BORDER"
+      ],
+      "summary": "The food crosses the aisle without difficulty. Maud admits that hunger has been a rather efficient ecumenist.",
+      "salience": 2
+    },
+    {
+      "eventId": "life_smuggler_coffin",
+      "resolvedChoiceId": "decline",
+      "actorBindings": {
+        "other": "agnes"
+      },
+      "id": "history_choice_508",
+      "year": 1359,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "agnes"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "life_smuggler_coffin:Leave the uncle to his own household",
+      "causes": [
+        "THE COFFIN WHICH RATTLES"
+      ],
+      "summary": "You decline before taking the load. Whatever is in the coffin will have to find someone else to be late for it.",
+      "salience": 2
+    },
+    {
+      "eventId": "life_quarry_shortcut",
+      "resolvedChoiceId": "turn",
+      "actorBindings": {
+        "other": "villager_16"
+      },
+      "id": "history_choice_517",
+      "year": 1360,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "villager_16"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "life_quarry_shortcut:Turn back before the descent begins",
+      "causes": [
+        "THE SHORTCUT WITHOUT THE ROAD"
+      ],
+      "summary": "You give up the excursion and preserve your health. Gilbert keeps the story of the shortcut for a more agreeable audience.",
+      "salience": 4
+    },
+    {
+      "eventId": "life_missing_constable_boot",
+      "resolvedChoiceId": "return",
+      "actorBindings": {
+        "other": "kin_526"
+      },
+      "id": "history_choice_530",
+      "year": 1361,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "kin_526"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "life_missing_constable_boot:Return the boot and its contents",
+      "causes": [
+        "THE CONSTABLE’S SINGLE BOOT"
+      ],
+      "summary": "You return the find and improve your reputation. Authority is restored to a matching pair.",
+      "salience": 2
+    },
+    {
+      "eventId": "base_spare_toe_relic",
+      "resolvedChoiceId": "base_spare_toe_relic_choice_2",
+      "actorBindings": {
+        "other": "elswyth"
+      },
+      "id": "history_choice_549",
+      "year": 1362,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "elswyth"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "base_spare_toe_relic:Ask it to bless you",
+      "causes": [
+        "SAINT SOMEBODY'S TOE"
+      ],
+      "summary": "Nothing happens. The seller says the toe is shy before crowds.",
+      "salience": 2
+    },
+    {
+      "eventId": "single_story_healers_burden",
+      "resolvedChoiceId": "fees",
+      "actorBindings": {
+        "other": "kin_457"
+      },
+      "id": "history_choice_560",
+      "year": 1363,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "kin_457"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "single_story_healers_burden:Give priority to those who can pay you",
+      "causes": [
+        "THIRTEEN DOORS, FOUR PAIRS OF HANDS"
+      ],
+      "summary": "You collect the fees. Walter has to deliver the refusal to the other doors and does not forgive the errand.",
+      "salience": 2
+    },
+    {
+      "eventId": "single_story_role_commoner",
+      "resolvedChoiceId": "buy",
+      "actorBindings": {
+        "other": "villager_18"
+      },
+      "id": "history_choice_571",
+      "year": 1364,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "villager_18"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "single_story_role_commoner:Buy out your service (8g)",
+      "causes": [
+        "THE LORD’S THREE DRIEST DAYS"
+      ],
+      "summary": "The steward accepts eight gold and stops praising the spiritual value of labour. Your hay is gathered before the rain.",
+      "salience": 2
+    },
+    {
+      "eventId": "life_sibling_fire_sale",
+      "resolvedChoiceId": "let_go",
+      "actorBindings": {
+        "sibling": "kin_116"
+      },
+      "id": "history_choice_593",
+      "year": 1365,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "kin_116"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "life_sibling_fire_sale:Help make a fair sale",
+      "causes": [
+        "THE HEIRLOOMS ON THE MARKET CLOTH"
+      ],
+      "summary": "You accept that survival can require parting with things. The family’s standing improves and Hugh trusts you more.",
+      "salience": 4
+    },
+    {
+      "id": "history_faction_609",
+      "year": 1366,
+      "type": "faction_shift",
+      "participantIds": [
+        "beatrice"
+      ],
+      "familyIds": [],
+      "causes": [
+        "guilds"
+      ],
+      "summary": "The Guilds extended influence in Swineford.",
+      "salience": 2
+    },
+    {
+      "eventId": "single_story_ashes_household",
+      "resolvedChoiceId": "patch",
+      "actorBindings": {
+        "other": "kin_261"
+      },
+      "id": "history_choice_611",
+      "year": 1366,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "kin_261"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "single_story_ashes_household:Patch a smaller room together",
+      "causes": [
+        "THE HOUSEHOLD THAT FITS IN THE YARD"
+      ],
+      "summary": "You save the usable timber and accept less space. O’Neill lends a hand after discovering that you intend to sleep under this work yourself.",
+      "salience": 4
+    },
+    {
+      "eventId": "base_goose_witness",
+      "resolvedChoiceId": "base_goose_witness_choice_3",
+      "actorBindings": {
+        "other": "kin_544"
+      },
+      "id": "history_choice_630",
+      "year": 1367,
+      "type": "failure",
+      "participantIds": [
+        "player_1",
+        "kin_544"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "base_goose_witness:Blame the pie",
+      "causes": [
+        "THE GOOSE IS SUMMONED"
+      ],
+      "summary": "You accuse the pie of tempting honest men. The court pauses, then fines you for nonsense.",
+      "salience": 2
+    },
+    {
+      "eventId": "life_innocent_fine",
+      "resolvedChoiceId": "appeal",
+      "actorBindings": {
+        "other": "kin_379"
+      },
+      "id": "history_choice_641",
+      "year": 1368,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "kin_379"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "life_innocent_fine:Request the original charge and witnesses",
+      "causes": [
+        "THE FINE FOR BEING AVAILABLE"
+      ],
+      "summary": "You contest the clerical shortcut and gain local standing. Percival is disappointed to discover that assistance can be made unnecessary.",
+      "salience": 2
+    },
+    {
+      "eventId": "single_story_war_swineford",
+      "resolvedChoiceId": "draft",
+      "actorBindings": {
+        "other": "kin_224"
+      },
+      "id": "history_choice_651",
+      "year": 1369,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "kin_224"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "single_story_war_swineford:Help make the muster fair",
+      "causes": [
+        "THE CART THAT HAS ALREADY ENLISTED"
+      ],
+      "summary": "You insist on a public list and exemptions read aloud. D’Arcy objects to giving the levy quite so many opportunities to understand it.",
+      "salience": 2
+    },
+    {
+      "eventId": "single_chain_granary_rats",
+      "resolvedChoiceId": "share",
+      "actorBindings": {
+        "other": "kin_350"
+      },
+      "id": "history_choice_661",
+      "year": 1370,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "kin_350"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "single_chain_granary_rats:Record an honest food allowance instead",
+      "causes": [
+        "THE RATS HAVE ACQUIRED A KEY"
+      ],
+      "summary": "The hungry household receives a proper ration. Mabel signs for it; the sacks stop having to develop holes to feed somebody.",
+      "salience": 2
+    },
+    {
+      "eventId": "single_chain_scholar_bone",
+      "resolvedChoiceId": "plain",
+      "actorBindings": {
+        "other": "kin_457"
+      },
+      "id": "history_choice_680",
+      "year": 1371,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "kin_457"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "single_chain_scholar_bone:Ask for the actual finding",
+      "causes": [
+        "THE SCHOLAR’S VERY CAREFUL SILENCE"
+      ],
+      "summary": "The bone is an ordinary sheep’s. Walter is relieved until you ask for the answer in ordinary writing as well.",
+      "salience": 2
+    },
+    {
+      "eventId": "faith_pardoner_sale",
+      "resolvedChoiceId": "faith_pardoner_sale_choice_2",
+      "actorBindings": {
+        "other": "kin_542"
+      },
+      "id": "history_choice_693",
+      "year": 1372,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "kin_542"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "faith_pardoner_sale:Ask for a receipt",
+      "causes": [
+        "THE PARDONER'S BUNDLE"
+      ],
+      "summary": "He flees at the word \"receipt.\" The crowd learns a valuable theology of paperwork, and repeats the story at every fair for a decade.",
+      "salience": 2
+    },
+    {
+      "eventId": "life_sibling_guarantor",
+      "resolvedChoiceId": "take_debt",
+      "actorBindings": {
+        "sibling": "kin_116"
+      },
+      "id": "history_choice_708",
+      "year": 1373,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "kin_116"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "choiceId": "life_sibling_guarantor:Accept the obligation, not the forgery",
+      "causes": [
+        "YOUR NAME UNDER SOMEONE ELSE’S DEBT"
+      ],
+      "summary": "You record a real twenty-gold debt in your own name. Hugh promises to remember it; the lender has a more dependable method.",
+      "salience": 4
+    },
+    {
+      "id": "rpg_history_720",
+      "year": 1374,
+      "type": "choice",
+      "participantIds": [
+        "player_1",
+        "elswyth"
+      ],
+      "familyIds": [],
+      "causes": [
+        "The broken village well",
+        "Arrange water from neighbouring farms"
+      ],
+      "summary": "Shared buckets meet the immediate need until the well is repaired.",
+      "salience": 3
+    },
+    {
+      "id": "history_death_722",
+      "year": 1375,
+      "type": "death",
+      "participantIds": [
+        "player_1"
+      ],
+      "familyIds": [
+        "family_0"
+      ],
+      "causes": [
+        "Died of a winter chill and a tired heart."
+      ],
+      "summary": "Cuthbert died at 55. Died of a winter chill and a tired heart.",
+      "salience": 5
+    },
+    {
+      "id": "history_succession_725",
+      "year": 1375,
+      "type": "succession",
+      "participantIds": [
+        "player_1",
+        "kin_224"
+      ],
+      "familyIds": [
+        "family_kin_214"
+      ],
+      "causes": [
+        "Died of a winter chill and a tired heart."
+      ],
+      "summary": "D’Arcy inherited the unfinished story of Swineford.",
+      "salience": 5
+    }
+  ],
+  "integrity": []
+}

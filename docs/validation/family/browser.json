@@ -1,0 +1,118 @@
+{
+  "browser": "Chromium production export",
+  "results": [
+    {
+      "kind": "birth",
+      "width": 280,
+      "textScale": 1,
+      "keyboardViewportResize": false,
+      "passed": true
+    },
+    {
+      "kind": "birth",
+      "width": 320,
+      "textScale": 1,
+      "keyboardViewportResize": false,
+      "passed": true
+    },
+    {
+      "kind": "birth",
+      "width": 390,
+      "textScale": 1,
+      "keyboardViewportResize": false,
+      "passed": true
+    },
+    {
+      "kind": "birth",
+      "width": 768,
+      "textScale": 1,
+      "keyboardViewportResize": false,
+      "passed": true
+    },
+    {
+      "kind": "rename",
+      "width": 280,
+      "textScale": 1,
+      "keyboardViewportResize": false,
+      "passed": true
+    },
+    {
+      "kind": "rename",
+      "width": 320,
+      "textScale": 1,
+      "keyboardViewportResize": false,
+      "passed": true
+    },
+    {
+      "kind": "rename",
+      "width": 390,
+      "textScale": 1,
+      "keyboardViewportResize": false,
+      "passed": true
+    },
+    {
+      "kind": "rename",
+      "width": 768,
+      "textScale": 1,
+      "keyboardViewportResize": false,
+      "passed": true
+    },
+    {
+      "kind": "widowed",
+      "width": 280,
+      "textScale": 1,
+      "keyboardViewportResize": false,
+      "passed": true
+    },
+    {
+      "kind": "widowed",
+      "width": 320,
+      "textScale": 1,
+      "keyboardViewportResize": false,
+      "passed": true
+    },
+    {
+      "kind": "widowed",
+      "width": 390,
+      "textScale": 1,
+      "keyboardViewportResize": false,
+      "passed": true
+    },
+    {
+      "kind": "widowed",
+      "width": 768,
+      "textScale": 1,
+      "keyboardViewportResize": false,
+      "passed": true
+    },
+    {
+      "kind": "birth",
+      "width": 280,
+      "textScale": 1.35,
+      "keyboardViewportResize": false,
+      "passed": true
+    },
+    {
+      "kind": "rename",
+      "width": 280,
+      "textScale": 1.35,
+      "keyboardViewportResize": false,
+      "passed": true
+    },
+    {
+      "kind": "rename",
+      "width": 280,
+      "textScale": 1,
+      "keyboardViewportResize": true,
+      "passed": true
+    },
+    {
+      "kind": "heir",
+      "width": 768,
+      "textScale": 1,
+      "keyboardViewportResize": false,
+      "passed": true
+    }
+  ],
+  "errors": []
+}

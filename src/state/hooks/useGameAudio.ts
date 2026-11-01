@@ -1,3 +1,4 @@
+import {isBereavementPending} from '@/engine/lifeEventNotices';
 import { useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 import { setAudioModeAsync, useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
@@ -98,7 +99,7 @@ export function useGameAudio(state: GameState, loaded: boolean): void {
     previousPendingId.current = pendingId;
     previousHistoryId.current = latestHistory?.id;
     if (
-      (!shouldPlay && !milestone)
+      (isBereavementPending(state) || (!shouldPlay && !milestone))
       || !successStatus.isLoaded
       || appState !== 'active'
       || !audioModeReady
@@ -108,7 +109,7 @@ export function useGameAudio(state: GameState, loaded: boolean): void {
       .seekTo(0)
       .then(() => successPlayer.play())
       .catch((error) => console.warn('[audio] success sound failed', error));
-  }, [appState, audioModeReady, loaded, state.gold, state.rankIdx, state.playerCharacterId, state.pendingEvent?.eventId, state.pendingEvent?.storyInstanceId, state.world.activeStories, state.world.history, state.settings.soundEffects, successPlayer, successStatus.isLoaded]);
+  }, [appState, audioModeReady, loaded, state.gold, state.rankIdx, state.playerCharacterId, state.pendingEvent?.eventId, state.pendingEvent?.storyInstanceId, state.world.activeStories, state.world.history, state.settings.soundEffects, successPlayer, successStatus.isLoaded,state.lifeEvents]);
 }
 
 /** Keeps frequent audio status updates inside a null child component. */

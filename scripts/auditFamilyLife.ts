@@ -4,6 +4,7 @@ import {createLife} from '../src/engine/gameState';
 import {spawnKin} from '../src/engine/kinFactory';
 import {gameReducer} from '../src/state/gameReducer';
 import {activeSpouse} from '../src/engine/characterState';
+import {nextLifeEventNotice} from '../src/engine/lifeEventNotices';
 import {namingChildId} from '../src/engine/childNaming';
 import {eventById,isChoiceEnabled} from '../src/engine/eventPicker';
 import {policyChoice} from './narrativeRiskAudit';
@@ -21,6 +22,12 @@ function check(label:string){const issues=worldIntegrityIssues(s);if(issues.leng
 function settle(){
  for(let i=0;i<30&&!s.dead&&(s.pendingEvent||s.duel||s.rpg.mission);i++){
   resolveRpgEncounter(s);if(s.pendingEvent&&!s.dead){const e=eventById(s.pendingEvent.eventId)!;const choices=e.choices.filter(c=>isChoiceEnabled(s,c));s=gameReducer(s,{type:'CHOOSE',choice:policyChoice(s,choices,'cautious',s.age)});}
+ }
+ for(let notice=nextLifeEventNotice(s);notice&&!s.dead;notice=nextLifeEventNotice(s)){
+  const rng=JSON.stringify(s.world.rngState),used=s.actionClock.used,gold=s.gold;
+  s=gameReducer(s,{type:'ACK_LIFE_EVENT',id:notice.id});
+  if(rng!==JSON.stringify(s.world.rngState)||used!==s.actionClock.used||gold!==s.gold)throw Error('Notice changed gameplay');
+  trace.push({label:'Acknowledged '+notice.category,text:notice.text,age:s.age});
  }
  for(let id=namingChildId(s);id;id=namingChildId(s)){
   const name=names[namedIds.length]??`Child ${namedIds.length+1}`;const rng=JSON.stringify(s.world.rngState),used=s.actionClock.used,gold=s.gold;
@@ -40,14 +47,14 @@ function haveChild(){const count=namedIds.length;for(let n=0;n<8&&namedIds.lengt
 const originalPlayer=s.playerCharacterId,first=marry(),child1=haveChild();const oldParents=[...s.world.characters[child1].parentIds!];
 // Exercise the same event consequence handler used by authored spouse deaths.
 runWithWorldRng(s.world,()=>applyEffects(s,{killKin:first}));check('Widowed after event death');
-s=normalizeGameState(JSON.parse(JSON.stringify(s)));check('Reloaded widow');
+s=normalizeGameState(JSON.parse(JSON.stringify(s)));check('Reloaded widow');settle();
 const second=marry(),child2=haveChild();if(JSON.stringify(s.world.characters[child1].parentIds)!==JSON.stringify(oldParents)||s.world.characters[second].childIds?.includes(child1))throw Error('Step-parent replaced genealogy');
 s=gameReducer(s,{type:'OPEN_CHILD_NAMING',id:child1});s=gameReducer(s,{type:'CONFIRM_CHILD_NAME',id:child1,name:'D’Arcy'});check('Renamed first child');
 const beforeLoad=JSON.stringify(s.world.rngState);s=normalizeGameState(JSON.parse(JSON.stringify(s)));if(beforeLoad!==JSON.stringify(s.world.rngState))throw Error('Reload drew RNG');
 while(!s.dead&&s.age<125)year();if(!s.dead)throw Error('Natural life unfinished');const deathAge=s.age,deathCause=s.deathCause;
 const heir=eligibleHeirs(s).find(h=>namedIds.includes(h.id));if(!heir)throw Error('No named heir survived');
 s=gameReducer(s,{type:'CONTINUE_AS_HEIR',heirId:heir.id});s=normalizeGameState(JSON.parse(JSON.stringify(s)));check('Continued as named heir');
-if(s.playerCharacterId!==heir.id||s.first!==heir.name||s.childNaming!.pendingIds.length||!s.world.characters[first]||!s.world.characters[originalPlayer].marriages?.some(m=>m.spouseId===first))throw Error('Family history lost');
+if(s.playerCharacterId!==heir.id||s.first!==heir.name||s.childNaming!.pendingIds.length||s.lifeEvents!.notices.length||!s.world.characters[first]||!s.world.characters[originalPlayer].marriages?.some(m=>m.spouseId===first))throw Error('Family history lost');
 mkdirSync(dir,{recursive:true});writeFileSync(dir+'/whole-life.json',JSON.stringify({seed,deathAge,deathCause,originalPlayer,firstSpouse:first,secondSpouse:second,children:[child1,child2],heirId:heir.id,heirName:s.first,marriages:s.world.characters[originalPlayer].marriages,childrenAfterContinuation:namedIds.map(id=>s.world.characters[id]),trace,history:s.world.history,integrity:worldIntegrityIssues(s)},null,2)+'\n');
 writeFileSync(dir+'/heir-ui-save.json',JSON.stringify({schemaVersion:7,savedAt:Date.now(),game:s})+'\n');
 console.log('PASS complete family life:',deathAge,deathCause,'→ heir',s.first);

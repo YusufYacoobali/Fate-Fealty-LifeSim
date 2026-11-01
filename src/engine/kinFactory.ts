@@ -1,3 +1,4 @@
+import {enqueuePersonalDeath} from './lifeEventNotices';
 import {queueChildNaming} from './childNaming';
 import { reconcileCourt } from './courtEngine';
 import { emptyEducation, legacyStatus } from './lifeDepthState';
@@ -212,10 +213,12 @@ export function spawnKin(s: GameState, spec: NewKinSpec): KinMember {
  * Mark a kin member deceased. The selector is either a concrete id ("mother",
  * "kin_42") or a kind ("child") — for a kind we take the first living match.
  */
-export function killKin(s: GameState, selector: string): KinMember | null {
+export function killKin(s: GameState, selector: string, cause?:string): KinMember | null {
   let target = Object.values(s.world.characters).find((k) => k.id !== s.playerCharacterId && k.id === selector && k.alive);
   if (!target) target = selector === 'spouse' ? activeSpouse(s) ?? undefined : Object.values(s.world.characters).find((k) => k.id !== s.playerCharacterId && k.kind === (selector as KinKind) && k.alive);
   if (!target) return null;
+  enqueuePersonalDeath(s,target.id,cause);
+  if(cause)target.deathCause=cause;
   unlinkSpouse(s, target.id, 'death');
   target.alive = false;
   target.deathYear = s.world.currentYear;

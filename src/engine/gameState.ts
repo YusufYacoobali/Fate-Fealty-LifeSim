@@ -1,3 +1,4 @@
+import {normalizeLifeEventNotices} from './lifeEventNotices';
 import {reconcileMarriages} from './characterState';
 import {normalizeChildNaming} from './childNaming';
 import { initializeCourt } from './courtEngine';
@@ -162,6 +163,7 @@ export function createLife(opts: FreshLifeOptions = {}): GameState {
   initializeCourt(created.value);
   reconcileMarriages(created.value);
   normalizeChildNaming(created.value);
+  normalizeLifeEventNotices(created.value);
   return created.value;
 }
 
@@ -440,6 +442,7 @@ export function cloneState(s: GameState): GameState {
   const characters = Object.fromEntries(Object.entries(s.world.characters).map(([id, character]) => [id, cloneCharacter(character)]));
   const cloned = {
     ...s,
+    lifeEvents: s.lifeEvents ? JSON.parse(JSON.stringify(s.lifeEvents)) : undefined,
     childNaming: s.childNaming ? JSON.parse(JSON.stringify(s.childNaming)) : undefined,
     rpg: JSON.parse(JSON.stringify(s.rpg ?? freshRpg())),
     stats: { ...s.stats },

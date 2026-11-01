@@ -317,7 +317,17 @@ export interface RelationshipPerspective {
   attraction: number;
 }
 
-export type RelationshipFlag = 'family' | 'spouse' | 'friend' | 'rival' | 'authority' | 'feud' | 'former_spouse' | 'affair';
+export type RelationshipFlag = 'family' | 'spouse' | 'friend' | 'rival' | 'authority' | 'feud' | 'former_spouse' | 'affair' | 'courtship';
+
+export type LifeEventCategory = 'spouse_death'|'child_death'|'parent_death'|'guardian_death'|'heartbreak'|'divorce'|'elopement'|'affair_exposed';
+export interface LifeEventPerson {id:string;name:string;age:number;relationship:string;}
+export interface LifeEventNotice {
+  id:string; ownerId:string; category:LifeEventCategory; characterIds:string[];
+  people:LifeEventPerson[]; cause?:string; year:number; priority:number; acknowledged:boolean;
+  title:string; text:string; variantId:string;
+  context:{affection:number;trust:number;playerAge:number;personality:string[];initiator?:'player'|'npc';romanceKind?:'affair'|'courtship';rivalry:boolean;infidelity:boolean;};
+}
+export interface LifeEventState {ownerId:string;notices:LifeEventNotice[];seenIds:string[];}
 
 export interface Relationship {
   id: string;
@@ -329,6 +339,7 @@ export interface Relationship {
   lastInteractionAge: number;
   interactionsThisYear: number;
   sharedMemories: string[];
+  mistreatmentCount?:number; strainedYears?:number; lastRomanceReviewYear?:number; romanceEpisode?:number; exposedEpisode?:number;
 }
 
 export interface Household {
@@ -1051,6 +1062,7 @@ export interface GameState {
   questRecipe?: string;
   selectedKinId: string | null;
   childNaming?: ChildNamingState;
+  lifeEvents?: LifeEventState;
   settingsOpen: boolean;
 
   // --- life goal (assigned at coming-of-age) ---

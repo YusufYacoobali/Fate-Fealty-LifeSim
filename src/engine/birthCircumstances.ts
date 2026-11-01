@@ -65,7 +65,7 @@ export function varyBirthHousehold(state: GameState, inheritedGold = 0): void {
     parents[1].debts.push({ id: `birth_debt_${state.nextId++}`, principal: rnd(10, 24), interestRate: 0.08, lenderId: bg.contactId });
   }
   if (bg.origin !== 'royal' && chance(0.06)) {
-    const deceased = pick(parents); deceased.alive = false; deceased.deathYear = state.world.currentYear; deceased.deathCause = 'illness before your earliest memory'; unlinkSpouse(state, deceased.id, 'death');
+    const deceased = pick(parents); deceased.alive = false; deceased.deathYear = state.world.currentYear; deceased.deathCause = 'illness before your earliest memory'; unlinkSpouse(state, deceased.id, 'death', deceased.id, {notify:false});
     const survivor = parents.find(c => c.alive)!;
     p.guardianIds = [survivor.id]; household.headId = survivor.id;
     circumstance = 'surviving_parent';

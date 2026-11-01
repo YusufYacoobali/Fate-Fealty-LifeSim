@@ -1,3 +1,4 @@
+import {normalizeLifeEventNotices} from '@/engine/lifeEventNotices';
 import {reconcileMarriages} from '@/engine/characterState';
 import {normalizeChildNaming} from '@/engine/childNaming';
 import {recoverLegacyLegalHearing} from '@/engine/legalEngine';
@@ -116,6 +117,7 @@ export function normalizeGameState(parsed: GameState): GameState {
     return hash % 2 === 0 ? 'woman' : 'man';
   };
 
+  const validAttraction = (value:unknown): value is import('@/types/game').AttractionPreference => ['men','women','none'].includes(value as string);
   const oldKin = Array.isArray(parsed.kin) ? parsed.kin : [];
   const normalizedTraits = Array.from(new Set((parsed.traits ?? []).map((id) => id === 'ill_starred' ? 'golden_child' : id)));
   const normalizedTags = Array.from(new Set((parsed.tags ?? []).map((tag) => tag === 'trait_ill_starred' ? 'trait_golden_child' : tag)));
@@ -125,7 +127,7 @@ export function normalizeGameState(parsed: GameState): GameState {
     ...member,
     gender,
     pronouns: defaultPronouns(gender),
-    attraction: member.id === 'goose' ? 'none' : gender === 'woman' ? 'men' : 'women',
+    attraction: validAttraction(member.attraction)?member.attraction:member.id === 'goose' ? 'none' : gender === 'woman' ? 'men' : 'women',
     stats: member.stats ?? { health: 65, charm: 50, wits: 50, faith: 45 },
     traits: member.traits ?? [member.trait ?? 'Ordinary'],
     gold: typeof member.gold === 'number' ? member.gold : 5,
@@ -172,7 +174,7 @@ export function normalizeGameState(parsed: GameState): GameState {
     id: playerCharacterId, name: parsed.first, role: 'Thyself', emoji: '🧑', rel: 100,
     trait: normalizedTraits[0] ?? 'Ordinary', bio: `${parsed.first}'s life in Swineford.`, kind: 'acquaintance',
     age: parsed.age, alive: !parsed.dead, gender: fallbackGender,
-    pronouns: defaultPronouns(fallbackGender), attraction: fallbackGender === 'woman' ? 'men' : 'women',
+    pronouns: defaultPronouns(fallbackGender), attraction: validAttraction(parsed.attraction)?parsed.attraction:validAttraction(parsed.world?.characters?.[playerCharacterId]?.attraction)?parsed.world.characters[playerCharacterId].attraction:fallbackGender === 'woman' ? 'men' : 'women',
     stats: { ...parsed.stats }, traits: normalizedTraits, gold: parsed.gold, rankIdx: parsed.rankIdx,
     occupation: { ...(parsed.occupation ?? { careerId: null, experience: 0, performance: 50, workedThisYear: 0 }) },
     debts: [...(parsed.debts ?? [])], healthTags: [], memories: [], parentIds: [], childIds: [], worldMemories: [],
@@ -304,6 +306,7 @@ export function normalizeGameState(parsed: GameState): GameState {
   }
   reconcileMarriages(normalized);
   normalizeChildNaming(normalized);
+  normalizeLifeEventNotices(normalized);
   recoverLegacyLegalHearing(normalized);
   retireAuthoredState(normalized);
   return syncPlayerFromWorld(normalized);

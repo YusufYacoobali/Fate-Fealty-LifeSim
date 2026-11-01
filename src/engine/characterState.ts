@@ -1,3 +1,4 @@
+import {enqueuePersonalDeath,enqueueLifeEventNotice,snapshotPerson} from './lifeEventNotices';
 import { GameState, WorldCharacter } from '@/types/game';
 
 export function cloneWorldCharacter(character: WorldCharacter): WorldCharacter {
@@ -87,10 +88,18 @@ function syncMaritalTags(state: GameState) {
 }
 
 /** Clear current links only. Genealogy and earlier marriage records never move. */
-export function unlinkSpouse(state: GameState, characterId: string, reason: NonNullable<import('@/types/game').MarriageRecord['endReason']> = 'separation', deceasedId = characterId): void {
+export function unlinkSpouse(state: GameState, characterId: string, reason: NonNullable<import('@/types/game').MarriageRecord['endReason']> = 'separation', deceasedId = characterId, notice: {notify?:boolean;initiator?:'player'|'npc';cause?:string} = {}): void {
   const person = state.world.characters[characterId], spouseId = person?.spouseId;
+  if(reason==='death')for(const r of Object.values(state.world.relationships))if(r.aId===deceasedId||r.bId===deceasedId)r.flags=r.flags.filter(f=>f!=='affair'&&f!=='courtship');
   if (!person || !spouseId) return;
   const spouse = state.world.characters[spouseId];
+  if (notice.notify!==false) {
+    if (reason==='death') enqueuePersonalDeath(state,deceasedId,notice.cause);
+    else if ((reason==='divorce'||reason==='separation')&&spouse?.spouseId===person.id&&[person.id,spouseId].includes(state.playerCharacterId)) {
+      const partner=person.id===state.playerCharacterId?spouse:person;
+      enqueueLifeEventNotice(state,{key:`marriage_${partner.id}_${state.world.characters[state.playerCharacterId].marriages?.length??0}_${state.world.currentYear}`,category:'divorce',people:[snapshotPerson(state,partner.id,'spouse')],cause:notice.cause,context:{initiator:notice.initiator??'player'}});
+    }
+  }
   delete person.spouseId;
   if (spouse?.spouseId === person.id) delete spouse.spouseId;
   const relation = relationshipBetween(state, person.id, spouseId);
@@ -113,11 +122,11 @@ export function unlinkSpouse(state: GameState, characterId: string, reason: NonN
 /** Idempotent load/runtime repair; never draws RNG or rewrites narration. */
 export function reconcileMaritalState(state: GameState, characterId = state.playerCharacterId): void {
   const person = state.world.characters[characterId]; if (!person) return;
-  const wasMarried = characterId === state.playerCharacterId && state.tags.includes('married');
+  const wasMarried = characterId === state.playerCharacterId && (state.tags.includes('married')||state.tags.includes('widowed'));
   const spouse = state.world.characters[person.spouseId ?? ''];
   if (person.spouseId && !activeSpouse(state, characterId)) {
     const deceased = !person.alive ? person.id : spouse && !spouse.alive ? spouse.id : undefined;
-    unlinkSpouse(state,person.id,deceased ? 'death' : 'separation',deceased);
+    unlinkSpouse(state,person.id,deceased ? 'death' : 'separation',deceased,{notify:false});
   }
   const current = activeSpouse(state,characterId);
   if (current) {
@@ -147,6 +156,17 @@ export function linkSpouses(state: GameState, aId: string, bId: string): boolean
   const a=state.world.characters[aId], b=state.world.characters[bId];
   if (!a?.alive || !b?.alive || a.spouseId && a.spouseId !== b.id || b.spouseId && b.spouseId !== a.id) return false;
   a.spouseId=b.id; b.spouseId=a.id;
+  for(const r of Object.values(state.world.relationships)){
+    const partnerId=r.aId===state.playerCharacterId?r.bId:r.bId===state.playerCharacterId?r.aId:undefined;
+    if(!partnerId||!r.flags.includes('courtship'))continue;
+    const playerInPair=[a.id,b.id].includes(state.playerCharacterId);
+    const chosen=playerInPair?(a.id===state.playerCharacterId?b:a):undefined;
+    if(playerInPair&&partnerId===chosen!.id){r.flags=r.flags.filter(f=>f!=='courtship'&&f!=='affair');continue;}
+    if(!playerInPair&&![a.id,b.id].includes(partnerId))continue;
+    const other=playerInPair?chosen!:(a.id===partnerId?b:a);
+    enqueueLifeEventNotice(state,{key:`romance_${partnerId}_${r.romanceEpisode??0}_${state.world.currentYear}`,category:'heartbreak',people:[snapshotPerson(state,partnerId,'romantic partner'),snapshotPerson(state,other.id,'new spouse')],cause:`Marriage to ${other.name}`,context:{initiator:playerInPair?'player':'npc',romanceKind:'courtship'}});
+    r.flags=r.flags.filter(f=>f!=='courtship');r.sharedMemories.push(`relationship_ended_${state.world.currentYear}`);
+  }
   rememberMarriage(a,b.id,state.world.currentYear); rememberMarriage(b,a.id,state.world.currentYear);
   reconcileMaritalState(state,a.id);
   return true;

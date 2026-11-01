@@ -26,7 +26,7 @@ export function tickKinMortality(s: GameState): GameState {
     if (!chance(risk)) continue;
 
     const wasSpouse=activeSpouse(s)?.id===k.id;
-    killKin(s, k.id);
+    killKin(s, k.id, 'Old age');
     if (wasSpouse) {
       pushFeed(s, 'BEREAVEMENT', C.bad, `${k.name}, your spouse, has passed away at ${k.age}. You are widowed.`, 'bad', {}, k.id, 'npc');
     } else {

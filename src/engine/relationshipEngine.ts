@@ -1,3 +1,5 @@
+import {endPlayerRomance,affairExposedInCurrentEpisode} from './relationshipEndings';
+import {enqueueLifeEventNotice,snapshotPerson} from './lifeEventNotices';
 import {
   GameState,
   KinKind,
@@ -170,6 +172,7 @@ export type SystemicKinAction =
   | 'promise_future'
   | 'elope'
   | 'end_affair'
+  | 'end_courtship'
   | 'spread_rumour'
   | 'blackmail'
   | 'steal_from'
@@ -249,6 +252,7 @@ export function contextualActions(state: GameState, kin: KinMember): SystemicKin
     result.push('end_affair');
   }
   else if (canSeduce(state, kin)) result.push('seduce');
+  if(relation.flags.includes('courtship')&&!spouse)result.push('end_courtship');
   if (kin.age >= 12) result.push('prank');
   if (kin.age >= 16 && state.age >= 16) result.push('carouse');
   if (!isFamilyTie(tie)) result.push('spread_rumour', 'steal_from');
@@ -282,9 +286,11 @@ export function applyRelationshipShift(
   otherDelta: Partial<RelationshipPerspective>,
 ): Relationship {
   const relation = relationshipWith(state, kinId);
+  if((otherDelta.affinity??0)<=-6||(otherDelta.trust??0)<=-8)relation.mistreatmentCount=(relation.mistreatmentCount??0)+1;
   const views = perspectives(state, relation);
   for (const [key, value] of Object.entries(playerDelta)) views.player[key as keyof RelationshipPerspective] = clamp(views.player[key as keyof RelationshipPerspective] + (value ?? 0));
   for (const [key, value] of Object.entries(otherDelta)) views.other[key as keyof RelationshipPerspective] = clamp(views.other[key as keyof RelationshipPerspective] + (value ?? 0));
+  if(views.other.affinity>=50&&views.other.trust>=50&&((otherDelta.trust??0)>0||(otherDelta.affinity??0)>0)){relation.sharedMemories=relation.sharedMemories.filter(m=>m!=='betrayal_unresolved');relation.strainedYears=0;}
   relation.lastInteractionAge = state.age;
   relation.interactionsThisYear += 1;
   syncLegacyBond(state, kinId);
@@ -423,6 +429,7 @@ export function performSystemicRelationshipAction(state: GameState, kin: KinMemb
     }
     case 'court':
       applyRelationshipShift(state, kin.id, { attraction: 7, trust: 3 }, { attraction: rnd(6, 12), affinity: 5, trust: 4 });
+      if(!isPlayerSpouse(state,kin)&&!activeSpouse(state)&&!activeSpouse(state,kin.id)&&!relation.flags.includes('affair')&&!relation.flags.includes('courtship')&&views.other.attraction>=30&&views.other.affinity>=40){relation.flags.push('courtship');relation.romanceEpisode=(relation.romanceEpisode??0)+1;relation.strainedYears=0;}
       pushFeed(state, 'COURTSHIP', C.healthDark, `You court ${kin.name} with time, attention, and a flower only slightly crushed.`, 'good');
       break;
     case 'propose': {
@@ -469,7 +476,7 @@ export function performSystemicRelationshipAction(state: GameState, kin: KinMemb
     case 'seduce': {
       const won = chance(0.3 + state.stats.charm / 200 + views.other.attraction / 300);
       if (won) {
-        if (!relation.flags.includes('affair')) relation.flags.push('affair');
+        if (!relation.flags.includes('affair')) { relation.flags=relation.flags.filter(f=>f!=='courtship');relation.flags.push('affair');relation.romanceEpisode=(relation.romanceEpisode??0)+1;relation.strainedYears=0; }
         relation.sharedMemories.push(`affair_began_${state.world.currentYear}`);
         relation.sharedMemories = relation.sharedMemories.slice(-24);
         applyRelationshipShift(state, kin.id, { attraction: 14, affinity: 6 }, { attraction: 16, affinity: 8 });
@@ -517,6 +524,7 @@ export function performSystemicRelationshipAction(state: GameState, kin: KinMemb
     }
     case 'elope': {
       const player = state.world.characters[state.playerCharacterId];
+      const abandonedIds=wrongedSpouses(state,kin.id).map(c=>c.id);
       const abandoned = affairStakes(state, kin.id);
       if (player?.spouseId) unlinkSpouse(state, player.id, 'elopement');
       if (kin.spouseId) unlinkSpouse(state, kin.id, 'elopement');
@@ -534,10 +542,17 @@ export function performSystemicRelationshipAction(state: GameState, kin: KinMemb
         summary: `${state.first} and ${kin.name} abandoned caution and married after an affair.`,
         salience: 5,
       });
+      const abandonedPeople=abandonedIds.map(id=>state.world.characters[id]).filter(Boolean);
+      enqueueLifeEventNotice(state,{key:`elopement_${kin.id}_${player?.marriages?.length??0}_${state.world.currentYear}`,category:'elopement',people:[snapshotPerson(state,kin.id,'new spouse'),...abandonedPeople.map(c=>snapshotPerson(state,c.id,'former spouse'))],context:{initiator:'player'}});
       pushFeed(state, 'ELOPEMENT', C.bad, `Thou and ${kin.name} choose each other in the open. ${abandoned.length ? `${abandoned.join(' and ')} are left with the wreckage.` : 'Swineford supplies the scandal.'}`, 'plain');
       break;
     }
+    case 'end_courtship':
+      endPlayerRomance(state,kin.id,'player','You chose to end the courtship');
+      pushFeed(state,'COURTSHIP ENDED',C.amber,`You and ${kin.name} end the courtship without pretending it was a marriage.`,'plain');
+      break;
     case 'end_affair':
+      endPlayerRomance(state,kin.id,'player','You chose to end the affair');
       relation.flags = relation.flags.filter((flag) => flag !== 'affair');
       applyRelationshipShift(state, kin.id, { attraction: -10 }, { attraction: -8, affinity: -10 });
       addMemory(state, 'ended_an_affair', 3, kin.name);
@@ -595,6 +610,8 @@ function marry(state: GameState, kin: KinMember, relation: Relationship): void {
   const player = state.world.characters[state.playerCharacterId];
   const spouse = state.world.characters[kin.id];
   if (!linkSpouses(state,state.playerCharacterId,kin.id)) return;
+
+  relation.flags=relation.flags.filter(f=>f!=='courtship'&&f!=='affair');
   kin.kind = 'spouse';
   kin.role = 'Thy Spouse';
   if (!relation.flags.includes('spouse')) relation.flags.push('spouse');
@@ -631,7 +648,7 @@ function marry(state: GameState, kin: KinMember, relation: Relationship): void {
 /** Whoever the player is currently carrying on with, if anyone. */
 export function affairPartnerId(state: GameState): string | null {
   for (const relation of Object.values(state.world.relationships)) {
-    if (!relation.flags.includes('affair')) continue;
+    if (!relation.flags.includes('affair')||!state.world.characters[relation.aId]?.alive||!state.world.characters[relation.bId]?.alive) continue;
     if (relation.aId === state.playerCharacterId) return relation.bId;
     if (relation.bId === state.playerCharacterId) return relation.aId;
   }
@@ -680,10 +697,12 @@ function exposeAffair(state: GameState, partnerId: string, risk: number): boolea
   const partner = state.world.characters[partnerId];
   if (!partner?.alive) return false;
   const relation = relationshipWith(state, partnerId);
-  if (relation.sharedMemories.includes('affair_exposed')) return false;
+  if (affairExposedInCurrentEpisode(relation)) return false;
   const wronged = wrongedSpouses(state, partnerId);
   if (!wronged.length || !chance(Math.min(0.85, Math.max(0, risk)))) return false;
 
+  relation.exposedEpisode=relation.romanceEpisode??0;
+  enqueueLifeEventNotice(state,{key:`affair_${partnerId}_${relation.romanceEpisode??0}_${state.world.currentYear}`,category:'affair_exposed',people:[snapshotPerson(state,partnerId,'lover'),...wronged.map(c=>snapshotPerson(state,c.id,c.id===activeSpouse(state)?.id?'spouse':'lover’s spouse'))],context:{infidelity:true}});
   relation.sharedMemories.push('affair_exposed');
   relation.sharedMemories = relation.sharedMemories.slice(-24);
   addTag(state, 'affair_exposed');
@@ -691,6 +710,7 @@ function exposeAffair(state: GameState, partnerId: string, risk: number): boolea
   for (const spouse of wronged) {
     const spouseRelation = applyRelationshipShift(state, spouse.id, { trust: -10 }, { affinity: -40, trust: -50, respect: -20 });
     if (!spouseRelation.flags.includes('feud')) spouseRelation.flags.push('feud');
+    if(!spouseRelation.sharedMemories.includes('betrayal_unresolved'))spouseRelation.sharedMemories.push('betrayal_unresolved');
   }
   applyRelationshipShift(state, partnerId, {}, { trust: -5 });
   addMemory(state, 'affair_discovered', 4, partner.name);

@@ -1,3 +1,5 @@
+import {maritalStatusLabel,playerMarriageLabel} from '@/engine/maritalLabels';
+import {affairExposedInCurrentEpisode} from '@/engine/relationshipEndings';
 import {canNameChild} from '@/engine/childNaming';
 import {activeSpouse} from '@/engine/characterState';
 import React from 'react';
@@ -75,6 +77,7 @@ const ACTION_META: Record<KinAction, ActionMeta> = {
   spend_night: { group: 'romance', label: 'SPEND THE NIGHT', hint: 'passion · discovery risk', bg: C.health, sd: C.healthDark },
   promise_future: { group: 'romance', label: 'PROMISE A FUTURE', hint: 'deepen love · or break trust', bg: C.charm, sd: C.charmDark },
   elope: { group: 'romance', label: 'RUN AWAY TOGETHER', hint: 'leave spouses · marry · scandal', bg: C.health, sd: C.healthDark },
+  end_courtship: {group:'romance',label:'END COURTSHIP',hint:'part without a marriage to dissolve',bg:C.lightFill,sd:C.paleEdge},
   end_affair: { group: 'romance', label: 'END THE AFFAIR', hint: 'before it is found out', bg: C.light, sd: C.blue },
   accept_proposal: { group: 'romance', label: 'ACCEPT PROPOSAL', hint: 'marry by choice', bg: C.faith, sd: C.faithDark },
   reject_proposal: { group: 'romance', label: 'REFUSE PROPOSAL', hint: 'remain unmarried', bg: C.health, sd: C.healthDark },
@@ -112,8 +115,9 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
     const actions = contextualActions(state, detail);
     const tie = ties[detail.id] ?? 'acquaintance';
     const spouse = activeSpouse(state,detail.id);
-    const affair = relation.flags.includes('affair');
-    const affairExposed = relation.sharedMemories.includes('affair_exposed');
+    const marriageLabel=playerMarriageLabel(state,detail),maritalStatus=maritalStatusLabel(state,detail);
+    const affair = detail.alive&&relation.flags.includes('affair');
+    const affairExposed = affairExposedInCurrentEpisode(relation);
     return (
       <ScrollView style={{ flex: 1, backgroundColor: C.sky }} contentContainerStyle={{ padding: 11, paddingBottom: 16, gap: 9 }}>
         <PixelButton bg={C.blue} shadow={C.blueDeep} onPress={onBack} style={{ alignSelf: 'flex-start' }} innerStyle={{ paddingHorizontal: 8, paddingVertical: 6 }}>
@@ -125,24 +129,18 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
           </View>
           <View style={{ flex: 1 }}>
             <PixelText font="pixel" size={10} color={detail.alive ? C.charm : C.creamBlue}>{detail.name}</PixelText>
-            <View style={{ alignSelf: 'flex-start', marginTop: 4, backgroundColor: isFamilyTie(tie) ? C.charm : C.light, borderWidth: 2, borderColor: C.inkSoft, paddingHorizontal: 6, paddingVertical: 2 }}>
-              <PixelText font="pixel" size={7} color={C.blueDark}>{kinshipLabel(tie).toUpperCase()}</PixelText>
+            <View style={{ alignSelf: 'flex-start', maxWidth:'100%', marginTop: 4, backgroundColor: isFamilyTie(tie) ? C.charm : C.light, borderWidth: 2, borderColor: C.inkSoft, paddingHorizontal: 6, paddingVertical: 2 }}>
+              <PixelText font="pixel" size={7} color={C.blueDark}>{(marriageLabel??kinshipLabel(tie)).toUpperCase()}</PixelText>
             </View>
-            <PixelText font="body" size={15} color="#dbe9ff" style={{ marginTop: 4 }}>{detail.role} · {detail.age} winters</PixelText>
+            <PixelText font="body" size={15} color="#dbe9ff" style={{ marginTop: 4 }}>{marriageLabel?'':`${detail.role} · `}{detail.age} winters</PixelText>
             <PixelText font="body" size={14} color="#a9c2df">{detail.pronouns.subject}/{detail.pronouns.object} · {career?.title ?? 'No occupation'} · {detail.gold}g</PixelText>
-            {spouse?.alive ? (
-              <PixelText font="pixel" size={7} color={C.charm} style={{ marginTop: 3 }}>
-                MARRIED TO {spouse.id === state.playerCharacterId ? 'YOU' : spouse.name.toUpperCase()}
-              </PixelText>
-            ) : (
-              <PixelText font="pixel" size={7} color="#9fc4e8" style={{ marginTop: 3 }}>UNMARRIED</PixelText>
-            )}
+            {maritalStatus!==marriageLabel&&<PixelText font="pixel" size={7} color={detail.alive?C.charm:'#9fc4e8'} style={{marginTop:3}}>{maritalStatus.toUpperCase()}</PixelText>}
             {affair && (
               <PixelText font="pixel" size={7} color={affairExposed ? C.health : C.purple} style={{ marginTop: 3 }}>
                 {affairExposed ? 'YOUR AFFAIR IS EXPOSED' : 'YOUR SECRET LOVER'}
               </PixelText>
             )}
-            {!detail.alive && <PixelText font="pixel" size={8} color={C.health}>DECEASED</PixelText>}
+            {!detail.alive && !maritalStatus.includes('Deceased') && <PixelText font="pixel" size={8} color={C.health}>DECEASED</PixelText>}
           </View>
         </View>
 
@@ -202,6 +200,7 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
           const tie = ties[person.id] ?? 'acquaintance';
           const family = isFamilyTie(tie);
           const spouse = activeSpouse(state,person.id);
+          const marriageLabel=playerMarriageLabel(state,person),maritalStatus=maritalStatusLabel(state,person);
           const affair = isAffairWith(state, person.id);
           return <PixelButton key={person.id} bg={C.parch} shadow={C.parchSd} light={C.parchSl} outline={C.parchBorder} onPress={() => onOpen(person.id)} innerStyle={{ paddingHorizontal: 9, paddingVertical: 8 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 9 }}>
@@ -211,16 +210,12 @@ export function KinTab({ state, kin, detail, filter, onFilter, onOpen, onBack, o
                 {/* The tie leads, because "who is this to me?" is the first
                     question the list has to answer. */}
                 <PixelText font="pixel" size={6} color={family ? C.amber : C.blue} style={{ marginTop: 2 }}>
-                  {kinshipLabel(tie).toUpperCase()}
+                  {(marriageLabel??kinshipLabel(tie)).toUpperCase()}
                 </PixelText>
                 <PixelText font="body" size={13} color={C.textMuted} style={{ marginTop: 2 }}>
-                  {person.alive ? `${person.role} · ${person.age} winters` : `${person.role} · deceased`}
+                  {marriageLabel?`${person.age} winters`:person.alive ? `${person.role} · ${person.age} winters` : `${person.role} · deceased`}
                 </PixelText>
-                {person.alive && (affair || spouse?.alive) && (
-                  <PixelText font="body" size={12} color={affair ? C.purpleDark : C.textMuted}>
-                    {affair ? 'Your secret lover' : `Married to ${spouse!.id === state.playerCharacterId ? 'you' : spouse!.name}`}
-                  </PixelText>
-                )}
+                {(affair||maritalStatus!==marriageLabel)&&<PixelText font="body" size={12} color={affair?C.purpleDark:C.textMuted}>{affair?'Your secret lover':maritalStatus}</PixelText>}
               </View>
               <View style={{ alignItems: 'flex-end' }}><PixelText font="pixel" size={8} color={relColor(person.rel)}>{person.rel}%</PixelText><PixelText font="body" size={12} color={C.textMuted}>{relLabel(person.rel)}</PixelText></View>
             </View>

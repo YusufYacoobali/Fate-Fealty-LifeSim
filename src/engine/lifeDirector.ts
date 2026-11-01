@@ -1,3 +1,4 @@
+import {tickRelationshipEndings} from './relationshipEndings';
 import {beginCourtScandal} from './courtIncidents';
 import { tickCourt } from './courtEngine';
 import { tickEducation } from './educationEngine';
@@ -90,6 +91,7 @@ export function ageUp(s: GameState): GameState {
   if (s.dead) return s;
   tickRelationshipDecay(s);
   tickAffairs(s);
+  tickRelationshipEndings(s);
   simulateLivingWorld(s);
   tickPersistentSociety(s);
   tickWorldConditions(s);

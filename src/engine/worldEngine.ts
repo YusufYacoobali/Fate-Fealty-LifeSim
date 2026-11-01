@@ -1,3 +1,4 @@
+import {enqueuePersonalDeath} from './lifeEventNotices';
 import { professionalRecord } from './careerSpecializationEngine';
 import { grantSkillXp } from './rpgProgress';
 import { GameState, KinMember, Relationship, RelationshipPerspective } from '@/types/game';
@@ -87,6 +88,8 @@ function simulateNpcCareer(state: GameState, npc: KinMember, budget: { left: num
   npc.occupation.performance = clamp(npc.occupation.performance + rnd(-3, 7));
   if (career.healthRisk && chance(career.healthRisk / 35)) npc.stats.health = clamp(npc.stats.health - rnd(2, 8));
   if (npc.stats.health <= 0) {
+    enqueuePersonalDeath(state,npc.id,'Declining health');
+    npc.deathCause='Declining health';
     unlinkSpouse(state, npc.id, 'death');
     npc.alive = false;
     npc.deathYear = state.world.currentYear;
@@ -125,7 +128,7 @@ function simulateNpcSocialLife(state: GameState): void {
   }
 
   if (!chance(0.16)) return;
-  const singles = adults.filter((npc) => !activeSpouse(state,npc.id));
+  const singles = adults.filter((npc) => !activeSpouse(state,npc.id)&&!Object.values(state.world.relationships).some(r=>r.flags.includes('courtship')&&((r.aId===npc.id&&state.world.characters[r.bId]?.alive)||(r.bId===npc.id&&state.world.characters[r.aId]?.alive))));
   if (singles.length < 2) return;
   const a = pick(singles);
   const b = pick(singles.filter((npc) => npc.id !== a.id));

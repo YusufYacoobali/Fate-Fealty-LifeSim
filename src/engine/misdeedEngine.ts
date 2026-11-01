@@ -176,7 +176,7 @@ export function murder(state: GameState, target: WorldCharacter): void {
   const player = state.world.characters[state.playerCharacterId];
   if (succeeded) {
     const survivors = circleOf(state, target);
-    killKin(state, target.id);
+    killKin(state, target.id, `Killed by ${state.first}`);
     // Everyone who loved them now knows someone did this, even if not who.
     for (const mourner of survivors.slice(0, 6)) {
       mourner.worldMemories = [...(mourner.worldMemories ?? []), {

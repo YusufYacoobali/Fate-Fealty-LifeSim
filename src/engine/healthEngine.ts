@@ -1,3 +1,4 @@
+import {enqueuePersonalDeath} from './lifeEventNotices';
 import { reconcileCourt } from './courtEngine';
 import { GameState, WorldCharacter } from '@/types/game';
 import { HEALTH_CONDITION_BY_ID } from '@/content/healthConditions';
@@ -7,6 +8,7 @@ import { killPlayer } from './consequenceEngine';
 import { appendWorldHistory } from './worldJournal';
 
 function killCharacter(state: GameState, character: WorldCharacter, cause: string): void {
+  enqueuePersonalDeath(state,character.id,cause);
   character.alive = false;
   character.deathYear = state.world.currentYear;
   character.deathCause = cause;

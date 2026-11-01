@@ -1,3 +1,4 @@
+import {acknowledgeLifeEvent} from '@/engine/lifeEventNotices';
 import {activeSpouse,reconcileMaritalState} from '@/engine/characterState';
 import {anotherChildName,canNameChild,confirmChildName,namingBlocked,namingChildId,normalizeChildNaming} from '@/engine/childNaming';
 import { selectProfessionalClient } from '@/engine/professionalClients';
@@ -43,6 +44,7 @@ import { beginForge, closeForge, finishForge, startForge, strikeForge } from '@/
 import { resolveTradeChoice } from '@/engine/tradeJourney';
 
 export type GameAction =
+  | {type:'ACK_LIFE_EVENT'; id:string}
   | {type:'OPEN_CHILD_NAMING'; id:string}
   | {type:'CONFIRM_CHILD_NAME'; id:string; name:string}
   | {type:'SUGGEST_CHILD_NAME'; id:string}
@@ -144,6 +146,9 @@ function careerRoutineId(action: CareerAction): string | null {
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
+    case 'ACK_LIFE_EVENT': {
+      const s=cloneState(state);return acknowledgeLifeEvent(s,action.id)?s:state;
+    }
     case 'OPEN_CHILD_NAMING': {
       if (namingBlocked(state) || !canNameChild(state,action.id)) return state;
       const s=cloneState(state); normalizeChildNaming(s); s.childNaming!.renameId=action.id; delete s.childNaming!.suggestion; return s;

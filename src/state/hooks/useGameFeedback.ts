@@ -1,3 +1,4 @@
+import {isBereavementPending} from '@/engine/lifeEventNotices';
 import { useEffect, useRef } from 'react';
 import { GameState } from '@/types/game';
 import { haptic } from '@/services/haptics';
@@ -15,9 +16,10 @@ export function useGameFeedback(state: GameState) {
 
   useEffect(() => {
     const on = state.settings.haptics;
-    if (state.rankIdx > prevRank.current) haptic('success', on);
+    const quiet=isBereavementPending(state);
+    if (!quiet && state.rankIdx > prevRank.current) haptic('success', on);
     if (state.dead && !prevDead.current) haptic('error', on);
-    if (state.playerCharacterId !== prevPlayerId.current) haptic('success', on);
+    if (!quiet && state.playerCharacterId !== prevPlayerId.current) haptic('success', on);
     const pendingId = state.pendingEvent?.eventId;
     if (pendingId && pendingId !== prevPendingId.current) {
       const story = state.pendingEvent?.storyInstanceId ? state.world.activeStories.find((item) => item.id === state.pendingEvent?.storyInstanceId) : undefined;
@@ -25,11 +27,11 @@ export function useGameFeedback(state: GameState) {
       else if (story?.scale === 'major') haptic('heavy', on);
     }
     const latestHistory = state.world.history.at(-1);
-    if (latestHistory && latestHistory.id !== prevHistoryId.current && ['pregnancy', 'adoption', 'wardship'].includes(latestHistory.type)) haptic('success', on);
+    if (!quiet && latestHistory && latestHistory.id !== prevHistoryId.current && ['pregnancy', 'adoption', 'wardship'].includes(latestHistory.type)) haptic('success', on);
     prevRank.current = state.rankIdx;
     prevDead.current = state.dead;
     prevPlayerId.current = state.playerCharacterId;
     prevPendingId.current = pendingId;
     prevHistoryId.current = latestHistory?.id;
-  }, [state.rankIdx, state.dead, state.playerCharacterId, state.pendingEvent?.eventId, state.pendingEvent?.storyInstanceId, state.world.activeStories, state.world.history, state.settings.haptics]);
+  }, [state.rankIdx, state.dead, state.playerCharacterId, state.pendingEvent?.eventId, state.pendingEvent?.storyInstanceId, state.world.activeStories, state.world.history, state.settings.haptics,state.lifeEvents]);
 }

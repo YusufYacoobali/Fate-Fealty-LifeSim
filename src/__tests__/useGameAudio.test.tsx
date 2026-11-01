@@ -109,3 +109,7 @@ test('respects the sound effects setting', async () => {
   await render();
   expect(player.play).not.toHaveBeenCalled();
 });
+
+test('suppresses cheerful money and milestone cues during pending bereavement, without replaying them on acknowledgement',async()=>{
+ await render();state={...state,gold:state.gold+20,rankIdx:state.rankIdx+1,lifeEvents:{ownerId:state.playerCharacterId,notices:[{id:'loss',ownerId:state.playerCharacterId,category:'spouse_death',characterIds:['a'],people:[{id:'a',name:'Alys',age:54,relationship:'spouse'}],year:state.world.currentYear,priority:100,acknowledged:false,title:'YOUR SPOUSE HAS DIED',text:'Alys has died.',variantId:'test',context:{affection:80,trust:80,playerAge:25,personality:[],rivalry:false,infidelity:false}}],seenIds:['loss']}};await render();expect(player.play).not.toHaveBeenCalled();state={...state,lifeEvents:{...state.lifeEvents!,notices:state.lifeEvents!.notices.map(n=>({...n,acknowledged:true}))}};await render();expect(player.play).not.toHaveBeenCalled();
+});

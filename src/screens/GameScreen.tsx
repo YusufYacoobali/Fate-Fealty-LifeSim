@@ -1,5 +1,7 @@
+import {LifeEventNoticeModal} from '@/components/modals/LifeEventNoticeModal';
+import {useFamilyOverlay} from '@/state/hooks/useFamilyOverlay';
 import {ChildNamingModal} from '@/components/modals/ChildNamingModal';
-import {namingChildId,suggestedChildName} from '@/engine/childNaming';
+import {suggestedChildName} from '@/engine/childNaming';
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -112,7 +114,7 @@ export function GameScreen() {
     ? undefined
     : [...state.memories].reverse().find((memory) => memory.tag === `promoted_${rank.key.toLowerCase()}`)?.note;
   const { achievedGoalId, dismissGoal } = useGoalCelebration(state, loaded);
-  const passivePromptsAllowed =
+  const familyPromptsAllowed =
     !state.dead &&
     !state.pendingEvent &&
     !state.duel &&
@@ -122,15 +124,20 @@ export function GameScreen() {
     !creating &&
     !onboardingVisible &&
     !chronicleOpen &&
-    !cartOpen &&
+    !cartOpen;
+  const passivePromptsAllowed=familyPromptsAllowed &&
     promotedTo == null &&
     achievedGoalId == null &&
     newAchievements.length === 0;
   // Exactly one low-priority prompt may be visible. This prevents circular
   // "hide when the other is open" checks from leaving every prompt hidden.
-  const childId=namingChildId(state);
-  const namingVisible=loaded && passivePromptsAllowed && Boolean(childId);
-  const passivePrompt: 'trialEnded' | 'daily' | 'rumour' | 'review' | 'shop' | null = !passivePromptsAllowed || namingVisible
+  const familyOverlay=useFamilyOverlay(state,familyPromptsAllowed);
+  const familyVisible=loaded&&familyPromptsAllowed&&Boolean(familyOverlay);
+  const childId=familyOverlay?.kind==='naming'?familyOverlay.id:undefined;
+  const lifeNotice=familyOverlay?.kind==='notice'?state.lifeEvents?.notices.find(n=>n.id===familyOverlay.id):undefined;
+  const namingVisible=familyVisible&&Boolean(childId);
+  const rewardsDeferred=Boolean(familyOverlay);
+  const passivePrompt: 'trialEnded' | 'daily' | 'rumour' | 'review' | 'shop' | null = !passivePromptsAllowed || rewardsDeferred
     ? null
     : proTrialNoticeVisible
       ? 'trialEnded'
@@ -148,10 +155,10 @@ export function GameScreen() {
   // existing return/review prompts. Once the screen is clear, consume the cue
   // and open the same Royal Shop the player can reach manually.
   useEffect(() => {
-    if (!launchPaywallVisible || !passivePromptsAllowed || namingVisible || passivePrompt !== null) return;
+    if (!launchPaywallVisible || !passivePromptsAllowed || rewardsDeferred || passivePrompt !== null) return;
     resolveLaunchPaywall();
     setCartOpen(true);
-  }, [launchPaywallVisible, passivePromptsAllowed, namingVisible, passivePrompt, resolveLaunchPaywall]);
+  }, [launchPaywallVisible, passivePromptsAllowed, rewardsDeferred, passivePrompt, resolveLaunchPaywall]);
 
   // Promotion/death haptics ride on engine transitions.
   useGameFeedback(state);
@@ -278,6 +285,7 @@ export function GameScreen() {
         </View>
 
         {/* overlays */}
+        {familyVisible && lifeNotice && <LifeEventNoticeModal notice={lifeNotice} onContinue={()=>dispatch({type:'ACK_LIFE_EVENT',id:lifeNotice.id})} />}
         {namingVisible && childId && <ChildNamingModal key={childId}
           suggestedName={suggestedChildName(state,childId)} currentName={state.world.characters[childId].name}
           renaming={state.childNaming?.renameId===childId}
@@ -373,7 +381,7 @@ export function GameScreen() {
             onClose={() => dispatch({ type: 'DUEL_CLOSE' })}
           />
         )}
-        {promotedTo != null && !state.rpg.forge && !state.dead && (
+        {promotedTo != null && familyPromptsAllowed && !rewardsDeferred && !state.rpg.forge && !state.dead && (
           <PromotionScreen
             rankIdx={promotedTo}
             reason={promotionReason}
@@ -384,7 +392,7 @@ export function GameScreen() {
             }}
           />
         )}
-        {achievedGoalId && promotedTo == null && !state.rpg.forge && !state.dead && (
+        {achievedGoalId && familyPromptsAllowed && !rewardsDeferred && promotedTo == null && !state.rpg.forge && !state.dead && (
           <GoalAchievedScreen
             goalId={achievedGoalId}
             reducedMotion={!!state.settings.reducedMotion}
@@ -432,13 +440,13 @@ export function GameScreen() {
             }}
           />
         )}
-        <AchievementToast
+        {familyPromptsAllowed && !rewardsDeferred && <AchievementToast
           id={state.rpg.forge ? null : newAchievements[0] ?? null}
           onDone={() => {
             haptic('success', buzz);
             dismissAchievement();
           }}
-        />
+        />}
       </View>
     </SafeAreaView>
     </PremiumShopContext.Provider>

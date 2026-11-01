@@ -71,6 +71,7 @@ export function continueAsHeir(state: GameState, requestedHeirId?: string, lifet
   heir.isHeir = true;
   state.playerCharacterId = heir.id;
   state.childNaming={ownerId:heir.id,pendingIds:[]};
+  state.lifeEvents={ownerId:heir.id,notices:[],seenIds:[]};
   if (state.rpg.stewardId === heir.id) state.rpg.stewardId = null;
   state.rpg.forge = null;
   state.rpg.forgeBonuses = { ownerId: heir.id, year: state.world.currentYear, used: 0 };

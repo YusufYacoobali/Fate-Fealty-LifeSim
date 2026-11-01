@@ -1,0 +1,10 @@
+{
+  "seed": 779023,
+  "command": "tsx scripts/auditFamilyLife.ts 779023 <output>",
+  "independentRuns": 2,
+  "wholeLifeJsonByteIdentical": true,
+  "sha256": "2925e39f90cc03df37bb71e3013626485a60b6218680833aace9085c5d44cb01",
+  "deathAge": 55,
+  "heirName": "D\u2019Arcy",
+  "integrityFailures": 0
+}

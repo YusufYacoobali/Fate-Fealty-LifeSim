@@ -1,0 +1,508 @@
+[
+  {
+    "scenario": "spouse_tender",
+    "id": "life_player_1_spouse_death_death_kin_4_1355",
+    "ownerId": "player_1",
+    "category": "spouse_death",
+    "characterIds": [
+      "kin_4"
+    ],
+    "people": [
+      {
+        "id": "kin_4",
+        "name": "Alys",
+        "age": 54,
+        "relationship": "spouse"
+      }
+    ],
+    "cause": "Old age",
+    "year": 1355,
+    "priority": 100,
+    "acknowledged": false,
+    "title": "YOUR SPOUSE HAS DIED",
+    "text": "Your marriage to Alys ends with their death at 54. You remember a voice more clearly than the important occasions. It is an unexpectedly small thing to miss so much.",
+    "variantId": "spouse_voice",
+    "context": {
+      "affection": 85,
+      "trust": 85,
+      "playerAge": 35,
+      "personality": [
+        "devout",
+        "generous"
+      ],
+      "rivalry": false,
+      "infidelity": false
+    }
+  },
+  {
+    "scenario": "spouse_bitter",
+    "id": "life_player_1_spouse_death_death_kin_4_1355",
+    "ownerId": "player_1",
+    "category": "spouse_death",
+    "characterIds": [
+      "kin_4"
+    ],
+    "people": [
+      {
+        "id": "kin_4",
+        "name": "Alys",
+        "age": 54,
+        "relationship": "spouse"
+      }
+    ],
+    "cause": "Declining health",
+    "year": 1355,
+    "priority": 100,
+    "acknowledged": false,
+    "title": "YOUR SPOUSE HAS DIED",
+    "text": "Alys has died at 54. Relief and grief sit on the same bench, looking thoroughly ashamed to be seen together. The neighbours offer to explain which one you ought to be feeling.",
+    "variantId": "spouse_relief",
+    "context": {
+      "affection": 5,
+      "trust": 5,
+      "playerAge": 35,
+      "personality": [
+        "devout",
+        "generous"
+      ],
+      "rivalry": true,
+      "infidelity": false
+    }
+  },
+  {
+    "scenario": "spouse_illness",
+    "id": "life_player_1_spouse_death_death_kin_4_1355",
+    "ownerId": "player_1",
+    "category": "spouse_death",
+    "characterIds": [
+      "kin_4"
+    ],
+    "people": [
+      {
+        "id": "kin_4",
+        "name": "Alys",
+        "age": 54,
+        "relationship": "spouse"
+      }
+    ],
+    "cause": "Plague",
+    "year": 1355,
+    "priority": 100,
+    "acknowledged": false,
+    "title": "YOUR SPOUSE HAS DIED",
+    "text": "Your spouse, Alys, has died at 54. You no longer have to ask whether there has been any improvement. It is a question you would dearly like to have a reason to ask again.",
+    "variantId": "spouse_ill_voice",
+    "context": {
+      "affection": 85,
+      "trust": 85,
+      "playerAge": 35,
+      "personality": [
+        "devout",
+        "generous"
+      ],
+      "rivalry": false,
+      "infidelity": false
+    }
+  },
+  {
+    "scenario": "child_loss",
+    "id": "life_player_1_child_death_death_kin_5_1355",
+    "ownerId": "player_1",
+    "category": "child_death",
+    "characterIds": [
+      "kin_5"
+    ],
+    "people": [
+      {
+        "id": "kin_5",
+        "name": "Edith",
+        "age": 11,
+        "relationship": "child"
+      }
+    ],
+    "cause": "Fever",
+    "year": 1355,
+    "priority": 100,
+    "acknowledged": false,
+    "title": "YOUR CHILD HAS DIED",
+    "text": "Edith, your child, has died at 11. Their name is still part of the way you think about tomorrow. You cannot yet imagine thinking differently.",
+    "variantId": "child_name",
+    "context": {
+      "affection": 80,
+      "trust": 80,
+      "playerAge": 35,
+      "personality": [
+        "loyal",
+        "patient"
+      ],
+      "rivalry": false,
+      "infidelity": false
+    }
+  },
+  {
+    "scenario": "parent_loss",
+    "id": "life_player_1_parent_death_death_mother_1355",
+    "ownerId": "player_1",
+    "category": "parent_death",
+    "characterIds": [
+      "mother"
+    ],
+    "people": [
+      {
+        "id": "mother",
+        "name": "Agnes",
+        "age": 66,
+        "relationship": "mother"
+      }
+    ],
+    "cause": "Old age",
+    "year": 1355,
+    "priority": 90,
+    "acknowledged": false,
+    "title": "A PARENT HAS DIED",
+    "text": "Agnes has died at 66. Advice you once hurried past returns to you at its own pace. For once, you cannot interrupt it.",
+    "variantId": "parent_death_advice",
+    "context": {
+      "affection": 66,
+      "trust": 69,
+      "playerAge": 35,
+      "personality": [
+        "cunning",
+        "proud"
+      ],
+      "rivalry": false,
+      "infidelity": false
+    }
+  },
+  {
+    "scenario": "guardian_loss",
+    "id": "life_player_1_guardian_death_death_kin_5_1355",
+    "ownerId": "player_1",
+    "category": "guardian_death",
+    "characterIds": [
+      "kin_5"
+    ],
+    "people": [
+      {
+        "id": "kin_5",
+        "name": "Rowan",
+        "age": 64,
+        "relationship": "guardian"
+      }
+    ],
+    "cause": "Declining health",
+    "year": 1355,
+    "priority": 90,
+    "acknowledged": false,
+    "title": "YOUR GUARDIAN HAS DIED",
+    "text": "Your guardian, Rowan, has died at 64. They had a gift for letting a difficult answer arrive slowly. You find yourself wishing for it now.",
+    "variantId": "guardian_death_patient_answer",
+    "context": {
+      "affection": 65,
+      "trust": 65,
+      "playerAge": 35,
+      "personality": [
+        "loyal",
+        "patient"
+      ],
+      "rivalry": false,
+      "infidelity": false
+    }
+  },
+  {
+    "scenario": "divorce",
+    "id": "life_player_1_divorce_marriage_kin_4_1_1355",
+    "ownerId": "player_1",
+    "category": "divorce",
+    "characterIds": [
+      "kin_4"
+    ],
+    "people": [
+      {
+        "id": "kin_4",
+        "name": "Alys",
+        "age": 54,
+        "relationship": "spouse"
+      }
+    ],
+    "year": 1355,
+    "priority": 85,
+    "acknowledged": false,
+    "title": "YOUR MARRIAGE HAS ENDED",
+    "text": "You and Alys end the marriage. Both of you attempt to preserve your dignity, which proves rather harder to divide than the company. Neither household owes the neighbours a better version of the ending.",
+    "variantId": "divorce_dignity",
+    "context": {
+      "affection": 85,
+      "trust": 85,
+      "playerAge": 35,
+      "personality": [
+        "devout",
+        "generous"
+      ],
+      "rivalry": false,
+      "infidelity": false,
+      "initiator": "player"
+    }
+  },
+  {
+    "scenario": "npc_breakup",
+    "id": "life_player_1_divorce_marriage_kin_4_1_1355",
+    "ownerId": "player_1",
+    "category": "divorce",
+    "characterIds": [
+      "kin_4"
+    ],
+    "people": [
+      {
+        "id": "kin_4",
+        "name": "Alys",
+        "age": 54,
+        "relationship": "spouse"
+      }
+    ],
+    "cause": "Repeated mistreatment",
+    "year": 1355,
+    "priority": 85,
+    "acknowledged": false,
+    "title": "YOUR MARRIAGE HAS ENDED",
+    "text": "Your spouse, Alys, confirms the separation. The trouble between you has finally found an ending, though neither side gets to call it a victory. The next conversation will have to begin somewhere else.",
+    "variantId": "divorce_npc_trust",
+    "context": {
+      "affection": 5,
+      "trust": 5,
+      "playerAge": 35,
+      "personality": [
+        "devout",
+        "generous"
+      ],
+      "rivalry": false,
+      "infidelity": false,
+      "initiator": "npc"
+    }
+  },
+  {
+    "scenario": "courtship_breakup",
+    "id": "life_player_1_heartbreak_romance_kin_5_1_1355",
+    "ownerId": "player_1",
+    "category": "heartbreak",
+    "characterIds": [
+      "kin_5"
+    ],
+    "people": [
+      {
+        "id": "kin_5",
+        "name": "Isolde",
+        "age": 30,
+        "relationship": "romantic partner"
+      }
+    ],
+    "cause": "Repeated mistreatment",
+    "year": 1355,
+    "priority": 80,
+    "acknowledged": false,
+    "title": "YOUR ROMANCE HAS ENDED",
+    "text": "Isolde says the romance is over. You had prepared an impressive reply to a rather different conversation. Its finest sentence is now entirely useless.",
+    "variantId": "heartbreak_bow",
+    "context": {
+      "affection": 5,
+      "trust": 5,
+      "playerAge": 35,
+      "personality": [
+        "ambitious",
+        "patient"
+      ],
+      "rivalry": false,
+      "infidelity": false,
+      "initiator": "npc",
+      "romanceKind": "courtship"
+    }
+  },
+  {
+    "scenario": "affair",
+    "id": "life_player_1_affair_exposed_affair_kin_5_0_1355",
+    "ownerId": "player_1",
+    "category": "affair_exposed",
+    "characterIds": [
+      "kin_5",
+      "kin_4"
+    ],
+    "people": [
+      {
+        "id": "kin_5",
+        "name": "Isolde",
+        "age": 30,
+        "relationship": "lover"
+      },
+      {
+        "id": "kin_4",
+        "name": "Alys",
+        "age": 54,
+        "relationship": "spouse"
+      }
+    ],
+    "year": 1355,
+    "priority": 85,
+    "acknowledged": false,
+    "title": "YOUR AFFAIR IS EXPOSED",
+    "text": "Your affair with Isolde is known to Alys. You attempt to explain, and make the impressive discovery that honesty would have required a much shorter speech. Nobody offers you a chair.",
+    "variantId": "affair_witnesses",
+    "context": {
+      "affection": 100,
+      "trust": 100,
+      "playerAge": 35,
+      "personality": [
+        "ambitious",
+        "patient"
+      ],
+      "rivalry": false,
+      "infidelity": true
+    }
+  },
+  {
+    "scenario": "elope",
+    "id": "life_player_1_elopement_elopement_kin_5_2_1355",
+    "ownerId": "player_1",
+    "category": "elopement",
+    "characterIds": [
+      "kin_5",
+      "kin_4"
+    ],
+    "people": [
+      {
+        "id": "kin_5",
+        "name": "Isolde",
+        "age": 30,
+        "relationship": "new spouse"
+      },
+      {
+        "id": "kin_4",
+        "name": "Alys",
+        "age": 54,
+        "relationship": "former spouse"
+      }
+    ],
+    "year": 1355,
+    "priority": 80,
+    "acknowledged": false,
+    "title": "A MOST PUBLIC ELOPEMENT",
+    "text": "You and Isolde choose each other openly. The people left behind include Alys. By supper, half the village will claim they arranged it and the other half will claim they tried to stop you.",
+    "variantId": "elope_open",
+    "context": {
+      "affection": 65,
+      "trust": 65,
+      "playerAge": 35,
+      "personality": [
+        "ambitious",
+        "patient"
+      ],
+      "rivalry": false,
+      "infidelity": false,
+      "initiator": "player"
+    }
+  },
+  {
+    "scenario": "priority",
+    "id": "life_player_1_spouse_death_death_kin_4_1355",
+    "ownerId": "player_1",
+    "category": "spouse_death",
+    "characterIds": [
+      "kin_4"
+    ],
+    "people": [
+      {
+        "id": "kin_4",
+        "name": "Alys",
+        "age": 35,
+        "relationship": "spouse"
+      }
+    ],
+    "cause": "Plague",
+    "year": 1355,
+    "priority": 100,
+    "acknowledged": false,
+    "title": "YOUR SPOUSE HAS DIED",
+    "text": "Your spouse, Alys, has died at 35. You no longer have to ask whether there has been any improvement. It is a question you would dearly like to have a reason to ask again.",
+    "variantId": "spouse_ill_voice",
+    "context": {
+      "affection": 85,
+      "trust": 85,
+      "playerAge": 35,
+      "personality": [
+        "devout",
+        "generous"
+      ],
+      "rivalry": false,
+      "infidelity": false
+    }
+  },
+  {
+    "scenario": "priority",
+    "id": "life_player_1_parent_death_death_mother_1355",
+    "ownerId": "player_1",
+    "category": "parent_death",
+    "characterIds": [
+      "mother"
+    ],
+    "people": [
+      {
+        "id": "mother",
+        "name": "Agnes",
+        "age": 66,
+        "relationship": "mother"
+      }
+    ],
+    "cause": "Old age",
+    "year": 1355,
+    "priority": 90,
+    "acknowledged": false,
+    "title": "A PARENT HAS DIED",
+    "text": "Agnes has died at 66. Advice you once hurried past returns to you at its own pace. For once, you cannot interrupt it.",
+    "variantId": "parent_death_advice",
+    "context": {
+      "affection": 66,
+      "trust": 69,
+      "playerAge": 35,
+      "personality": [
+        "cunning",
+        "proud"
+      ],
+      "rivalry": false,
+      "infidelity": false
+    }
+  },
+  {
+    "scenario": "former_deceased",
+    "id": "life_player_1_divorce_marriage_kin_4_1_1355",
+    "ownerId": "player_1",
+    "category": "divorce",
+    "characterIds": [
+      "kin_4"
+    ],
+    "people": [
+      {
+        "id": "kin_4",
+        "name": "Alys",
+        "age": 54,
+        "relationship": "spouse"
+      }
+    ],
+    "year": 1355,
+    "priority": 85,
+    "acknowledged": false,
+    "title": "YOUR MARRIAGE HAS ENDED",
+    "text": "You and Alys end the marriage. Both of you attempt to preserve your dignity, which proves rather harder to divide than the company. Neither household owes the neighbours a better version of the ending.",
+    "variantId": "divorce_dignity",
+    "context": {
+      "affection": 85,
+      "trust": 85,
+      "playerAge": 35,
+      "personality": [
+        "devout",
+        "generous"
+      ],
+      "rivalry": false,
+      "infidelity": false,
+      "initiator": "player"
+    }
+  }
+]

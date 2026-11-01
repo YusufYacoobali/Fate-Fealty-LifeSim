@@ -1,0 +1,14 @@
+
+> fate-and-fealty@1.0.0 test
+> jest --runInBand src/__tests__/lifeEventNotices.test.ts src/__tests__/lifeEventNoticeModal.test.tsx src/__tests__/useGameFeedback.test.tsx src/__tests__/useGameAudio.test.tsx
+
+PASS src/__tests__/useGameFeedback.test.tsx
+PASS src/__tests__/lifeEventNotices.test.ts
+PASS src/__tests__/lifeEventNoticeModal.test.tsx
+PASS src/__tests__/useGameAudio.test.tsx
+
+Test Suites: 4 passed, 4 total
+Tests:       41 passed, 41 total
+Snapshots:   0 total
+Time:        2.724 s
+Ran all test suites matching /src\/__tests__\/lifeEventNotices.test.ts|src\/__tests__\/lifeEventNoticeModal.test.tsx|src\/__tests__\/useGameFeedback.test.tsx|src\/__tests__\/useGameAudio.test.tsx/i.

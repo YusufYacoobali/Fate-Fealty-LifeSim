@@ -1,0 +1,414 @@
+{
+  "browser": "Chromium production export",
+  "browserVersion": "154.0.8037.57",
+  "reducedMotion": true,
+  "results": [
+    {
+      "viewportHeight": 850,
+      "scenario": "spouse_tender",
+      "width": 280,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "spouse_tender",
+      "width": 320,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "spouse_tender",
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "spouse_tender",
+      "width": 768,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "spouse_bitter",
+      "width": 280,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "spouse_bitter",
+      "width": 320,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "spouse_bitter",
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "spouse_bitter",
+      "width": 768,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "spouse_illness",
+      "width": 280,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "spouse_illness",
+      "width": 320,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "spouse_illness",
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "spouse_illness",
+      "width": 768,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "child_loss",
+      "width": 280,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "child_loss",
+      "width": 320,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "child_loss",
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "child_loss",
+      "width": 768,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "parent_loss",
+      "width": 280,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "parent_loss",
+      "width": 320,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "parent_loss",
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "parent_loss",
+      "width": 768,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "guardian_loss",
+      "width": 280,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "guardian_loss",
+      "width": 320,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "guardian_loss",
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "guardian_loss",
+      "width": 768,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "divorce",
+      "width": 280,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "divorce",
+      "width": 320,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "divorce",
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "divorce",
+      "width": 768,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "npc_breakup",
+      "width": 280,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "npc_breakup",
+      "width": 320,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "npc_breakup",
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "npc_breakup",
+      "width": 768,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "affair",
+      "width": 280,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "affair",
+      "width": 320,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "affair",
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "affair",
+      "width": 768,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "elope",
+      "width": 280,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "elope",
+      "width": 320,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "elope",
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "elope",
+      "width": 768,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "priority",
+      "width": 280,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "priority",
+      "width": 320,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "priority",
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "priority",
+      "width": 768,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "former_deceased",
+      "width": 280,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "former_deceased",
+      "width": 320,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "former_deceased",
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "former_deceased",
+      "width": 768,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "spouse_bitter",
+      "width": 280,
+      "textScale": 1.35,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "child_loss",
+      "width": 280,
+      "textScale": 1.35,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "priority",
+      "width": 280,
+      "textScale": 1.35,
+      "passed": true
+    },
+    {
+      "viewportHeight": 850,
+      "scenario": "former_deceased",
+      "width": 280,
+      "textScale": 1.35,
+      "passed": true
+    },
+    {
+      "viewportHeight": 430,
+      "scenario": "spouse_bitter",
+      "width": 280,
+      "textScale": 1.35,
+      "passed": true
+    },
+    {
+      "viewportHeight": 430,
+      "scenario": "priority",
+      "width": 280,
+      "textScale": 1.35,
+      "passed": true
+    },
+    {
+      "scenario": "courtship_breakup",
+      "width": 280,
+      "viewportHeight": 850,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "scenario": "courtship_breakup",
+      "width": 320,
+      "viewportHeight": 850,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "scenario": "courtship_breakup",
+      "width": 390,
+      "viewportHeight": 850,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "scenario": "courtship_breakup",
+      "width": 768,
+      "viewportHeight": 850,
+      "textScale": 1,
+      "passed": true
+    }
+  ],
+  "errors": []
+}

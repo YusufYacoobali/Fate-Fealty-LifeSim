@@ -804,6 +804,9 @@ export type EventCategory =
   | 'arc';
 
 export interface EventActorRole {
+  reference?: 'education_mentor'|'classmate'|'childhood_peer'|'career_contact'|'career_rival'|'patron';
+  /** Only unenrolled childhood scenes may use a local teacher or age-matched child. */
+  allowInformal?: boolean;
   familyRelation?: 'enemy' | 'ally';
   characterId?: string;
   gender?: GenderIdentity;

@@ -35,16 +35,17 @@ function recommendation(state: GameState): string {
 
 
 export function HoldingTab({state,section,onSectionChange,onAction,onUpgrade}:Props){
- const {width}=useWindowDimensions(),[buildingsOpen,setBuildingsOpen]=useState(false);
+ const {width,fontScale}=useWindowDimensions(),[buildingsOpen,setBuildingsOpen]=useState(false);
  const managed=state.holding.lastActionAge===state.age,locked=state.age<HOLDING_UNLOCK_AGE;
  const prosperity=holdingProsperity(state),upkeep=holdingYearlyUpkeep(state),reward=holdingProsperityReward(state);
  const columns=width>=720?3:width>=360?2:1;
+ const compactNavigation=width<390||width/fontScale<300;
  const orders=HOLDING_ACTIONS.map((action,index)=>({action,index,availability:holdingActionAvailability(state,action.id)})).sort((a,b)=>Number(b.availability.available)-Number(a.availability.available)||a.index-b.index);
  const next=HOLDING_UPGRADES.find(u=>!state.holding.upgrades.includes(u.id)&&holdingUpgradeAvailability(state,u.id).available)??HOLDING_UPGRADES.find(u=>!state.holding.upgrades.includes(u.id));
  return <View style={{flex:1}}>
   <View style={{flexDirection:'row',gap:4,padding:8,borderBottomWidth:3,borderColor:C.blueDeep}}>
-   {([{id:'estate',label:'ESTATE',art:PAYWALL_ART.holding},{id:'court',label:'ROYAL COURT',art:PAYWALL_ART.crown},{id:'swineford',label:'SWINEFORD',art:HOLDING_UPGRADE_ART.stewards_hall}] as const).map(item=><PixelButton key={item.id} selected={section===item.id} bg={section===item.id?C.charm:C.lightFill} shadow={section===item.id?C.charmDark:C.blueDark} onPress={()=>onSectionChange(item.id)} style={{flex:1,minWidth:0}} innerStyle={{padding:7,minHeight:52,alignItems:'center',justifyContent:'center',gap:4,flexDirection:width>=600?'row':'column'}}>
-    <Image source={item.art} resizeMode="contain" style={{width:25,height:25}}/><PixelText font="pixel" size={7} color={C.blueDark} style={{textAlign:'center'}}>{item.label}</PixelText>
+   {([{id:'estate',label:'ESTATE',art:PAYWALL_ART.holding},{id:'court',label:'ROYAL COURT',art:PAYWALL_ART.crown},{id:'swineford',label:'SWINEFORD',art:HOLDING_UPGRADE_ART.stewards_hall}] as const).map(item=><PixelButton key={item.id} accessibilityLabel={item.label} selected={section===item.id} bg={section===item.id?C.charm:C.lightFill} shadow={section===item.id?C.charmDark:C.blueDark} onPress={()=>onSectionChange(item.id)} style={{flex:1,minWidth:0}} innerStyle={{paddingHorizontal:compactNavigation?1:7,paddingVertical:7,minHeight:52,alignItems:'center',justifyContent:'center',gap:4,flexDirection:width>=600?'row':'column'}}>
+    <Image source={item.art} resizeMode="contain" style={{width:25,height:25}}/><PixelText font="pixel" size={7} color={C.blueDark} style={{textAlign:'center'}}>{compactNavigation?(item.id==='court'?'COURT':item.id==='swineford'?'VILLAGE':item.label):item.label}</PixelText>
    </PixelButton>)}
   </View>
   <ScrollView key={section} contentInsetAdjustmentBehavior="automatic" keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets keyboardDismissMode="on-drag" style={{flex:1}} contentContainerStyle={{padding:9,paddingBottom:18,gap:10}}>

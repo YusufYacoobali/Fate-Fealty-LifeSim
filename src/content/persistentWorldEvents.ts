@@ -1,3 +1,4 @@
+import {actorIntroductionInText} from '@/engine/eventActors';
 /**
  * Event nodes for the persistent story graph.
  *
@@ -19,11 +20,12 @@ import { ROLE_STORY_COPY } from './stories/roles';
 import { RELATIONSHIP_STORY_COPY } from './stories/relationships';
 import { DOMAIN_STORY_COPY } from './stories/domains';
 
-/** Both `{{role}}` and `{{role.name}}` name the saved actor; `.role` reads their role. */
+/** Plain names remain natural; `.intro` adds truthful context once where the author requests it. */
 export function renderBoundText(state: GameState, source: string): string {
   const bindings = state.pendingEvent?.bindings ?? {};
-  return source.replace(/\{\{(\w+)(?:\.(name|role))?\}\}/g, (_match, role: string, field?: 'name' | 'role') => {
+  return source.replace(/\{\{(\w+)(?:\.(name|role|intro))?\}\}/g, (_match, role: string, field?: 'name' | 'role' | 'intro', offset?:number) => {
     const character = state.world.characters[role === 'player' ? state.playerCharacterId : bindings[role]];
+    if(field==='intro')return actorIntroductionInText(state,character?.id??'',role,source.slice(0,offset),source.slice((offset??0)+_match.length));
     return character?.[field ?? 'name'] ?? 'someone once known in Swineford';
   });
 }

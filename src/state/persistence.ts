@@ -1,3 +1,4 @@
+import {reconcilePendingEventActors} from '@/engine/eventPicker';
 import {normalizeLifeEventNotices} from '@/engine/lifeEventNotices';
 import {reconcileMarriages} from '@/engine/characterState';
 import {normalizeChildNaming} from '@/engine/childNaming';
@@ -290,11 +291,24 @@ export function normalizeGameState(parsed: GameState): GameState {
   if (normalized.age >= 18 && /^education_(?!adult_)/.test(normalized.pendingEvent?.eventId ?? '')) {
     const learning = characters[playerCharacterId].education!;
     if (learning.track) {
-      const peer = Object.values(characters).find(c => c.alive && c.age >= 18 && c.id !== playerCharacterId && c.id !== learning.mentorId && c.id !== 'goose');
+      const eligible=Object.values(characters).filter(c=>c.alive&&c.age>=18&&c.id!==playerCharacterId&&c.id!==learning.mentorId&&c.id!=='goose'&&(!c.education?.track||c.education.track===learning.track));
+      const previousPeers=[...(learning.activeClassmateIds??[]),...learning.classmateIds];
+      const peer=eligible.find(c=>previousPeers.includes(c.id)&&c.education?.track===learning.track)
+        ??eligible.find(c=>c.education?.track===learning.track)
+        ??eligible.find(c=>c.householdId===characters[playerCharacterId].householdId)??eligible[0];
       const index = Number(normalized.pendingEvent!.eventId.split('_').at(-1)) || 0;
       normalized.pendingEvent = { eventId: `education_adult_${learning.track}_${index % 2}`, bindings: { ...(learning.mentorId ? { mentor: learning.mentorId } : {}), ...(peer ? { classmate: peer.id } : {}) } };
       learning.mode = 'adult';
-      if (peer) { learning.activeClassmateIds = [peer.id]; learning.classmateIds = [...new Set([...learning.classmateIds,peer.id])]; }
+      if (peer) {
+        // Existing v6 recovery already selected an adult peer. Complete that
+        // canonical record, retaining the old childhood classmates and RNG.
+        const peerLearning=peer.education!;
+        peerLearning.track=learning.track;peerLearning.startedYear??=normalized.world.currentYear;
+        peerLearning.mode='adult';peerLearning.mentorId=learning.mentorId;
+        peerLearning.classmateIds=[...new Set([...peerLearning.classmateIds,playerCharacterId])];
+        peerLearning.activeClassmateIds=[...new Set([...(peerLearning.activeClassmateIds??[]),playerCharacterId])];
+        learning.activeClassmateIds=[peer.id];learning.classmateIds=[...new Set([...learning.classmateIds,peer.id])];
+      }
     } else normalized.pendingEvent = null;
   }
   initializeCourt(normalized);
@@ -309,6 +323,7 @@ export function normalizeGameState(parsed: GameState): GameState {
   normalizeLifeEventNotices(normalized);
   recoverLegacyLegalHearing(normalized);
   retireAuthoredState(normalized);
+  reconcilePendingEventActors(normalized);
   return syncPlayerFromWorld(normalized);
 }
 

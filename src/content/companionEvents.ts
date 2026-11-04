@@ -36,17 +36,18 @@ export const COMPANION_EVENTS: GameEvent[] = [
   // --- a childhood friend --------------------------------------------------
   {
 id: 'child_first_friend',
+actorRoles:{},
 category: 'child',
-title: 'THE SMITH’S CHILD',
-text: "Another child keeps finding reasons to pass your fence. Today the reason is a pebble that has been kicked in the same small circle for most of the morning.",
+title: "THE CHILD AT YOUR FENCE",
+text: "A child keeps stopping outside your fence. Today they kick the same pebble in a circle until you look over. Then they kick it straight to you.",
 ageMin: 6,
 ageMax: 14,
 once: true,
 requires: { kinCountAtMost: { friend: 1 } },
 choices: [
-      { label: 'Offer half your turnip', outcome: { text: 'You split your turnip and gained a friend for life. The finest trade you will ever make.', effects: { addKin: { kind: 'friend', role: 'Childhood Friend', trait: 'True as iron', rel: 72, age: 9 }, charm: 3, memory: { tag: 'made_friend', weight: 2 } }, tone: 'good' } },
-      { label: 'Challenge them to a pebble contest', successChance: (s) => 0.45 + s.stats.charm / 200, success: { text: 'You lost the contest on purpose (mostly) and won a friend. Cunning diplomacy.', effects: { addKin: { kind: 'friend', role: 'Childhood Friend', trait: 'Competitive', rel: 62, age: 9 }, wits: 2, memory: { tag: 'made_friend', weight: 2 } }, tone: 'good' }, failure: { text: 'You won too hard and gloated too long. They stomped off. The pebble remains your only trophy.', effects: { charm: -3 }, tone: 'bad' } },
-      { label: 'Hide behind the goose', requires:{custom:s=>s.world.characters.goose?.alive===true}, outcome: { text: 'Sir Quackbeard hissed. The smith’s child fled. Your social circle remains: one goose.', effects: { kinRel: { id: 'goose', delta: 4 } }, tone: 'plain' } },
+      { label: "Share your turnip", outcome: { text: "You split the turnip and sit together on the fence. By the time the last piece is gone, you have a new friend.", effects: { addKin: { kind: 'friend', role: 'Childhood Friend', trait: 'True as iron', rel: 72, age: 9 }, charm: 3, memory: { tag: 'made_friend', weight: 2 } }, tone: 'good' } },
+      { label: "Challenge them to a pebble contest", successChance: (s) => 0.45 + s.stats.charm / 200, success: { text: "You lose by a suspiciously small amount. Your new friend demands a rematch before you have even picked up the pebbles.", effects: { addKin: { kind: 'friend', role: 'Childhood Friend', trait: 'Competitive', rel: 62, age: 9 }, wits: 2, memory: { tag: 'made_friend', weight: 2 } }, tone: 'good' }, failure: { text: "You win, then explain exactly how much you won by. The other child stalks away and leaves you to admire the pebble alone.", effects: { charm: -3 }, tone: 'bad' } },
+      { label: "Hide behind Sir Quackbeard", requires:{custom:s=>s.world.characters.goose?.alive===true}, outcome: { text: "Sir Quackbeard hisses the child back down the lane. You are left with one goose and a pebble that nobody wants to kick.", effects: { kinRel: { id: 'goose', delta: 4 } }, tone: 'plain' } },
     ]
 },
 

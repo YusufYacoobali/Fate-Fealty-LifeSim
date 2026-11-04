@@ -14,7 +14,8 @@ export function singleYearFixture(e:GameEvent):GameState {
  const peer=spawn({kind:'friend',age:Math.min(16,Math.max(6,age)),name:'Test Peer'});
  if(Object.values(e.actorRoles??{}).some(r=>r.kinds?.includes('friend')))spawn({kind:'friend',age:30,name:'Adult Friend'});
  const teacher=spawn({kind:'acquaintance',age:40,name:'Test Teacher'});teacher.occupation.careerId='cleric';
- if(Object.values(e.actorRoles??{}).some(r=>r.relation==='child'))spawn({kind:'child',age:12});
+ const childRole=Object.values(e.actorRoles??{}).find(r=>r.relation==='child');
+ if(childRole)spawn({kind:'child',age:Math.min(childRole.maxAge??12,Math.max(childRole.minAge??4,Math.min(12,age-16)))});
  if(Object.values(e.actorRoles??{}).some(r=>r.relation==='spouse'))spawn({kind:'spouse',age:30});
  if(Object.values(e.actorRoles??{}).some(r=>r.relation==='sibling'))spawn({kind:'sibling',age:Math.max(18,age)});
  if(Object.values(e.actorRoles??{}).some(r=>r.relation==='rival')){

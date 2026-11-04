@@ -1,3 +1,4 @@
+import {actorIntroductionInText} from '@/engine/eventActors';
 /**
  * Annual flavour beats. The Life Director emits 1-2 of these per year. Each is
  * pure data: a feed tag, text, effects, and an optional eligibility condition so
@@ -31,15 +32,15 @@ const LEGACY_ANNUAL_MESSAGES: Omit<AnnualMessage, 'theme'>[] = [
   { id: 'baby_first_word', tag: 'INFANCY', tagColor: C.amber, tone: 'good', text: "Your first clear word is “more.” {{carer}} looks pleased until you begin applying it to everything.", effects: { charm: 2, kinRel: { id: 'mother', delta: 3 } }, requires: { maxAge: 3 } },
   { id: 'baby_goose_guard', tag: 'INFANCY', tagColor: C.good, tone: 'good', text: "Sir Quackbeard inspects your cradle with the severity of a constable. He objects to the blanket and loses the argument.", effects: { kinRel: { id: 'goose', delta: 5 } }, requires: { maxAge: 3 } },
   { id: 'baby_winter_fever', tag: 'INFANCY', tagColor: C.bad, tone: 'bad', text: "A winter cough keeps you awake. {{carer}} warms your blanket by the hearth and stays until your breathing settles.", effects: { health: -5, kinRel: { id: 'mother', delta: 3 } }, requires: { maxAge: 3 } },
-  { id: 'mishap_trough', tag: 'MISHAP', tagColor: C.bad, tone: 'bad', text: "You slip beside the watering trough. A bystander offers advice after you have stopped needing it.", effects: { charm: -4 }, requires: { minAge: 3 } },
+  { id: 'mishap_trough', tag: 'MISHAP', tagColor: C.bad, tone: 'bad', text: "You slip beside the watering trough and come up with duckweed in your hair. A bystander turns away to cough very noisily into a sleeve.", effects: { charm: -4 }, requires: { minAge: 3 } },
   { id: 'fortune_coin', tag: 'FORTUNE', tagColor: C.good, tone: 'good', text: 'Found a shiny coin in the mud. It is mostly mud, but it spends.', effects: { gold: 3 }, requires: { minAge: 4 } },
   { id: 'gossip_bard', tag: 'GOSSIP', tagColor: C.amber, tone: 'plain', text: "A bard fits your name into a song by adding two syllables and a crime you have never committed.", effects: { charm: -2 }, requires: { minAge: 6 } },
-  { id: 'plague_cough', tag: 'PLAGUE', tagColor: C.bad, tone: 'bad', text: "During the sickness scare you avoid the crowded stalls. You miss the company more than the haggling.", effects: { health: -9 }, requires: { minAge: 5 } },
+  { id: 'plague_cough', tag: 'PLAGUE', tagColor: C.bad, tone: 'bad', text: "You catch a rough cough during the market sickness scare. Several nights pass without good sleep; even the haggling outside sounds distant.", effects: { health: -9 }, requires: { minAge: 5 } },
   { id: 'wisdom_hermit', tag: 'WISDOM', tagColor: C.blue, tone: 'good', text: "A hermit teaches you the words on a milestone. His complaints about visitors become easier to understand.", effects: { wits: 6 }, requires: { minAge: 5 } },
   { id: 'blessing_candle', tag: 'BLESSING', tagColor: C.good, tone: 'good', text: 'You lit a candle at the chapel. You feel holier and slightly singed.', effects: { faith: 7, path: { church: 1 } }, requires: { minAge: 5 } },
   { id: 'weather_harvest', tag: 'WEATHER', tagColor: C.amber, tone: 'good', text: "Full granaries lower the price of bread. You buy a little extra and need no better reason to enjoy it.", effects: { health: 4, gold: 2 }, requires: { minAge: 4 } },
   { id: 'mishap_goat', tag: 'MISHAP', tagColor: C.bad, tone: 'bad', text: "A tethered goat loops its rope around your ankle. It watches you untie the knot as though reviewing your work.", effects: { health: -6, charm: -2 }, requires: { minAge: 4 } },
-  { id: 'fortune_merchant', tag: 'FORTUNE', tagColor: C.good, tone: 'good', text: 'A merchant overpaid you by mistake and rode off. You said nothing. Wise.', effects: { gold: 6, faith: -2 }, requires: { minAge: 8 } },
+  { id: 'fortune_merchant', tag: 'FORTUNE', tagColor: C.good, tone: 'good', text: "A merchant counts out six gold too many and rides away. You close your purse before anyone asks you to check it.", effects: { gold: 6, faith: -2 }, requires: { minAge: 8 } },
   { id: 'romance_wink', tag: 'ROMANCE', tagColor: C.healthDark, tone: 'good', text: "You try a knowing smile across the square and receive a puzzled one in return. The misunderstanding is mercifully brief.", effects: { charm: 3 }, requires: { minAge: 14 } },
   { id: 'wisdom_zero', tag: 'WISDOM', tagColor: C.blue, tone: 'good', text: "A monk leaves a space in his sums to show you how nothing can have a place. You think about that on the way home.", effects: { wits: 5 }, requires: { minAge: 5 } },
   { id: 'child_mud', tag: 'CHILDHOOD', tagColor: C.amber, tone: 'plain', text: "You build a miniature house in the mud and give it a very small door. Visitors will have to be polite enough to shrink.", effects: { health: 2 }, requires: { maxAge: 8 } },
@@ -116,7 +117,8 @@ export const ANNUAL_MESSAGES: AnnualMessage[] = [
 
 export function renderAnnualText(s: GameState, message: AnnualMessage): string {
   const actors = annualActors(s);
-  return message.text.replace(/\{\{(\w+)\}\}/g, (_, role: AnnualActor) => s.world.characters[actors[role] ?? '']?.name ?? 'your household');
+  const seen=new Set<string>();
+  return message.text.replace(/\{\{(\w+)\}\}/g, (token,role:AnnualActor,offset:number)=>{const id=actors[role],person=s.world.characters[id??''];if(!person)return 'your household';if(seen.has(person.id))return person.name;seen.add(person.id);return actorIntroductionInText(s,person.id,role,message.text.slice(0,offset),message.text.slice(offset+token.length));});
 }
 
 /** Existing saved ID years also seed theme cooldowns, without RNG or title migrations. */

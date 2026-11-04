@@ -30,7 +30,7 @@ export const BIRTH_ORIGINS: readonly BirthOriginDef[] = [
     '{mother} has your lineage read aloud. {father} interrupts twice to omit a cousin. Lord Aldric sends a silver cup and an assessment of the estate.',
     'You arrive beneath painted ancestors. {father} promises to preserve their land; {mother} quietly sells a jewel to pay the wet nurse.' ] },
   { id: 'royal', name: 'Royal', icon: '👑', weight: 0, wealth: 160, standing: 95, careers: ['steward', 'chancellor'], contactId: 'aldric', advantage: 'A documented royal claim and palace connections.', burden: 'An older sibling has the stronger claim. Neither of you rules yet.', introductions: [
-    'You are born to {mother} and King {father}. An older sibling stands between you and the throne. Your mother forbids you to regard this as a practical problem.',
+    'You are born to {mother} and {father}, the King. An older sibling stands between you and the throne. Your mother forbids you to regard this as a practical problem.',
     '{father} announces another royal child. {mother} orders the nursery locks replaced. Your older sibling sends a wooden crown with a splinter.',
     'The herald traces your claim through {father}. {mother} dismisses him before he reaches the disputed marriages. You receive a cradle, guards and a place behind your sibling.' ] },
 ];

@@ -1,3 +1,4 @@
+import {actorIntroductionInText} from './eventActors';
 import { varyBirthHousehold } from './birthCircumstances';
 import type { BirthOriginId, GameState } from '@/types/game';
 import { BIRTH_ORIGINS, birthWeights } from '@/data/birthOrigins';
@@ -57,7 +58,8 @@ export function initializeBirthOrigin(state: GameState, selected?: BirthOriginId
     sibling.background = { ...player.background, guardianIds: [...player.guardianIds] };
     state.world.characters.father.role = 'King · Thy Father';
   }
-  state.feed[0].text = pick(def.introductions).replaceAll('{mother}', parents[0].name).replaceAll('{father}', parents[1].name).replaceAll('{player}', state.first);
+  const introduction=pick(def.introductions),introduced=new Set<string>();
+  state.feed[0].text=introduction.replace(/\{(mother|father|player)\}/g,(token,role:string,offset:number)=>{if(role==='player')return state.first;const person=state.world.characters[role];if(introduced.has(person.id))return person.name;introduced.add(person.id);return actorIntroductionInText(state,person.id,role,introduction.slice(0,offset),introduction.slice(offset+token.length));});
   varyBirthHousehold(state,inheritedGold);
   player.bio = state.feed[0].text;
 }

@@ -3,6 +3,7 @@ import { Pressable, View, ViewStyle, StyleProp } from 'react-native';
 
 interface Props {
   children?: React.ReactNode;
+  accessibilityLabel?: string;
   onPress?: () => void;
   bg: string;
   /** Bottom/right shadow colour for the chunky pixel button. */
@@ -22,6 +23,7 @@ interface Props {
  */
 export function PixelButton({
   children,
+  accessibilityLabel,
   onPress,
   bg,
   shadow,
@@ -35,6 +37,7 @@ export function PixelButton({
   return (
     <Pressable
       accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
       accessibilityState={{ disabled, selected }}
       disabled={disabled}
       onPress={disabled ? undefined : onPress}

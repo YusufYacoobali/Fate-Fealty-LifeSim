@@ -48,14 +48,14 @@ export function recoverEducationActors(state: GameState): void {
   const p = state.world.characters[state.playerCharacterId], e = educationOf(p);
   if (!e.track) return;
   const def = educationTrack(e.track);
-  if (!e.mentorId || !state.world.characters[e.mentorId]?.alive) {
+  if (!e.mentorId || !state.world.characters[e.mentorId]?.alive || state.world.characters[e.mentorId].age<20 || state.world.characters[e.mentorId].occupation.careerId!==def.mentorCareer) {
     const mentor = Object.values(state.world.characters).find(c => c.id !== p.id && c.alive && c.age >= 20 && c.id !== (e.activeClassmateIds?.[0] ?? e.classmateIds[0]) && c.occupation.careerId === def.mentorCareer)
       ?? spawnKin(state, { kind: 'acquaintance', age: 35, role: `${def.name} mentor`, bio: 'A patient teacher whose fees include the right to complain.' });
     mentor.occupation.careerId = def.mentorCareer;
     e.mentorId = mentor.id;
   }
   e.activeClassmateIds ??= [...e.classmateIds];
-  e.activeClassmateIds = e.activeClassmateIds.filter(id => state.world.characters[id]?.alive && (state.world.characters[id].age >= 18) === (state.age >= 18));
+  e.activeClassmateIds = e.activeClassmateIds.filter(id => state.world.characters[id]?.alive && id!==p.id && id!==e.mentorId && state.world.characters[id].education?.track===e.track && (state.world.characters[id].age >= 18) === (state.age >= 18) && (state.age>=18||Math.abs(state.world.characters[id].age-state.age)<=3));
   if (!e.activeClassmateIds.length) {
     const peer = Object.values(state.world.characters).find(c => c.id !== p.id && c.id !== e.mentorId && c.alive && Math.abs(c.age - state.age) <= 3 && (c.age >= 18) === (state.age >= 18) && (!c.education?.track || c.education.track === e.track) && c.id !== 'goose')
       ?? spawnKin(state, { kind: 'acquaintance', age: state.age, role: state.age >= 18 ? 'Adult study colleague' : 'Fellow learner', bio: 'Your fellow learner keeps careful count of every slight and every favour.' });

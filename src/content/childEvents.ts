@@ -5,16 +5,17 @@ import { C } from '@/theme/theme';
 export const CHILD_EVENTS: GameEvent[] = [
   {
 id: 'child_first_lesson',
+actorRoles:{teacher:{reference:'education_mentor',allowInformal:true,minAge:20,alive:true,missingActor:'clear_event'}},
 category: 'child',
-title: 'THE WANDERING MONK',
-text: "The travelling monk asks the children to copy “Do not waste parchment.” He has written it on a fresh sheet so large that even the back row can see the irony.",
+title: "A VERY LARGE WARNING",
+text: "{{teacher.intro}} writes “Do not waste parchment” across an enormous clean sheet. Somebody at the back asks whether the warning applies to teachers.",
 ageMin: 5,
 ageMax: 11,
 once: true,
 choices: [{
-label: "Learn the letters, including the expensive ones",
+label: "Learn to read the warning yourself",
 outcome: {
-text: "You learn enough letters to read the warning yourself. The monk lets you keep a scrap and looks away while you practise.",
+text: "You can read the words without help by the end. {{teacher}} lets you keep a scrap, and you fill every corner with letters.",
 effects: {
 education: {
 qualifications: ["literacy"]
@@ -32,7 +33,7 @@ tone: 'good'
 {
 label: "Spend the lesson with Sir Quackbeard",
 outcome: {
-text: "The goose offers no instruction and requires no parchment. You enjoy the company, though the writing remains unread.",
+text: "Sir Quackbeard settles beside you and goes to sleep. You enjoy the company, but the letters on the sheet remain a mystery.",
 effects: {
 health: 3,
 kinRel: { id: 'goose', delta: 6 },
@@ -43,9 +44,9 @@ tone: 'good'
 requires: { custom:s=>s.world.characters.goose?.alive===true }
 },
 {
-label: "Introduce the frog to the lesson",
+label: "Follow the frog outside",
 outcome: {
-text: "The frog leaves a wet impression on the page. You gain a reputation for mischief and the monk gains a very brief pupil with excellent jumping prospects.",
+text: "The frog leaps into the ditch and you leap after it. {{teacher}} has an empty place at the bench and a very muddy pupil to look for.",
 effects: {
 charm: 5,
 faith: -4,
@@ -60,14 +61,14 @@ tone: 'plain'
 id: 'child_chores',
 category: 'child',
 title: 'A MOUNTAIN OF TURNIPS',
-text: "{{father}} points out the rows waiting to be weeded. “You can see the end,” {{father}} says, omitting that the end is also where tomorrow begins.",
+text: "{{father.intro}} points to the turnip rows. “You can see the end.” You can, but it appears to be getting farther away whenever you bend down.",
 requires: { birthOrigins: ['peasant'] },
 ageMin: 6,
 ageMax: 12,
 choices: [{
-label: "Work through the rows with your father",
+label: "Weed the rows together",
 outcome: {
-text: "You finish tired and gain your father’s affection. The last row earns a quiet nod that nobody else would recognise as a celebration.",
+text: "Your hands ache by the last row. {{father}} gives you a quiet nod and takes the heavier basket home.",
 effects: {
 health: -3,
 path: { labour: 2 },
@@ -81,9 +82,9 @@ tone: 'good'
 }
 },
 {
-label: "Do enough, then hide in the hay",
+label: "Sneak away to play",
 outcome: {
-text: "The nap is excellent. Your father’s disappointment is less restful and follows you indoors.",
+text: "You return rested and find {{father}} finishing the rows alone. The spare basket is placed beside you without a word.",
 effects: {
 health: 4,
 kinRel: {
@@ -100,14 +101,14 @@ actorRoles: { father: { relation:'parent', gender:'man', minAge:18, alive:true, 
 id: 'child_bully',
 category: 'child',
 title: 'THE MILLER’S BIG SON',
-text: "{{other}} collects lunches on behalf of the miller’s big son. The supposed protection consists of not being bothered by the people collecting it.",
+text: "{{other.intro}} holds out a hand for your lunch. The miller’s big son supposedly sent them. You have never seen the big son do any of the collecting.",
 ageMin: 6,
 ageMax: 12,
 choices: [{
-label: "Refuse the protection fee",
+label: "Keep your lunch and stand your ground",
 successChance: (s) => 0.3 + s.stats.health / 250,
 success: {
-text: "You refuse to surrender lunch. {{other}} backs down and remembers exactly who made the collection difficult.",
+text: "{{other}} gives way in front of the other children. You eat your lunch while they stare at you, plainly saving the insult for later.",
 effects: {
 charm: 6,
 path: { martial: 2 },
@@ -117,7 +118,7 @@ bond: {"role":"other","trust":-8,"flag":"rival"}
 tone: 'good'
 },
 failure: {
-text: "You are knocked into the ditch. {{other}} keeps the food and acquires a rival who will remember more than the price of lunch.",
+text: "{{other}} shoves you into the ditch and takes the food. You climb out with a scraped knee and a very good memory.",
 effects: {
 health: -5,
 charm: -2,
@@ -128,9 +129,9 @@ tone: 'bad'
 }
 },
 {
-label: "Surrender the lunch and keep the afternoon quiet",
+label: "Hand it over and get away",
 outcome: {
-text: "You hand over the food. {{other}} gains confidence in the arrangement and loses some of your trust.",
+text: "{{other}} eats while you watch. You leave before the grin gets any wider.",
 effects: {
 charm: -2,
 bond: {"role":"other","trust":-10}
@@ -139,9 +140,9 @@ tone: 'plain'
 }
 },
 {
-label: "Call Sir Quackbeard between you",
+label: "Let Sir Quackbeard handle the ankles",
 outcome: {
-text: "The goose drives {{other}} back by refusing to negotiate about ankles. The collection stops here, and the collector becomes a named rival.",
+text: "Sir Quackbeard drives {{other}} backward with a hiss. You keep your lunch, and the collector points at you as though you personally sharpened the beak.",
 effects: {
 charm: 4,
 kinRel: { id: 'goose', delta: 5 },
@@ -151,6 +152,6 @@ tone: 'good'
 },
 requires: { custom:s=>s.world.characters.goose?.alive===true }
 }],
-actorRoles: {other:{minAge:6,maxAge:16,alive:true,excludePlayer:true,missingActor:'clear_event'}}
+actorRoles: {other:{reference:'childhood_peer',minAge:6,maxAge:16,alive:true,excludePlayer:true,missingActor:'clear_event'}}
 },
 ];

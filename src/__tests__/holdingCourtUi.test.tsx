@@ -12,7 +12,7 @@ import {gameReducer} from '@/state/gameReducer';
 const mockDispatch=jest.fn();jest.mock('@/state/GameContext',()=>({useGame:()=>({dispatch:mockDispatch})}));
 jest.mock('@/components/rpg/RpgPanels',()=>({HoldingExpansionPanel:()=>null}));
 let root:ReactTestRenderer;afterEach(()=>{act(()=>root?.unmount());jest.clearAllMocks();});
-function button(label:string){return root.root.findAllByType(PixelButton).find(b=>b.findAllByType(PixelText).some(t=>[t.props.children].flat(5).join('')===label));}
+function button(label:string){return root.root.findAllByType(PixelButton).find(b=>b.props.accessibilityLabel===label||b.findAllByType(PixelText).some(t=>[t.props.children].flat(5).join('')===label));}
 function text(){return JSON.stringify(root.toJSON());}
 function state(){const s=makeState({age:25,gold:200});syncPlayerToWorld(s);return s;}
 function tap(label:string){const b=button(label);expect(b).toBeDefined();act(()=>b!.props.onPress());}

@@ -55,9 +55,6 @@ export function bindDirectedEvent(state: GameState, directed: DirectedYear): Rec
   if (directed.event && ['household_first_words','household_rainy_roof'].includes(directed.event.id)) return birthBindings(state,true);
   if (directed.event?.id.startsWith('origin_child_')) return birthBindings(state);
   if (directed.event?.id.startsWith('profession_') || directed.event?.id.startsWith('practice_')) return bindProfessionalEvent(state, directed.event.id);
-  if (directed.event?.id.startsWith('education_')) {
-    const e = state.world.characters[state.playerCharacterId].education;
-    return e?.mentorId && (e.activeClassmateIds?.[0] ?? e.classmateIds[0]) ? { mentor: e.mentorId, classmate: (e.activeClassmateIds?.[0] ?? e.classmateIds[0]) } : undefined;
-  }
+  if (directed.event?.id.startsWith('education_')) return bindEventActors(state,directed.event);
   return directed.event ? bindEventActors(state, directed.event) : undefined;
 }

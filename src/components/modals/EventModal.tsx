@@ -1,3 +1,4 @@
+import {involvedPeople} from '@/engine/eventActors';
 import { professionalClientContext } from '@/engine/professionalClients';
 import { medicalAdviser, patientSummary } from '@/engine/medicalPractice';
 import { PersonPicker } from '../ui/PersonPicker';
@@ -29,6 +30,7 @@ export function EventModal({ state, event, onChoose, onProfessionalClient }: Pro
   const client = onProfessionalClient && event.id === state.pendingEvent?.eventId ? professionalClientContext(state) : undefined;
   const adviser = client?.definition.family === 'medicine' && client.selected ? medicalAdviser(state,client.record,client.selected.id) : undefined;
   const choices = event.choices.filter((c) => isChoiceAvailable(state, c));
+  const people=involvedPeople(state,rawText,choices.map(c=>c.label));
   const story = state.pendingEvent?.storyInstanceId
     ? state.world.activeStories.find((item) => item.id === state.pendingEvent!.storyInstanceId && item.status === 'active')
     : undefined;
@@ -82,6 +84,8 @@ export function EventModal({ state, event, onChoose, onProfessionalClient }: Pro
             onDone={onWritten}
           />
         </Pressable>
+
+        {people.length>0&&<View style={{marginBottom:10,gap:4}}><PixelText font="pixel" size={6} color={C.blueDeep}>INVOLVED PEOPLE</PixelText>{people.map(person=><PixelText key={person.id} size={16} color={C.textBrown}>{person.description}</PixelText>)}</View>}
 
         {client && onProfessionalClient && <View style={[PANEL.parchCard,{ marginBottom: 10 }]}>
           <PixelText font="pixel" size={7} color={C.blueDeep}>{client.definition.family === 'medicine' ? 'PATIENT' : 'TRADING PARTNER'}</PixelText>

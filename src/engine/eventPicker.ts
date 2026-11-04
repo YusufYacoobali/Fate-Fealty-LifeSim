@@ -1,3 +1,4 @@
+import {matchesActorReference} from './eventActors';
 import {activeSpouse} from './characterState';
 import { isRomanceEligible } from './relationshipEngine';
 import { callbackSource, callbackBindings } from './narrativeCallbacks';
@@ -236,6 +237,7 @@ function actorCandidates(s: GameState, role: EventActorRole) {
     // creditors, physicians or letter-writing suitors as his age increases.
     if (character.id === 'goose' && role.characterId !== 'goose') return false;
     if (role.characterId && character.id !== role.characterId) return false;
+    if (!matchesActorReference(s,character,role)) return false;
     if (role.excludePlayer !== false && character.id === s.playerCharacterId) return false;
     if (role.gender && character.gender !== role.gender) return false;
     const p = s.world.characters[s.playerCharacterId];
@@ -262,8 +264,8 @@ function actorCandidates(s: GameState, role: EventActorRole) {
 }
 
 /** Solve the cast as a whole, so two roles cannot silently claim the same sole actor. */
-function assignEventCast(s: GameState, event: GameEvent, random: boolean): Record<string,string> | undefined {
-  const roles = Object.entries(event.actorRoles ?? {}).map(([id,role]) => ({ id, candidates: actorCandidates(s,role) })).sort((a,b) => a.candidates.length - b.candidates.length);
+function assignEventCast(s: GameState, event: GameEvent, random: boolean, retained:Record<string,string>={}): Record<string,string> | undefined {
+  const roles = Object.entries(event.actorRoles ?? {}).map(([id,role]) => ({ id, candidates: actorCandidates(s,role).filter(c=>!retained[id]||retained[id]===c.id) })).sort((a,b) => a.candidates.length - b.candidates.length);
   const bindings: Record<string,string> = {}, used = new Set<string>();
   const recent=random?s.world.history.filter(h=>h.actorBindings&&s.world.currentYear-h.year<=6).slice(-6):[];
   const visit = (index:number): boolean => {
@@ -272,7 +274,7 @@ function assignEventCast(s: GameState, event: GameEvent, random: boolean): Recor
     const remaining = candidates.filter(c => !used.has(c.id));
     while (remaining.length) {
       const role=event.actorRoles?.[id];
-      const generic=random&&!role?.relation&&!role?.characterId&&!role?.familyRelation;
+      const generic=random&&!role?.relation&&!role?.reference&&!role?.characterId&&!role?.familyRelation;
       const fresh=generic?remaining.filter(c=>!recent.some(h=>Object.values(h.actorBindings??{}).includes(c.id))):[];
       const pool=fresh.length?fresh:remaining;
       const actor = random ? (pickWeighted(pool,c=>generic?Math.pow(0.25,recent.filter(h=>Object.values(h.actorBindings??{}).includes(c.id)).length):1) ?? pool[0]) : remaining[0];
@@ -290,6 +292,23 @@ export function bindEventActors(s: GameState, event: GameEvent): Record<string, 
   if (event.callback) return callbackBindings(s,event);
   if (!event.actorRoles) return undefined;
   return assignEventCast(s,event,true);
+}
+
+/** Repair only invalid saved casts, respecting clear/substitute policy without RNG. */
+export function reconcilePendingEventActors(s:GameState):void{
+ const pending=s.pendingEvent,event=pending?eventById(pending.eventId):undefined;
+ if(!pending||!event||event.legacyNarrative||!Object.keys(event.actorRoles??{}).length)return;
+ const retained:Record<string,string>={};let invalid=false;
+ for(const[key,role]of Object.entries(event.actorRoles??{})){
+  const id=pending.bindings?.[key];
+  if(id&&actorCandidates(s,role).some(c=>c.id===id)){retained[key]=id;continue;}
+  invalid=true;
+  if(role.missingActor==='clear_event'){s.pendingEvent=null;s.world.recoveryNotice=true;return;}
+ }
+ if(!invalid)return;
+ const repaired=assignEventCast(s,event,false,retained);
+ if(repaired)pending.bindings={...pending.bindings,...repaired};
+ else{s.pendingEvent=null;s.world.recoveryNotice=true;}
 }
 
 export function recordEventResolution(s: GameState, event: GameEvent, choiceId: string): void {

@@ -106,6 +106,7 @@ export function GameScreen() {
   const [chronicleOpen, setChronicleOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [holdingSection,setHoldingSection]=useState<HoldingSection>('estate');
+  useEffect(()=>setHoldingSection('estate'),[state.playerCharacterId,state.lifeNo]);
   const insets = useSafeAreaInsets();
   const bottomNavInset = Math.max(insets.bottom, MIN_ANDROID_BOTTOM_NAV_GUARD);
   const currentEvent = state.pendingEvent ? eventById(state.pendingEvent.eventId) : undefined;

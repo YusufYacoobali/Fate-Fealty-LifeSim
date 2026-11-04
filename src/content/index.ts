@@ -1,3 +1,4 @@
+import {EDITORIAL_REPETITION_GROUPS} from './editorialContinuity';
 import {SOCIAL_COMEDY_EVENTS} from './socialComedyEvents';
 import {CHILDHOOD_DEPTH_EVENTS} from './childhoodDepthEvents';
 import {SINGLE_YEAR_STORIES} from './singleYearStories';
@@ -110,7 +111,7 @@ function normaliseEvent(event: GameEvent): GameEvent {
     domain,
     rarity: event.rarity ?? (event.premium ? 'rare' : 'common'),
     cooldownYears: event.cooldownYears ?? 15,
-    repetitionGroup: sharedNarrativeTheme(event.id,typeof event.text==='string'?event.text:'') ?? singleYearTheme(event.id) ?? event.repetitionGroup ?? legacyNarrativeTheme(event.id) ?? `${domain}:${event.arc ?? event.id}`,
+    repetitionGroup: EDITORIAL_REPETITION_GROUPS[event.id] ?? sharedNarrativeTheme(event.id,typeof event.text==='string'?event.text:'') ?? singleYearTheme(event.id) ?? event.repetitionGroup ?? legacyNarrativeTheme(event.id) ?? `${domain}:${event.arc ?? event.id}`,
     actorRoles,
     editorialScore: event.editorialScore ?? (event.once || event.arc ? 4 : 3),
     choices: event.choices.map((choice, index) => ({

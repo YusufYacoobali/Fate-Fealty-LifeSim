@@ -1,0 +1,42 @@
+[
+  {
+    "id": "child_ink_finger",
+    "before": "The writing master asks who touched his ink. You raise a perfectly black finger to deny it.",
+    "after": "You practise your letters on a broken roof tile. The first good letter is so large that there is no room for the rest of your name."
+  },
+  {
+    "id": "child_shepherd",
+    "before": "The other children elect you shepherd of a flock of stones. None stray. Your reputation for husbandry is impeccable.",
+    "after": "You herd a flock of stones across the yard. They are obedient sheep until someone tries to put one in a pocket."
+  },
+  {
+    "id": "child_snow_lord",
+    "before": "You build a snow lord with an enormous nose. The thaw removes his authority before anyone can collect rent.",
+    "after": "Your snowman has the reeve’s enormous nose. When the reeve comes past, you hastily add a moustache."
+  },
+  {
+    "id": "fortune_merchant",
+    "before": "A merchant overpaid you by mistake and rode off. You said nothing. Wise.",
+    "after": "A merchant counts out six gold too many and rides away. You close your purse before anyone asks you to check it."
+  },
+  {
+    "id": "mishap_trough",
+    "before": "You slip beside the watering trough. A bystander offers advice after you have stopped needing it.",
+    "after": "You slip beside the watering trough and come up with duckweed in your hair. A bystander turns away to cough very noisily into a sleeve."
+  },
+  {
+    "id": "nursery_measuring",
+    "before": "{{carer}} marks your height on the doorpost. You are now taller than last year’s debt notice.",
+    "after": "{{carer}} marks your height on the doorpost. You stand on tiptoe and wait to see whether it counts."
+  },
+  {
+    "id": "nursery_spoon",
+    "before": "You discover that dropping a spoon makes an adult fetch it. An excellent arrangement, briefly.",
+    "after": "You try to fit an enormous bite into your mouth. Half reaches your chin. You pat it back up with both hands."
+  },
+  {
+    "id": "plague_cough",
+    "before": "During the sickness scare you avoid the crowded stalls. You miss the company more than the haggling.",
+    "after": "You catch a rough cough during the market sickness scare. Several nights pass without good sleep; even the haggling outside sounds distant."
+  }
+]

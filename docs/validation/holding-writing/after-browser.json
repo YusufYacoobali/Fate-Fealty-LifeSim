@@ -1,0 +1,29 @@
+{
+  "results": [
+    {
+      "scenario": "court",
+      "width": 280,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "scenario": "court",
+      "width": 320,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "scenario": "court",
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "scenario": "court",
+      "width": 768,
+      "textScale": 1,
+      "passed": true
+    }
+  ],
+  "errors": []
+}

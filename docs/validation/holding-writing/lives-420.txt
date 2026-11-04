@@ -1,0 +1,48 @@
+holding-writing: 100/420
+holding-writing: 200/420
+holding-writing: 300/420
+holding-writing: 400/420
+{
+  "medianDeathAge": 61,
+  "prematureDeaths": 11,
+  "eventDrivenDeathsPer100": 4.285714285714286,
+  "directedShareOfYears": 0.09168114263655665,
+  "meanDirectedRepeats": 4.264285714285714,
+  "independentEncountersRange": [
+    23,
+    80
+  ],
+  "independentEncountersStdDev": 8.614514395869564,
+  "meanIndependentEncounters": 53.71190476190476,
+  "repeatedInteractiveResolutions": 1892,
+  "reloadChecks": 1222,
+  "reloadInconsistencies": 0,
+  "authoredSchedulesCreated": 0,
+  "maxAuthoredOpen": 0,
+  "authoredOpenAtDeath": 0,
+  "popupsPerLifeYear": 0.9664157498552403,
+  "meanPopupYears": 59.3,
+  "maxYearlyPopups": 2,
+  "meanDeathAge": 61.67857142857143,
+  "meanEventIds": 55.102380952380955,
+  "meanAnnualIds": 69.44285714285714,
+  "uniqueEvents": 410,
+  "uniqueAnnual": 171,
+  "totalChoices": 25035,
+  "seriousChoices": 4569,
+  "seriousRate": 0.18250449370880767,
+  "callbacks": 0,
+  "shortCallbacks": 0,
+  "delayedCallbacks": 0,
+  "exactAnnualRepeats": 0,
+  "annualThemeRepeats": 19,
+  "eventThemeRepeats": 0,
+  "stalls": 0,
+  "storyInstancesStarted": 0,
+  "storyInstancesCompleted": 0,
+  "storyInstancesCancelled": 0,
+  "storyInstancesOpenAtDeath": 0,
+  "chainInstancesStarted": 0,
+  "chainInstancesCompleted": 0,
+  "unfinishedLives": 0
+}

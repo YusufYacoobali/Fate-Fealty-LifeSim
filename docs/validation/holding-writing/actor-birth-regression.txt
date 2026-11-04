@@ -1,0 +1,12 @@
+
+> fate-and-fealty@1.0.0 test
+> jest --runInBand src/__tests__/editorialActors.test.ts src/__tests__/birthOrigins.test.ts
+
+PASS src/__tests__/editorialActors.test.ts
+PASS src/__tests__/birthOrigins.test.ts
+
+Test Suites: 2 passed, 2 total
+Tests:       26 passed, 26 total
+Snapshots:   0 total
+Time:        2.471 s, estimated 3 s
+Ran all test suites matching /src\/__tests__\/editorialActors.test.ts|src\/__tests__\/birthOrigins.test.ts/i.

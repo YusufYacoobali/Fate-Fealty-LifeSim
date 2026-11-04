@@ -1,0 +1,8 @@
+
+> fate-and-fealty@1.0.0 release:check
+> node scripts/checkRelease.cjs
+
+env: load .env
+env: export META_APP_ID META_CLIENT_TOKEN
+BLOCKED: Set TERMS_OF_USE_URL to the published HTTPS app terms page for Android.
+Manual release gates: Meta/RevenueCat dashboard connection, privacy/store disclosures, and signed-device acceptance tests. See docs/meta-ads-release.md.

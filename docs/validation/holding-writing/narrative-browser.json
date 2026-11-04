@@ -1,0 +1,66 @@
+{
+  "version": "154.0.8037.57",
+  "results": [
+    {
+      "id": "young_spoon_office",
+      "width": 280,
+      "textScale": 1.35,
+      "passed": true
+    },
+    {
+      "id": "young_spoon_office",
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "id": "young_market_math",
+      "width": 280,
+      "textScale": 1.35,
+      "passed": true
+    },
+    {
+      "id": "young_market_math",
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "id": "education_guild_1",
+      "width": 280,
+      "textScale": 1.35,
+      "passed": true
+    },
+    {
+      "id": "education_guild_1",
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "id": "young_rival_nickname",
+      "width": 280,
+      "textScale": 1.35,
+      "passed": true
+    },
+    {
+      "id": "young_rival_nickname",
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "id": "legacy_adult",
+      "width": 280,
+      "textScale": 1.35,
+      "passed": true
+    },
+    {
+      "id": "legacy_adult",
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,3075 @@
+{
+  "staticCurrentEvents": 545,
+  "renderedScenes": 95,
+  "renderedChoices": 237,
+  "validation": [],
+  "scenes": [
+    {
+      "id": "young_spoon_office",
+      "introduction": "You drop your spoon. Your mother, Emma, picks it up. By the fifth time, the smile has gone and the spoon is being held very firmly.",
+      "people": [
+        {
+          "role": "carer",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 33,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "again",
+          "label": "Drop it once more",
+          "outcome": "Emma catches the spoon before it lands. You squeal with delight. This was meant to discourage you."
+        },
+        {
+          "id": "offer",
+          "label": "Give it back with your sweetest smile",
+          "outcome": "Emma kisses your sticky forehead and lets you try feeding yourself. Most of supper reaches your mouth."
+        }
+      ]
+    },
+    {
+      "id": "young_sleep_inspection",
+      "introduction": "Your mother, Emma, has just fallen asleep in the chair beside you. One eye is still open. You would like the other one open too.",
+      "people": [
+        {
+          "role": "carer",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 33,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "call",
+          "label": "Shout until both eyes open",
+          "outcome": "Emma lurches upright and bumps the table. You laugh so hard that a tired laugh comes back."
+        },
+        {
+          "id": "settle",
+          "label": "Curl up and let them sleep",
+          "outcome": "The chair creaks. Emma sleeps with one hand on your blanket, and you drift off too."
+        }
+      ]
+    },
+    {
+      "id": "young_soup_fort",
+      "introduction": "Your mother, Emma, brings your soup. You have built a wall of bread around the bowl and will not allow the spoon through.",
+      "people": [
+        {
+          "role": "carer",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 33,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "defend",
+          "label": "Slap away the invading spoon",
+          "outcome": "Soup splashes down your sleeve. Emma wipes you clean while you inspect the hole in your bread wall."
+        },
+        {
+          "id": "share",
+          "label": "Open a little gap",
+          "outcome": "Emma gets a spoonful past the bread. You eat it, look surprised, and allow another."
+        }
+      ]
+    },
+    {
+      "id": "young_boot_harbour",
+      "introduction": "A wooden duck fits neatly into your mother Emma’s boot. You push it right down to the toe and wait to see what happens.",
+      "people": [
+        {
+          "role": "carer",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 33,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "retrieve",
+          "label": "Fetch your duck when the hopping starts",
+          "outcome": "Emma holds out the boot. You fish out the duck and get a grateful squeeze, though the hopping has stopped."
+        },
+        {
+          "id": "hide",
+          "label": "Look as surprised as possible",
+          "outcome": "Emma shakes out the duck. You stare at it in amazement. It is the best acting you have managed so far."
+        }
+      ]
+    },
+    {
+      "id": "young_washing_judge",
+      "introduction": "Your mother, Emma, approaches with a wet cloth. You clamp both hands over the patch of mud you have been saving on your cheek.",
+      "people": [
+        {
+          "role": "carer",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 33,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "object",
+          "label": "Wriggle like an eel",
+          "outcome": "Emma catches one cheek, then the other. You get muddy fingerprints on the clean one and earn a helpless laugh."
+        },
+        {
+          "id": "help",
+          "label": "Take a corner of the cloth",
+          "outcome": "You scrub your chin while Emma does the difficult parts. Water runs down your neck, but the dirt comes off."
+        }
+      ]
+    },
+    {
+      "id": "young_small_mending",
+      "introduction": "Your mother, Emma, gives you the thread to hold while a torn sleeve is mended. You watch the needle as though it might bite.",
+      "people": [
+        {
+          "role": "carer",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 33,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "hold",
+          "label": "Keep your fist still",
+          "outcome": "Emma finishes the sleeve and pulls it on to show you. You pat the new stitches and are thanked for helping."
+        },
+        {
+          "id": "pull",
+          "label": "See how far the thread goes",
+          "outcome": "Much farther than expected. Emma catches the sleeve before it falls apart and gives you a spare length to tug."
+        }
+      ]
+    },
+    {
+      "id": "young_goat_headmaster",
+      "introduction": "A goat eats the lesson sheet. Test Peer puts a cap on it and seats it in the cleric Test Teacher’s chair. The goat immediately eats the cap.",
+      "people": [
+        {
+          "role": "peer",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your friend, Test Peer"
+        },
+        {
+          "role": "teacher",
+          "actorId": "kin_7",
+          "name": "Test Teacher",
+          "age": 40,
+          "description": "Test Teacher, a cleric"
+        }
+      ],
+      "choices": [
+        {
+          "id": "teacher",
+          "label": "Help Test Teacher get the goat outside",
+          "outcome": "Test Teacher holds out a carrot. The goat abandons its chair, while Test Peer finds you a clean lesson sheet."
+        },
+        {
+          "id": "goat",
+          "label": "Let the goat teach the lesson",
+          "outcome": "Test Teacher waits for a sensible answer. The goat swallows the last bit of cap, and Test Peer snorts so loudly that you start laughing too."
+        },
+        {
+          "id": "forge",
+          "label": "Replace the register with generous new names",
+          "outcome": "You add three absent children and a pig. Test Teacher asks the pig to read aloud, then takes the pencil away from you."
+        }
+      ]
+    },
+    {
+      "id": "young_ink_finger",
+      "introduction": "Test Teacher, a cleric, finds an open inkpot. Test Peer looks at your blackened hand, then at your face. “Put it in your pocket,” comes the whispered advice.",
+      "people": [
+        {
+          "role": "peer",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your friend, Test Peer"
+        },
+        {
+          "role": "teacher",
+          "actorId": "kin_7",
+          "name": "Test Teacher",
+          "age": 40,
+          "description": "Test Teacher, a cleric"
+        }
+      ],
+      "choices": [
+        {
+          "id": "admit",
+          "label": "Hold up the inky hand",
+          "outcome": "Test Teacher hands you a rag. You clean the spill together, and next time the inkpot is left within your reach."
+        },
+        {
+          "id": "hide",
+          "label": "Hide it behind your back",
+          "outcome": "You press a perfect black handprint onto your tunic. Test Peer stuffs a sleeve into their mouth to stop laughing."
+        }
+      ]
+    },
+    {
+      "id": "young_stool_court",
+      "introduction": "Your friend, Test Peer, gets the only stool and decides that means choosing every game. The rest of you have a plate of biscuits.",
+      "people": [
+        {
+          "role": "peer",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "justice",
+          "label": "Insist everyone gets a turn",
+          "outcome": "Test Peer listens to each child in turn. By the time a game is chosen, the biscuits are gone."
+        },
+        {
+          "id": "settle",
+          "label": "Offer a biscuit for a turn on the stool",
+          "outcome": "Test Peer takes the biscuit and climbs down. You sit for a minute before sharing it out again."
+        }
+      ]
+    },
+    {
+      "id": "young_river_boat",
+      "introduction": "You and your friend, Test Peer, launch a wooden boat in the ditch. It shoots under a bridge that neither of you can crawl beneath.",
+      "people": [
+        {
+          "role": "peer",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "reach",
+          "label": "Fish it out with a stick",
+          "outcome": "You hook the boat and soak your sleeve. Test Peer holds your belt so you do not follow it into the ditch."
+        },
+        {
+          "id": "charge",
+          "label": "Make the other children pay to watch",
+          "outcome": "The boat vanishes before your grand demonstration. Test Peer has to return the pebbles while you explain the invisible ship."
+        }
+      ]
+    },
+    {
+      "id": "young_saint_cake",
+      "introduction": "Your friend, Test Peer, lifts the cloth over a cake saved for the parish feast. There is a great deal of cake and nobody in the room but you.",
+      "people": [
+        {
+          "role": "peer",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "guard",
+          "label": "Cover it and wait for the feast",
+          "outcome": "You both wait. The first slices reach you warm, and Test Peer nudges yours across with the larger corner."
+        },
+        {
+          "id": "taste",
+          "label": "Try a little from the far side",
+          "outcome": "You and Test Peer keep cutting it straight. When the cloth goes back, it sags into a hole big enough to hide a kitten."
+        }
+      ]
+    },
+    {
+      "id": "young_lost_button",
+      "introduction": "Your friend, Test Peer, has lost a shiny button in the rushes. They are trying very hard not to cry, which makes finding it much more urgent.",
+      "people": [
+        {
+          "role": "peer",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "search",
+          "label": "Get down and search together",
+          "outcome": "You find a bead, a nail and the button. Test Peer presses the bead into your hand and keeps checking that the button is still there."
+        },
+        {
+          "id": "boast",
+          "label": "Promise to find it for a reward",
+          "outcome": "Test Peer reaches into another pocket and finds it. You pretend you were about to suggest looking there."
+        }
+      ]
+    },
+    {
+      "id": "young_market_math",
+      "introduction": "Test Teacher, a cleric, lays out apples for a lesson. At the far end of the bench, Test Peer quietly makes one of the numbers smaller.",
+      "people": [
+        {
+          "role": "peer",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your friend, Test Peer"
+        },
+        {
+          "role": "teacher",
+          "actorId": "kin_7",
+          "name": "Test Teacher",
+          "age": 40,
+          "description": "Test Teacher, a cleric"
+        }
+      ],
+      "choices": [
+        {
+          "id": "count",
+          "label": "Point out the missing apple",
+          "outcome": "Test Teacher asks Test Peer to count aloud. A mouth full of apple makes this a difficult exercise."
+        },
+        {
+          "id": "join",
+          "label": "Help eat the difficult numbers",
+          "outcome": "Test Peer slips you a piece. Test Teacher takes away the apples and gives you both more sums, which are much harder to swallow."
+        }
+      ]
+    },
+    {
+      "id": "young_family_whisper",
+      "introduction": "Your father, Leofric, drops a pot and shouts a word you have never heard. Test Peer leans close. “Say it again.”",
+      "people": [
+        {
+          "role": "peer",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your friend, Test Peer"
+        },
+        {
+          "role": "carer",
+          "actorId": "father",
+          "name": "Leofric",
+          "age": 34,
+          "description": "your father, Leofric"
+        }
+      ],
+      "choices": [
+        {
+          "id": "private",
+          "label": "Ask what it means, quietly",
+          "outcome": "Leofric tells you what it means and asks you not to repeat it at chapel. Test Peer looks as though chapel has just become interesting."
+        },
+        {
+          "id": "public",
+          "label": "Try the new word at full volume",
+          "outcome": "A neighbour drops a spoon. Leofric covers your mouth too late, while Test Peer bends double laughing."
+        }
+      ]
+    },
+    {
+      "id": "young_mud_toll",
+      "introduction": "Your friend, Test Peer, wants a pebble from anyone crossing a plank over a puddle. You can get around the entire puddle in one step.",
+      "people": [
+        {
+          "role": "peer",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "bypass",
+          "label": "Step around it",
+          "outcome": "Test Peer drags the plank to block you. You go around the other end. This continues until both of you are laughing."
+        },
+        {
+          "id": "join",
+          "label": "Help collect the pebbles",
+          "outcome": "You collect six before an adult takes back the plank. Test Peer lets you keep half the pebbles and blames the adult."
+        }
+      ]
+    },
+    {
+      "id": "young_borrowed_bell",
+      "introduction": "Your friend, Test Peer, finds a small bell. One ring could bring the whole household running to supper, if anybody had cooked it yet.",
+      "people": [
+        {
+          "role": "peer",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "warn",
+          "label": "Put it back before trouble comes",
+          "outcome": "Test Peer sighs, but helps you return it. The adults finish their work without being dragged away from it."
+        },
+        {
+          "id": "ring",
+          "label": "Ring for a splendid imaginary supper",
+          "outcome": "Three hungry adults arrive. Test Peer looks into an empty bowl and whispers, “Ring it again. Perhaps that makes the food.”"
+        }
+      ]
+    },
+    {
+      "id": "young_pocket_inventory",
+      "introduction": "Your mother, Emma, empties your pocket before washing your clothes. Out come a stone, a bent nail and something with far too many legs.",
+      "people": [
+        {
+          "role": "carer",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "sort",
+          "label": "Explain which things you need",
+          "outcome": "Emma lets you keep the stone. The nail goes on a high shelf and the many-legged treasure goes outside on a shovel."
+        },
+        {
+          "id": "rescue",
+          "label": "Grab the many-legged treasure",
+          "outcome": "It scuttles up your sleeve. Emma helps shake it out while you discover how quickly you can dance."
+        }
+      ]
+    },
+    {
+      "id": "young_holy_gloss",
+      "introduction": "Test Teacher, a cleric, sets a Latin sentence. Test Peer reads it as “give the children more pudding” and waits hopefully.",
+      "people": [
+        {
+          "role": "peer",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 10,
+          "description": "your friend, Test Peer"
+        },
+        {
+          "role": "teacher",
+          "actorId": "kin_7",
+          "name": "Test Teacher",
+          "age": 40,
+          "description": "Test Teacher, a cleric"
+        }
+      ],
+      "choices": [
+        {
+          "id": "check",
+          "label": "Check the word for pudding",
+          "outcome": "The word means patience. Test Teacher makes you find the right passage, while Test Peer keeps a finger on the wrong one."
+        },
+        {
+          "id": "defend",
+          "label": "Explain why pudding fits the meaning",
+          "outcome": "Test Teacher asks for the grammar. Test Peer rubs an empty stomach. It is a strong argument for lunch, but a poor one for Latin."
+        }
+      ]
+    },
+    {
+      "id": "young_rival_nickname",
+      "introduction": "Your friend, Test Peer, gives you an unkind nickname. Younger children start repeating it, even when you are close enough to hear every word.",
+      "people": [
+        {
+          "role": "peer",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 10,
+          "description": "your friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "plain",
+          "label": "Tell them it hurts and ask them to stop",
+          "outcome": "Test Peer glances at your face and drops the grin. The next time somebody repeats it, they change the subject."
+        },
+        {
+          "id": "answer",
+          "label": "Find a crueler name for them",
+          "outcome": "The younger children learn both names. Test Peer stops laughing and starts using yours whenever an adult turns away."
+        }
+      ]
+    },
+    {
+      "id": "young_family_tally",
+      "introduction": "Your mother, Emma, asks you to count the grain sacks. There are fewer than the tally says, and the empty shelf is hard to argue with.",
+      "people": [
+        {
+          "role": "carer",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 43,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "honest",
+          "label": "Show where the grain is missing",
+          "outcome": "Emma checks the shelf and changes the supper plan. Your careful count leaves a little more grain for the lean week ahead."
+        },
+        {
+          "id": "pretty",
+          "label": "Write down the reassuring number",
+          "outcome": "Emma finds the bare shelf later and recounts everything. Next time, you have to count with someone watching."
+        }
+      ]
+    },
+    {
+      "id": "young_flood_slate",
+      "introduction": "Your friend, Test Peer, draws a bridge to build from spare boards. There is room for a hero in a cloak, but nothing holding up the middle.",
+      "people": [
+        {
+          "role": "peer",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 10,
+          "description": "your friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "supports",
+          "label": "Make room for the supports",
+          "outcome": "Test Peer rubs out the cloak. With two extra supports, your little model stays upright and the bridge might be useful."
+        },
+        {
+          "id": "hero",
+          "label": "Test the heroic version",
+          "outcome": "One pebble folds the bridge in half. Test Peer redraws the hero on the bank, well away from the water."
+        }
+      ]
+    },
+    {
+      "id": "young_love_note",
+      "introduction": "Your friend, Test Peer, has your note. They point to the line about their eyes and wait for you to stop staring at your shoes.",
+      "people": [
+        {
+          "role": "peer",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 14,
+          "description": "your friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "honest",
+          "label": "Ask the question you meant to ask",
+          "outcome": "You get the words out without a borrowed verse. Test Peer answers quietly, and neither of you has to involve the whole lane."
+        },
+        {
+          "id": "deny",
+          "label": "Say it was a handwriting exercise",
+          "outcome": "Test Peer reads the line about their eyes again. You decide to become very interested in the weather."
+        }
+      ]
+    },
+    {
+      "id": "young_first_wage",
+      "introduction": "Leofric, a tenant farmer, offers to pay you for an errand, then takes back half the wage as a fee for learning how to do it.",
+      "people": [
+        {
+          "role": "other",
+          "actorId": "leofric",
+          "name": "Leofric",
+          "age": 48,
+          "description": "Leofric, a tenant farmer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "terms",
+          "label": "Ask for the whole wage before you start",
+          "outcome": "Leofric grumbles, but pays four gold. You do the errand carefully; you would like to be paid again."
+        },
+        {
+          "id": "accept",
+          "label": "Take the two gold and get it done",
+          "outcome": "You carry the sack and collect two gold. Leofric pats your shoulder and asks whether the free instructions made it a fair bargain."
+        }
+      ]
+    },
+    {
+      "id": "young_forbidden_chapter",
+      "introduction": "Your friend, Test Peer, opens a respectable book at a forbidden page. Somebody has underlined all the exciting parts in red.",
+      "people": [
+        {
+          "role": "peer",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 14,
+          "description": "your friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "study",
+          "label": "Read the argument and check it",
+          "outcome": "You find a flaw in the passage and point it out. Test Peer groans; you have somehow made forbidden reading into more work."
+        },
+        {
+          "id": "spread",
+          "label": "Copy the red bits for everyone",
+          "outcome": "The copies are traced to your enormous red initials. Test Peer quietly turns your name face down."
+        }
+      ]
+    },
+    {
+      "id": "young_borrowed_reference",
+      "introduction": "Your friend, Test Peer, writes you a glowing reference. It lists three skills you do not have and one that neither of you can pronounce.",
+      "people": [
+        {
+          "role": "peer",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 14,
+          "description": "your friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "correct",
+          "label": "Leave in the things you can actually do",
+          "outcome": "Test Peer keeps one warm compliment and crosses out the rest. The shorter reference gives you something you can build on."
+        },
+        {
+          "id": "submit",
+          "label": "Hand over the magnificent version",
+          "outcome": "You are asked to demonstrate the unpronounceable skill. Test Peer takes a sudden interest in a very distant part of the yard."
+        }
+      ]
+    },
+    {
+      "id": "circumstance_rival_higher_price",
+      "introduction": "Your rival, Sir Roderick, offers to stop repeating a rumour about you. The price is shouted across the market. So is the rumour.",
+      "people": [
+        {
+          "role": "other",
+          "actorId": "roderick",
+          "name": "Sir Roderick",
+          "age": 47,
+          "description": "your rival, Sir Roderick"
+        }
+      ],
+      "choices": [
+        {
+          "id": "reject",
+          "label": "Refuse to buy the silence",
+          "outcome": "Sir Roderick shouts a higher price. Several listeners ask whether shouting costs extra."
+        },
+        {
+          "id": "expose",
+          "label": "Repeat the offer to everyone listening",
+          "outcome": "You quote the demand word for word. Sir Roderick discovers how embarrassing it is to have an exact price put on their discretion."
+        }
+      ]
+    },
+    {
+      "id": "circumstance_wet_ancestor",
+      "introduction": "Leofric, a tenant farmer, tries to sell you an exclusive pedigree. Two stalls away, the same ancestor has six different descendants and a cheaper frame.",
+      "people": [
+        {
+          "role": "other",
+          "actorId": "leofric",
+          "name": "Leofric",
+          "age": 52,
+          "description": "Leofric, a tenant farmer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "withdraw",
+          "label": "Drop the doubtful claim",
+          "outcome": "Leofric offers a smaller ancestor at half the price. You leave before the family shrinks any further."
+        },
+        {
+          "id": "defend",
+          "label": "Swear the pedigree is true",
+          "outcome": "The clerk asks how you met the witness from 1180. Leofric suddenly has another customer to serve."
+        }
+      ]
+    },
+    {
+      "id": "circumstance_child_collector",
+      "introduction": "Your friend, Test Peer, takes the other children’s lunches while wearing a leaf as a badge. The oldest children deny sending anyone with a leaf.",
+      "people": [
+        {
+          "role": "other",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "truce",
+          "label": "Stop taking lunches together",
+          "outcome": "Test Peer pulls off the leaf. You both leave the food where its owners can reach it."
+        },
+        {
+          "id": "repay",
+          "label": "Demand a lunch as repayment",
+          "outcome": "Test Peer hands it over and looks at you with weary recognition. The leaf is gone, but the children are still losing their lunch."
+        }
+      ]
+    },
+    {
+      "id": "circumstance_roderick_words",
+      "introduction": "Your rival, Sir Roderick, arrives to tell you exactly what he thinks of you. He says he left his duelling glove at home and shows you both empty hands.",
+      "people": [
+        {
+          "role": "other",
+          "actorId": "roderick",
+          "name": "Sir Roderick",
+          "age": 47,
+          "description": "your rival, Sir Roderick"
+        }
+      ],
+      "choices": [
+        {
+          "id": "hear",
+          "label": "Hear Roderick without an audience",
+          "outcome": "Roderick gets through the complaint without reaching for a weapon. Once you answer quietly, he finds rather less to shout about."
+        },
+        {
+          "id": "repeat",
+          "label": "Give your finest answer in public",
+          "outcome": "Roderick produces the glove. It was in the other pocket. Your audience takes a quick, interested step backward."
+        }
+      ]
+    },
+    {
+      "id": "circumstance_tonic_guarantee",
+      "introduction": "Leofric, a tenant farmer, points to a tonic’s guarantee. It promises that the bottle contains tonic. The ingredients appear in much smaller writing.",
+      "people": [
+        {
+          "role": "other",
+          "actorId": "leofric",
+          "name": "Leofric",
+          "age": 52,
+          "description": "Leofric, a tenant farmer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "accept",
+          "label": "Accept a plain account of what is in it",
+          "outcome": "Leofric reads the ingredients without promising to restore your youth or rearrange your teeth. You can finally judge the offer itself."
+        },
+        {
+          "id": "reject",
+          "label": "Decline it without another argument",
+          "outcome": "Leofric puts the bottle away. You leave with your coins and the teeth you arrived with."
+        }
+      ]
+    },
+    {
+      "id": "single_story_rivals_rise",
+      "introduction": "Mab, a poacher, draws a finish line and practises a victory bow. Then they invite you to race. Several people have stopped to see whether the bow was premature.",
+      "people": [
+        {
+          "role": "other",
+          "actorId": "mab",
+          "name": "Mab",
+          "age": 34,
+          "description": "Mab, a poacher"
+        }
+      ],
+      "choices": [
+        {
+          "id": "race",
+          "label": "Race for it",
+          "success": "You finish first. Mab bows automatically, sees you beside them, and wishes they had not practised so thoroughly.",
+          "failure": "Mab beats you to the line. You arrive breathless with a sore leg, and the grin waiting for you is larger than the crowd."
+        },
+        {
+          "id": "terms",
+          "label": "Check the rules before agreeing",
+          "outcome": "Mab has given themselves a shorter course and the good starting spot. You point this out, and the race is suddenly far less urgent."
+        },
+        {
+          "id": "together",
+          "label": "Carry the sack together instead",
+          "outcome": "Mab takes the other handle after a little grumbling. Your shoulders ache, but the sack reaches its owner and you part on better terms."
+        }
+      ]
+    },
+    {
+      "id": "single_story_disputed_inheritance",
+      "introduction": "Mab, a poacher, wants your household’s inheritance. The proposed settlement leaves a blank beside the witness’s name. A fresh quill lies helpfully across it.",
+      "people": [
+        {
+          "role": "other",
+          "actorId": "mab",
+          "name": "Mab",
+          "age": 44,
+          "description": "Mab, a poacher"
+        }
+      ],
+      "choices": [
+        {
+          "id": "contest",
+          "label": "Pay nine gold to contest the claim",
+          "outcome": "The witnesses identify the disputed goods and your household keeps them. Mab leaves angry, while the clerk counts the nine-gold fee twice."
+        },
+        {
+          "id": "settle",
+          "label": "Agree a smaller share now",
+          "outcome": "You give up some goods and have the settlement witnessed. Mab helps carry the agreed share instead of returning with another demand."
+        },
+        {
+          "id": "forge",
+          "label": "Fill in the helpful blank",
+          "outcome": "You secure the larger share until Mab recognises your handwriting. The forgery gives the authorities something concrete to investigate."
+        },
+        {
+          "id": "surrender",
+          "label": "Give up the disputed goods",
+          "outcome": "Mab carries the goods away. You hold the door, accept the quiet thanks and shut it on an emptier room."
+        }
+      ]
+    },
+    {
+      "id": "single_chain_siblings_share",
+      "introduction": "Your sister, Avice, lies across the best bed and will not move. You are trying to divide the household goods. They suggest beginning with something they are not lying on.",
+      "people": [
+        {
+          "role": "sibling",
+          "actorId": "kin_8",
+          "name": "Avice",
+          "age": 18,
+          "description": "your sister, Avice"
+        }
+      ],
+      "choices": [
+        {
+          "id": "divide",
+          "label": "Agree a division with witnesses",
+          "outcome": "You take fewer goods and get the division witnessed. Avice finally sits up, trusts the agreement and helps carry your share."
+        },
+        {
+          "id": "yield",
+          "label": "Let them have the bed",
+          "outcome": "Avice smooths the blanket, then notices you still standing. They make room for you to sit and ask you to stay for supper."
+        },
+        {
+          "id": "forge",
+          "label": "Invent a better inventory for yourself",
+          "outcome": "You get the larger share until Avice recognises the chest they carved last winter. They take the false list to the authorities."
+        }
+      ]
+    },
+    {
+      "id": "single_chain_masterpiece",
+      "introduction": "Leofric, a tenant farmer, wants an oak chest finished by tomorrow. Their purse contains next week’s price. An apprentice shows you a better joint as the old sample splits on the bench.",
+      "people": [
+        {
+          "role": "other",
+          "actorId": "leofric",
+          "name": "Leofric",
+          "age": 50,
+          "description": "Leofric, a tenant farmer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "craft",
+          "label": "Use the sound joint and credit the apprentice",
+          "outcome": "The lid closes neatly. Leofric tries to lift the chest by one corner, fails to break it, and pays eight gold with obvious reluctance."
+        },
+        {
+          "id": "cheap",
+          "label": "Hide a split in cheap timber",
+          "outcome": "You pocket eighteen gold. Leofric lifts the chest, sees daylight through the split, and carries the receipt straight to the guild."
+        },
+        {
+          "id": "refuse",
+          "label": "Give back the eight-gold advance",
+          "outcome": "Leofric takes the money back and complains about the delay. You keep your tools, your unbroken timber and one fewer impossible promise."
+        }
+      ]
+    },
+    {
+      "id": "single_chain_returned_driver",
+      "introduction": "Leofric, a tenant farmer, returns without your cart. They blame a bridge, a lord and a pig powerful enough to overturn both. You ask which part happened first.",
+      "people": [
+        {
+          "role": "other",
+          "actorId": "leofric",
+          "name": "Leofric",
+          "age": 50,
+          "description": "Leofric, a tenant farmer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "inspect",
+          "label": "Check the route and talk to people who saw it",
+          "outcome": "The lord disappears from the story, then the bridge. Leofric admits overloading the cart and returns some of the missing goods."
+        },
+        {
+          "id": "settle",
+          "label": "Take eight gold back now",
+          "outcome": "Leofric counts out eight gold. You acknowledge the payment, but refuse to put the pig’s alleged title in writing."
+        }
+      ]
+    },
+    {
+      "id": "life_child_bailiff",
+      "introduction": "Your daughter, Edith, has stretched a string across the doorstep. Visitors must pay a button to get in. A neighbour is already missing one and wants to see where this leads.",
+      "people": [
+        {
+          "role": "child",
+          "actorId": "kin_8",
+          "name": "Edith",
+          "age": 4,
+          "description": "your daughter, Edith"
+        }
+      ],
+      "choices": [
+        {
+          "id": "accounts",
+          "label": "Help return every button",
+          "outcome": "Edith knocks on the neighbours’ doors with you and returns the buttons. One coat is fastened again before you get home."
+        },
+        {
+          "id": "allow",
+          "label": "Back your child and keep charging",
+          "outcome": "Edith beams at your support. The neighbours stop visiting, and somebody cuts the string while you are inside."
+        },
+        {
+          "id": "game",
+          "label": "Make it a counting game with no real toll",
+          "outcome": "You put the buttons in a pile and count them with Edith, then give them back. The child tries to count the neighbours too."
+        }
+      ]
+    },
+    {
+      "id": "life_family_ladder",
+      "introduction": "Leofric, a tenant farmer, has your ladder again. Their roof is mended. Your ladder is now holding up a washing line.",
+      "people": [
+        {
+          "role": "other",
+          "actorId": "leofric",
+          "name": "Leofric",
+          "age": 50,
+          "description": "Leofric, a tenant farmer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "retrieve",
+          "label": "Help finish up and carry it home",
+          "outcome": "You climb up to free the line, then carry the ladder home together. Your shoulders ache, but you can finally repair your own rafters."
+        },
+        {
+          "id": "charge",
+          "label": "Ask for five gold for all that borrowing",
+          "outcome": "Leofric hands over five gold and takes the washing down very slowly. The next greeting across the lane is much shorter."
+        },
+        {
+          "id": "gift",
+          "label": "Let them keep it and lower your shelves",
+          "outcome": "Leofric carries it away with both hands and a grin. You move the high shelves down and gain a friend who no longer needs an excuse to call."
+        }
+      ]
+    },
+    {
+      "id": "life_heir_grammar",
+      "introduction": "Your daughter, Edith, writes a promise to obey you, then adds “when I am not busy.” The handwriting is much neater around those last six words.",
+      "people": [
+        {
+          "role": "child",
+          "actorId": "kin_8",
+          "name": "Edith",
+          "age": 10,
+          "description": "your daughter, Edith"
+        }
+      ],
+      "choices": [
+        {
+          "id": "negotiate",
+          "label": "Agree which chores come before being busy",
+          "outcome": "You work through the chores together. Edith grumbles over two, agrees to the rest, and lets you keep the finished copy."
+        },
+        {
+          "id": "punish",
+          "label": "Tear off the qualifying words",
+          "outcome": "Edith takes back the torn sheet. The next promise is shorter and leaves out everything you might disagree with."
+        }
+      ]
+    },
+    {
+      "id": "origin_child_peasant",
+      "introduction": "The bailiff demands a fourth hen. Your mother, Emma, has counted three since you were small. You are sent to fetch the old tally before anyone catches a bird.",
+      "people": [
+        {
+          "role": "guardian",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "mother",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "origin_child_peasant_choice_1",
+          "label": "Compare the bailiff’s rent tally",
+          "outcome": "Joan helps you check the tally. Three hens remain three hens, and Emma takes them back to the yard."
+        },
+        {
+          "id": "origin_child_peasant_choice_2",
+          "label": "Accept the bailiff’s hush money",
+          "outcome": "The bailiff pays you three coins to hide his extra assessment. Your household loses more grain than those coins could buy."
+        }
+      ]
+    },
+    {
+      "id": "origin_child_artisan",
+      "introduction": "Your household is being fined for hammering after compline. Your mother, Emma, points at the bell you are making for the church. It will be much quieter if nobody finishes it.",
+      "people": [
+        {
+          "role": "guardian",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "mother",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "origin_child_artisan_choice_1",
+          "label": "Ask Joan to check the guild exemption",
+          "outcome": "Joan finds the exemption for the church’s own bell. Emma gets back to work while the collector discovers somewhere else to be."
+        },
+        {
+          "id": "origin_child_artisan_choice_2",
+          "label": "Keep the noise penalty secret for three gold",
+          "outcome": "You pocket three gold while the workshop pays the penalty. Joan learns whose silence was purchased."
+        }
+      ]
+    },
+    {
+      "id": "origin_child_merchant",
+      "introduction": "A seller’s grain measure has a false bottom. Your mother, Emma, asks you to watch it filled. The seller keeps putting a large hand over the part you want to see.",
+      "people": [
+        {
+          "role": "guardian",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "mother",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "origin_child_merchant_choice_1",
+          "label": "Ask Joan to witness the false measure",
+          "outcome": "Joan witnesses the measure being emptied. Your household’s buyers keep their grain, and the seller stops waving you nearer."
+        },
+        {
+          "id": "origin_child_merchant_choice_2",
+          "label": "Take three gold from the short-measure seller",
+          "outcome": "The seller buys your silence. Your household’s buyers discover the short grain and blame the family name."
+        }
+      ]
+    },
+    {
+      "id": "origin_child_church",
+      "introduction": "A visiting friar sees a child’s toy beside the household books and leaps to a scandal. Your mother, Emma, points out that lay scribes are allowed families. He has already drawn breath for the sermon.",
+      "people": [
+        {
+          "role": "guardian",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "mother",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "origin_child_church_choice_1",
+          "label": "Produce the household marriage entry",
+          "outcome": "Joan helps produce the marriage entry. The friar shuts his mouth, opens it once more, and settles for asking directions."
+        },
+        {
+          "id": "origin_child_church_choice_2",
+          "label": "Sell the friar a rumour for three gold",
+          "outcome": "The friar pays for a scandal about your own lay household. The correction will cost considerably more than three gold."
+        }
+      ]
+    },
+    {
+      "id": "origin_child_military",
+      "introduction": "The garrison will not feed a soldier’s child until the child can carry a spear. Your mother, Emma, brings you forward. The spear is taller than the man refusing the bread.",
+      "people": [
+        {
+          "role": "guardian",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "mother",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "origin_child_military_choice_1",
+          "label": "Ask Joan to cite the service oath",
+          "outcome": "Joan helps establish the household’s right to rations. Emma takes the bread while the clerk tries not to look at the spear."
+        },
+        {
+          "id": "origin_child_military_choice_2",
+          "label": "Take three gold to abandon the ration claim",
+          "outcome": "The stores clerk buys your silence. Your family gives up a season of bread for your private handful of coins."
+        }
+      ]
+    },
+    {
+      "id": "origin_child_noble",
+      "introduction": "A cousin’s new boundary map runs through your nursery. Your mother, Emma, asks you to carry the old charter. The cousin has helpfully offered to rent the nursery back.",
+      "people": [
+        {
+          "role": "guardian",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "mother",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "origin_child_noble_choice_1",
+          "label": "Ask Joan to compare the boundary charter",
+          "outcome": "You and Joan compare the charter with the boundary stones. Emma keeps the field, and the cousin takes back a very expensive drawing."
+        },
+        {
+          "id": "origin_child_noble_choice_2",
+          "label": "Accept three gold to hide the cousin’s map",
+          "outcome": "Your cousin buys your silence and presses the boundary claim. The household discovers your price was lower than the surveyor’s."
+        }
+      ]
+    },
+    {
+      "id": "origin_child_royal",
+      "introduction": "Your elder sibling claims the whole nursery. Your mother, Emma, asks on what grounds. “I got here first,” comes the answer from behind a barricade of cushions.",
+      "people": [
+        {
+          "role": "guardian",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "mother",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "origin_child_royal_choice_1",
+          "label": "Ask the guardian to settle nursery precedence",
+          "outcome": "Emma divides the room and has you both move the cushions. Joan watches the new border survive almost until supper."
+        },
+        {
+          "id": "origin_child_royal_choice_2",
+          "label": "Sell your sibling the secret nursery key",
+          "outcome": "Your sibling pays three gold for the nursery key. The guards change the locks and your household’s opinion of you."
+        }
+      ]
+    },
+    {
+      "id": "origin_child_peasant_extra_0",
+      "introduction": "Seed from your mother Emma’s strip is floating into the next field. Joan points to the old ditch. You can see the boundary dispute sprouting.",
+      "people": [
+        {
+          "role": "guardian",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "contact",
+          "actorId": "joan",
+          "name": "Joan",
+          "age": 32,
+          "description": "Joan, the marshal"
+        },
+        {
+          "role": "mother",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "origin_child_peasant_extra_0_choice_1",
+          "label": "Reopen the ditch together",
+          "outcome": "The reopened ditch saves seed on both strips. Joan records your household’s share of the labour."
+        },
+        {
+          "id": "origin_child_peasant_extra_0_choice_2",
+          "label": "Charge the neighbour for your own lost seed",
+          "outcome": "Your false claim wins a few coins and leaves Emma to repair the damaged neighbourly agreement."
+        }
+      ]
+    },
+    {
+      "id": "origin_child_peasant_extra_1",
+      "introduction": "Joan, the marshal, offers fallen wood if your household helps repair the common gate. Emma looks at the cold hearth, then at your good clothes. You put on the other pair.",
+      "people": [
+        {
+          "role": "guardian",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "contact",
+          "actorId": "joan",
+          "name": "Joan",
+          "age": 32,
+          "description": "Joan, the marshal"
+        },
+        {
+          "role": "mother",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "origin_child_peasant_extra_1_choice_1",
+          "label": "Help Emma mend the gate",
+          "outcome": "The common gate stands through winter. Joan delivers the promised fallen wood."
+        },
+        {
+          "id": "origin_child_peasant_extra_1_choice_2",
+          "label": "Sell the gate timber secretly",
+          "outcome": "The missing timber leaves the common gate open. Joan charges your household for its replacement."
+        }
+      ]
+    },
+    {
+      "id": "origin_child_artisan_extra_2",
+      "introduction": "Your mother, Emma, has begun a commission without a deposit. Joan recognises the customer’s disputed seal. There is already a week’s work on the bench.",
+      "people": [
+        {
+          "role": "guardian",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "contact",
+          "actorId": "joan",
+          "name": "Joan",
+          "age": 32,
+          "description": "Joan, the marshal"
+        },
+        {
+          "role": "mother",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "origin_child_artisan_extra_2_choice_1",
+          "label": "Ask for a witnessed deposit",
+          "outcome": "The witnessed deposit pays for material before the customer can dispute the order."
+        },
+        {
+          "id": "origin_child_artisan_extra_2_choice_2",
+          "label": "Copy the seal onto another order",
+          "outcome": "The copied seal is discovered on the second order. Joan keeps it as evidence against your household."
+        }
+      ]
+    },
+    {
+      "id": "origin_child_artisan_extra_3",
+      "introduction": "Joan, the marshal, invites the household to show a trial piece. Emma counts out an entry fee large enough to buy a week’s supper, then counts it again.",
+      "people": [
+        {
+          "role": "guardian",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "contact",
+          "actorId": "joan",
+          "name": "Joan",
+          "age": 32,
+          "description": "Joan, the marshal"
+        },
+        {
+          "role": "mother",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "origin_child_artisan_extra_3_choice_1",
+          "label": "Help Emma prepare a modest sample",
+          "outcome": "The workshop’s sample is admired, tasted and promptly requested in a larger quantity. Your household still has supper when the important guests finish theirs."
+        },
+        {
+          "id": "origin_child_artisan_extra_3_choice_2",
+          "label": "Pass off another workshop’s piece",
+          "outcome": "The borrowed trial piece is recognised. Your workshop pays the entry fee and loses the guild’s trust."
+        }
+      ]
+    },
+    {
+      "id": "origin_child_merchant_extra_4",
+      "introduction": "Your mother, Emma, reaches a toll bridge with a wagon. Joan is there too, staring at the cheap flooded ford. Only the bridge has a dry way across.",
+      "people": [
+        {
+          "role": "guardian",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "contact",
+          "actorId": "joan",
+          "name": "Joan",
+          "age": 32,
+          "description": "Joan, the marshal"
+        },
+        {
+          "role": "mother",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "origin_child_merchant_extra_4_choice_1",
+          "label": "Share the safe crossing cost",
+          "outcome": "Both wagons share the safe crossing and split the fee. The shipment arrives with its partners intact."
+        },
+        {
+          "id": "origin_child_merchant_extra_4_choice_2",
+          "label": "Send Joan toward the flooded ford",
+          "outcome": "Joan finds the dangerous ford and learns who gave the directions. Your household loses a trading partner."
+        }
+      ]
+    },
+    {
+      "id": "origin_child_church_extra_6",
+      "introduction": "Rain creeps beneath the reading-room window onto a manuscript your mother, Emma, owes the priory. Joan arrives to find you holding the book over your head.",
+      "people": [
+        {
+          "role": "guardian",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "contact",
+          "actorId": "joan",
+          "name": "Joan",
+          "age": 32,
+          "description": "Joan, the marshal"
+        },
+        {
+          "role": "mother",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "origin_child_church_extra_6_choice_1",
+          "label": "Help dry and recopy the damaged leaves",
+          "outcome": "The dried leaves and careful copies satisfy the priory. Your lay household retains its access to the books."
+        },
+        {
+          "id": "origin_child_church_extra_6_choice_2",
+          "label": "Blame a visiting lay household",
+          "outcome": "The visiting household produces witnesses. Your own household pays for the damaged manuscript."
+        }
+      ]
+    },
+    {
+      "id": "origin_child_church_extra_7",
+      "introduction": "Joan, the marshal, asks for help recording bread for hungry neighbours. Emma checks the list. One loaf remains, and somebody is still waiting by the door.",
+      "people": [
+        {
+          "role": "guardian",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "contact",
+          "actorId": "joan",
+          "name": "Joan",
+          "age": 32,
+          "description": "Joan, the marshal"
+        },
+        {
+          "role": "mother",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "origin_child_church_extra_7_choice_1",
+          "label": "Ask Emma to check the names",
+          "outcome": "The checked names reveal a hungry neighbour missed from the tally. The last loaf reaches them."
+        },
+        {
+          "id": "origin_child_church_extra_7_choice_2",
+          "label": "Sell the extra loaf and alter the list",
+          "outcome": "The altered bread list is traced to your hand. Your household must replace what the charity lost."
+        }
+      ]
+    },
+    {
+      "id": "origin_child_military_extra_9",
+      "introduction": "Joan, the marshal, needs help with a nervous horse while Emma checks its harness. The horse would prefer all of you to stop discussing it and stand farther away.",
+      "people": [
+        {
+          "role": "guardian",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "contact",
+          "actorId": "joan",
+          "name": "Joan",
+          "age": 32,
+          "description": "Joan, the marshal"
+        },
+        {
+          "role": "mother",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "origin_child_military_extra_9_choice_1",
+          "label": "Help check the girth and stay beside it",
+          "outcome": "The checked girth holds and the garrison records your household’s help."
+        },
+        {
+          "id": "origin_child_military_extra_9_choice_2",
+          "label": "Tell the quartermaster another child lost it",
+          "outcome": "The quartermaster finds your false account beside the harness. Your household loses standing with the stores."
+        }
+      ]
+    },
+    {
+      "id": "origin_child_noble_extra_10",
+      "introduction": "Your mother, Emma, has a tutor’s fee to pay and a tenant asking for seed. Joan spreads out the household figures. Both requests are larger than the spare coins.",
+      "people": [
+        {
+          "role": "guardian",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "contact",
+          "actorId": "joan",
+          "name": "Joan",
+          "age": 32,
+          "description": "Joan, the marshal"
+        },
+        {
+          "role": "mother",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "origin_child_noble_extra_10_choice_1",
+          "label": "Read the accounts before asking for more",
+          "outcome": "The accounts show what can be spent on tutors after seed is reserved. Your guardian trusts you with the next petition."
+        },
+        {
+          "id": "origin_child_noble_extra_10_choice_2",
+          "label": "Hide the tenant’s petition",
+          "outcome": "The hidden petition is found. The tenants blame your household for a refusal it never openly made."
+        }
+      ]
+    },
+    {
+      "id": "origin_child_royal_extra_12",
+      "introduction": "Your mother, Emma, finds two nursery orders from rival palace factions. Joan asks which one you carried. One orders a door locked; the other has already sent someone to open it.",
+      "people": [
+        {
+          "role": "guardian",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "contact",
+          "actorId": "joan",
+          "name": "Joan",
+          "age": 32,
+          "description": "Joan, the marshal"
+        },
+        {
+          "role": "mother",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        }
+      ],
+      "choices": [
+        {
+          "id": "origin_child_royal_extra_12_choice_1",
+          "label": "Show both seals to the guardian",
+          "outcome": "Both nursery seals reach the guardian. Conflicting orders are corrected before the guards choose sides."
+        },
+        {
+          "id": "origin_child_royal_extra_12_choice_2",
+          "label": "Tell each faction the other threatened you",
+          "outcome": "The two palace factions compare your stories. Both now have grounds to distrust your household’s word."
+        }
+      ]
+    },
+    {
+      "id": "child_first_lesson",
+      "introduction": "Thomas, an acolyte, writes “Do not waste parchment” across an enormous clean sheet. Somebody at the back asks whether the warning applies to teachers.",
+      "people": [
+        {
+          "role": "teacher",
+          "actorId": "villager_17",
+          "name": "Thomas",
+          "age": 35,
+          "description": "Thomas, an acolyte"
+        }
+      ],
+      "choices": [
+        {
+          "id": "child_first_lesson_choice_1",
+          "label": "Learn to read the warning yourself",
+          "outcome": "You can read the words without help by the end. Thomas lets you keep a scrap, and you fill every corner with letters."
+        },
+        {
+          "id": "child_first_lesson_choice_2",
+          "label": "Spend the lesson with Sir Quackbeard",
+          "outcome": "Sir Quackbeard settles beside you and goes to sleep. You enjoy the company, but the letters on the sheet remain a mystery."
+        },
+        {
+          "id": "child_first_lesson_choice_3",
+          "label": "Follow the frog outside",
+          "outcome": "The frog leaps into the ditch and you leap after it. Thomas has an empty place at the bench and a very muddy pupil to look for."
+        }
+      ]
+    },
+    {
+      "id": "child_chores",
+      "introduction": "Your father, Leofric, points to the turnip rows. “You can see the end.” You can, but it appears to be getting farther away whenever you bend down.",
+      "people": [
+        {
+          "role": "father",
+          "actorId": "father",
+          "name": "Leofric",
+          "age": 35,
+          "description": "your father, Leofric"
+        }
+      ],
+      "choices": [
+        {
+          "id": "child_chores_choice_1",
+          "label": "Weed the rows together",
+          "outcome": "Your hands ache by the last row. Leofric gives you a quiet nod and takes the heavier basket home."
+        },
+        {
+          "id": "child_chores_choice_2",
+          "label": "Sneak away to play",
+          "outcome": "You return rested and find Leofric finishing the rows alone. The spare basket is placed beside you without a word."
+        }
+      ]
+    },
+    {
+      "id": "child_bully",
+      "introduction": "Your friend, Test Peer, holds out a hand for your lunch. The miller’s big son supposedly sent them. You have never seen the big son do any of the collecting.",
+      "people": [
+        {
+          "role": "other",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "child_bully_choice_1",
+          "label": "Keep your lunch and stand your ground",
+          "success": "Test Peer gives way in front of the other children. You eat your lunch while they stare at you, plainly saving the insult for later.",
+          "failure": "Test Peer shoves you into the ditch and takes the food. You climb out with a scraped knee and a very good memory."
+        },
+        {
+          "id": "child_bully_choice_2",
+          "label": "Hand it over and get away",
+          "outcome": "Test Peer eats while you watch. You leave before the grin gets any wider."
+        },
+        {
+          "id": "child_bully_choice_3",
+          "label": "Let Sir Quackbeard handle the ankles",
+          "outcome": "Sir Quackbeard drives Test Peer backward with a hiss. You keep your lunch, and the collector points at you as though you personally sharpened the beak."
+        }
+      ]
+    },
+    {
+      "id": "child_first_friend",
+      "introduction": "A child keeps stopping outside your fence. Today they kick the same pebble in a circle until you look over. Then they kick it straight to you.",
+      "people": [],
+      "choices": [
+        {
+          "id": "child_first_friend_choice_1",
+          "label": "Share your turnip",
+          "outcome": "You split the turnip and sit together on the fence. By the time the last piece is gone, you have a new friend."
+        },
+        {
+          "id": "child_first_friend_choice_2",
+          "label": "Challenge them to a pebble contest",
+          "success": "You lose by a suspiciously small amount. Your new friend demands a rematch before you have even picked up the pebbles.",
+          "failure": "You win, then explain exactly how much you won by. The other child stalks away and leaves you to admire the pebble alone."
+        },
+        {
+          "id": "child_first_friend_choice_3",
+          "label": "Hide behind Sir Quackbeard",
+          "outcome": "Sir Quackbeard hisses the child back down the lane. You are left with one goose and a pebble that nobody wants to kick."
+        }
+      ]
+    },
+    {
+      "id": "education_household_0",
+      "introduction": "The bailiff counts an extra rent notch on the household tally. Test Peer is holding the grain sack open. If the bailiff is right, there will be very little left for supper.",
+      "people": [
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Fit the two halves of the tally together",
+          "outcome": "Leofric checks your count and Test Peer helps fit the halves. The old notches line up; the extra demand does not."
+        },
+        {
+          "id": "deceive",
+          "label": "Trim the notch and blame the knife on Test Peer",
+          "outcome": "The fresh cut is pale against the old wood. Leofric sees it at once, and Test Peer refuses to lend you anything sharp again."
+        },
+        {
+          "id": "confess",
+          "label": "Ask Leofric to check the tally",
+          "outcome": "Leofric runs a thumb along the fresh mark and shows you where to compare it. You finish the count without sacrificing supper."
+        }
+      ]
+    },
+    {
+      "id": "education_household_1",
+      "introduction": "There is a drowned rat in the seed pot. Test Peer looks from the rat to the bread dough and says, “We need not mention it.”",
+      "people": [
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Help Test Peer sort out clean seed",
+          "outcome": "You spread the grain to dry. Leofric checks it with you, and Test Peer starts counting what can still be sown."
+        },
+        {
+          "id": "deceive",
+          "label": "Say Test Peer put the rat there",
+          "outcome": "Test Peer gets a filthy pot to scrub. Leofric catches your smirk before you can wipe it away."
+        },
+        {
+          "id": "confess",
+          "label": "Ask Leofric how to store the seed",
+          "outcome": "Leofric finds a dry bin with a stone lid. Test Peer carries the saved grain while you clean out the old pot."
+        }
+      ]
+    },
+    {
+      "id": "education_household_2",
+      "introduction": "Leofric chalks letters onto a soot-blackened door. A neighbour sees the crooked marks and fetches holy water. Test Peer helpfully draws a little tail on the B.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "leofric",
+          "name": "Leofric",
+          "age": 39,
+          "description": "your mentor, Leofric"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Read the letters before the bucket arrives",
+          "outcome": "You sound out the words while Test Peer rubs off the tail. The neighbour lowers the bucket; Leofric gives you a harder word."
+        },
+        {
+          "id": "deceive",
+          "label": "Tell the neighbour Test Peer wrote the curse",
+          "outcome": "The neighbour makes the sign of the cross at Test Peer. Leofric has just watched you write the letters, so the excuse lasts one breath."
+        },
+        {
+          "id": "confess",
+          "label": "Ask Leofric to read with you",
+          "outcome": "Leofric guides your finger along a familiar household name. The neighbour recognises it and takes the holy water home."
+        }
+      ]
+    },
+    {
+      "id": "education_household_3",
+      "introduction": "You and Test Peer must count six fleeces for a buyer. One is dripping onto the floor. Leofric asks whether water has become as valuable as wool.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "leofric",
+          "name": "Leofric",
+          "age": 39,
+          "description": "your mentor, Leofric"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Dry them and work out the true weight",
+          "outcome": "Test Peer helps spread the wool. Leofric checks the dry weight and lets you finish the count together."
+        },
+        {
+          "id": "deceive",
+          "label": "Hide the wet fleece in Test Peer’s sack",
+          "outcome": "The sack drips all the way to Leofric’s feet. Test Peer opens it and looks straight at you."
+        },
+        {
+          "id": "confess",
+          "label": "Ask Leofric for a dry sample to compare",
+          "outcome": "You weigh the sample, then the suspect fleece. Leofric helps you calculate the difference before the buyer comes back."
+        }
+      ]
+    },
+    {
+      "id": "education_parish_0",
+      "introduction": "Brother Oswin sets you to copy the relic list. You give Saint Aelfric three elbows. Test Peer peers over and asks whether he used all of them for praying.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "oswin",
+          "name": "Brother Oswin",
+          "age": 43,
+          "description": "your mentor, Brother Oswin"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Check the older list together",
+          "outcome": "Test Peer finds the missing saint. Brother Oswin watches you move one elbow to its proper owner and praises the correction."
+        },
+        {
+          "id": "deceive",
+          "label": "Let Test Peer copy your splendid extra elbow",
+          "outcome": "The visiting canon counts the elbows aloud. Test Peer recognises your mistake on their own page, and Brother Oswin recognises who lent it."
+        },
+        {
+          "id": "confess",
+          "label": "Ask Brother Oswin to check the relic list",
+          "outcome": "Brother Oswin lays the old list beside yours. You correct the extra elbow without making the saint lose anything else."
+        }
+      ]
+    },
+    {
+      "id": "education_parish_1",
+      "introduction": "A pig eats the bottom half of a psalter page. Test Peer catches it by one hind leg; Brother Oswin catches the book. Neither rescue restores the words.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "oswin",
+          "name": "Brother Oswin",
+          "age": 43,
+          "description": "your mentor, Brother Oswin"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Rebuild the missing lines with Test Peer",
+          "outcome": "Between you, enough of the psalm comes back. Brother Oswin checks a second book and helps you fill the gap honestly."
+        },
+        {
+          "id": "deceive",
+          "label": "Accuse Test Peer of feeding the page to the pig",
+          "outcome": "Test Peer lets go of the leg in shock. The pig escapes, and Brother Oswin has seen enough to doubt your story."
+        },
+        {
+          "id": "confess",
+          "label": "Bring the torn book to Brother Oswin",
+          "outcome": "Brother Oswin borrows another psalter. You compare the lines while Test Peer keeps the pig outside."
+        }
+      ]
+    },
+    {
+      "id": "education_parish_2",
+      "introduction": "A widow finds her husband entered twice in the burial book. “He was difficult,” she tells Brother Oswin, “but I only buried him once.” Test Peer is trying not to laugh.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "oswin",
+          "name": "Brother Oswin",
+          "age": 43,
+          "description": "your mentor, Brother Oswin"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Find and correct the duplicate entry",
+          "outcome": "Test Peer helps find the earlier burial. Brother Oswin checks your correction and the widow keeps her pennies."
+        },
+        {
+          "id": "deceive",
+          "label": "Put Test Peer’s signature under the extra charge",
+          "outcome": "The widow curses Test Peer by name. Brother Oswin spots the copied hand, and your classmate learns exactly why everyone is staring."
+        },
+        {
+          "id": "confess",
+          "label": "Ask Brother Oswin to strike out the second burial",
+          "outcome": "Brother Oswin checks both dates with you and crosses out the duplicate. You take the corrected book back to the widow."
+        }
+      ]
+    },
+    {
+      "id": "education_parish_3",
+      "introduction": "Test Peer hangs from the bell rope with the only clean lesson sheet clamped between their teeth. Every attempt to speak rings the bell again. Brother Oswin is coming to find out why.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "oswin",
+          "name": "Brother Oswin",
+          "age": 43,
+          "description": "your mentor, Brother Oswin"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Help them down and share the sheet",
+          "outcome": "Brother Oswin checks the answers with both of you. The bell rings once more when Test Peer finally lets go."
+        },
+        {
+          "id": "deceive",
+          "label": "Read the answers while Test Peer dangles",
+          "outcome": "You finish first. Brother Oswin looks from your neat page to Test Peer’s white knuckles and stops looking pleased."
+        },
+        {
+          "id": "confess",
+          "label": "Fetch Brother Oswin and something to stand on",
+          "outcome": "Brother Oswin steadies a stool while you guide Test Peer down. The lesson resumes with the bell rope tied out of reach."
+        }
+      ]
+    },
+    {
+      "id": "education_guild_0",
+      "introduction": "Avice selects a horseshoe for inspection. You saw it crack under the hammer. Test Peer is about to carry it in on a cushion, which will not improve the metal.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "kin_8",
+          "name": "Avice",
+          "age": 35,
+          "description": "your mentor, Avice"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Repair the crack with Test Peer",
+          "outcome": "Avice watches your careful repair. Test Peer carries in a sound shoe and makes sure your help is mentioned."
+        },
+        {
+          "id": "deceive",
+          "label": "Blame Test Peer for cracking the shoe",
+          "outcome": "Test Peer gets the blame before the inspector. Avice remembers who was at the anvil and asks you to stay behind."
+        },
+        {
+          "id": "confess",
+          "label": "Show Avice the crack before the inspection",
+          "outcome": "Avice turns the shoe in the light and puts it aside. You help make a sound replacement instead of learning how to hide a split."
+        }
+      ]
+    },
+    {
+      "id": "education_guild_1",
+      "introduction": "A customer wants a silver mark stamped on pewter spoons. Avice sets the proper sample on the bench. Test Peer is watching the customer’s purse rather closely.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "kin_8",
+          "name": "Avice",
+          "age": 35,
+          "description": "your mentor, Avice"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Test the spoons against the real sample",
+          "outcome": "Test Peer helps with the test. The metal fails; Avice gives you credit for catching it before the spoons leave."
+        },
+        {
+          "id": "deceive",
+          "label": "Stamp Test Peer’s mark on the false spoons",
+          "outcome": "Test Peer is called to explain the mark. Avice finds the spoons on your side of the bench, still warm from your work."
+        },
+        {
+          "id": "confess",
+          "label": "Ask Avice to test one in front of the customer",
+          "outcome": "Avice makes you compare the two metals. The customer takes back the purse when the difference can no longer be talked away."
+        }
+      ]
+    },
+    {
+      "id": "education_guild_2",
+      "introduction": "Test Peer traps a finger in the vice. The job is already late. Avice calls from the next room, asking why the hammering has stopped.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "kin_8",
+          "name": "Avice",
+          "age": 35,
+          "description": "your mentor, Avice"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Free the finger and finish together",
+          "outcome": "Avice helps check the hand. Test Peer works beside you once the pain settles, and you learn how to handle the vice safely."
+        },
+        {
+          "id": "deceive",
+          "label": "Tell Avice that Test Peer jammed it on purpose",
+          "outcome": "Avice frees the hand, then hears your excuse. Test Peer holds the swollen finger against their chest and will not look at you."
+        },
+        {
+          "id": "confess",
+          "label": "Call Avice before you turn the screw",
+          "outcome": "Avice steadies the trapped hand while you ease the vice open. The job can wait; the finger cannot."
+        }
+      ]
+    },
+    {
+      "id": "education_guild_3",
+      "introduction": "A spark burns through your measured drawing. Test Peer’s neat copy lies unattended beside it. Avice will want both pieces of work before supper.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "kin_8",
+          "name": "Avice",
+          "age": 35,
+          "description": "your mentor, Avice"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Ask Test Peer to help rebuild the measurements",
+          "outcome": "Test Peer shares the figures while you redraw the lost lines. Avice checks the finished work and credits you both."
+        },
+        {
+          "id": "deceive",
+          "label": "Hand in Test Peer’s drawing as your own",
+          "outcome": "Avice recognises the compass holes from the earlier work. Test Peer holds out a hand for the drawing and leaves it there until you give it back."
+        },
+        {
+          "id": "confess",
+          "label": "Ask Avice to check the surviving lines",
+          "outcome": "Avice helps you recover the measurements from the unburnt corner. The new drawing is slower to make, but it is yours."
+        }
+      ]
+    },
+    {
+      "id": "education_cathedral_0",
+      "introduction": "Test Peer draws a bishop being swallowed by a snail. Avice finds the picture while the ink is wet. The snail is wearing a remarkably familiar mitre.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "kin_8",
+          "name": "Avice",
+          "age": 35,
+          "description": "your mentor, Avice"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Defend the picture as a warning against vanity",
+          "outcome": "Avice makes you explain the warning. Test Peer keeps a straight face, then whispers thanks when the page is put away."
+        },
+        {
+          "id": "deceive",
+          "label": "Say Test Peer drew it to mock the bishop",
+          "outcome": "Test Peer has to scrape the picture off the parchment. Avice notices that your explanation changes once the scraping starts."
+        },
+        {
+          "id": "confess",
+          "label": "Ask Avice what the snail could mean",
+          "outcome": "Avice finds a solemn explanation with surprising speed. You learn which parts of it are safe to repeat outside the room."
+        }
+      ]
+    },
+    {
+      "id": "education_cathedral_1",
+      "introduction": "Avice proudly reads a Greek quotation. Test Peer turns it the right way up: it is a merchant’s laundry list, with a great deal to say about stained shirts.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "kin_8",
+          "name": "Avice",
+          "age": 35,
+          "description": "your mentor, Avice"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Translate it quietly before the lecture",
+          "outcome": "You and Test Peer work through the list. Avice changes the quotation and gives you a better passage to study."
+        },
+        {
+          "id": "deceive",
+          "label": "Encourage Test Peer to recite it to the chapter",
+          "outcome": "The chapter hears the price of washing six shirts. Avice sees your face, and Test Peer realises why you were so eager to help."
+        },
+        {
+          "id": "confess",
+          "label": "Show Avice the list in private",
+          "outcome": "Avice checks your translation and shuts the book. The lecture begins with a different quotation."
+        }
+      ]
+    },
+    {
+      "id": "education_cathedral_2",
+      "introduction": "The chapter is arguing over whether a goose counts as fish on a fast day. Avice wants your argument. Test Peer is guarding the goose from a cook who seems ready to settle it.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "kin_8",
+          "name": "Avice",
+          "age": 35,
+          "description": "your mentor, Avice"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Check the text with Test Peer",
+          "outcome": "Avice hears a careful argument instead of a hungry guess. Test Peer gets the goose out of the kitchen while the discussion continues."
+        },
+        {
+          "id": "deceive",
+          "label": "Blame Test Peer for the forbidden supper",
+          "outcome": "The chapter turns on Test Peer. Avice has heard you arguing for the meal and makes you answer for your own words."
+        },
+        {
+          "id": "confess",
+          "label": "Ask Avice to keep the cook waiting",
+          "outcome": "Avice makes you find the relevant passage before anyone picks up a knife. The goose gets a little longer to be a goose."
+        }
+      ]
+    },
+    {
+      "id": "education_cathedral_3",
+      "introduction": "A manuscript recommends bleeding anyone who faints. Test Peer has fainted over it. Avice reaches the desk while somebody is looking for a lancet.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "kin_8",
+          "name": "Avice",
+          "age": 35,
+          "description": "your mentor, Avice"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Read the patient before trusting the page",
+          "outcome": "You help Test Peer lie safely while Avice checks their breathing. You compare what happened with what the manuscript actually claims."
+        },
+        {
+          "id": "deceive",
+          "label": "Say Test Peer demanded the lancet",
+          "outcome": "Avice puts down the lancet and asks who suggested it. Test Peer hears you shift the blame and remembers it once the room stops spinning."
+        },
+        {
+          "id": "confess",
+          "label": "Fetch Avice before anyone uses the blade",
+          "outcome": "Avice arranges immediate care. Later, you set the actual symptoms beside the old advice and mark the dangerous difference."
+        }
+      ]
+    },
+    {
+      "id": "education_martial_0",
+      "introduction": "Your watch is outside the lord’s privy. Test Peer has a desperate visitor by the elbow, and Emma has told you not to let anyone through.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Hear the visitor before enforcing the order",
+          "outcome": "You and Test Peer find a sensible way to help without abandoning the watch. Emma hears a clear account rather than a wet complaint."
+        },
+        {
+          "id": "deceive",
+          "label": "Send the visitor to Test Peer’s post instead",
+          "outcome": "The complaint lands on Test Peer. Emma follows the visitor’s route back to you, while your classmate begins taking a careful interest in your next watch."
+        },
+        {
+          "id": "confess",
+          "label": "Fetch Emma to settle the urgent problem",
+          "outcome": "Emma handles the visitor and shows you how to keep the watch without making misery its main purpose."
+        }
+      ]
+    },
+    {
+      "id": "education_martial_1",
+      "introduction": "Test Peer’s practice saddle slips beneath the rider. Emma calls it a lesson in balance. The horse appears to be learning how far a pupil can slide.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Check the girth and help remount",
+          "outcome": "Test Peer holds the horse while you fix the girth. Emma checks it and lets you practise together on sound tack."
+        },
+        {
+          "id": "deceive",
+          "label": "Claim Test Peer loosened your saddle",
+          "outcome": "Emma checks the straps and finds your careless fastening. Test Peer hears the accusation before you can take it back."
+        },
+        {
+          "id": "confess",
+          "label": "Ask Emma to inspect the tack",
+          "outcome": "Emma makes you check every buckle before the next ride. Test Peer holds the reins and waits until you get it right."
+        }
+      ]
+    },
+    {
+      "id": "education_martial_2",
+      "introduction": "A fresh split runs down the training lance. Emma wants it ready for drill. Test Peer holds up a pot of paint and raises an eyebrow.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Replace the damaged shaft together",
+          "outcome": "Test Peer helps fit sound wood. Emma checks the lance, then gives you both another turn at the drill."
+        },
+        {
+          "id": "deceive",
+          "label": "Give the painted split lance to Test Peer",
+          "outcome": "The paint flakes when Emma tests the shaft. Test Peer sees the split and realises why you insisted on swapping."
+        },
+        {
+          "id": "confess",
+          "label": "Bring the shaft to Emma before drill",
+          "outcome": "Emma finds a sound replacement and shows you where a painted crack will still give under pressure."
+        }
+      ]
+    },
+    {
+      "id": "education_martial_3",
+      "introduction": "Emma asks you to check the muster. There are four dead soldiers on it and a horse drawing a cook’s wage. Test Peer wants to meet this very talented horse.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 38,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Recount the living soldiers with Test Peer",
+          "outcome": "You cross-check the names together. Emma approves the corrected roll and has a useful drill ready for you."
+        },
+        {
+          "id": "deceive",
+          "label": "Put Test Peer’s name beside the extra rations",
+          "outcome": "Test Peer is called to account for food never received. Emma compares the marks with your earlier work and calls you over."
+        },
+        {
+          "id": "confess",
+          "label": "Ask Emma to check the suspicious names",
+          "outcome": "Emma removes the false entries while you copy the corrected ration order. The horse returns to being paid in oats."
+        }
+      ]
+    },
+    {
+      "id": "education_noble_0",
+      "introduction": "Lord Aldric asks you to seat two hostile cousins at supper. Test Peer has drawn crossed swords between their names on the plan.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "aldric",
+          "name": "Lord Aldric",
+          "age": 52,
+          "description": "your mentor, Lord Aldric"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Check the family ties before placing them",
+          "outcome": "Test Peer helps redraw the table. Lord Aldric approves seats with several calm people and a great deal of food between the cousins."
+        },
+        {
+          "id": "deceive",
+          "label": "Put Test Peer’s name on the insulting plan",
+          "outcome": "The cousins demand to know why Test Peer put them together. Lord Aldric has already seen your first drawing and asks for it back."
+        },
+        {
+          "id": "confess",
+          "label": "Ask Lord Aldric to check the disputed arms",
+          "outcome": "Lord Aldric helps you trace the descent, then moves the cousins away from the sharp cutlery. You keep the corrected plan."
+        }
+      ]
+    },
+    {
+      "id": "education_noble_1",
+      "introduction": "The kitchen has paid for thirteen swans and received twelve. Lord Aldric gives you the receipts. Test Peer points out that the thirteenth looks suspiciously like a goose.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "aldric",
+          "name": "Lord Aldric",
+          "age": 52,
+          "description": "your mentor, Lord Aldric"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Find the goose receipt together",
+          "outcome": "Test Peer tracks down the cheaper bird. Lord Aldric praises the careful sum before anyone accuses the cook of eating a swan."
+        },
+        {
+          "id": "deceive",
+          "label": "Slip the missing swan into Test Peer’s account",
+          "outcome": "Lord Aldric finds two different hands in the account. Test Peer has to explain a purchase you made up for them."
+        },
+        {
+          "id": "confess",
+          "label": "Ask Lord Aldric to compare the kitchen receipts",
+          "outcome": "Lord Aldric puts the goose receipt beside the swan price. You correct the total and return the money to the proper column."
+        }
+      ]
+    },
+    {
+      "id": "education_noble_2",
+      "introduction": "An envoy’s chair is an inch lower than yours. Test Peer notices first; Lord Aldric arrives just as the envoy’s secretary demands a ruler.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "aldric",
+          "name": "Lord Aldric",
+          "age": 52,
+          "description": "your mentor, Lord Aldric"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Change the seating without singling anyone out",
+          "outcome": "Test Peer helps swap the chairs. Lord Aldric watches the envoy sit down without having to defend anyone’s knees."
+        },
+        {
+          "id": "deceive",
+          "label": "Tell the envoy Test Peer chose the low chair",
+          "outcome": "Test Peer receives a frosty bow. Lord Aldric has watched you move the chairs and is unimpressed by the explanation."
+        },
+        {
+          "id": "confess",
+          "label": "Ask Lord Aldric to replace the whole row",
+          "outcome": "Every guest gets an equally uncomfortable chair. Lord Aldric lets you explain the seating plan while nobody can claim a shorter seat."
+        }
+      ]
+    },
+    {
+      "id": "education_noble_3",
+      "introduction": "A tenant asks for seed grain. Lord Aldric calls it a lesson in managing a household. “Mine is hungry,” the tenant replies. Test Peer stops fiddling with the seal.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "aldric",
+          "name": "Lord Aldric",
+          "age": 52,
+          "description": "your mentor, Lord Aldric"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_6",
+          "name": "Test Peer",
+          "age": 6,
+          "description": "your classmate and friend, Test Peer"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Count what can safely be spared",
+          "outcome": "Test Peer helps work out the grain. Lord Aldric checks your proposal and approves an answer the household can actually carry out."
+        },
+        {
+          "id": "deceive",
+          "label": "Forge a refusal under Test Peer’s name",
+          "outcome": "The tenant blames Test Peer. Lord Aldric catches the copied seal and makes you read the refusal aloud to the person it would hurt."
+        },
+        {
+          "id": "confess",
+          "label": "Ask Lord Aldric to check the stores with you",
+          "outcome": "You count the grain beside Lord Aldric instead of guessing from the tenant’s manners. The request gets a practical answer."
+        }
+      ]
+    },
+    {
+      "id": "education_adult_household_0",
+      "introduction": "The grain reserve and a creditor both need the same coins. Leofric brings the figures; Avice brings a loaf to make sure the lesson lasts until supper.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "leofric",
+          "name": "Leofric",
+          "age": 52,
+          "description": "your mentor, Leofric"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_8",
+          "name": "Avice",
+          "age": 18,
+          "description": "your classmate, Avice"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Plan the stores with Avice",
+          "outcome": "Leofric checks the sums. You and Avice find enough for seed and supper without making a debt disappear."
+        },
+        {
+          "id": "deceive",
+          "label": "Hide the arrears under Avice’s figures",
+          "outcome": "Avice finds the debt tucked beside their signature. Leofric asks you to add it up again, this time with every number showing."
+        },
+        {
+          "id": "review",
+          "label": "Ask Leofric to check what can be spared",
+          "outcome": "Leofric keeps the seed grain separate while you and Avice work out the payment. You leave with a plan you can explain at home."
+        }
+      ]
+    },
+    {
+      "id": "education_adult_household_1",
+      "introduction": "After work, Avice brings a tenancy clause neither of you understood as children. Leofric fetches the older agreement. The rent has grown much faster than the words.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "leofric",
+          "name": "Leofric",
+          "age": 52,
+          "description": "your mentor, Leofric"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_8",
+          "name": "Avice",
+          "age": 18,
+          "description": "your classmate, Avice"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Read the two agreements side by side",
+          "outcome": "Avice finds the changed line while Leofric checks your reading. You can both explain the new rent without guessing."
+        },
+        {
+          "id": "deceive",
+          "label": "Pretend the clause gives you the advantage",
+          "outcome": "Avice takes your reading to the landlord and comes back with the old agreement. Leofric does not need to ask which line you left out."
+        },
+        {
+          "id": "review",
+          "label": "Read the disputed sentence with Leofric",
+          "outcome": "You work through the unfamiliar words with Leofric. The altered obligation is much less impressive once you can read all of it."
+        }
+      ]
+    },
+    {
+      "id": "education_adult_parish_0",
+      "introduction": "Avice brings a contract to the evening reading lesson. Brother Oswin starts with the large decorated initial. “That bit owes nothing,” your classmate says. “Try the rest.”",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "oswin",
+          "name": "Brother Oswin",
+          "age": 56,
+          "description": "your mentor, Brother Oswin"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_8",
+          "name": "Avice",
+          "age": 18,
+          "description": "your classmate, Avice"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Read the contract together",
+          "outcome": "You and Avice pick out the promises hiding under the fine writing. Brother Oswin checks each one and lets you read the last sentence unaided."
+        },
+        {
+          "id": "deceive",
+          "label": "Copy Avice’s fluent exercise",
+          "outcome": "Brother Oswin praises the borrowed page until Avice lays the original beside it. The two pages have the same ink blot."
+        },
+        {
+          "id": "review",
+          "label": "Ask Brother Oswin for a shorter passage to start with",
+          "outcome": "Brother Oswin covers the rest of the page. You get through one hard sentence properly before trying the next."
+        }
+      ]
+    },
+    {
+      "id": "education_adult_parish_1",
+      "introduction": "Avice needs a letter for a relative working away from home. The first attempt contains a great deal of weather and none of what they want to say. Brother Oswin leaves you a quiet corner.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "oswin",
+          "name": "Brother Oswin",
+          "age": 56,
+          "description": "your mentor, Brother Oswin"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_8",
+          "name": "Avice",
+          "age": 18,
+          "description": "your classmate, Avice"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Help write what they actually mean",
+          "outcome": "Avice reads it back slowly and folds it with care. Brother Oswin checks the difficult words without prying into the rest."
+        },
+        {
+          "id": "deceive",
+          "label": "Read the private lines aloud for a laugh",
+          "outcome": "The room laughs before Avice can take the page away. Brother Oswin sends the listeners back to work; your classmate folds the letter without your help."
+        },
+        {
+          "id": "review",
+          "label": "Ask Brother Oswin how to keep the letter private",
+          "outcome": "Brother Oswin helps you find plain words for the reply. Avice watches you leave the private lines covered."
+        }
+      ]
+    },
+    {
+      "id": "education_adult_guild_0",
+      "introduction": "Wulfric gets the heavy lifting because an older apprentice is supposedly stronger. Avice asks you to choose the work for a trial piece. Your classmate is rubbing a shoulder.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "kin_8",
+          "name": "Avice",
+          "age": 35,
+          "description": "your mentor, Avice"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_9",
+          "name": "Wulfric",
+          "age": 18,
+          "description": "your classmate, Wulfric"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Suggest a fair rotation and a proper trial",
+          "outcome": "Wulfric helps with the piece while you share the lifting. Avice tests the result and gives both of you useful work."
+        },
+        {
+          "id": "deceive",
+          "label": "Put Wulfric’s mark on your flawed trial piece",
+          "outcome": "Avice finds the fault. Wulfric recognises the piece they helped you carry and sees the mark you added."
+        },
+        {
+          "id": "review",
+          "label": "Ask Avice to test the work you already know",
+          "outcome": "Avice gives you a small job at the bench and watches your hands. You find out which parts of the late apprenticeship still need practice."
+        }
+      ]
+    },
+    {
+      "id": "education_adult_guild_1",
+      "introduction": "You have one evening to finish your apprenticeship sample. Wulfric offers their measurements. Avice will test the piece in the morning. The first cock has already crowed.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "kin_8",
+          "name": "Avice",
+          "age": 35,
+          "description": "your mentor, Avice"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_9",
+          "name": "Wulfric",
+          "age": 18,
+          "description": "your classmate, Wulfric"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Use the figures and credit their help",
+          "outcome": "Avice tests the finished piece. You name the help, and Wulfric stays to hear the answer beside you."
+        },
+        {
+          "id": "deceive",
+          "label": "Put your mark on Wulfric’s finished sample",
+          "outcome": "Avice asks about a joint you have never cut. Wulfric produces the drawing and waits for you to stop describing it."
+        },
+        {
+          "id": "review",
+          "label": "Show Avice what you can honestly finish",
+          "outcome": "Avice sets a smaller trial from the surviving measurements. You have time to make it properly rather than sign somebody else’s work."
+        }
+      ]
+    },
+    {
+      "id": "education_adult_cathedral_0",
+      "introduction": "Avice sets a fever diary beside an old commentary. The patient recovered on the day the commentary says recovery was impossible. Wulfric asks whether the patient has been told.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "kin_8",
+          "name": "Avice",
+          "age": 35,
+          "description": "your mentor, Avice"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_9",
+          "name": "Wulfric",
+          "age": 18,
+          "description": "your classmate, Wulfric"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Compare the observations honestly",
+          "outcome": "Wulfric helps set out the dates. Avice makes you separate what was seen from what the commentary merely assumed."
+        },
+        {
+          "id": "deceive",
+          "label": "Change the diary to flatter the old authority",
+          "outcome": "Wulfric keeps the original notes. When Avice compares the dates, your corrected patient appears to have recovered twice."
+        },
+        {
+          "id": "review",
+          "label": "Ask Avice to check the symptoms with you",
+          "outcome": "You work through the diary beside Avice, marking the actual symptoms before discussing the old explanation."
+        }
+      ]
+    },
+    {
+      "id": "education_adult_cathedral_1",
+      "introduction": "A visiting examiner asks which study you completed between paid jobs. Avice has the real hours; Wulfric has a finished certificate with remarkably tempting blank space.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "kin_8",
+          "name": "Avice",
+          "age": 35,
+          "description": "your mentor, Avice"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_9",
+          "name": "Wulfric",
+          "age": 18,
+          "description": "your classmate, Wulfric"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Present your honest study record",
+          "outcome": "Avice confirms the hours. Wulfric helps you list what remains, and the examiner can question you on work you actually did."
+        },
+        {
+          "id": "deceive",
+          "label": "Borrow the completed clerical certificate",
+          "outcome": "The paper passes the first inspection. Wulfric recognises the borrowed certificate, and its signatures may still be checked later."
+        },
+        {
+          "id": "review",
+          "label": "Ask Avice for the real examination requirements",
+          "outcome": "Avice lists the hours and arguments still needed. You practise one of the difficult questions instead of practising a signature."
+        }
+      ]
+    },
+    {
+      "id": "education_adult_martial_0",
+      "introduction": "Emma asks for a plan to defend a narrow gate. Avice draws a wonderful formation with you standing directly in front of every spear.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 51,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_8",
+          "name": "Avice",
+          "age": 18,
+          "description": "your classmate, Avice"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Work through the drill together",
+          "outcome": "You and Avice move the markers until both lines have cover. Emma checks the plan and sends you out to try it."
+        },
+        {
+          "id": "deceive",
+          "label": "Present Avice’s plan as your own",
+          "outcome": "Emma asks why your plan has Avice’s initials in the corner. Avice waits to hear the answer."
+        },
+        {
+          "id": "review",
+          "label": "Review the drill beside Emma",
+          "outcome": "Emma moves you out of the spear line and makes you explain why the new position is safer. You practise until you can hold it."
+        }
+      ]
+    },
+    {
+      "id": "education_adult_martial_1",
+      "introduction": "The adult recruits have paid work in the morning, but somebody must stand the cold watch. Avice finds their name on nearly every empty space. Emma hands you the rota.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "mother",
+          "name": "Emma",
+          "age": 51,
+          "description": "your mother, Emma"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_8",
+          "name": "Avice",
+          "age": 18,
+          "description": "your classmate, Avice"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Take your share and make a fair rotation",
+          "outcome": "Avice checks the new list while Emma checks your name is on it too. You learn the watch instead of merely assigning it."
+        },
+        {
+          "id": "deceive",
+          "label": "Leave Avice on every cold watch",
+          "outcome": "Avice makes a second copy. Emma reads it at breakfast while you try to look well rested for an innocent reason."
+        },
+        {
+          "id": "review",
+          "label": "Ask Emma to review the watch with you",
+          "outcome": "You and Emma fit the watches around the recruits’ paid work. Avice keeps a turn, but so do you."
+        }
+      ]
+    },
+    {
+      "id": "education_adult_noble_0",
+      "introduction": "Avice brings a household request to the adult lesson. Lord Aldric asks for useful advice. Your classmate puts away the beautifully phrased version and shows you the unpaid bills.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "aldric",
+          "name": "Lord Aldric",
+          "age": 65,
+          "description": "your mentor, Lord Aldric"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_8",
+          "name": "Avice",
+          "age": 18,
+          "description": "your classmate, Avice"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Work from the actual household figures",
+          "outcome": "Lord Aldric checks your proposed relief. Avice has an answer that may help at home, rather than a compliment to repeat at supper."
+        },
+        {
+          "id": "deceive",
+          "label": "Trade their private grievance for influence",
+          "outcome": "The story comes back to Avice with your name attached. Lord Aldric sets aside your polished advice and asks about the confidence you broke."
+        },
+        {
+          "id": "review",
+          "label": "Ask Lord Aldric to check the relief you propose",
+          "outcome": "Lord Aldric counts the grain with you before you promise it. Avice leaves with a smaller, affordable request."
+        }
+      ]
+    },
+    {
+      "id": "education_adult_noble_1",
+      "introduction": "An envoy asks why the household pays for tutoring while tenants need seed. Lord Aldric gives you the figures; Avice waits to see whether your answer contains any grain.",
+      "people": [
+        {
+          "role": "mentor",
+          "actorId": "aldric",
+          "name": "Lord Aldric",
+          "age": 65,
+          "description": "your mentor, Lord Aldric"
+        },
+        {
+          "role": "classmate",
+          "actorId": "kin_8",
+          "name": "Avice",
+          "age": 18,
+          "description": "your classmate, Avice"
+        }
+      ],
+      "choices": [
+        {
+          "id": "repair",
+          "label": "Explain the figures and offer affordable relief",
+          "outcome": "You answer the difficult questions while Avice checks the sums. Lord Aldric has you defend a practical decision rather than a borrowed phrase."
+        },
+        {
+          "id": "deceive",
+          "label": "Produce a borrowed court certificate",
+          "outcome": "The seal opens a door for now. Avice recognises the document, and a later examination may ask what you actually learned."
+        },
+        {
+          "id": "review",
+          "label": "Ask Lord Aldric for an honest assessment",
+          "outcome": "Lord Aldric offers a witnessed examination. You work on the questions still beyond you instead of pretending the certificate answered them."
+        }
+      ]
+    }
+  ]
+}

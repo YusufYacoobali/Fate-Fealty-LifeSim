@@ -1,0 +1,2 @@
+95 rewritten events; all event IDs, choice IDs, conditions and consequences preserved
+{"currentEvents":545,"patterns":{"mock_bureaucracy":34,"paperwork":334,"speech_reporting":158,"abstract_lesson":60},"repeatedSixWordPhrases":0,"similarStarts":3}

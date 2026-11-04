@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Image, ScrollView, View } from 'react-native';
+import type { ScrollViewInstance } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { C } from '@/theme/theme';
 import { VillageNewspaper } from '../modals/VillageNewspaper';
@@ -27,7 +28,7 @@ export function LifeFeed({ feed, autoScroll, filter, onFilter, bornYear, reduced
   const [edition, setEdition] = useState<number | null>(null);
   const groups = new Map<number, FeedVM[]>();
   if (filter === 'all' || filter === 'world') for (const entry of feed) if (isRoutineNews(entry)) groups.set(entry.age, [...(groups.get(entry.age) ?? []), entry]);
-  const ref = useRef<ScrollView>(null);
+  const ref = useRef<ScrollViewInstance>(null);
   // Returning from a quest reveals its result even with ongoing auto-scroll off.
   useEffect(() => {
     if (!resultKey) return;

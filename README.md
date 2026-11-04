@@ -2,7 +2,7 @@
 
 The `v5` life-depth overhaul adds seven birth origins, playable education, distinct professional careers and a persistent royal court with protected succession. See [the implementation and verification report](docs/life-depth-overhaul.md) for systems, migration behavior, acceptance scenarios and release checks.
 
-A BitLife-style medieval life simulator for mobile, built with **Expo SDK 57 + React Native 0.86 + React 19.2 + TypeScript**. Be born a muddy peasant in Swineford, age up one year at a time, and claw your way toward knighthood and nobility — or die of a mild cough at 30. The goose is your best friend.
+A BitLife-style medieval life simulator for mobile, built with **Expo SDK 58 + React Native 0.88 + React 19.3 + TypeScript**. Be born a muddy peasant in Swineford, age up one year at a time, and claw your way toward knighthood and nobility — or die of a mild cough at 30. The goose is your best friend.
 
 Built to match the pixel-art mockup (`Medieval Life.dc.html`) 1:1, on top of a fully data-driven game engine.
 
@@ -10,19 +10,17 @@ The workshop update adds optional five-strike forge play, a four-chapter craft/t
 
 ## Running it
 
-Use Node.js 22.13+ (22 LTS) or 24.3+ (24 LTS). SDK 57 uses React Native
-0.86.3 and React 19.2.3. Native iOS builds require macOS with Xcode 26.4+
-and target iOS 16.4 or later.
+Use Node.js 22.13+ (22 LTS) or 24.3+ (24 LTS). Expo Go must support SDK 58.
+Native iOS builds require macOS with Xcode 26.4+ and target iOS 16.4 or later.
 
 ```bash
 npm install
 npm start          # then press a / i / w, or scan the QR with Expo Go
 ```
 
-After upgrading from SDK 54, rebuild native apps before connecting to Metro.
-The ignored `android/` and `ios/` projects are generated from `app.json` with
-`npx expo prebuild`; regenerate iOS on macOS or through EAS Build. Previous
-local native projects are preserved in `.cache/expo-sdk54-native-backup/`.
+After an SDK upgrade, regenerate any local `android/` and `ios/` projects with
+`npx expo prebuild --clean` before rebuilding a native app. Regenerate iOS on
+macOS or through EAS Build.
 
 Other scripts:
 

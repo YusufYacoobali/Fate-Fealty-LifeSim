@@ -1,5 +1,6 @@
 android/local.properties
 node_modules/
+__pycache__/
 .expo/
 .cache/
 dist/

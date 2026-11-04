@@ -94,7 +94,12 @@ TRAITS_UI = [
 
 def archive_live_pngs() -> None:
     OLD_DIR.mkdir(parents=True, exist_ok=True)
-    for png in sorted(ASSET_DIR.glob("*.png")):
+    # Archive only the outputs this legacy slicer can rebuild. Newer icons,
+    # banners and restored artwork must not disappear during a sheet rebuild.
+    for name in sorted(set(RANKS + ACTIVITIES + KIN_STATS_SHOP + TRAITS_UI)):
+        png = ASSET_DIR / name
+        if not png.exists():
+            continue
         target = OLD_DIR / png.name
         if target.exists():
             stem = png.stem
@@ -285,6 +290,10 @@ def main() -> None:
     slice_sheet("activities.png", 6, 3, ACTIVITIES)
     slice_sheet("kin-stats-shop.png", 6, 4, KIN_STATS_SHOP)
     slice_sheet("traits-ui.png", 6, 3, TRAITS_UI)
+    # The generated sheets are not exact grids. Apply the reviewed full-subject
+    # selections after the legacy cuts, including their portrait derivatives.
+    from repair_game_icon_crops import repair_icons
+    repair_icons()
     make_contact_sheet()
 
 

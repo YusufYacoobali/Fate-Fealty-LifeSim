@@ -2,7 +2,7 @@
 
 4 November 2026 · branch `v5` · baseline `c9cadaf18b04db44f82675a5cc98f6539b16bdb3`.
 
-Reviewed all **187 unique registered game icons**. Corrected **68 PNG assets**; the other 119 icon files remain byte-for-byte unchanged. Six larger illustrations and both configured launcher icons were also reviewed and retain their existing full-bleed compositions. Existing icon mappings, navigation, fonts, panels, buttons and game logic are unchanged.
+Reviewed all **187 unique registered game icons**. Corrected **68 PNG assets**; the other 119 icon files remain byte-for-byte unchanged. Six larger illustrations and both configured launcher icons were also reviewed and retain their existing full-bleed compositions. The icon fixes preserve existing icon mappings, navigation, fonts, panels, buttons and game logic. The concurrent upstream Expo 58 upgrade is also preserved, as described below.
 
 ## What was wrong
 
@@ -36,6 +36,10 @@ Every pair below shows the baseline icon on the left and the corrected icon on t
 
 Actual production-web screen examples: [Leisure activity cards, 390px](validation/icon-crops/game-do-leisure-390.png), [Apothecary, 280px](validation/icon-crops/game-apothecary-280.png), [People, 390px](validation/icon-crops/game-people-390.png), [Holding, tablet](validation/icon-crops/game-hold-768.png), and [Me, 320px](validation/icon-crops/game-me-320.png). All screenshots use the existing app UI and real asset mappings. The gallery is a separate review fixture, not a new game screen.
 
+## Expo 58 integration
+
+Remote `v5` advanced to `96deaa3` during this work, upgrading Expo/React Native and their related dependencies and adding two type compatibility updates. Those changes were merged without alteration in `ec36a1f`; the icon fix does not replace or downgrade them. A clean `npm ci` installed Expo 58.0.23 / React Native 0.88.1. TypeScript, the full Jest suite, all three platform exports and all browser checks were then repeated on that merged code. The screen screenshots and browser JSON here reflect that final Expo 58 export.
+
 ## Verification
 
 | Check | Result |
@@ -44,15 +48,16 @@ Actual production-web screen examples: [Leisure activity cards, 390px](validatio
 | Repeatability | Two successive repairs preserve every generated PNG byte-for-byte; compatibility entry point verifies the same outputs |
 | Python regressions | Five tests passed: background/fringe removal, preservation of real purple artwork, intentional cog centre, full outlined silhouettes/pixel palette, empty-source rejection and safe archival of only rebuildable files |
 | Relevant Jest suites | Five suites / 105 tests passed: Holding/court UI, shop markets, workshop, RPG expansion and pixel-animation lifecycle |
-| TypeScript | Passed |
-| Expo exports | Web, iOS and Android production exports completed |
+| Final merged full Jest | 100 suites / 1,009 tests passed on Expo 58 |
+| Final TypeScript | Passed on Expo 58 |
+| Expo exports | Web, iOS and Android production exports completed again on Expo 58 |
 | Exported-asset integrity | All 187 gallery PNGs match the current source SHA-256 hashes in the production export |
 | Browser review | Four widths: 280, 320, 390 and 768px; every icon at 24/32/48/64px on parchment and blue (1,496 image elements per viewport); all load without overflow |
 | Existing game screens | 24 main-tab checks plus eight Leisure/Quests section checks; apothecary screenshots at every width; zero JavaScript page errors or page-width overflow |
 
-Browser checks use Chromium and controlled local fixture saves, including a cached fixture entitlement. They do not purchase anything or change production access. Native exports are build checks; no physical iOS/Android device testing is claimed. The full engine simulation suites were not repeated for this asset-only change; no runtime TypeScript, save, balance, event or entitlement code changed.
+Browser checks use Chromium and controlled local fixture saves, including a cached fixture entitlement. They do not purchase anything or change production access. Native exports are build checks; no physical iOS/Android device testing is claimed. The complete Jest suite, including its existing simulation and dynasty tests, was repeated after the dependency merge. No additional standalone life-cohort audit was needed for the artwork. The icon patch itself changes no runtime TypeScript, save, balance, event or entitlement code.
 
-Raw evidence: [audit](validation/icon-crops/audit.json), [browser checks](validation/icon-crops/browser.json), [focused Jest](validation/icon-crops/focused-tests.txt), [pipeline tests](validation/icon-crops/pipeline-tests.txt), [repeatability](validation/icon-crops/rebuild-check.txt), [TypeScript](validation/icon-crops/typecheck.txt), [exports](validation/icon-crops/exports.txt), [manifest](validation/icon-crops/manifest.json).
+Raw evidence: [audit](validation/icon-crops/audit.json), [browser checks](validation/icon-crops/browser.json), [focused Jest](validation/icon-crops/focused-tests.txt), [pipeline tests](validation/icon-crops/pipeline-tests.txt), [repeatability](validation/icon-crops/rebuild-check.txt), [TypeScript](validation/icon-crops/typecheck.txt), [exports](validation/icon-crops/exports.txt), [manifest](validation/icon-crops/manifest.json). Final Expo 58 evidence: [clean install](validation/icon-crops/expo58-install.txt), [full Jest](validation/icon-crops/expo58-full-tests.txt), [TypeScript](validation/icon-crops/expo58-typecheck.txt), [all-platform export](validation/icon-crops/expo58-exports.txt).
 
 ## Rebuilding safely
 
@@ -64,7 +69,7 @@ python3 scripts/test_icon_crops.py
 python3 scripts/audit_icon_crops.py
 ```
 
-The Python tools require Pillow, as the existing asset tools already did. The old cleanup entry point now delegates to the immutable-source repair, and the original sheet-slicing pipeline reapplies these reviewed repairs. Its archive step now moves only icons it can recreate, retaining newer icons and banners. Python cache files are ignored. Application dependencies and lockfile did not change.
+The Python tools require Pillow, as the existing asset tools already did. The old cleanup entry point now delegates to the immutable-source repair, and the original sheet-slicing pipeline reapplies these reviewed repairs. Its archive step now moves only icons it can recreate, retaining newer icons and banners. Python cache files are ignored. The icon patch adds no application dependencies. The upstream Expo 58 dependency, lockfile, Jest configuration and type updates are preserved.
 
 Browser reproduction uses `scripts/createHoldingUiFixtures.ts`, a locally served production export and `scripts/verifyIconUi.cjs`; set `ICON_EXPORT_DIR`, `ICON_UI_URL` and `PLAYWRIGHT_MODULE` if using different locations. Playwright/tsx review tooling was installed outside the app. The generated icon gallery lives only in the temporary production-review directory.
 

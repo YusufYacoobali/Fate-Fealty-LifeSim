@@ -1,0 +1,6411 @@
+{
+  "baseline": "c9cadaf18b04db44f82675a5cc98f6539b16bdb3",
+  "referencedPngs": 193,
+  "iconsReviewed": 187,
+  "iconsChanged": 68,
+  "findings": [],
+  "icons": [
+    {
+      "name": "activity-arrange-gathering.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          16,
+          22,
+          123,
+          124
+        ],
+        "sha256": "b1c9263bbc033e7c7b3cb09f14ac1c572a022282878eb423afb8137452501143"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          16,
+          22,
+          123,
+          124
+        ],
+        "sha256": "b1c9263bbc033e7c7b3cb09f14ac1c572a022282878eb423afb8137452501143"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-banditry.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          11,
+          8,
+          116,
+          120
+        ],
+        "sha256": "d15964c4a10851d10d5f7396cc4e2dc00a7f4673442e47d2675d9bad39dade96"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          14,
+          8,
+          114,
+          120
+        ],
+        "sha256": "f217670c3b38d94fb9d1d61465560bc5620a13d9f8f8215e5b1a434de3165ea1"
+      },
+      "changed": true
+    },
+    {
+      "name": "activity-bathhouse.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          18,
+          20,
+          108,
+          108
+        ],
+        "sha256": "446e6b12127e38e07d30f4d324206ab88fafa09c33070e4930935d3ee4b76368"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          13,
+          120,
+          115
+        ],
+        "sha256": "40be579d435663091ffb6da9a3335bd676880f413086e942033a443d5b247eac"
+      },
+      "changed": true
+    },
+    {
+      "name": "activity-blacksmith.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          13,
+          8,
+          115,
+          120
+        ],
+        "sha256": "19a452c1e9132dffd5da55d38a1e76a482e2e64ee2290703eea9add0d8c11513"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          11,
+          120,
+          116
+        ],
+        "sha256": "99dd3c8376c7d61440ab0f108c5a4d3b060710454373d543853a15868c9fd8da"
+      },
+      "changed": true
+    },
+    {
+      "name": "activity-bribe-official.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          11,
+          23,
+          119,
+          107
+        ],
+        "sha256": "5aa2571055aa1983d9ff1f793e0ddba4ff8034ba45b44b3c95e14251797c44df"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          11,
+          23,
+          119,
+          107
+        ],
+        "sha256": "5aa2571055aa1983d9ff1f793e0ddba4ff8034ba45b44b3c95e14251797c44df"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-care-relative.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          12,
+          48,
+          117,
+          109
+        ],
+        "sha256": "1dd359fc3cad0d6ee0be5d9f80a9999c9a84105323da36bdf1438b8fb82d0acf"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          12,
+          48,
+          117,
+          109
+        ],
+        "sha256": "1dd359fc3cad0d6ee0be5d9f80a9999c9a84105323da36bdf1438b8fb82d0acf"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-church.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          17,
+          8,
+          111,
+          120
+        ],
+        "sha256": "31ef98c0b10f4471476b120caebc1b7ecb600b27e7361c2c82c0fb9c754c5f71"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          16,
+          8,
+          111,
+          120
+        ],
+        "sha256": "f8c2d6fdc6096dcc5b2bc707a53e400b61b54e72e080e21ecf5f9015cec0f626"
+      },
+      "changed": true
+    },
+    {
+      "name": "activity-copy-manuscript.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          22,
+          115,
+          104
+        ],
+        "sha256": "ea76d2314d353ccc19ba23b1ccf07583c1823f572b67684cbd3a2e2c157de4dd"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          22,
+          115,
+          104
+        ],
+        "sha256": "ea76d2314d353ccc19ba23b1ccf07583c1823f572b67684cbd3a2e2c157de4dd"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-courting.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          27,
+          15,
+          101,
+          112
+        ],
+        "sha256": "e9b7e99c7716c1b996c741c3174306688f7b1d4bf09c8972b897be6d19a1c7a0"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          27,
+          15,
+          101,
+          112
+        ],
+        "sha256": "e9b7e99c7716c1b996c741c3174306688f7b1d4bf09c8972b897be6d19a1c7a0"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-dice.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          17,
+          21,
+          110,
+          107
+        ],
+        "sha256": "298f9bfbf6648a8686025964096593b80d929d23b604238a5808d93a7c716456"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          17,
+          21,
+          110,
+          107
+        ],
+        "sha256": "298f9bfbf6648a8686025964096593b80d929d23b604238a5808d93a7c716456"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-drill-levy.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          11,
+          12,
+          101,
+          106
+        ],
+        "sha256": "a47293542c14ac8500d0cff90132b06c268573180e3fb838da9a6db6b48b4524"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          11,
+          12,
+          101,
+          106
+        ],
+        "sha256": "a47293542c14ac8500d0cff90132b06c268573180e3fb838da9a6db6b48b4524"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-fair.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          19,
+          8,
+          109,
+          120
+        ],
+        "sha256": "1914076b1dbc3003bcf3dea9ffe7a12a6c08b4e1b6f53e291dea41923107c68e"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          19,
+          8,
+          109,
+          120
+        ],
+        "sha256": "1914076b1dbc3003bcf3dea9ffe7a12a6c08b4e1b6f53e291dea41923107c68e"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-feast.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          15,
+          120,
+          112
+        ],
+        "sha256": "68b9e3c72ee07a85513717ae2c6426e1c88b81d043640a3766287c768a4cf40c"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          20,
+          120,
+          107
+        ],
+        "sha256": "d5418fd3e2ee6ba54b5acc77a05605c1e59b82d75512f238d252b5dcd47a92ab"
+      },
+      "changed": true
+    },
+    {
+      "name": "activity-fence-goods.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          17,
+          27,
+          119,
+          107
+        ],
+        "sha256": "7509b47d08078efeef536adf7ebc19680d2deee4a8221a9adccc376440c453ea"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          17,
+          27,
+          119,
+          107
+        ],
+        "sha256": "7509b47d08078efeef536adf7ebc19680d2deee4a8221a9adccc376440c453ea"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-fields.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          16,
+          15,
+          111,
+          110
+        ],
+        "sha256": "1093c6ae18a0f1b20ce7bf45d44a4c4020d2db082d142a337cf1a26171f853c4"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          16,
+          15,
+          111,
+          110
+        ],
+        "sha256": "1093c6ae18a0f1b20ce7bf45d44a4c4020d2db082d142a337cf1a26171f853c4"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-gather-fuel.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          19,
+          29,
+          111,
+          109
+        ],
+        "sha256": "068d0f6e609a5964b2c6b3ac9e4a2d6a07cc7734828e589532653a7a50553e9d"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          19,
+          29,
+          111,
+          109
+        ],
+        "sha256": "068d0f6e609a5964b2c6b3ac9e4a2d6a07cc7734828e589532653a7a50553e9d"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-gather-intelligence.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          9,
+          12,
+          113,
+          107
+        ],
+        "sha256": "cc3b6c754cb9e43fea9a8667fe561253ac100b21dda9e59c491f8f5883c55e77"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          9,
+          12,
+          113,
+          107
+        ],
+        "sha256": "cc3b6c754cb9e43fea9a8667fe561253ac100b21dda9e59c491f8f5883c55e77"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-guild-bargain.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          10,
+          18,
+          110,
+          115
+        ],
+        "sha256": "c5d9ef88bb01b6daed9ab1972950996a487179c0c584554c8715cb10e99451e0"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          10,
+          18,
+          110,
+          115
+        ],
+        "sha256": "c5d9ef88bb01b6daed9ab1972950996a487179c0c584554c8715cb10e99451e0"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-hear-confession.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          26,
+          7,
+          112,
+          109
+        ],
+        "sha256": "fc971c149ab9e2492ca7e599d0a58d41ec957fdaa692f9cf970922b38f08ea93"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          26,
+          7,
+          112,
+          109
+        ],
+        "sha256": "fc971c149ab9e2492ca7e599d0a58d41ec957fdaa692f9cf970922b38f08ea93"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-hear-petitions.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          10,
+          107,
+          91
+        ],
+        "sha256": "aa9fc41f629fed33906f93f92226f8a79da7a9a07c3bc35badf17d8f7011c0b3"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          10,
+          107,
+          91
+        ],
+        "sha256": "aa9fc41f629fed33906f93f92226f8a79da7a9a07c3bc35badf17d8f7011c0b3"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-herbalist.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          8,
+          120,
+          120
+        ],
+        "sha256": "42928e42a49542b2322b91fe31f8a5fd799817a7ce232a0f745c8e39dd473dd3"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          14,
+          120,
+          114
+        ],
+        "sha256": "25ea9a157c91b63a9fb438b50558dccaffbf2cf35529f7f8f7a5bbeaaa644810"
+      },
+      "changed": true
+    },
+    {
+      "name": "activity-hold-council.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          7,
+          4,
+          110,
+          100
+        ],
+        "sha256": "94287299d6e07a877c88a5f6993a3340276cb84674ff6a581b2dade9d87c466b"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          7,
+          4,
+          110,
+          100
+        ],
+        "sha256": "94287299d6e07a877c88a5f6993a3340276cb84674ff6a581b2dade9d87c466b"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-host-court.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          12,
+          4,
+          114,
+          99
+        ],
+        "sha256": "e27479229c23e62436b3e10a485197f2b84fdc13262612bdf4ec806bac74c99c"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          12,
+          4,
+          114,
+          99
+        ],
+        "sha256": "e27479229c23e62436b3e10a485197f2b84fdc13262612bdf4ec806bac74c99c"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-lead-patrol.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          14,
+          18,
+          109,
+          106
+        ],
+        "sha256": "bbbcf64c4ca5bb13b4b3d9c93f6ea854f8967729b431c595d2fbe2f692f884a5"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          14,
+          18,
+          109,
+          106
+        ],
+        "sha256": "bbbcf64c4ca5bb13b4b3d9c93f6ea854f8967729b431c595d2fbe2f692f884a5"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-leech.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          23,
+          8,
+          105,
+          120
+        ],
+        "sha256": "b2f0901573a6dd24394ecc1366973704431477a0b796085a95e48d627c2c0779"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          26,
+          8,
+          102,
+          120
+        ],
+        "sha256": "0f126234d9db6e7fef55d75038151bb3b0ef920f257fd9da56563f0a53ae789b"
+      },
+      "changed": true
+    },
+    {
+      "name": "activity-manage-stores.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          11,
+          0,
+          114,
+          104
+        ],
+        "sha256": "0607c7d4a64d4d49b37ce74f3c48a1de287c7b30579c847169e6ccec9be64c0d"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          10,
+          8,
+          118,
+          120
+        ],
+        "sha256": "ca75d758f3406d6935b790e6a29d0e0f08032281d10e74a18f4ccb4854b55068"
+      },
+      "changed": true
+    },
+    {
+      "name": "activity-manage-workshop.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          15,
+          23,
+          103,
+          114
+        ],
+        "sha256": "3a43505e33f05cc4661653789dd1503e51b287ce1151df2241473d12fd80741d"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          15,
+          23,
+          103,
+          114
+        ],
+        "sha256": "3a43505e33f05cc4661653789dd1503e51b287ce1151df2241473d12fd80741d"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-market.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          13,
+          8,
+          115,
+          120
+        ],
+        "sha256": "56bd4dd7b83183e3acbb1b0ba26a220f52ce088058cd69e15cbb23d9d2853eda"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          9,
+          8,
+          119,
+          120
+        ],
+        "sha256": "cd0851e055330f95e0083a01dbeb5bc64e542ce9539b250b1cce3f44dd3c1cfb"
+      },
+      "changed": true
+    },
+    {
+      "name": "activity-negotiate-levy.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          26,
+          0,
+          110,
+          98
+        ],
+        "sha256": "30246162ec769ce322537db7721090a546485d5261d59166c563d52616f4d57c"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          8,
+          106,
+          120
+        ],
+        "sha256": "fd537a16eb9b79c510b3e2a1998409fbbcb9785cb16307b20373ec6b55276e7b"
+      },
+      "changed": true
+    },
+    {
+      "name": "activity-pickpocket.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          9,
+          8,
+          119,
+          120
+        ],
+        "sha256": "3aae9fceb6282046ff72f252cb02679b06cc8dfd9e8d67fec40ca1bcb25dce74"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          13,
+          8,
+          114,
+          120
+        ],
+        "sha256": "188ccc9305d1c6c503de95ddebd1fbcc7e126306c8e68168f8e4c85313dba27d"
+      },
+      "changed": true
+    },
+    {
+      "name": "activity-pilgrimage.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          26,
+          8,
+          101,
+          120
+        ],
+        "sha256": "5e376fbda3f090d1e4fc9defe636ff895db3c5d86660166f6953c6cf9c172dfb"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          26,
+          8,
+          101,
+          120
+        ],
+        "sha256": "5e376fbda3f090d1e4fc9defe636ff895db3c5d86660166f6953c6cf9c172dfb"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-plan-heist.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          24,
+          4,
+          115,
+          97
+        ],
+        "sha256": "1220519349527ef0f77d865d848be40755bb6057770805e26df2f4ad98530aa1"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          24,
+          4,
+          115,
+          97
+        ],
+        "sha256": "1220519349527ef0f77d865d848be40755bb6057770805e26df2f4ad98530aa1"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-poach.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          11,
+          8,
+          116,
+          120
+        ],
+        "sha256": "99f8b7a1fd4aa3d5c34c80262d84a289830464eb466b46aa3a1ce1386e860e97"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          11,
+          8,
+          117,
+          120
+        ],
+        "sha256": "499b566e312974b91b753ab966ee88b433981f16fbdf7828620c99ddb0045216"
+      },
+      "changed": true
+    },
+    {
+      "name": "activity-preach-sermon.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          20,
+          12,
+          108,
+          108
+        ],
+        "sha256": "44134964f8eb2c6c7587a297ea6cfb672042bef6bf2177c5d6138ee8890b7d3a"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          20,
+          12,
+          108,
+          108
+        ],
+        "sha256": "44134964f8eb2c6c7587a297ea6cfb672042bef6bf2177c5d6138ee8890b7d3a"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-quest.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          18,
+          17,
+          110,
+          111
+        ],
+        "sha256": "90eaae81501a47ca0900c703473a5c0e731711c2c6403b3cd8ae708b8d11ff5b"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          12,
+          120,
+          115
+        ],
+        "sha256": "64b7f2cc4edba6f676a47055f47ef623367a96e0ab06a779b6685798c5aecc18"
+      },
+      "changed": true
+    },
+    {
+      "name": "activity-rally-gang.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          20,
+          3,
+          107,
+          95
+        ],
+        "sha256": "307d263ecca0707427fa512792fe3bdb9a1641dca3c172d59857a38a96a24e24"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          20,
+          3,
+          107,
+          95
+        ],
+        "sha256": "307d263ecca0707427fa512792fe3bdb9a1641dca3c172d59857a38a96a24e24"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-repair-household.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          11,
+          4,
+          114,
+          102
+        ],
+        "sha256": "5d1375522f192c98b253d23bca8163500adb3b2506fa9a96af7162962460eb0d"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          11,
+          4,
+          114,
+          102
+        ],
+        "sha256": "5d1375522f192c98b253d23bca8163500adb3b2506fa9a96af7162962460eb0d"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-rest.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          13,
+          22,
+          118,
+          122
+        ],
+        "sha256": "9f5ee8a341317eaeae8e2038c80a63f0721781a6fce75f767fe5e3efc08e4563"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          13,
+          22,
+          118,
+          122
+        ],
+        "sha256": "9f5ee8a341317eaeae8e2038c80a63f0721781a6fce75f767fe5e3efc08e4563"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-royal-audience.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          13,
+          5,
+          99,
+          103
+        ],
+        "sha256": "7bc7bf3306e6feb9112024ac65c7a58c1afcba7fde242060081b160ddc5e7523"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          13,
+          5,
+          99,
+          103
+        ],
+        "sha256": "7bc7bf3306e6feb9112024ac65c7a58c1afcba7fde242060081b160ddc5e7523"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-run-caravan.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          9,
+          13,
+          117,
+          104
+        ],
+        "sha256": "14ce261586735f618575c7329cc3daa79ccccdf3bc8e0fc47edf4a51ef2dfec4"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          9,
+          13,
+          117,
+          104
+        ],
+        "sha256": "14ce261586735f618575c7329cc3daa79ccccdf3bc8e0fc47edf4a51ef2dfec4"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-scout-target.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          14,
+          15,
+          119,
+          110
+        ],
+        "sha256": "f0e07069d35e1b5163b838596981490bfc488b2b231e68ea065047848adf2a97"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          14,
+          15,
+          119,
+          110
+        ],
+        "sha256": "f0e07069d35e1b5163b838596981490bfc488b2b231e68ea065047848adf2a97"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-seek-patron.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          16,
+          24,
+          121,
+          128
+        ],
+        "sha256": "e6bc575c2840d4bd70c81db0fa23867a0f60b7ba71d9b155024ec5631be9f4ae"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          11,
+          29,
+          116,
+          98
+        ],
+        "sha256": "aa71d9aae014e25b688fae60496654c06e5c80028155ac437f9f2fe2dc444000"
+      },
+      "changed": true
+    },
+    {
+      "name": "activity-study-trade.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          10,
+          20,
+          112,
+          115
+        ],
+        "sha256": "6d2eb7ee9c677a2ec83a9555b283575e4a7befe2d525b3ab8da7676b1b469679"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          10,
+          20,
+          112,
+          115
+        ],
+        "sha256": "6d2eb7ee9c677a2ec83a9555b283575e4a7befe2d525b3ab8da7676b1b469679"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-tavern.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          15,
+          8,
+          112,
+          120
+        ],
+        "sha256": "a3ecb8a403a85326d5ffdf14147da01d8b3fdd19ac3a3e38967e34f8cb855cad"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          10,
+          120,
+          117
+        ],
+        "sha256": "1141c280cefe3eb9f018f2dee24d65216d451db02ca6db96dc80257ba3e49fca"
+      },
+      "changed": true
+    },
+    {
+      "name": "activity-teach-child.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          0,
+          13,
+          114,
+          95
+        ],
+        "sha256": "fb6d4b173cb6cf5b2135abce31b45accc7b1d621cfa023155a6a5a9d28196be8"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          22,
+          120,
+          106
+        ],
+        "sha256": "1d7dfa3717fcac14cd4c7fa23ffae196d612981336d2232c2233dc9d5734b8c7"
+      },
+      "changed": true
+    },
+    {
+      "name": "activity-tournament.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          21,
+          8,
+          107,
+          120
+        ],
+        "sha256": "41c68659760c2a8a8a33680dc29d960919e9c9c8c863263e0b8c7189cd11fcfa"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          16,
+          8,
+          112,
+          120
+        ],
+        "sha256": "50b32d64c3c6ae97b8b4df4eb7a32b4b84f1386642ae47fb30796b01df557eb8"
+      },
+      "changed": true
+    },
+    {
+      "name": "activity-train.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          34,
+          8,
+          94,
+          120
+        ],
+        "sha256": "3202f9e8d03dc31e90da176af0373fdf9bf602debe2f8e2734291e2955992336"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          34,
+          8,
+          94,
+          120
+        ],
+        "sha256": "3202f9e8d03dc31e90da176af0373fdf9bf602debe2f8e2734291e2955992336"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-treat-patient.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          14,
+          20,
+          113,
+          120
+        ],
+        "sha256": "c65c9ac8d499f739b33e279501d8e27ee772737d00a1b352f51628cbaf33e3cb"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          14,
+          20,
+          113,
+          120
+        ],
+        "sha256": "c65c9ac8d499f739b33e279501d8e27ee772737d00a1b352f51628cbaf33e3cb"
+      },
+      "changed": false
+    },
+    {
+      "name": "activity-village-service.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          24,
+          28,
+          120,
+          115
+        ],
+        "sha256": "2acec7cba581355806f60d36148d82136b385be3942e6ee2f2fd005e0ed37280"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          24,
+          28,
+          120,
+          115
+        ],
+        "sha256": "2acec7cba581355806f60d36148d82136b385be3942e6ee2f2fd005e0ed37280"
+      },
+      "changed": false
+    },
+    {
+      "name": "career-action-borrow.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          16,
+          120,
+          112
+        ],
+        "sha256": "f5840885bb7f335d0c2ac789d7070d86523c479d5753e0b588a5d6091f2b6076"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          16,
+          120,
+          112
+        ],
+        "sha256": "f5840885bb7f335d0c2ac789d7070d86523c479d5753e0b588a5d6091f2b6076"
+      },
+      "changed": false
+    },
+    {
+      "name": "career-action-craft.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          8,
+          120,
+          120
+        ],
+        "sha256": "411b33e2997070987f66e51cdfea400f4856575a86e492c847556c58931f75ef"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          8,
+          120,
+          120
+        ],
+        "sha256": "411b33e2997070987f66e51cdfea400f4856575a86e492c847556c58931f75ef"
+      },
+      "changed": false
+    },
+    {
+      "name": "career-action-odd-job.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          12,
+          8,
+          116,
+          120
+        ],
+        "sha256": "61a35a59d16bd8035f4667a71c39a4fa0e8ba01351d1973949619c2391bd6471"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          12,
+          8,
+          116,
+          120
+        ],
+        "sha256": "61a35a59d16bd8035f4667a71c39a4fa0e8ba01351d1973949619c2391bd6471"
+      },
+      "changed": false
+    },
+    {
+      "name": "career-action-promote.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          37,
+          8,
+          90,
+          120
+        ],
+        "sha256": "563f2f19b1d637edac5606648896d7986bd92d3afc81065ceed1695efb4132c0"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          37,
+          8,
+          90,
+          120
+        ],
+        "sha256": "563f2f19b1d637edac5606648896d7986bd92d3afc81065ceed1695efb4132c0"
+      },
+      "changed": false
+    },
+    {
+      "name": "career-action-rank-duty.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          10,
+          8,
+          118,
+          120
+        ],
+        "sha256": "a07195a0f7b45370c3140694925215bf6f21e18c3d0c1ef27dde7922ad03be42"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          10,
+          8,
+          118,
+          120
+        ],
+        "sha256": "a07195a0f7b45370c3140694925215bf6f21e18c3d0c1ef27dde7922ad03be42"
+      },
+      "changed": false
+    },
+    {
+      "name": "career-action-repay.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          11,
+          120,
+          117
+        ],
+        "sha256": "09745b19d8d30226df28f268b9c3e5a7d89690970638d585ede8d1b4bc5b2337"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          11,
+          120,
+          117
+        ],
+        "sha256": "09745b19d8d30226df28f268b9c3e5a7d89690970638d585ede8d1b4bc5b2337"
+      },
+      "changed": false
+    },
+    {
+      "name": "career-action-resign.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          18,
+          120,
+          110
+        ],
+        "sha256": "7b76c05c1350884c933281c5fa5361c09ed6254a91dbc419b9561f75c604b32c"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          18,
+          120,
+          110
+        ],
+        "sha256": "7b76c05c1350884c933281c5fa5361c09ed6254a91dbc419b9561f75c604b32c"
+      },
+      "changed": false
+    },
+    {
+      "name": "career-action-trade.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          20,
+          120,
+          108
+        ],
+        "sha256": "786a2fe205979a90b9e7d6119946dac81c80fa67f6d0bee9924e5274fdf8e74e"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          20,
+          120,
+          108
+        ],
+        "sha256": "786a2fe205979a90b9e7d6119946dac81c80fa67f6d0bee9924e5274fdf8e74e"
+      },
+      "changed": false
+    },
+    {
+      "name": "career-action-train.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          16,
+          120,
+          112
+        ],
+        "sha256": "8e1cb34c2354ef47dfa75abddebe86054216496d197d0dd7c2cff5130488659c"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          16,
+          120,
+          112
+        ],
+        "sha256": "8e1cb34c2354ef47dfa75abddebe86054216496d197d0dd7c2cff5130488659c"
+      },
+      "changed": false
+    },
+    {
+      "name": "career-action-work.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          12,
+          120,
+          116
+        ],
+        "sha256": "819f9e56e3f5d139a9a2015154725e4b28cf42846191b833de2b02fe0fd2082b"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          12,
+          120,
+          116
+        ],
+        "sha256": "819f9e56e3f5d139a9a2015154725e4b28cf42846191b833de2b02fe0fd2082b"
+      },
+      "changed": false
+    },
+    {
+      "name": "daily-reward-purse.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          434,
+          512
+        ],
+        "visibleBounds": [
+          0,
+          0,
+          434,
+          512
+        ],
+        "sha256": "dc8f3efd1fda4da71f7d0337d3d0a48d825da3d6cc6b637ed1f86a9e54468747"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          16,
+          8,
+          112,
+          120
+        ],
+        "sha256": "e0b5a8bf876293431377fdcacdaf44fbe6591e9d26614dbd0731027c70bec868"
+      },
+      "changed": true
+    },
+    {
+      "name": "holding-resource-loyalty.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          52,
+          41,
+          205,
+          198
+        ],
+        "sha256": "4dfa644672fc91f71b89362f38111f3dddbbe4ce270e45a0e3a160e597b53fae"
+      },
+      "after": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          52,
+          41,
+          205,
+          198
+        ],
+        "sha256": "4dfa644672fc91f71b89362f38111f3dddbbe4ce270e45a0e3a160e597b53fae"
+      },
+      "changed": false
+    },
+    {
+      "name": "holding-resource-security.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          51,
+          43,
+          205,
+          213
+        ],
+        "sha256": "8333aa0ec685209f4ab42de107bee2c8fea18609da7eae02cbcce273d5964f9d"
+      },
+      "after": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          51,
+          43,
+          205,
+          213
+        ],
+        "sha256": "8333aa0ec685209f4ab42de107bee2c8fea18609da7eae02cbcce273d5964f9d"
+      },
+      "changed": false
+    },
+    {
+      "name": "holding-resource-stores.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          57,
+          30,
+          196,
+          213
+        ],
+        "sha256": "b76586f3aca01eada4c23cf7c450225361e8cc151ed6015cb237296794b2dc51"
+      },
+      "after": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          57,
+          30,
+          196,
+          213
+        ],
+        "sha256": "b76586f3aca01eada4c23cf7c450225361e8cc151ed6015cb237296794b2dc51"
+      },
+      "changed": false
+    },
+    {
+      "name": "holding-upgrade-fenced-field.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          34,
+          58,
+          222,
+          191
+        ],
+        "sha256": "60b51c5f4c07337fed20e7c0321ba318f4d45e901583b88b2f0ac20a8f85f7a9"
+      },
+      "after": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          34,
+          58,
+          222,
+          191
+        ],
+        "sha256": "60b51c5f4c07337fed20e7c0321ba318f4d45e901583b88b2f0ac20a8f85f7a9"
+      },
+      "changed": false
+    },
+    {
+      "name": "holding-upgrade-granary.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          36,
+          20,
+          220,
+          238
+        ],
+        "sha256": "6841c8e95fd2934e8943af37a9a82c54dc9aab7fe57a6ef40e39d37fc556fbc9"
+      },
+      "after": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          36,
+          20,
+          220,
+          238
+        ],
+        "sha256": "6841c8e95fd2934e8943af37a9a82c54dc9aab7fe57a6ef40e39d37fc556fbc9"
+      },
+      "changed": false
+    },
+    {
+      "name": "holding-upgrade-royal-road.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          53,
+          48,
+          203,
+          208
+        ],
+        "sha256": "66978a64a34cad5f0523bf26925cb7a5f06a30f8b314671d553a933e20360ca8"
+      },
+      "after": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          53,
+          48,
+          203,
+          208
+        ],
+        "sha256": "66978a64a34cad5f0523bf26925cb7a5f06a30f8b314671d553a933e20360ca8"
+      },
+      "changed": false
+    },
+    {
+      "name": "holding-upgrade-smokehouse.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          50,
+          32,
+          205,
+          211
+        ],
+        "sha256": "a99bfb7e80ace82dabb52d9c3a6264c7cd448be3f2aa79f44160c91112e51b00"
+      },
+      "after": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          50,
+          32,
+          205,
+          211
+        ],
+        "sha256": "a99bfb7e80ace82dabb52d9c3a6264c7cd448be3f2aa79f44160c91112e51b00"
+      },
+      "changed": false
+    },
+    {
+      "name": "holding-upgrade-stable.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          28,
+          28,
+          227,
+          225
+        ],
+        "sha256": "e9ffcc999b532d7c6be7b001a2f97cc074ab7ec678a3bd26d7824b3cc7d7b114"
+      },
+      "after": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          28,
+          28,
+          227,
+          225
+        ],
+        "sha256": "e9ffcc999b532d7c6be7b001a2f97cc074ab7ec678a3bd26d7824b3cc7d7b114"
+      },
+      "changed": false
+    },
+    {
+      "name": "holding-upgrade-stewards-hall.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          24,
+          29,
+          232,
+          221
+        ],
+        "sha256": "4c0004ad2bb3e443647f5ac82335e4c0b6f46cef18d23241fb4616940b901c6b"
+      },
+      "after": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          24,
+          29,
+          232,
+          221
+        ],
+        "sha256": "4c0004ad2bb3e443647f5ac82335e4c0b6f46cef18d23241fb4616940b901c6b"
+      },
+      "changed": false
+    },
+    {
+      "name": "holding-upgrade-watchtower.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          73,
+          23,
+          185,
+          225
+        ],
+        "sha256": "449394940a076292499e7d17a5364c3d0d373070a2c2cd0076fdc2e9d89dcd58"
+      },
+      "after": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          73,
+          23,
+          185,
+          225
+        ],
+        "sha256": "449394940a076292499e7d17a5364c3d0d373070a2c2cd0076fdc2e9d89dcd58"
+      },
+      "changed": false
+    },
+    {
+      "name": "holding-upgrade-watermill.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          37,
+          17,
+          217,
+          237
+        ],
+        "sha256": "dd5fd3463142f0f38a4d4398bfad0babf83fda623c678cb203c14c5e2f35dcde"
+      },
+      "after": {
+        "size": [
+          256,
+          256
+        ],
+        "visibleBounds": [
+          37,
+          17,
+          217,
+          237
+        ],
+        "sha256": "dd5fd3463142f0f38a4d4398bfad0babf83fda623c678cb203c14c5e2f35dcde"
+      },
+      "changed": false
+    },
+    {
+      "name": "kin-child.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          17,
+          8,
+          110,
+          120
+        ],
+        "sha256": "e9b1813a97c3247dea4bdb7c9ba3f83de7776310bd77d94b04273800d9d33984"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          8,
+          106,
+          120
+        ],
+        "sha256": "cc4e215bd7f168ae2ea2a65edf8c55ecc36ff07951958a45e7c29740f1ade700"
+      },
+      "changed": true
+    },
+    {
+      "name": "kin-father.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          21,
+          8,
+          107,
+          120
+        ],
+        "sha256": "1857646746ffc8b3f073debe287fd603cdaca42aa24f03f52e3d627d7e4a6154"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          24,
+          8,
+          104,
+          120
+        ],
+        "sha256": "659f339e97e2ee4ff43a24fd606f65ad89f29f371575781d489850941d5be7d0"
+      },
+      "changed": true
+    },
+    {
+      "name": "kin-foe.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          21,
+          8,
+          107,
+          120
+        ],
+        "sha256": "d0b181eb8b9062b6f9915cd0f2843cca42db06014a7291a857426a65f3d9a3e7"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          23,
+          8,
+          105,
+          120
+        ],
+        "sha256": "0e7eaad881f4a0928b7e683b33283a6e088fe00a93b24be0913a295fc42d1201"
+      },
+      "changed": true
+    },
+    {
+      "name": "kin-friend.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          27,
+          8,
+          100,
+          120
+        ],
+        "sha256": "bae0279b81d5254704a2dfe63de4bd8a74437cf9fb715f13ee230567f28f7fc4"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          26,
+          8,
+          101,
+          120
+        ],
+        "sha256": "00a12aefbccf0af07e261cd155dfecdca3d126c561ac93aabc3ea3c0a1288a1c"
+      },
+      "changed": true
+    },
+    {
+      "name": "kin-goose.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          21,
+          8,
+          107,
+          120
+        ],
+        "sha256": "6bb2442251f7059349ee67e66ffccbcd06a07d040e5f8c4ef1364635a9e28d1c"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          8,
+          105,
+          120
+        ],
+        "sha256": "6057c421009a1d2f1ef4c4b74d285bd2a15fb3c8257fc2a1bb3049353ca67508"
+      },
+      "changed": true
+    },
+    {
+      "name": "kin-liege.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          18,
+          8,
+          110,
+          120
+        ],
+        "sha256": "bdb2ff1cba611a5773486e2195251b6fc5363654b94afb88695cf8849fefd4a3"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          20,
+          8,
+          108,
+          120
+        ],
+        "sha256": "332e9bd4acd5cd45924bf6f120d86d947f357ff1e961e2c29a2575c119aeb1ad"
+      },
+      "changed": true
+    },
+    {
+      "name": "kin-mother.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          19,
+          8,
+          109,
+          120
+        ],
+        "sha256": "1eaeca1f15767d4e68e765b1f83289baca435a043cbc5e5f52a4a049a1bb5915"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          8,
+          106,
+          120
+        ],
+        "sha256": "1b4ce84f3246a23318ebeb0b7b6561d84a2b680d4ff2a2399863b2c4e1f47832"
+      },
+      "changed": true
+    },
+    {
+      "name": "kin-roderick.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          24,
+          8,
+          103,
+          120
+        ],
+        "sha256": "360acc5353e9e31b0a0c2635ec12f4e23756d7194fb1c33a001c2f320a486f68"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          26,
+          8,
+          101,
+          120
+        ],
+        "sha256": "ecc9ea056d140c8949a60be7a906296869a5b4afa706d8e7c22c6f3e980e4882"
+      },
+      "changed": true
+    },
+    {
+      "name": "kin-sibling.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          21,
+          8,
+          107,
+          120
+        ],
+        "sha256": "f92ceb75b84057f539391f61c9e5f32389b4ced21dd919c6449e2cbc65a7d709"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          25,
+          8,
+          103,
+          120
+        ],
+        "sha256": "8e8e46113ed7aa580af9fc609d471daca716d35b6c13518cfb5947ec60dc4f18"
+      },
+      "changed": true
+    },
+    {
+      "name": "kin-spouse.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          8,
+          120,
+          120
+        ],
+        "sha256": "6185854a546a812d5922816bd41fd10de160ca28a4f6fc9d3eb5137dece87df3"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          11,
+          8,
+          117,
+          120
+        ],
+        "sha256": "2b29808081ac17f343455c54f4947052315daafb823637ff3447c857d8448244"
+      },
+      "changed": true
+    },
+    {
+      "name": "paywall-check-badge.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          256,
+          244
+        ],
+        "visibleBounds": [
+          6,
+          6,
+          250,
+          238
+        ],
+        "sha256": "fe744df82967bb096460e42e3c9c9c84ae51a94a7ea4f61381bf7dd4516a720e"
+      },
+      "after": {
+        "size": [
+          256,
+          244
+        ],
+        "visibleBounds": [
+          6,
+          6,
+          250,
+          238
+        ],
+        "sha256": "fe744df82967bb096460e42e3c9c9c84ae51a94a7ea4f61381bf7dd4516a720e"
+      },
+      "changed": false
+    },
+    {
+      "name": "paywall-crown.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          256,
+          239
+        ],
+        "visibleBounds": [
+          6,
+          6,
+          250,
+          233
+        ],
+        "sha256": "88f7faf8613c592ac82593439a568f4a18e1c28d9e0d1e445255374e4144b6ec"
+      },
+      "after": {
+        "size": [
+          256,
+          239
+        ],
+        "visibleBounds": [
+          6,
+          6,
+          250,
+          233
+        ],
+        "sha256": "88f7faf8613c592ac82593439a568f4a18e1c28d9e0d1e445255374e4144b6ec"
+      },
+      "changed": false
+    },
+    {
+      "name": "paywall-holding.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          212,
+          256
+        ],
+        "visibleBounds": [
+          6,
+          6,
+          206,
+          250
+        ],
+        "sha256": "76c65b3410bf1c85659f496151e9d474fe9c4fe701addd894a84d25ae41d562f"
+      },
+      "after": {
+        "size": [
+          212,
+          256
+        ],
+        "visibleBounds": [
+          6,
+          6,
+          206,
+          250
+        ],
+        "sha256": "76c65b3410bf1c85659f496151e9d474fe9c4fe701addd894a84d25ae41d562f"
+      },
+      "changed": false
+    },
+    {
+      "name": "paywall-monthly-shield.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          216,
+          256
+        ],
+        "visibleBounds": [
+          6,
+          6,
+          210,
+          250
+        ],
+        "sha256": "e2c87c3a1d1bc1ba7e6e8b08dd1b9abaa60a38edfc54458077f3328f2acb076b"
+      },
+      "after": {
+        "size": [
+          216,
+          256
+        ],
+        "visibleBounds": [
+          6,
+          6,
+          210,
+          250
+        ],
+        "sha256": "e2c87c3a1d1bc1ba7e6e8b08dd1b9abaa60a38edfc54458077f3328f2acb076b"
+      },
+      "changed": false
+    },
+    {
+      "name": "paywall-stories.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          256,
+          203
+        ],
+        "visibleBounds": [
+          7,
+          7,
+          249,
+          196
+        ],
+        "sha256": "ecdc78ccda9d9fea72429904532838dbadb98f9cd47dc72fe948c09ca17bcce4"
+      },
+      "after": {
+        "size": [
+          256,
+          203
+        ],
+        "visibleBounds": [
+          7,
+          7,
+          249,
+          196
+        ],
+        "sha256": "ecdc78ccda9d9fea72429904532838dbadb98f9cd47dc72fe948c09ca17bcce4"
+      },
+      "changed": false
+    },
+    {
+      "name": "portrait-baron.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          17,
+          8,
+          111,
+          120
+        ],
+        "sha256": "16a66ff86fe4ab22e046ee3ff906c69f5e59a90252261154669a06f74aa17c4d"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          17,
+          8,
+          111,
+          120
+        ],
+        "sha256": "16a66ff86fe4ab22e046ee3ff906c69f5e59a90252261154669a06f74aa17c4d"
+      },
+      "changed": false
+    },
+    {
+      "name": "portrait-knight.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          26,
+          8,
+          102,
+          120
+        ],
+        "sha256": "f23fdc7e27eb876b593b0edfade8b20b276c2b3246f0b1174aa86ee72e904daf"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          26,
+          8,
+          102,
+          120
+        ],
+        "sha256": "f23fdc7e27eb876b593b0edfade8b20b276c2b3246f0b1174aa86ee72e904daf"
+      },
+      "changed": false
+    },
+    {
+      "name": "portrait-monarch.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          8,
+          106,
+          120
+        ],
+        "sha256": "fce038b7dd54ac0421c9c8857777e0e576d38d8c92f66e9f33abc893cbeca6b2"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          8,
+          106,
+          120
+        ],
+        "sha256": "fce038b7dd54ac0421c9c8857777e0e576d38d8c92f66e9f33abc893cbeca6b2"
+      },
+      "changed": false
+    },
+    {
+      "name": "portrait-noble.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          8,
+          106,
+          120
+        ],
+        "sha256": "f8be658418b1bdb002c4d417bd9d381f5d49cbe2ef88bfa2d30b5d5a6841bc2d"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          8,
+          106,
+          120
+        ],
+        "sha256": "f8be658418b1bdb002c4d417bd9d381f5d49cbe2ef88bfa2d30b5d5a6841bc2d"
+      },
+      "changed": false
+    },
+    {
+      "name": "portrait-peasant.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          19,
+          8,
+          109,
+          120
+        ],
+        "sha256": "a89588d1e411ae8dcab4e82dad9de2cfcb465d615e6c3bc524ba36fddabdaa7a"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          19,
+          8,
+          109,
+          120
+        ],
+        "sha256": "a89588d1e411ae8dcab4e82dad9de2cfcb465d615e6c3bc524ba36fddabdaa7a"
+      },
+      "changed": false
+    },
+    {
+      "name": "portrait-squire.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          21,
+          8,
+          107,
+          120
+        ],
+        "sha256": "8d007072b5e40aea1a025e9abd6f7339643c35902ac69a04829eb89cab9ff894"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          21,
+          8,
+          107,
+          120
+        ],
+        "sha256": "8d007072b5e40aea1a025e9abd6f7339643c35902ac69a04829eb89cab9ff894"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-ale.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          21,
+          8,
+          107,
+          120
+        ],
+        "sha256": "93bf0759f0738ad8a639a57f799ba75f045b38ab5ec6dddfd9d4956b517547ee"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          11,
+          8,
+          117,
+          120
+        ],
+        "sha256": "590510e4aff60b074704622cb83aa7c70387082d4cc078a553125abb09588654"
+      },
+      "changed": true
+    },
+    {
+      "name": "shop-altar-cloth.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          7,
+          37,
+          105,
+          116
+        ],
+        "sha256": "569031aa726808a509d626fac2a6b64c9c6b43d78db6efeb0aafaff16cd303e3"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          7,
+          37,
+          105,
+          116
+        ],
+        "sha256": "569031aa726808a509d626fac2a6b64c9c6b43d78db6efeb0aafaff16cd303e3"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-beeskep.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          17,
+          13,
+          102,
+          115
+        ],
+        "sha256": "7b98cb78db5e69dd0c92b154fab2477bd8da47e28b2da2cab566c421bb7641ac"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          17,
+          13,
+          102,
+          115
+        ],
+        "sha256": "7b98cb78db5e69dd0c92b154fab2477bd8da47e28b2da2cab566c421bb7641ac"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-bread.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          19,
+          120,
+          109
+        ],
+        "sha256": "f4df6928019d827b7be8e054cb0c13f7c58232f69eca990ecaf97ca49a2cba4a"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          19,
+          120,
+          109
+        ],
+        "sha256": "f4df6928019d827b7be8e054cb0c13f7c58232f69eca990ecaf97ca49a2cba4a"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-candle.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          29,
+          8,
+          99,
+          120
+        ],
+        "sha256": "d7557d164982772a06b856bcab695bfc47e39375072ab64be7d7cd17e14bb551"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          29,
+          8,
+          99,
+          120
+        ],
+        "sha256": "d7557d164982772a06b856bcab695bfc47e39375072ab64be7d7cd17e14bb551"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-cheese-wheel.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          17,
+          27,
+          105,
+          110
+        ],
+        "sha256": "62dfcc5b17b0ae523e382c79894f7ccf8bae150ee0fdf0b8d8723939c96a5761"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          17,
+          27,
+          105,
+          110
+        ],
+        "sha256": "62dfcc5b17b0ae523e382c79894f7ccf8bae150ee0fdf0b8d8723939c96a5761"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-cottage.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          11,
+          120,
+          117
+        ],
+        "sha256": "8c39604a3a6bd120d80094cb6ddf7944e98204da1d29e66f4192c2e1492df15a"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          20,
+          120,
+          108
+        ],
+        "sha256": "37a80b56f9b4867717a8a289c22f73f365ae7ad6896d1b3870d727bb4d7780e3"
+      },
+      "changed": true
+    },
+    {
+      "name": "shop-croft-strip.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          9,
+          19,
+          118,
+          107
+        ],
+        "sha256": "8dfc22904edcd1a224721ad29d7a5af9eb86a045b2a5f4f5e55a0f78a9a28f95"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          9,
+          19,
+          118,
+          107
+        ],
+        "sha256": "8dfc22904edcd1a224721ad29d7a5af9eb86a045b2a5f4f5e55a0f78a9a28f95"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-dyed-gown.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          31,
+          16,
+          110,
+          110
+        ],
+        "sha256": "cff81d6c288645f9e1ff1d06a3ce9892f72835832704650ea42a170a94229707"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          31,
+          16,
+          110,
+          110
+        ],
+        "sha256": "cff81d6c288645f9e1ff1d06a3ce9892f72835832704650ea42a170a94229707"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-falcon.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          15,
+          5,
+          94,
+          109
+        ],
+        "sha256": "4ea334cfd07169433346e9d0068347ba9b65996abefebf168ddd2f632dafc1bc"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          15,
+          5,
+          94,
+          109
+        ],
+        "sha256": "4ea334cfd07169433346e9d0068347ba9b65996abefebf168ddd2f632dafc1bc"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-fur-mantle.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          20,
+          16,
+          115,
+          110
+        ],
+        "sha256": "f2282d8321164176b5935c476cb9bf65f896aafcb01758b5ad30cd8c9c238705"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          20,
+          16,
+          115,
+          110
+        ],
+        "sha256": "f2282d8321164176b5935c476cb9bf65f896aafcb01758b5ad30cd8c9c238705"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-gambeson.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          11,
+          10,
+          116,
+          118
+        ],
+        "sha256": "e1d119f4b866a62e083f38beb8e254c24d13a36c9c6585512cfce267c2b08ccb"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          11,
+          10,
+          116,
+          118
+        ],
+        "sha256": "e1d119f4b866a62e083f38beb8e254c24d13a36c9c6585512cfce267c2b08ccb"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-grain-sack.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          18,
+          19,
+          110,
+          115
+        ],
+        "sha256": "b2a4e45e6d4189b502832e3b5dadf8b0956445656756e9014f1ce8492bdfc9e4"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          18,
+          19,
+          110,
+          115
+        ],
+        "sha256": "b2a4e45e6d4189b502832e3b5dadf8b0956445656756e9014f1ce8492bdfc9e4"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-hand-cart.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          0,
+          26,
+          116,
+          112
+        ],
+        "sha256": "65a7721f79d61baec93eb488990bbb3927b6ef2632eb5570db94a59a058d7c02"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          21,
+          120,
+          107
+        ],
+        "sha256": "09b49c6b57dbfacd11df9c6d74e91d14cf9f916ba864c220fd37471358e400e5"
+      },
+      "changed": true
+    },
+    {
+      "name": "shop-helm.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          23,
+          30,
+          96,
+          114
+        ],
+        "sha256": "713a94e0f97c8ee49a0cea36341da620b08f708337fd865828cc67fca618ef9b"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          23,
+          30,
+          96,
+          114
+        ],
+        "sha256": "713a94e0f97c8ee49a0cea36341da620b08f708337fd865828cc67fca618ef9b"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-herbal-book.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          17,
+          14,
+          110,
+          114
+        ],
+        "sha256": "f02775600c966f9c0803735d95de4e4ac4431c08f1719cf8b2f01afeb0a21628"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          17,
+          14,
+          110,
+          114
+        ],
+        "sha256": "f02775600c966f9c0803735d95de4e4ac4431c08f1719cf8b2f01afeb0a21628"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-herbs.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          23,
+          8,
+          105,
+          120
+        ],
+        "sha256": "83e52547a89d760cecac60f3f14cbae959f4f8a6f534099bd7f14f46af7bc1f4"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          14,
+          8,
+          114,
+          120
+        ],
+        "sha256": "c6978dfd06145c189fd24eddc6c7b4ca480ea522ddb164a2856ebfd7dbde9c66"
+      },
+      "changed": true
+    },
+    {
+      "name": "shop-honeycomb.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          16,
+          28,
+          110,
+          121
+        ],
+        "sha256": "5692187b35ae662588c3cb256c7d54524c492a853941b9c8c9c56f9ec009f4e7"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          16,
+          28,
+          110,
+          121
+        ],
+        "sha256": "5692187b35ae662588c3cb256c7d54524c492a853941b9c8c9c56f9ec009f4e7"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-hunting-hound.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          26,
+          19,
+          127,
+          128
+        ],
+        "sha256": "798b81306384121829bbf3cd373781f91de72873b092f950a05b31a7222cf1a1"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          13,
+          23,
+          114,
+          105
+        ],
+        "sha256": "5ac2ef2ddf7437f482eafcebb8fbe69240641a46ea9ced3c05da005720debe4e"
+      },
+      "changed": true
+    },
+    {
+      "name": "shop-iron-pot.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          16,
+          14,
+          104,
+          115
+        ],
+        "sha256": "8930877f5f13d1d4eb43a826be9f4717084e367c3ad965be00598f181bf4f4f0"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          16,
+          14,
+          104,
+          115
+        ],
+        "sha256": "8930877f5f13d1d4eb43a826be9f4717084e367c3ad965be00598f181bf4f4f0"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-laying-hens.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          12,
+          24,
+          97,
+          103
+        ],
+        "sha256": "e400368740fb9320ea210677a7d65d3af0f85b2f24af6c68937ef5a955674c02"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          12,
+          24,
+          97,
+          103
+        ],
+        "sha256": "e400368740fb9320ea210677a7d65d3af0f85b2f24af6c68937ef5a955674c02"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-leather-boots.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          29,
+          31,
+          106,
+          114
+        ],
+        "sha256": "04b85858991262a550fafb8adad006c6666bc02c0be4516cd751e90abd2de7f0"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          29,
+          31,
+          106,
+          114
+        ],
+        "sha256": "04b85858991262a550fafb8adad006c6666bc02c0be4516cd751e90abd2de7f0"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-ledger.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          15,
+          15,
+          107,
+          116
+        ],
+        "sha256": "02226ec031ba0d57aa0bf66fb6de18619a7285941119fb33dd305426ed28e41a"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          15,
+          15,
+          107,
+          116
+        ],
+        "sha256": "02226ec031ba0d57aa0bf66fb6de18619a7285941119fb33dd305426ed28e41a"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-leech-jar.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          40,
+          105,
+          128
+        ],
+        "sha256": "f03a3b4a075103901e200754e962c66ba31019b3401f364702f5005619cabc7d"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          25,
+          8,
+          103,
+          120
+        ],
+        "sha256": "7dbed7fba845f22f948b69fa93cb1fe6d7834e8aecafc4b88ed61e6a2b0dd961"
+      },
+      "changed": true
+    },
+    {
+      "name": "shop-lucky-pebble.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          18,
+          37,
+          94,
+          106
+        ],
+        "sha256": "d179f31483a49058fba0b25b0abf4fe0edf475808a659463fd6866f7bab56f45"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          18,
+          37,
+          94,
+          106
+        ],
+        "sha256": "d179f31483a49058fba0b25b0abf4fe0edf475808a659463fd6866f7bab56f45"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-mail-shirt.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          12,
+          10,
+          115,
+          118
+        ],
+        "sha256": "f2b247689f58b1eaf31b9f3fd236e264fe2a1a3b71b284a3cd437cf9140f0203"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          12,
+          10,
+          115,
+          118
+        ],
+        "sha256": "f2b247689f58b1eaf31b9f3fd236e264fe2a1a3b71b284a3cd437cf9140f0203"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-manor-lease.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          2,
+          117,
+          98
+        ],
+        "sha256": "6559d496d939d7b8f59d8112ba3efa62a42f89b59b2614af38d8b19dbc451b1d"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          2,
+          117,
+          98
+        ],
+        "sha256": "6559d496d939d7b8f59d8112ba3efa62a42f89b59b2614af38d8b19dbc451b1d"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-map-of-realm.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          0,
+          19,
+          96,
+          112
+        ],
+        "sha256": "b029d5d1e50e27fcc8780c4c0a24453eb97f39662e412026232ea0b1c721586f"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          13,
+          120,
+          115
+        ],
+        "sha256": "0e0063f24f73ce896972b19722af09b20c8a6dcfd829e10dc6148740a670938a"
+      },
+      "changed": true
+    },
+    {
+      "name": "shop-milk-goat.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          9,
+          17,
+          92,
+          109
+        ],
+        "sha256": "aebb03254d77f63451a920fd7f0127ae06edc0f8e16ea26622d1cf28b83438f4"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          9,
+          17,
+          92,
+          109
+        ],
+        "sha256": "aebb03254d77f63451a920fd7f0127ae06edc0f8e16ea26622d1cf28b83438f4"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-millstone.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          20,
+          15,
+          115,
+          101
+        ],
+        "sha256": "5bb7486a3c01eca2e704c1b5985cbb8669b02e9570dbd23457c0de87c4998281"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          20,
+          15,
+          115,
+          101
+        ],
+        "sha256": "5bb7486a3c01eca2e704c1b5985cbb8669b02e9570dbd23457c0de87c4998281"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-oxen-pair.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          0,
+          15,
+          117,
+          103
+        ],
+        "sha256": "056c740f1d01e5dca13e9576ac5dc60723e68d4b0ecd30bbe83c41d2c19f1f97"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          20,
+          120,
+          107
+        ],
+        "sha256": "dac374a0dc49f808114a2ff06380a268e1d953df7ff2f86a8555db713f29d338"
+      },
+      "changed": true
+    },
+    {
+      "name": "shop-parchment.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          26,
+          18,
+          113,
+          115
+        ],
+        "sha256": "60601b426e3f3a829057bca9a8fcf25e478430d30394b662b768515d9bf51876"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          26,
+          18,
+          113,
+          115
+        ],
+        "sha256": "60601b426e3f3a829057bca9a8fcf25e478430d30394b662b768515d9bf51876"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-physic-garden.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          10,
+          14,
+          118,
+          114
+        ],
+        "sha256": "8a0f7427a018a6a653d99764ca0a204f0be50f5c4394dab74d17140fde8e0c5e"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          10,
+          14,
+          118,
+          114
+        ],
+        "sha256": "8a0f7427a018a6a653d99764ca0a204f0be50f5c4394dab74d17140fde8e0c5e"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-pilgrim-badge.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          28,
+          28,
+          118,
+          113
+        ],
+        "sha256": "bbf36d401dcadea30918346b2d1f2fd3b7f14adb7df2c65434a57f67b0bb2c68"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          28,
+          28,
+          118,
+          113
+        ],
+        "sha256": "bbf36d401dcadea30918346b2d1f2fd3b7f14adb7df2c65434a57f67b0bb2c68"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-plague-mask.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          46,
+          114,
+          128
+        ],
+        "sha256": "3db0759f0344dfee71f9577550929443f7148a18b3c610639c76f1d1b95a4a49"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          9,
+          120,
+          118
+        ],
+        "sha256": "79763dd2c0a8d5abf3d965e228cf221858c02ecbfc444824a361645e13771b65"
+      },
+      "changed": true
+    },
+    {
+      "name": "shop-pottage.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          18,
+          33,
+          116,
+          113
+        ],
+        "sha256": "dcf539c0274d8dc43211c7d8a4c1d559e4031bbe9a4319e20fabef64d1db64ba"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          18,
+          33,
+          116,
+          113
+        ],
+        "sha256": "dcf539c0274d8dc43211c7d8a4c1d559e4031bbe9a4319e20fabef64d1db64ba"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-quill.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          17,
+          8,
+          110,
+          120
+        ],
+        "sha256": "7379635bed277ee16520036b4961a75403cec2db28d30fb2766bc34a74140df9"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          21,
+          8,
+          106,
+          120
+        ],
+        "sha256": "3c1d6b5494d73cf716bf13c92d2cd1bb4b8a0b37a9a1e24e723a6a2fbb51d439"
+      },
+      "changed": true
+    },
+    {
+      "name": "shop-relic.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          33,
+          18,
+          95,
+          108
+        ],
+        "sha256": "7e912468e967fd474ce7032334f99eecd0c596f0126c554014db2cb510ba0f06"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          31,
+          8,
+          97,
+          120
+        ],
+        "sha256": "20bf2bd99eeae098bd7cb876d16ab751cc0e7d69c8e339ce6cbb1309774626ec"
+      },
+      "changed": true
+    },
+    {
+      "name": "shop-reliquary-box.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          9,
+          15,
+          97,
+          121
+        ],
+        "sha256": "02d09b2f56e13f5cb747ef4a78adec3bef2db2ef413a6635e4def3644fdd1c72"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          9,
+          15,
+          97,
+          121
+        ],
+        "sha256": "02d09b2f56e13f5cb747ef4a78adec3bef2db2ef413a6635e4def3644fdd1c72"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-ribbon.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          18,
+          31,
+          110,
+          117
+        ],
+        "sha256": "a78986d534858b5900f71b30b520ad55f4d7991bb7c602e27139fa196c67474f"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          18,
+          31,
+          110,
+          117
+        ],
+        "sha256": "a78986d534858b5900f71b30b520ad55f4d7991bb7c602e27139fa196c67474f"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-rosary.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          25,
+          28,
+          107,
+          117
+        ],
+        "sha256": "680b763ea88dd42c66a28deacb07b12fe097b740fe834604ecc3038c4e0fee41"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          25,
+          28,
+          107,
+          117
+        ],
+        "sha256": "680b763ea88dd42c66a28deacb07b12fe097b740fe834604ecc3038c4e0fee41"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-salt-pouch.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          12,
+          27,
+          115,
+          120
+        ],
+        "sha256": "8b64a92491a6f7e563b28fde2635a6d49649d7fd31be4d5f85c751ad36be961d"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          12,
+          27,
+          115,
+          120
+        ],
+        "sha256": "8b64a92491a6f7e563b28fde2635a6d49649d7fd31be4d5f85c751ad36be961d"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-salted-fish.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          12,
+          26,
+          121,
+          105
+        ],
+        "sha256": "1e8316257a028b303537a024e653fc43c0005f23a7674a1f373bcdd7acfe8a85"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          12,
+          26,
+          121,
+          105
+        ],
+        "sha256": "1e8316257a028b303537a024e653fc43c0005f23a7674a1f373bcdd7acfe8a85"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-shield.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          29,
+          19,
+          97,
+          107
+        ],
+        "sha256": "2837ebd597b45ad0da52d57983473d973674e0cb4ec0ce698131138bfc320d10"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          29,
+          19,
+          97,
+          107
+        ],
+        "sha256": "2837ebd597b45ad0da52d57983473d973674e0cb4ec0ce698131138bfc320d10"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-silk-hose.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          30,
+          22,
+          83,
+          118
+        ],
+        "sha256": "fe71bcaf616911e29d7ec09532fe198d6c63313c686672bcc86c533ef6fc2ff9"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          30,
+          22,
+          83,
+          118
+        ],
+        "sha256": "fe71bcaf616911e29d7ec09532fe198d6c63313c686672bcc86c533ef6fc2ff9"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-silver-brooch.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          32,
+          82,
+          114
+        ],
+        "sha256": "e7b183b21ad3ca9913fe17c257c3270d1f915e5f36ec01b572041a62b8c5456a"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          32,
+          82,
+          114
+        ],
+        "sha256": "e7b183b21ad3ca9913fe17c257c3270d1f915e5f36ec01b572041a62b8c5456a"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-steed.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          10,
+          120,
+          117
+        ],
+        "sha256": "26f1cc2ca14f30457f6de9939bd1c580195e2825e2ad1e41f8b53b11dfea53aa"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          12,
+          8,
+          115,
+          120
+        ],
+        "sha256": "9cd47d14c93e57d041bc5a8adca7cf0ee94aa428e876e799f8219d2abeb37e07"
+      },
+      "changed": true
+    },
+    {
+      "name": "shop-swine-herd.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          14,
+          21,
+          128,
+          96
+        ],
+        "sha256": "e6e92da3489ebb75b68717d40a3580877f4806bb887a7a165d52fa9851fcab1f"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          17,
+          26,
+          111,
+          101
+        ],
+        "sha256": "383368895ff499b60bcaf1b8aa25288712c0e46c6a48b7e6e986b6d018146aeb"
+      },
+      "changed": true
+    },
+    {
+      "name": "shop-sword.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          11,
+          120,
+          117
+        ],
+        "sha256": "c0f7c21162982fc6a17ceee66809255b4c1d6ec9efa4ccb808af0170d596bff1"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          9,
+          8,
+          118,
+          120
+        ],
+        "sha256": "7ff8990a8b17994cec6d27de4f6b72b171e51893bcaa76e41c3e12c73eb46587"
+      },
+      "changed": true
+    },
+    {
+      "name": "shop-theriac.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          0,
+          31,
+          105,
+          128
+        ],
+        "sha256": "8a26e8509856912adb690fd1bc7b871765efb57aab8bee07be77c5dc98d60987"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          30,
+          8,
+          98,
+          120
+        ],
+        "sha256": "98cce342f78082dad0f2bc89668105ca19a71b5f1593f117d6a53eddb7c518c5"
+      },
+      "changed": true
+    },
+    {
+      "name": "shop-tin-whistle.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          24,
+          21,
+          115,
+          113
+        ],
+        "sha256": "412065872801cc441bf0eebe6c51ba98e0f8f132024b002e392037edc2256a86"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          24,
+          21,
+          115,
+          113
+        ],
+        "sha256": "412065872801cc441bf0eebe6c51ba98e0f8f132024b002e392037edc2256a86"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-town-house.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          11,
+          4,
+          106,
+          108
+        ],
+        "sha256": "da14a9a36cf1eb40c2e5cc33ffe99e79e33b69bedfba1f595b2a422d714dacd5"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          11,
+          4,
+          106,
+          108
+        ],
+        "sha256": "da14a9a36cf1eb40c2e5cc33ffe99e79e33b69bedfba1f595b2a422d714dacd5"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-tunic.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          14,
+          120,
+          114
+        ],
+        "sha256": "0917639e556082fdf099c2f65bfc2f0a79d82aa4d7e7e06877b5dc4656b931e5"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          14,
+          120,
+          114
+        ],
+        "sha256": "0917639e556082fdf099c2f65bfc2f0a79d82aa4d7e7e06877b5dc4656b931e5"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-whetstone.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          10,
+          11,
+          118,
+          117
+        ],
+        "sha256": "f791266e56b567516cef2f877bfa64e2ac280713533d157d0c0e0c1a6d475d14"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          10,
+          11,
+          118,
+          117
+        ],
+        "sha256": "f791266e56b567516cef2f877bfa64e2ac280713533d157d0c0e0c1a6d475d14"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-willow-bark.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          11,
+          43,
+          128,
+          128
+        ],
+        "sha256": "fdcd4690bbd255a4c613de21dd78e08fc8e9bc79c898d521d79091d75d6bde16"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          9,
+          8,
+          118,
+          120
+        ],
+        "sha256": "529f79b9d3b587260839498273cc0679afa547cf2a02ae6d19284c1b87cefccf"
+      },
+      "changed": true
+    },
+    {
+      "name": "shop-wool-cloak.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          21,
+          30,
+          114,
+          114
+        ],
+        "sha256": "a050c4cbba46dfd8f738c14edba6d3bd2628a4729578c42c06a6d4dcdcfc22f9"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          21,
+          30,
+          114,
+          114
+        ],
+        "sha256": "a050c4cbba46dfd8f738c14edba6d3bd2628a4729578c42c06a6d4dcdcfc22f9"
+      },
+      "changed": false
+    },
+    {
+      "name": "shop-writing-desk.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          23,
+          9,
+          115,
+          103
+        ],
+        "sha256": "07938fad0e614ca8c95d37c120d87ab1c09593f850ccb5a3c6bdedcead8dea6a"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          23,
+          9,
+          115,
+          103
+        ],
+        "sha256": "07938fad0e614ca8c95d37c120d87ab1c09593f850ccb5a3c6bdedcead8dea6a"
+      },
+      "changed": false
+    },
+    {
+      "name": "stat-charm.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          23,
+          8,
+          105,
+          120
+        ],
+        "sha256": "e89fb4cc7980281c5c4c9f8004c339e8632d921ef75fc8ad0dfe93314890a421"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          21,
+          8,
+          106,
+          120
+        ],
+        "sha256": "fd828b4bc2b11f0cfd0985e02ca75c3eabd99ff8c1933f94f8caa12fe2d5a071"
+      },
+      "changed": true
+    },
+    {
+      "name": "stat-faith.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          21,
+          8,
+          107,
+          120
+        ],
+        "sha256": "f346820e7e1f0c23b97f66eb2517d12de505b2e8eb5dbb856c1d271d3dd6aca8"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          21,
+          8,
+          107,
+          120
+        ],
+        "sha256": "f346820e7e1f0c23b97f66eb2517d12de505b2e8eb5dbb856c1d271d3dd6aca8"
+      },
+      "changed": false
+    },
+    {
+      "name": "stat-health.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          11,
+          120,
+          116
+        ],
+        "sha256": "8bd4798ddca4d4240a5de01be88e288a2493a54e7362e615397bbd4d5c0188e1"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          11,
+          120,
+          116
+        ],
+        "sha256": "8bd4798ddca4d4240a5de01be88e288a2493a54e7362e615397bbd4d5c0188e1"
+      },
+      "changed": false
+    },
+    {
+      "name": "stat-wits.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          18,
+          120,
+          110
+        ],
+        "sha256": "13ab73c386cd895e165ef7886fb3caf3238dd243d2dcfa1c029fed24fcbe3be3"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          20,
+          120,
+          107
+        ],
+        "sha256": "fd8174aafce3b4e3a2154bbe266a48e13cbcdd0cf196f497cc1ce9d8119df1e1"
+      },
+      "changed": true
+    },
+    {
+      "name": "trait-bookish.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          16,
+          120,
+          112
+        ],
+        "sha256": "ee8f2f1841c724fcbcd82adf1e4df43f1ef2d81b1279466d6bb4215a307c261c"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          14,
+          120,
+          113
+        ],
+        "sha256": "3106bc87419dddc8c70829d4fc5f166a61ce6de848d0ed8ec148324f76f6a116"
+      },
+      "changed": true
+    },
+    {
+      "name": "trait-comely.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          18,
+          120,
+          109
+        ],
+        "sha256": "e95e3cef1925be9350534e2e54ce17746c757ea2f00101f2b0a526bb9559623a"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          18,
+          120,
+          109
+        ],
+        "sha256": "e95e3cef1925be9350534e2e54ce17746c757ea2f00101f2b0a526bb9559623a"
+      },
+      "changed": false
+    },
+    {
+      "name": "trait-devoted_parent.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          13,
+          120,
+          115
+        ],
+        "sha256": "3791f40e51abef54f54080594122efc06f13015d85b0f93b638c47f3894da105"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          13,
+          120,
+          115
+        ],
+        "sha256": "54470372d147b8215a7fc7af6ce168e24c72b9672eb87c8602d24aa6478b17b9"
+      },
+      "changed": true
+    },
+    {
+      "name": "trait-golden_child.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          9,
+          8,
+          119,
+          120
+        ],
+        "sha256": "3e2f21471d7b34a51405bcedb0bd7857d35bbfca7e6cdb782f3ddb47ade8dde0"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          9,
+          8,
+          119,
+          120
+        ],
+        "sha256": "3e2f21471d7b34a51405bcedb0bd7857d35bbfca7e6cdb782f3ddb47ade8dde0"
+      },
+      "changed": false
+    },
+    {
+      "name": "trait-goose_cursed.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          12,
+          8,
+          116,
+          120
+        ],
+        "sha256": "3a955e005ff762be29473ccfb7f0b07e6e99e50484bb4b9c1af42bb1167c460a"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          12,
+          8,
+          116,
+          120
+        ],
+        "sha256": "3a955e005ff762be29473ccfb7f0b07e6e99e50484bb4b9c1af42bb1167c460a"
+      },
+      "changed": false
+    },
+    {
+      "name": "trait-hale.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          10,
+          120,
+          118
+        ],
+        "sha256": "535a7835a2acf17a720df2a8d76ed2771ecdd42711e819f3c62d67470a2098ee"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          9,
+          120,
+          118
+        ],
+        "sha256": "02216cc28dd06272fd2b84ff15690d01f1c58737515005bb9ed2583d91478dc2"
+      },
+      "changed": true
+    },
+    {
+      "name": "trait-heathen.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          20,
+          8,
+          108,
+          120
+        ],
+        "sha256": "e9e4c5b480d40ef890c71140d74e1cea38fc96de72769074250e15070b3d6945"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          20,
+          8,
+          108,
+          120
+        ],
+        "sha256": "e9e4c5b480d40ef890c71140d74e1cea38fc96de72769074250e15070b3d6945"
+      },
+      "changed": false
+    },
+    {
+      "name": "trait-kingmaker.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          10,
+          8,
+          118,
+          120
+        ],
+        "sha256": "9a2893ace8092d2e0b8e012c10d40b0c1ca696447f527f832d28f2568b8082c8"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          10,
+          8,
+          118,
+          120
+        ],
+        "sha256": "9a2893ace8092d2e0b8e012c10d40b0c1ca696447f527f832d28f2568b8082c8"
+      },
+      "changed": false
+    },
+    {
+      "name": "trait-living_saint.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          10,
+          120,
+          118
+        ],
+        "sha256": "26b7f7bdd351908ba09c18315dc5130fbc2eeaf7f4df1b67add32fed21d520ad"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          13,
+          120,
+          114
+        ],
+        "sha256": "7bd3de0192a64cc82b00bc6d838c71744625aa29442313087ce2591bca703e06"
+      },
+      "changed": true
+    },
+    {
+      "name": "trait-lucky.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          20,
+          120,
+          108
+        ],
+        "sha256": "2c5266c81bc6a5c67cbfde1cb96af6f96d7aa2a221e07de6aa31235f6cde4c3b"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          20,
+          120,
+          108
+        ],
+        "sha256": "2c5266c81bc6a5c67cbfde1cb96af6f96d7aa2a221e07de6aa31235f6cde4c3b"
+      },
+      "changed": false
+    },
+    {
+      "name": "trait-notorious_outlaw.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          8,
+          120,
+          120
+        ],
+        "sha256": "2e074005d926f97f76e4e5ddedb950fe101efc8bb50587da996cff2027af791c"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          9,
+          8,
+          119,
+          120
+        ],
+        "sha256": "8e7e02ba35d3ec6d04ce2c8d7768c3412d9f7fb0fc5b4a8065c14177c7671ba9"
+      },
+      "changed": true
+    },
+    {
+      "name": "trait-pious.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          21,
+          8,
+          107,
+          120
+        ],
+        "sha256": "fd1be61fd58763ae711d23ebed842478dc58c648f79654ff91c56586d7dc458e"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          23,
+          8,
+          104,
+          119
+        ],
+        "sha256": "398c2af373d18d87bf1e2da6be779c4e970e7fe52565472cbe80040ea39b2286"
+      },
+      "changed": true
+    },
+    {
+      "name": "trait-plague_touched.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          10,
+          8,
+          118,
+          120
+        ],
+        "sha256": "1d301704d0474fc734694816beaa512da61bc91bf31d92f1d16e47ac96d0f41d"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          10,
+          8,
+          118,
+          120
+        ],
+        "sha256": "1d301704d0474fc734694816beaa512da61bc91bf31d92f1d16e47ac96d0f41d"
+      },
+      "changed": false
+    },
+    {
+      "name": "trait-royal_bastard.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          21,
+          8,
+          107,
+          120
+        ],
+        "sha256": "a4d8e143902d27843c0204331ea2c22b1cfc16e25a9d4e0b5b5a2485fcb10f59"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          21,
+          8,
+          107,
+          120
+        ],
+        "sha256": "a4d8e143902d27843c0204331ea2c22b1cfc16e25a9d4e0b5b5a2485fcb10f59"
+      },
+      "changed": false
+    },
+    {
+      "name": "trait-sickly.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          11,
+          120,
+          117
+        ],
+        "sha256": "22794037e7c54190a23dd6bc15ef352c076822f142c7905071bbf701ae95c2d1"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          12,
+          120,
+          116
+        ],
+        "sha256": "250381685c5fa4fc0e6da159dd63474095e8e339eac68b664e3fe990ef84377f"
+      },
+      "changed": true
+    },
+    {
+      "name": "trait-silver_tongue.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          10,
+          8,
+          118,
+          120
+        ],
+        "sha256": "32f61f5b47c5dab58733334c49cdfe1e6f2ff863f6e84b093226b9e5897f8b06"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          12,
+          8,
+          115,
+          120
+        ],
+        "sha256": "93e01af735b2acfaafffb4cd414cdcd09f15b8a54e7dd44bac612e9fdfdc9413"
+      },
+      "changed": true
+    },
+    {
+      "name": "trait-war_hero.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          8,
+          106,
+          120
+        ],
+        "sha256": "277e6a31afd35cdd06d135a5d6643fcede4798966440ecc09146fe38e726370c"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          8,
+          106,
+          120
+        ],
+        "sha256": "277e6a31afd35cdd06d135a5d6643fcede4798966440ecc09146fe38e726370c"
+      },
+      "changed": false
+    },
+    {
+      "name": "ui-settings.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          8,
+          120,
+          120
+        ],
+        "sha256": "87116263e0ed443c74ec11cd2f6d0dffb5a884d21305faf1e19081e1fca44a6c"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          8,
+          120,
+          119
+        ],
+        "sha256": "c4320334f1ca2e7225d5c15f9d7b1811b6197a909cf50ffa9c4ed5eddfb741a9"
+      },
+      "changed": true
+    },
+    {
+      "name": "ui-shop.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          12,
+          120,
+          116
+        ],
+        "sha256": "e29fa2c2e8348d5bb8726cef17ac6cdbb53c97ba97fe380293f126f87e002326"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          12,
+          120,
+          116
+        ],
+        "sha256": "e29fa2c2e8348d5bb8726cef17ac6cdbb53c97ba97fe380293f126f87e002326"
+      },
+      "changed": false
+    },
+    {
+      "name": "world-child-1.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          17,
+          8,
+          110,
+          120
+        ],
+        "sha256": "b689df77f7a728cae0e7b99e75b6980dd03982ecdcaad20ddbd4227d0ec657ca"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          8,
+          106,
+          120
+        ],
+        "sha256": "cc4e215bd7f168ae2ea2a65edf8c55ecc36ff07951958a45e7c29740f1ade700"
+      },
+      "changed": true
+    },
+    {
+      "name": "world-child-2.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          17,
+          8,
+          110,
+          120
+        ],
+        "sha256": "d58899d2843d25f70d01caf432a104e9839d5b754e79eea1eaba5e88bc15ab1b"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          8,
+          106,
+          120
+        ],
+        "sha256": "925ab9bdde11f86f7b90833fb9411df70c5b5656dde537cc4904e6a38fbb4e8a"
+      },
+      "changed": true
+    },
+    {
+      "name": "world-child-3.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          17,
+          8,
+          110,
+          120
+        ],
+        "sha256": "926c9b3c31160954d3141381b3bdba5070712f9e16b06a7e9f5103745c82b92a"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          8,
+          106,
+          120
+        ],
+        "sha256": "95b463c79ef06b5b08f65e7a63a473d2c66df39daddf9eb37524ac37fffa9ed0"
+      },
+      "changed": true
+    },
+    {
+      "name": "world-man-1.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          21,
+          8,
+          107,
+          120
+        ],
+        "sha256": "773bdf307c3e880515ee1d11a3b1238667f5b9565794126fdcc5e65b223ec897"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          24,
+          8,
+          104,
+          120
+        ],
+        "sha256": "659f339e97e2ee4ff43a24fd606f65ad89f29f371575781d489850941d5be7d0"
+      },
+      "changed": true
+    },
+    {
+      "name": "world-man-2.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          21,
+          8,
+          107,
+          120
+        ],
+        "sha256": "1c5b45d35a926e1276c781c61f3e2c2711c3778b9c10129372097d4bb44045b0"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          24,
+          8,
+          104,
+          120
+        ],
+        "sha256": "c5adcf177246d68024315e1c30420ee0588e57d94973251a2ef4a4297526cfed"
+      },
+      "changed": true
+    },
+    {
+      "name": "world-man-3.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          27,
+          8,
+          100,
+          120
+        ],
+        "sha256": "fa3bd1e089e6255a7e9f905a84a6faf047bfd11304badcbf6ac78faa274d7bd1"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          26,
+          8,
+          101,
+          120
+        ],
+        "sha256": "00a12aefbccf0af07e261cd155dfecdca3d126c561ac93aabc3ea3c0a1288a1c"
+      },
+      "changed": true
+    },
+    {
+      "name": "world-man-4.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          27,
+          8,
+          100,
+          120
+        ],
+        "sha256": "03bf6c4aec6b42eab97ea40273451df684645c5c7a7c5dee04072fe9b273d6c6"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          26,
+          8,
+          101,
+          120
+        ],
+        "sha256": "5b0703bf1525a732bdd0c74107ae98e0b3124a3cd591a04c3aa0072aff5d1e59"
+      },
+      "changed": true
+    },
+    {
+      "name": "world-man-5.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          21,
+          8,
+          107,
+          120
+        ],
+        "sha256": "0ca4f9252e349bc2587ead227b5bbd62ba0353f17569373ca809263407c6f19d"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          23,
+          8,
+          105,
+          120
+        ],
+        "sha256": "0e7eaad881f4a0928b7e683b33283a6e088fe00a93b24be0913a295fc42d1201"
+      },
+      "changed": true
+    },
+    {
+      "name": "world-man-6.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          21,
+          8,
+          107,
+          120
+        ],
+        "sha256": "c6ffd147a639eb5514a05b6954fd91a7d47809b1fd9fb56f5b6944478e0be7a6"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          23,
+          8,
+          105,
+          120
+        ],
+        "sha256": "58cd327403782b490683523c888c3daf6bae02e49c3593620c888b863fcadc5f"
+      },
+      "changed": true
+    },
+    {
+      "name": "world-woman-1.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          19,
+          8,
+          109,
+          120
+        ],
+        "sha256": "da31a30e365367cdfbb277e3f0e6386bdbd2792380eac51a258a78728980104e"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          8,
+          106,
+          120
+        ],
+        "sha256": "1b4ce84f3246a23318ebeb0b7b6561d84a2b680d4ff2a2399863b2c4e1f47832"
+      },
+      "changed": true
+    },
+    {
+      "name": "world-woman-2.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          19,
+          8,
+          109,
+          120
+        ],
+        "sha256": "4cb75bd18d1376f5a6f4378bb2994bd414ca9e47c2e4f9dbb2153da6d1fd0373"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          8,
+          106,
+          120
+        ],
+        "sha256": "2ee15a7036134147bcc3cf2041e046556716176d0e7ca06a4fdb8ee6a635488f"
+      },
+      "changed": true
+    },
+    {
+      "name": "world-woman-3.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          8,
+          120,
+          120
+        ],
+        "sha256": "2e848f1c3f28cbf374291165107a75519266f342236162a98dc9b686db462b24"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          11,
+          8,
+          117,
+          120
+        ],
+        "sha256": "2b29808081ac17f343455c54f4947052315daafb823637ff3447c857d8448244"
+      },
+      "changed": true
+    },
+    {
+      "name": "world-woman-4.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          8,
+          8,
+          120,
+          120
+        ],
+        "sha256": "a978d26bb7ed7c2b1f5f0c70dafa7c4b04147a4ef798872f03ebc6309df8c596"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          11,
+          8,
+          117,
+          120
+        ],
+        "sha256": "695f34f633c41fd240c1ecdaa0878d8b5f711ad595ef9d72f474473e32b3cddf"
+      },
+      "changed": true
+    },
+    {
+      "name": "world-woman-5.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          8,
+          106,
+          120
+        ],
+        "sha256": "25f802aff5ca950d3ba4c6e8bcb40d0763444f8f8aa84ba1fca32fc79743764a"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          8,
+          106,
+          120
+        ],
+        "sha256": "25f802aff5ca950d3ba4c6e8bcb40d0763444f8f8aa84ba1fca32fc79743764a"
+      },
+      "changed": false
+    },
+    {
+      "name": "world-woman-6.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          8,
+          106,
+          120
+        ],
+        "sha256": "6cf63e46c5793c1f3a71925992fba2f2e845bd9b7e2b31a9b6be686472a10e93"
+      },
+      "after": {
+        "size": [
+          128,
+          128
+        ],
+        "visibleBounds": [
+          22,
+          8,
+          106,
+          120
+        ],
+        "sha256": "6cf63e46c5793c1f3a71925992fba2f2e845bd9b7e2b31a9b6be686472a10e93"
+      },
+      "changed": false
+    }
+  ],
+  "illustrations": [
+    {
+      "name": "combat-yard-pixel.png",
+      "uses": [
+        "src/components/modals/InteractiveDuelModal.tsx"
+      ],
+      "before": {
+        "size": [
+          1536,
+          1024
+        ],
+        "visibleBounds": [
+          0,
+          0,
+          1536,
+          1024
+        ],
+        "sha256": "09e9150d9277d93509464df3d2aab7a60d6cdab54ce6bcf12ec505331c03b0e8"
+      },
+      "after": {
+        "size": [
+          1536,
+          1024
+        ],
+        "visibleBounds": [
+          0,
+          0,
+          1536,
+          1024
+        ],
+        "sha256": "09e9150d9277d93509464df3d2aab7a60d6cdab54ce6bcf12ec505331c03b0e8"
+      },
+      "changed": false
+    },
+    {
+      "name": "forge-workshop-pixel.png",
+      "uses": [
+        "src/components/rpg/ForgeScene.tsx"
+      ],
+      "before": {
+        "size": [
+          1536,
+          1024
+        ],
+        "visibleBounds": [
+          0,
+          0,
+          1536,
+          1024
+        ],
+        "sha256": "3811cd195236a2b9427ce2891bb7cb434fdd776b802e6536db223c02e6be5098"
+      },
+      "after": {
+        "size": [
+          1536,
+          1024
+        ],
+        "visibleBounds": [
+          0,
+          0,
+          1536,
+          1024
+        ],
+        "sha256": "3811cd195236a2b9427ce2891bb7cb434fdd776b802e6536db223c02e6be5098"
+      },
+      "changed": false
+    },
+    {
+      "name": "gazette-village-pixel.png",
+      "uses": [
+        "src/components/modals/VillageNewspaper.tsx"
+      ],
+      "before": {
+        "size": [
+          2172,
+          724
+        ],
+        "visibleBounds": [
+          0,
+          0,
+          2172,
+          724
+        ],
+        "sha256": "f852892f842424ae91f3de1c5dbfd0cdac17b884db9a4b9a4cfe78c3fdfbe49d"
+      },
+      "after": {
+        "size": [
+          2172,
+          724
+        ],
+        "visibleBounds": [
+          0,
+          0,
+          2172,
+          724
+        ],
+        "sha256": "f852892f842424ae91f3de1c5dbfd0cdac17b884db9a4b9a4cfe78c3fdfbe49d"
+      },
+      "changed": false
+    },
+    {
+      "name": "holding-overview-banner.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          2172,
+          724
+        ],
+        "visibleBounds": [
+          0,
+          0,
+          2172,
+          724
+        ],
+        "sha256": "a2d1efa9e5653392c05205cb6ae6a153ef62afc49863daf5589557547b744159"
+      },
+      "after": {
+        "size": [
+          2172,
+          724
+        ],
+        "visibleBounds": [
+          0,
+          0,
+          2172,
+          724
+        ],
+        "sha256": "a2d1efa9e5653392c05205cb6ae6a153ef62afc49863daf5589557547b744159"
+      },
+      "changed": false
+    },
+    {
+      "name": "paywall-progression-hero.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          1824,
+          862
+        ],
+        "visibleBounds": [
+          0,
+          0,
+          1824,
+          862
+        ],
+        "sha256": "64aadaa698087c225e65c54eee63a7bc7e863190f75be71ff01e47b1064aebe0"
+      },
+      "after": {
+        "size": [
+          1824,
+          862
+        ],
+        "visibleBounds": [
+          0,
+          0,
+          1824,
+          862
+        ],
+        "sha256": "64aadaa698087c225e65c54eee63a7bc7e863190f75be71ff01e47b1064aebe0"
+      },
+      "changed": false
+    },
+    {
+      "name": "work-occupations-banner.png",
+      "uses": [
+        "src/assets/generatedAssets.ts"
+      ],
+      "before": {
+        "size": [
+          2172,
+          724
+        ],
+        "visibleBounds": [
+          0,
+          0,
+          2172,
+          724
+        ],
+        "sha256": "c5cd55ecfbb0e8c413f3778c02d2132d37f931cbe01a79b364340da1bdcd9184"
+      },
+      "after": {
+        "size": [
+          2172,
+          724
+        ],
+        "visibleBounds": [
+          0,
+          0,
+          2172,
+          724
+        ],
+        "sha256": "c5cd55ecfbb0e8c413f3778c02d2132d37f931cbe01a79b364340da1bdcd9184"
+      },
+      "changed": false
+    }
+  ],
+  "launchers": [
+    {
+      "path": "assets/icon/icon-ios.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "visibleBounds": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "sha256": "8152a9a9380d8d6fe390e2e5ba862504d1cf3bdfda31f438936990077231de9f"
+    },
+    {
+      "path": "assets/icon/icon_android.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "visibleBounds": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "sha256": "1be7c801b0b89757a730df60e4e8f60dda8efc242c4ad61a03dce074d9a00dcd"
+    }
+  ],
+  "policy": "Transparent UI icons must have visible breathing room. Repaired icons are 128px RGBA with at least 8px margin. Full-bleed illustrations/launcher art are separate visual reviews. Legitimate separate hearts, rays and coins are preserved."
+}

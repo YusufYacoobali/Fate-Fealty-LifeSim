@@ -1,0 +1,4 @@
+Rebuilt 68 icon crops from immutable sources
+Rebuilt 68 icon crops from immutable sources
+Verified 68 icon crops from immutable sources
+PASS: two successive repairs preserve every generated PNG byte-for-byte; legacy entry point verifies the same pixels.

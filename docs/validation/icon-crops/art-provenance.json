@@ -1,0 +1,50 @@
+{
+  "date": "2026-11-04",
+  "tool": "image_gen.imagegen",
+  "referenceCommit": "c9cadaf18b04db44f82675a5cc98f6539b16bdb3",
+  "purpose": "Conservative crop/transparency repairs in the existing medieval pixel-art style. Recovered full artwork from original sprite sheets wherever available; these eleven cutouts repair missing outlines or poor source transparency. Original generated files remain outside the repository at their tool-provided paths.",
+  "atlases": [
+    {
+      "path": "assets/generated/imagegen-sheets/shop-crop-restorations.png",
+      "layout": [
+        2,
+        2
+      ],
+      "referencesInOrder": [
+        "shop-leech-jar.png",
+        "shop-plague-mask.png",
+        "shop-willow-bark.png",
+        "shop-theriac.png"
+      ],
+      "instruction": "Restore the missing jar bottom, mask beak/hood hem, willow stick ends and theriac bottle base; isolated complete icons with transparent margins."
+    },
+    {
+      "path": "assets/generated/imagegen-sheets/icon-edge-restorations.png",
+      "layout": [
+        2,
+        2
+      ],
+      "referencesInOrder": [
+        "activity-teach-child.png",
+        "shop-hand-cart.png",
+        "shop-map-of-realm.png",
+        "daily-reward-purse.png"
+      ],
+      "instruction": "Restore complete left outlines for teaching book, cart and parchment map; remove blue fringe around purse while preserving the familiar purse and coins; generous transparent margins."
+    },
+    {
+      "path": "assets/generated/imagegen-sheets/storage-levy-oxen-restorations.png",
+      "layout": [
+        3,
+        1
+      ],
+      "referencesInOrder": [
+        "activity-manage-stores.png",
+        "activity-negotiate-levy.png",
+        "shop-oxen-pair.png"
+      ],
+      "instruction": "Restore the full sack knot, spear point and ox horns/outlines; one row, three isolated original-style icons."
+    }
+  ],
+  "packing": "scripts/repair_game_icon_crops.py extracts the reviewed atlas cells, removes encoder transparency dust, trims to subject, uses nearest-neighbour sizing and centres each on a 128px RGBA canvas with an 8px margin. No generative redraw is applied to the 41 icons recovered from the original sheets or the three scrap-only repairs."
+}

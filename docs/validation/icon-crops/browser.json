@@ -1,0 +1,274 @@
+{
+  "version": "154.0.8037.57",
+  "results": [
+    {
+      "kind": "gallery",
+      "width": 280,
+      "icons": 187,
+      "images": 1496,
+      "sizes": [
+        24,
+        32,
+        48,
+        64
+      ],
+      "backgrounds": [
+        "parchment",
+        "blue"
+      ],
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "LIFE",
+      "width": 280,
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "DO",
+      "width": 280,
+      "passed": true
+    },
+    {
+      "kind": "game-section",
+      "tab": "DO",
+      "section": "LEISURE",
+      "width": 280,
+      "passed": true
+    },
+    {
+      "kind": "game-section",
+      "tab": "DO",
+      "section": "QUESTS",
+      "width": 280,
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "PEOPLE",
+      "width": 280,
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "HOLD",
+      "width": 280,
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "SHOP",
+      "width": 280,
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "ME",
+      "width": 280,
+      "passed": true
+    },
+    {
+      "kind": "gallery",
+      "width": 320,
+      "icons": 187,
+      "images": 1496,
+      "sizes": [
+        24,
+        32,
+        48,
+        64
+      ],
+      "backgrounds": [
+        "parchment",
+        "blue"
+      ],
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "LIFE",
+      "width": 320,
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "DO",
+      "width": 320,
+      "passed": true
+    },
+    {
+      "kind": "game-section",
+      "tab": "DO",
+      "section": "LEISURE",
+      "width": 320,
+      "passed": true
+    },
+    {
+      "kind": "game-section",
+      "tab": "DO",
+      "section": "QUESTS",
+      "width": 320,
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "PEOPLE",
+      "width": 320,
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "HOLD",
+      "width": 320,
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "SHOP",
+      "width": 320,
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "ME",
+      "width": 320,
+      "passed": true
+    },
+    {
+      "kind": "gallery",
+      "width": 390,
+      "icons": 187,
+      "images": 1496,
+      "sizes": [
+        24,
+        32,
+        48,
+        64
+      ],
+      "backgrounds": [
+        "parchment",
+        "blue"
+      ],
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "LIFE",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "DO",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "kind": "game-section",
+      "tab": "DO",
+      "section": "LEISURE",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "kind": "game-section",
+      "tab": "DO",
+      "section": "QUESTS",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "PEOPLE",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "HOLD",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "SHOP",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "ME",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "kind": "gallery",
+      "width": 768,
+      "icons": 187,
+      "images": 1496,
+      "sizes": [
+        24,
+        32,
+        48,
+        64
+      ],
+      "backgrounds": [
+        "parchment",
+        "blue"
+      ],
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "LIFE",
+      "width": 768,
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "DO",
+      "width": 768,
+      "passed": true
+    },
+    {
+      "kind": "game-section",
+      "tab": "DO",
+      "section": "LEISURE",
+      "width": 768,
+      "passed": true
+    },
+    {
+      "kind": "game-section",
+      "tab": "DO",
+      "section": "QUESTS",
+      "width": 768,
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "PEOPLE",
+      "width": 768,
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "HOLD",
+      "width": 768,
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "SHOP",
+      "width": 768,
+      "passed": true
+    },
+    {
+      "kind": "game",
+      "tab": "ME",
+      "width": 768,
+      "passed": true
+    }
+  ],
+  "errors": []
+}

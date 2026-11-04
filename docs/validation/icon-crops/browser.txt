@@ -1,0 +1,1 @@
+PASS: four galleries (187 icons, four sizes, two backgrounds), 24 game-tab screens and eight Do sections; no page errors or width overflow

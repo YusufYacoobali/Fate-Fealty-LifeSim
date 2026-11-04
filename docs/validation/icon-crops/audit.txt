@@ -1,0 +1,2 @@
+Reviewed 187 icons; repaired 68; 6 illustrations and 2 launcher assets reported separately
+PASS: all icons decode, all have transparent edge clearance; repaired icons meet the 8px margin

@@ -1,0 +1,15 @@
+
+> fate-and-fealty@1.0.0 test
+> jest --runInBand src/__tests__/holdingCourtUi.test.tsx src/__tests__/shopMarkets.test.ts src/__tests__/workshopUpdate.test.ts src/__tests__/rpgExpansion.test.ts src/__tests__/pixelAnimationLifecycle.test.tsx
+
+PASS src/__tests__/holdingCourtUi.test.tsx
+PASS src/__tests__/rpgExpansion.test.ts
+PASS src/__tests__/workshopUpdate.test.ts
+PASS src/__tests__/pixelAnimationLifecycle.test.tsx
+PASS src/__tests__/shopMarkets.test.ts
+
+Test Suites: 5 passed, 5 total
+Tests:       105 passed, 105 total
+Snapshots:   0 total
+Time:        3.255 s
+Ran all test suites matching /src\/__tests__\/holdingCourtUi.test.tsx|src\/__tests__\/shopMarkets.test.ts|src\/__tests__\/workshopUpdate.test.ts|src\/__tests__\/rpgExpansion.test.ts|src\/__tests__\/pixelAnimationLifecycle.test.tsx/i.

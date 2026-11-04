@@ -1,59 +1,21 @@
-import { currentRank } from '@/state/viewModel';
-import { CourtPanel } from './CourtPanel';
-import { HoldingExpansionPanel } from '../rpg/RpgPanels';
-import React from 'react';
-import { Image, ScrollView, View } from 'react-native';
-import { GameState, HoldingResource } from '@/types/game';
-import { HOLDING_ACTIONS, HOLDING_UNLOCK_AGE, HOLDING_UPGRADES, holdingTitle } from '@/data/holding';
-import {
-  holdingActionAvailability,
-  holdingPopulation,
-  holdingPopulationCapacity,
-  holdingProsperity,
-  holdingProsperityReward,
-  holdingUpgradeAvailability,
-  holdingYearlyUpkeep,
-  isHoldingUpgradeActive,
-} from '@/engine/holdingEngine';
-import { RANKS } from '@/data/ranks';
-import { C, PANEL } from '@/theme/theme';
-import { FEATURE_ART, HOLDING_ACTION_ART, HOLDING_RESOURCE_ART, HOLDING_UPGRADE_ART } from '@/assets/generatedAssets';
-import { PixelBox } from '../ui/PixelBox';
-import { PixelButton } from '../ui/PixelButton';
-import { PixelText } from '../ui/PixelText';
-import { StatBar } from '../ui/StatBar';
-import { WorldStatusPanel } from '../WorldStatusPanel';
-
-interface Props {
-  state: GameState;
-  onAction: (id: string) => void;
-  onUpgrade: (id: string) => void;
-  onToggleVillage: () => void;
-}
-
-const RESOURCE_STYLE: Record<HoldingResource, { label: string; color: string; dark: string }> = {
-  stores: { label: 'STORES', color: '#d8ad62', dark: '#966c2f' },
-  security: { label: 'SECURITY', color: C.blue, dark: C.blueDark },
-  loyalty: { label: 'LOYALTY', color: C.faith, dark: C.faithDark },
-};
-
-function ResourceMeter({ resource, value, note }: { resource: HoldingResource; value: number; note: string }) {
-  const style = RESOURCE_STYLE[resource];
-  return (
-    <View style={{ marginBottom: 12 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <Image source={HOLDING_RESOURCE_ART[resource]} resizeMode="contain" style={{ width: 24, height: 24 }} />
-          <PixelText font="pixel" size={8} color={style.dark}>{style.label}</PixelText>
-        </View>
-        <PixelText font="pixel" size={8} color={value < 15 ? C.bad : C.inkSoft}>{value}%</PixelText>
-      </View>
-      <StatBar value={value} color={style.color} dark={style.dark} height={14} trackBg={C.lightFill} trackBorder={C.inkSoft} />
-      <PixelText font="body" size={13} color={C.textMuted} style={{ marginTop: 4 }}>{note}</PixelText>
-    </View>
-  );
-}
-
+import React,{useState} from 'react';
+import {Image,ScrollView,View,useWindowDimensions} from 'react-native';
+import type {GameState,HoldingResource} from '@/types/game';
+import {currentRank} from '@/state/viewModel';
+import {HOLDING_ACTIONS,HOLDING_UNLOCK_AGE,HOLDING_UPGRADES,holdingTitle} from '@/data/holding';
+import {holdingActionAvailability,holdingPopulation,holdingPopulationCapacity,holdingProsperity,holdingProsperityReward,holdingUpgradeAvailability,holdingYearlyUpkeep,isHoldingUpgradeActive} from '@/engine/holdingEngine';
+import {C,PANEL} from '@/theme/theme';
+import {FEATURE_ART,HOLDING_ACTION_ART,HOLDING_RESOURCE_ART,HOLDING_UPGRADE_ART,PAYWALL_ART} from '@/assets/generatedAssets';
+import {PixelButton} from '../ui/PixelButton';
+import {PixelText} from '../ui/PixelText';
+import {StatBar} from '../ui/StatBar';
+import {WorldStatusPanel} from '../WorldStatusPanel';
+import {HoldingExpansionPanel} from '../rpg/RpgPanels';
+import {CourtPanel} from './CourtPanel';
+import {HoldingPanel} from './HoldingPanel';
+export type HoldingSection='estate'|'court'|'swineford';
+interface Props{state:GameState;section:HoldingSection;onSectionChange:(section:HoldingSection)=>void;onAction:(id:string)=>void;onUpgrade:(id:string)=>void;}
+const RESOURCE_STYLE={stores:{label:'STORES',color:'#d8ad62',dark:'#966c2f'},security:{label:'SECURITY',color:C.blue,dark:C.blueDark},loyalty:{label:'LOYALTY',color:C.faith,dark:C.faithDark}};
 function recommendation(state: GameState): string {
   if (state.holding.lastActionAge === state.age) return 'Your estate order is complete. Age up to see the yearly result.';
   if (state.holding.stores < 45) return 'Work the Land next. Low Stores can cause hunger and population loss.';
@@ -71,195 +33,63 @@ function recommendation(state: GameState): string {
   return 'The estate is thriving. Keep every resource at 75 or more to earn gold and reputation each year.';
 }
 
-export function HoldingTab({ state, onAction, onUpgrade, onToggleVillage }: Props) {
-  const villageCollapsed = state.settings.villageCollapsed ?? false;
-  const lockedByAge = state.age < HOLDING_UNLOCK_AGE;
-  const managed = state.holding.lastActionAge === state.age;
-  const title = holdingTitle(state.rankIdx);
-  const population = holdingPopulation(state);
-  const capacity = holdingPopulationCapacity(state);
-  const prosperity = holdingProsperity(state);
-  const prosperityReward = holdingProsperityReward(state);
-  const upkeep = holdingYearlyUpkeep(state);
-  const flourishing = prosperity >= 75;
 
-  return (
-    <ScrollView
-      style={{ flex: 1 }}
-      contentInsetAdjustmentBehavior="automatic"
-      keyboardShouldPersistTaps="handled"
-      automaticallyAdjustKeyboardInsets
-      keyboardDismissMode="on-drag"
-      contentContainerStyle={{ padding: 11, paddingBottom: 18 }}
-    >
-      <CourtPanel state={state} />
-      {/* Swineford leads: the estate below only makes sense against the village
-          it sits in. Collapsible, because most years it needs no attention. */}
-      <View style={{ marginBottom: 12 }}>
-        <PixelButton
-          bg={C.blueDeep}
-          shadow={C.blueDark}
-          onPress={onToggleVillage}
-          innerStyle={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 8 }}
-        >
-          <PixelText font="pixel" size={8} color={C.charm}>THE VILLAGE OF SWINEFORD</PixelText>
-          <PixelText font="pixel" size={8} color={C.white}>{villageCollapsed ? '▾ SHOW' : '▴ HIDE'}</PixelText>
-        </PixelButton>
-        {!villageCollapsed && (
-          <View style={{ marginTop: 8 }}>
-            <WorldStatusPanel state={state} />
-            <PixelText font="body" size={14} color={C.textBrown} style={{ marginTop: 7 }}>
-              Swineford belongs to everyone and outlives thee. Thy own estate is below: its Stores nudge the village
-              FOOD each year, its Security and Loyalty nudge ORDER, and nothing reaches back the other way.
-            </PixelText>
-          </View>
-        )}
-      </View>
-
-      <View style={{ borderWidth: 3, borderColor: C.inkSoft, backgroundColor: C.blueDeep }}>
-        <Image source={FEATURE_ART.holding} resizeMode="cover" style={{ width: '100%', height: 122 }} />
-        <View style={{ padding: 11, borderTopWidth: 3, borderTopColor: C.charmDark }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-            <View style={{ flex: 1 }}>
-              <PixelText font="pixel" size={10} color={C.charm}>{title.toUpperCase()}</PixelText>
-              <PixelText font="body" size={15} color={C.creamBlue} style={{ marginTop: 4 }}>
-                {currentRank(state).key} lands. Dynasty {state.lifeNo}.
-              </PixelText>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <View style={{ alignItems: 'flex-end' }}>
-                <PixelText font="pixel" size={7} color={flourishing ? C.faith : C.charm}>PROSPERITY</PixelText>
-                <PixelText font="body" size={20} color={C.white}>{prosperity}%</PixelText>
-              </View>
-              <View style={{ alignItems: 'flex-end' }}>
-                <PixelText font="pixel" size={7} color={C.faith}>PEOPLE</PixelText>
-                <PixelText font="body" size={20} color={C.white}>{population}/{capacity}</PixelText>
-              </View>
-            </View>
-          </View>
-        </View>
-      </View>
-
-      <View style={[PANEL.parchCard, { marginTop: 10, padding: 11 }]}>
-        <PixelText font="pixel" size={8} color={C.blueDeep}>HOW THY HOLDING HELPS</PixelText>
-        <PixelText font="body" size={16} color={C.textDark} style={{ marginTop: 7 }}>
-          Give one estate order each year. Keep Stores, Security, and Loyalty healthy so people settle here and the land pays gold and reputation into your life.
-        </PixelText>
-        <View style={{ flexDirection: 'row', gap: 7, marginTop: 10 }}>
-          <View style={{ flex: 1, backgroundColor: C.goodBg, borderWidth: 2, borderColor: C.goodBorder, padding: 8, minHeight: 68 }}>
-            <PixelText font="pixel" size={7} color={C.good}>HOW PROSPERITY WORKS</PixelText>
-            <PixelText font="body" size={14} color={C.textDark} style={{ marginTop: 4 }}>
-              It equals your lowest resource. Reach 75% to earn {prosperityReward}g and 2 reputation yearly.
-            </PixelText>
-          </View>
-          <View style={{ flex: 1, backgroundColor: C.lightFill, borderWidth: 2, borderColor: C.paleEdge, padding: 8, minHeight: 68 }}>
-            <PixelText font="pixel" size={7} color={C.blueDeep}>POPULATION</PixelText>
-            <PixelText font="body" size={14} color={C.textDark} style={{ marginTop: 4 }}>
-              At 60+ in all three, people arrive and increase the payout.
-            </PixelText>
-          </View>
-        </View>
-        <PixelText font="body" size={14} color={C.bad} style={{ marginTop: 8 }}>
-          Below 15 for two years can cause famine, raids, revolt, lost buildings, or lost rank.
-        </PixelText>
-      </View>
-
-      {lockedByAge && (
-        <View style={[PANEL.parchCard, { marginTop: 10 }]}>
-          <PixelText font="pixel" size={8} color={C.amber}>UNDER REGENCY</PixelText>
-          <PixelText font="body" size={15} color={C.textBrown} style={{ marginTop: 6 }}>
-            Your family tends the land for now. You take command at age {HOLDING_UNLOCK_AGE}.
-          </PixelText>
-        </View>
-      )}
-
-      <View style={{ backgroundColor: flourishing ? C.goodBg : '#fff4d6', borderWidth: 2, borderColor: flourishing ? C.goodBorder : C.charmDark, padding: 10, marginTop: 10 }}>
-        <PixelText font="pixel" size={8} color={flourishing ? C.good : C.amber}>
-          {flourishing ? 'THE ESTATE IS THRIVING' : 'BEST NEXT MOVE'}
-        </PixelText>
-        <PixelText font="body" size={15} color={C.textDark} style={{ marginTop: 5 }}>{recommendation(state)}</PixelText>
-      </View>
-
-      <PixelText font="pixel" size={8} color={C.blueDeep} style={{ marginTop: 14, marginBottom: 8 }}>THE YEARLY LEDGER</PixelText>
-      <PixelBox bg={C.parch} shadow={C.parchSd} light={C.parchSl} innerStyle={{ padding: 10 }}>
-        <ResourceMeter resource="stores" value={state.holding.stores} note={`Feeds the estate. Yearly upkeep costs ${upkeep.stores}.`} />
-        <ResourceMeter resource="security" value={state.holding.security} note={`Stops raids and protects buildings. Yearly upkeep costs ${upkeep.security}.`} />
-        <ResourceMeter resource="loyalty" value={state.holding.loyalty} note="Stops revolt and protects your reputation and rank." />
-        {state.holding.criticalYears > 0 && (
-          <PixelText font="body" size={14} color={C.bad}>Warning: another critical year will bring a major crisis.</PixelText>
-        )}
-      </PixelBox>
-
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 14, marginBottom: 8 }}>
-        <PixelText font="pixel" size={8} color={C.blueDeep}>ONE ORDER THIS YEAR</PixelText>
-        <PixelText font="body" size={14} color={managed ? C.faithDark : C.amber}>{managed ? 'ORDER GIVEN' : lockedByAge ? 'LOCKED' : 'READY'}</PixelText>
-      </View>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-        {HOLDING_ACTIONS.map((action) => {
-          const availability = holdingActionAvailability(state, action.id);
-          const art = HOLDING_ACTION_ART[action.id as keyof typeof HOLDING_ACTION_ART];
-          return (
-            <PixelButton
-              key={action.id}
-              bg={C.parch}
-              shadow={C.parchSd}
-              light={C.parchSl}
-              disabled={!availability.available}
-              onPress={() => onAction(action.id)}
-              style={{ width: '48.5%', marginBottom: 8 }}
-              innerStyle={{ padding: 8, minHeight: 142 }}
-            >
-              <View style={{ width: 42, height: 42, backgroundColor: C.lightFill, borderWidth: 2, borderColor: C.inkSoft, alignItems: 'center', justifyContent: 'center' }}>
-                <Image source={art} resizeMode="contain" style={{ width: 36, height: 36 }} />
-              </View>
-              <PixelText font="pixel" size={7} color={C.textDark} style={{ marginTop: 7 }}>{action.name}</PixelText>
-              <PixelText font="body" size={14} color={C.textMuted} style={{ marginTop: 6 }}>{action.desc}</PixelText>
-              {!availability.available && <PixelText font="body" size={12} color={C.bad} style={{ marginTop: 5 }}>{availability.reason}</PixelText>}
-            </PixelButton>
-          );
-        })}
-      </View>
-
-      <PixelText font="pixel" size={8} color={C.blueDeep} style={{ marginTop: 7, marginBottom: 8 }}>PERMANENT BUILDINGS</PixelText>
-      <PixelText font="body" size={14} color={C.textMuted} style={{ marginBottom: 8 }}>
-        Buildings cost gold once, improve future years, and pass to an heir with the estate.
-      </PixelText>
-      <View style={{ gap: 8 }}>
-        {HOLDING_UPGRADES.map((upgrade) => {
-          const availability = holdingUpgradeAvailability(state, upgrade.id);
-          const owned = state.holding.upgrades.includes(upgrade.id);
-          const active = isHoldingUpgradeActive(state, upgrade.id);
-          const art = HOLDING_UPGRADE_ART[upgrade.id as keyof typeof HOLDING_UPGRADE_ART];
-          return (
-            <PixelButton
-              key={upgrade.id}
-              bg={owned ? C.lightFill : C.parch}
-              shadow={owned ? C.faithDark : C.parchSd}
-              light={C.parchSl}
-              disabled={!availability.available}
-              onPress={() => onUpgrade(upgrade.id)}
-              innerStyle={{ padding: 11, minHeight: 76 }}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                <View style={{ width: 50, height: 50, flexShrink: 0, backgroundColor: C.lightFill, borderWidth: 2, borderColor: C.inkSoft, alignItems: 'center', justifyContent: 'center' }}>
-                  <Image source={art} resizeMode="contain" style={{ width: 44, height: 44 }} />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 6 }}>
-                    <PixelText font="pixel" size={7} color={C.textDark}>{upgrade.name}</PixelText>
-                    <PixelText font="body" size={14} color={owned ? C.faithDark : C.amber}>
-                      {owned ? active ? 'OWNED' : 'DORMANT' : `${upgrade.price}g`}
-                    </PixelText>
-                  </View>
-                  <PixelText font="body" size={14} color={C.textMuted} style={{ marginTop: 5 }}>{upgrade.desc}</PixelText>
-                  {!availability.available && !owned && <PixelText font="body" size={12} color={C.bad} style={{ marginTop: 4 }}>{availability.reason}</PixelText>}
-                </View>
-              </View>
-            </PixelButton>
-          );
-        })}
-      </View>
-    <HoldingExpansionPanel />
-    </ScrollView>
-  );
+export function HoldingTab({state,section,onSectionChange,onAction,onUpgrade}:Props){
+ const {width}=useWindowDimensions(),[buildingsOpen,setBuildingsOpen]=useState(false);
+ const managed=state.holding.lastActionAge===state.age,locked=state.age<HOLDING_UNLOCK_AGE;
+ const prosperity=holdingProsperity(state),upkeep=holdingYearlyUpkeep(state),reward=holdingProsperityReward(state);
+ const columns=width>=720?3:width>=360?2:1;
+ const orders=HOLDING_ACTIONS.map((action,index)=>({action,index,availability:holdingActionAvailability(state,action.id)})).sort((a,b)=>Number(b.availability.available)-Number(a.availability.available)||a.index-b.index);
+ const next=HOLDING_UPGRADES.find(u=>!state.holding.upgrades.includes(u.id)&&holdingUpgradeAvailability(state,u.id).available)??HOLDING_UPGRADES.find(u=>!state.holding.upgrades.includes(u.id));
+ return <View style={{flex:1}}>
+  <View style={{flexDirection:'row',gap:4,padding:8,borderBottomWidth:3,borderColor:C.blueDeep}}>
+   {([{id:'estate',label:'ESTATE',art:PAYWALL_ART.holding},{id:'court',label:'ROYAL COURT',art:PAYWALL_ART.crown},{id:'swineford',label:'SWINEFORD',art:HOLDING_UPGRADE_ART.stewards_hall}] as const).map(item=><PixelButton key={item.id} selected={section===item.id} bg={section===item.id?C.charm:C.lightFill} shadow={section===item.id?C.charmDark:C.blueDark} onPress={()=>onSectionChange(item.id)} style={{flex:1,minWidth:0}} innerStyle={{padding:7,minHeight:52,alignItems:'center',justifyContent:'center',gap:4,flexDirection:width>=600?'row':'column'}}>
+    <Image source={item.art} resizeMode="contain" style={{width:25,height:25}}/><PixelText font="pixel" size={7} color={C.blueDark} style={{textAlign:'center'}}>{item.label}</PixelText>
+   </PixelButton>)}
+  </View>
+  <ScrollView key={section} contentInsetAdjustmentBehavior="automatic" keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets keyboardDismissMode="on-drag" style={{flex:1}} contentContainerStyle={{padding:9,paddingBottom:18,gap:10}}>
+   {section==='court'?<CourtPanel state={state}/>:section==='swineford'?<>
+    <View style={PANEL.parchCard}><PixelText font="pixel" size={10} color={C.blueDeep}>THE VILLAGE OF SWINEFORD</PixelText><PixelText size={17} style={{marginTop:7}}>Village conditions affect everyone. Your estate’s Stores support village food; Security and Loyalty support order.</PixelText></View>
+    <WorldStatusPanel state={state}/>
+   </>:<>
+    <View style={{borderWidth:3,borderColor:C.parchSl,backgroundColor:C.blueDeep}}>
+     <View style={{padding:10,gap:8}}>
+      <PixelText font="pixel" size={10} color={C.charm}>{holdingTitle(state.rankIdx).toUpperCase()}</PixelText>
+      <PixelText size={16} color={C.white}>{currentRank(state).key} lands · Dynasty {state.lifeNo}</PixelText>
+      <View style={{flexDirection:'row',flexWrap:'wrap',gap:14,justifyContent:'space-between'}}><PixelText size={19} color={C.charm}>Prosperity {prosperity}%</PixelText><PixelText size={19} color={C.faith}>People {holdingPopulation(state)}/{holdingPopulationCapacity(state)}</PixelText></View>
+      <PixelText size={15} color={C.creamBlue}>{prosperity>=75?`${reward}g + 2 reputation each year`:`At 75% prosperity: ${reward}g + 2 reputation yearly`}</PixelText>
+     </View>
+     <Image source={FEATURE_ART.holding} resizeMode="cover" style={{width:'100%',height:width>=600?160:110}}/>
+    </View>
+    <View style={[PANEL.parchCard,{gap:7}]}><PixelText font="pixel" size={8} color={C.blueDeep}>BEST NEXT MOVE</PixelText><PixelText size={17} color={C.textBrown}>{recommendation(state)}</PixelText></View>
+    {locked&&<View style={PANEL.parchCard}><PixelText font="pixel" size={8} color={C.amber}>UNDER REGENCY</PixelText><PixelText size={16}>Your family tends the land until you reach {HOLDING_UNLOCK_AGE}.</PixelText></View>}
+    <HoldingPanel title="YEARLY LEDGER">
+     {(['stores','security','loyalty'] as HoldingResource[]).map(resource=><View key={resource} style={{gap:7,padding:5,borderBottomWidth:1,borderColor:C.parchSd,flexDirection:width>=700?'row':'column'}}>
+      <View style={{flex:1,gap:5}}><View style={{flexDirection:'row',alignItems:'center',gap:7,flexWrap:'wrap'}}><Image source={HOLDING_RESOURCE_ART[resource]} resizeMode="contain" style={{width:26,height:26}}/><PixelText font="pixel" size={8} color={RESOURCE_STYLE[resource].dark}>{RESOURCE_STYLE[resource].label}</PixelText><PixelText size={19}>{state.holding[resource]}%</PixelText></View><StatBar value={state.holding[resource]} color={RESOURCE_STYLE[resource].color} dark={RESOURCE_STYLE[resource].dark} height={12} animated={!state.settings.reducedMotion} trackBg={C.lightFill} trackBorder={C.inkSoft}/></View>
+      <PixelText size={16} color={C.textBrown} style={width>=700?{flex:1,paddingLeft:9}:undefined}>{resource==='stores'?`Feeds the estate. Yearly upkeep: ${upkeep.stores}.`:resource==='security'?`Protects people and buildings. Yearly upkeep: ${upkeep.security}.`:'Prevents revolt and protects reputation and rank.'}</PixelText>
+     </View>)}
+     <PixelText size={14} color={C.textMuted}>Prosperity equals the lowest resource. All three at 60+ attract settlers; below 15 for two years risks a crisis.</PixelText>
+     {state.holding.criticalYears>0&&<PixelText size={16} color={C.bad}>Another critical year risks famine, raids or revolt.</PixelText>}
+    </HoldingPanel>
+    <HoldingPanel title="ONE ORDER THIS YEAR" note={managed?'ORDER GIVEN':locked?'LOCKED':'READY'}>
+     <View style={{flexDirection:'row',flexWrap:'wrap',gap:8}}>{orders.map(({action,availability})=><PixelButton key={action.id} bg={availability.available?C.parch:C.lightFill} shadow={C.parchSd} disabled={!availability.available} onPress={()=>onAction(action.id)} style={{width:columns===3?'32%':columns===2?'48.5%':'100%'}} innerStyle={{padding:8,gap:7,minHeight:116}}>
+      <View style={{flexDirection:'row',alignItems:'center',gap:7}}><Image source={HOLDING_ACTION_ART[action.id as keyof typeof HOLDING_ACTION_ART]} resizeMode="contain" style={{width:32,height:32}}/><PixelText font="pixel" size={7} style={{flex:1}}>{action.name}</PixelText></View>
+      <PixelText size={16} color={C.textBrown}>{action.desc}</PixelText>{!availability.available&&<PixelText size={14} color={C.bad}>{availability.reason}</PixelText>}
+     </PixelButton>)}</View>
+    </HoldingPanel>
+    <HoldingPanel title="BUILDINGS & UPGRADES" note={`${state.holding.upgrades.length} improvements`}>
+     <View style={{flexDirection:'row',flexWrap:'wrap',gap:6}}>{state.holding.upgrades.map(id=><Image key={id} accessibilityLabel={HOLDING_UPGRADES.find(u=>u.id===id)?.name} source={HOLDING_UPGRADE_ART[id as keyof typeof HOLDING_UPGRADE_ART]} resizeMode="contain" style={{width:34,height:34}}/>)}</View>
+     <PixelButton bg={C.lightFill} shadow={C.paleEdge} onPress={()=>setBuildingsOpen(!buildingsOpen)} innerStyle={{padding:9,gap:6}}>
+      <PixelText font="pixel" size={7} color={C.blueDeep}>{buildingsOpen?'CLOSE BUILDINGS & UPGRADES':'EXPAND BUILDINGS & UPGRADES'}</PixelText>
+      <PixelText size={17}>{next?`Next: ${next.name} · ${next.price}g`:'All permanent improvements owned'}</PixelText>
+      <PixelText size={15} color={C.textMuted}>{next?.desc??'Manage construction, materials and stewardship.'}</PixelText>
+     </PixelButton>
+     {buildingsOpen&&<>{HOLDING_UPGRADES.map(upgrade=>{const availability=holdingUpgradeAvailability(state,upgrade.id),owned=state.holding.upgrades.includes(upgrade.id);return <PixelButton key={upgrade.id} bg={owned?C.lightFill:C.parch} shadow={C.parchSd} disabled={!availability.available} onPress={()=>onUpgrade(upgrade.id)} innerStyle={{padding:9,gap:6}}>
+      <View style={{flexDirection:'row',alignItems:'center',gap:8}}><Image source={HOLDING_UPGRADE_ART[upgrade.id as keyof typeof HOLDING_UPGRADE_ART]} resizeMode="contain" style={{width:38,height:38}}/><View style={{flex:1,gap:4}}><PixelText font="pixel" size={7}>{upgrade.name}</PixelText><PixelText size={16}>{owned?isHoldingUpgradeActive(state,upgrade.id)?'OWNED':'DORMANT':`${upgrade.price}g`}</PixelText></View></View>
+      <PixelText size={16}>{upgrade.desc}</PixelText>{!availability.available&&!owned&&<PixelText size={14} color={C.bad}>{availability.reason}</PixelText>}
+     </PixelButton>})}<HoldingExpansionPanel/></>}
+    </HoldingPanel>
+   </>}
+  </ScrollView>
+ </View>;
 }

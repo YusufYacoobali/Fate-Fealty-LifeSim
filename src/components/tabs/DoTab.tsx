@@ -22,10 +22,11 @@ interface Props {
   state: GameState;
   onCat: (c: ActivityCategory | 'all') => void;
   onActivity: (id: string) => void;
+  onOpenCourt?:()=>void;
   onCareer: (action: CareerAction, careerId?: string) => void;
 }
 
-export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
+export function DoTab({ cat, age, state, onCat, onActivity, onCareer,onOpenCourt }: Props) {
   const role = deriveLifeRole(state);
   const activities = ACTIVITY_DEFS.filter((a) => (!a.roles || a.roles.includes(role)) && (cat === 'all' || a.cat === cat));
 
@@ -58,7 +59,7 @@ export function DoTab({ cat, age, state, onCat, onActivity, onCareer }: Props) {
 
       {/* activity grid */}
       {cat === 'quests' ? <QuestsTab /> : <ScrollView automaticallyAdjustKeyboardInsets keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled" key={cat} style={{ flex: 1 }} contentContainerStyle={{ padding: 11, paddingBottom: 7 }}>
-        {(cat === 'all' || cat === 'work') && state.age >= 16 && (careerById(state.occupation.careerId)?.family === 'court' || state.world.court?.rulerId === state.playerCharacterId) && <CourtEntry state={state} />}
+        {(cat === 'all' || cat === 'work') && state.age >= 16 && (careerById(state.occupation.careerId)?.family === 'court' || state.world.court?.rulerId === state.playerCharacterId) && <CourtEntry state={state} onOpen={onOpenCourt} />}
         {(cat === 'all' || cat === 'practice') && <EducationPanel state={state} />}
         {cat === 'practice' && <TrainingPanel /> }
         {(cat === 'all' || cat === 'work') && <CareerPanel state={state} onAction={onCareer} />}

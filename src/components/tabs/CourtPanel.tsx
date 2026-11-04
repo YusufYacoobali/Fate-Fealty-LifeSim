@@ -1,71 +1,85 @@
-import React, { useState } from 'react';
-import { View } from 'react-native';
-import type { CourtOffice, GameState } from '@/types/game';
-import { courtAvailability, CourtAction } from '@/engine/courtEngine';
-import { courtCandidatesFor, councilAdvice } from '@/engine/courtPolitics';
-import { POLITICAL_OFFICES, ROYAL_DECISIONS } from '@/data/politicalOffices';
-import { useGame } from '@/state/GameContext';
-import { PixelButton } from '../ui/PixelButton';
-import { PixelText } from '../ui/PixelText';
-import { PanelChips } from '../ui/PanelChips';
-import { PersonPicker } from '../ui/PersonPicker';
-import { C, PANEL } from '@/theme/theme';
-
-const SECTIONS = [{ id: 'council',label: 'Council' },{ id: 'intrigue',label: 'Intrigue' },{ id: 'decrees',label: 'Decrees' },{ id: 'succession',label: 'Succession' }] as const;
-const LABELS: Partial<Record<CourtAction,string>> = { patron: 'Seek patronage', petition: 'Petition for office', alliance: 'Household alliance', expose: 'Audit court funds', advise: 'Offer advice', appoint: 'Appoint councillor', dismiss: 'Dismiss councillor', recognise_claim: 'Press a royal claim', takeover: 'Seek a takeover', regency_claim: 'Claim after regency', abdicate: 'Abdicate' };
-const NEED_PERSON: CourtAction[] = ['patron','alliance','appoint','justice','grant_title','name_heir','disinherit'];
-export function CourtPanel({ state }: { state: GameState }) {
-  const { dispatch } = useGame();
-  const [section, setSection] = useState<typeof SECTIONS[number]['id']>('council');
-  const [office, setOffice] = useState<CourtOffice>('chancellor');
-  const [selectedAction, setAction] = useState<CourtAction>();
-  const [selectedPerson, setPerson] = useState<string>();
-  const [counsel, setCounsel] = useState<'consult' | 'override'>('consult');
-  const [records, setRecords] = useState(false);
-  const [moreAdvice, setMoreAdvice] = useState(false);
-  const court = state.world.court; if (!court) return null;
-  const player = state.world.characters[state.playerCharacterId], rules = court.rulerId === player.id;
-  const actions: CourtAction[] = section === 'council' ? rules ? ['appoint','dismiss'] : ['petition','patron','advise'] : section === 'intrigue' ? ['expose','alliance','patron'] : section === 'decrees' ? rules ? ['tax_relief','tax_raise','religion','mobilise','peace','justice','grant_title'] : ['advise'] : rules ? ['name_heir','disinherit','abdicate'] : ['recognise_claim','takeover','regency_claim'];
-  const action = selectedAction && actions.includes(selectedAction) ? selectedAction : actions[0];
-  const candidates = courtCandidatesFor(state,action);
-  const targetId = candidates.some(c => c.id === selectedPerson) ? selectedPerson : undefined;
-  const needsOffice = ['appoint','dismiss','petition'].includes(action);
-  const needsPerson = NEED_PERSON.includes(action);
-  const reason = courtAvailability(state,action,needsPerson ? targetId : undefined,needsOffice ? office : undefined);
-  const label = (id: CourtAction) => LABELS[id] ?? ROYAL_DECISIONS.find(d => d.id === id)?.name ?? id.replaceAll('_',' ');
-  const advice = rules && section === 'decrees' ? councilAdvice(state,action) : [];
-  const leadOffice: CourtOffice = action === 'mobilise' ? 'marshal' : action === 'religion' ? 'religious_adviser' : action.startsWith('tax_') ? 'treasurer' : 'chancellor';
-  const leadAdvice = advice.find(a => a.id === court.offices[leadOffice]) ?? advice[0];
-  const shownAdvice = moreAdvice ? advice : leadAdvice ? [leadAdvice] : [];
-  return <View style={{ marginBottom: 14 }}>
-    <View style={PANEL.parchCard}>
-      <PixelText font="pixel" size={9} color={C.blueDeep}>THE ROYAL COURT</PixelText>
-      <PixelText size={17} style={{ marginTop: 6 }}>Ruler: {state.world.characters[court.rulerId]?.name}. Heir: {state.world.characters[court.heirId ?? '']?.name ?? 'Disputed'}.</PixelText>
-      {court.regentId && <PixelText size={15}>Regent: {state.world.characters[court.regentId]?.name}.</PixelText>}
-      <PixelText size={16} style={{ marginTop: 4 }}>Treasury {court.treasury}g · Legitimacy {court.legitimacy} · Your influence {player.factionInfluence ?? 0}</PixelText>
-      <PixelText size={14} color={C.textMuted} style={{ marginTop: 5 }}>Three political matters per year.</PixelText>
-    </View>
-    <PanelChips items={SECTIONS} value={section} onChange={id => { setSection(id); setAction(undefined); setPerson(undefined); }} />
-    {section === 'council' && <><PanelChips items={POLITICAL_OFFICES.map(o => ({ id: o.id,label: o.name }))} value={office} onChange={setOffice} /><View style={PANEL.parchCard}><PixelText size={17}>{POLITICAL_OFFICES.find(o => o.id === office)!.name}: {state.world.characters[court.offices[office] ?? '']?.name ?? 'Vacant'}</PixelText><PixelText size={15} color={C.textMuted} style={{ marginTop: 5 }}>An incumbent retains the seal while a petition is considered. Learning, service and council support affect appointments.</PixelText></View></>}
-    {section === 'intrigue' && <View style={PANEL.parchCard}><PixelText size={16}>{court.coalitions?.length ? court.coalitions.map(q => `${state.world.characters[q.leaderId]?.name}'s coalition · strength ${q.strength}`).join('\n') : 'No organised opposing coalition is recorded.'}</PixelText><PixelText size={15} color={C.textMuted} style={{ marginTop: 5 }}>Open scandals: {court.scandals.filter(s => !s.resolved).length}. Household alliances and evidence influence later politics.</PixelText></View>}
-    {section === 'succession' && <View style={PANEL.parchCard}>{court.claims.filter(q => state.world.characters[q.characterId]?.alive && q.characterId !== court.rulerId).map(q => <PixelText key={q.characterId} size={15} style={{ marginBottom: 4 }}>{state.world.characters[q.characterId].name} · {q.basis} · strength {q.strength}{q.disinherited ? ' · disinherited' : ''}</PixelText>)}<PixelText size={15} color={C.textMuted}>Premium access is required to rule. Royal genealogy and former titles remain recorded.</PixelText></View>}
-    {state.age >= 16 && <>
-      <PanelChips items={actions.map(id => ({ id,label: label(id) }))} value={action} onChange={id => { setAction(id); setPerson(undefined); }} />
-      <View style={PANEL.parchCard}>
-        <PixelText size={18}>{label(action)}</PixelText>
-        {ROYAL_DECISIONS.find(d => d.id === action) && <PixelText size={16} style={{ marginTop: 6 }}>{ROYAL_DECISIONS.find(d => d.id === action)!.desc}</PixelText>}
-        {needsPerson && <><PersonPicker people={candidates} value={targetId} onChange={setPerson} />{!candidates.length && <PixelText size={15} color={C.textMuted}>No living person currently meets this action’s requirements.</PixelText>}</>}
-        {needsOffice && section !== 'council' && <PanelChips items={POLITICAL_OFFICES.map(o => ({ id: o.id,label: o.name }))} value={office} onChange={setOffice} />}
-        {advice.length > 0 && <><PixelText font="pixel" size={7} color={C.blueDeep} style={{ marginTop: 10 }}>COUNCIL ADVICE</PixelText><PixelText size={15} style={{ marginTop: 5 }}>{advice.filter(a => a.support).length} for · {advice.filter(a => !a.support).length} against</PixelText>{shownAdvice.map(a => <PixelText key={a.id} size={15} style={{ marginTop: 6 }}>{a.support ? 'For' : 'Against'} · {a.text}</PixelText>)}{advice.length > 1 && <PixelButton bg={C.lightFill} shadow={C.parchSd} onPress={() => setMoreAdvice(!moreAdvice)} style={{ marginTop: 7 }} innerStyle={{ padding: 8, minHeight: 44 }}><PixelText size={15}>Other council views {moreAdvice ? '▴' : '▾'}</PixelText></PixelButton>}<PanelChips items={[{ id: 'consult',label: 'Hear council' },{ id: 'override',label: 'Act independently' }]} value={counsel} onChange={setCounsel} /></>}
-        <PixelButton disabled={!!reason} bg={reason ? C.lightFill : C.parch} shadow={C.parchSd} onPress={() => dispatch({ type: 'COURT',action,targetId: needsPerson ? targetId : undefined,office: needsOffice ? office : undefined,counsel })} style={{ marginTop: 8 }} innerStyle={{ padding: 10, minHeight: 48 }}><PixelText font="pixel" size={7}>{label(action).toUpperCase()}</PixelText><PixelText size={15} color={reason ? C.bad : C.textMuted} style={{ marginTop: 5 }}>{reason ?? '1 action · the court records the decision'}</PixelText></PixelButton>
-      </View>
-    </>}
-    {court.petition && court.petition.applicantId === player.id && <PixelText size={15} style={{ marginTop: 8 }}>Petition: {court.petition.resolved ? court.petition.outcome : 'Awaiting the council’s decision'}{court.petition.outcome === 'conditional' ? ` · court standing ${court.petition.requiredStanding} required` : ''}.</PixelText>}
-    <PixelButton bg={C.lightFill} shadow={C.parchSd} onPress={() => setRecords(!records)} style={{ marginTop: 8 }} innerStyle={{ padding: 10 }}><PixelText size={16}>Recent court record {records ? '▴' : '▾'}</PixelText></PixelButton>
-    {records && court.records.slice(-5).reverse().map((r,i) => <PixelText key={i} size={15} style={{ marginTop: 7 }}>Year {r.year}: {r.detail}</PixelText>)}
+import React,{useState} from 'react';
+import {Image,View,useWindowDimensions} from 'react-native';
+import type {CourtOffice,GameState} from '@/types/game';
+import {courtAvailability,courtPetitionRequirements,COURT_YEARLY_ACTION_LIMIT,type CourtAction} from '@/engine/courtEngine';
+import {courtCandidatesFor,councilAdvice} from '@/engine/courtPolitics';
+import {POLITICAL_OFFICES,ROYAL_DECISIONS} from '@/data/politicalOffices';
+import {useGame} from '@/state/GameContext';
+import {kinIconAsset,PAYWALL_ART,CAREER_FAMILY_ART,GOAL_ICONS} from '@/assets/generatedAssets';
+import {PixelButton} from '../ui/PixelButton';
+import {PixelText} from '../ui/PixelText';
+import {PersonPicker} from '../ui/PersonPicker';
+import {C,PANEL} from '@/theme/theme';
+import {HoldingPanel} from './HoldingPanel';
+export const POLITICAL_ACTIONS:CourtAction[]=['petition','patron','advise','alliance','expose'];
+export const ROYAL_GROUPS:{title:string;actions:CourtAction[]}[]=[
+ {title:'KINGDOM AFFAIRS',actions:['tax_relief','tax_raise','religion','peace']},
+ {title:'MILITARY & JUSTICE',actions:['mobilise','justice']},
+ {title:'NOBILITY & SUCCESSION',actions:['appoint','dismiss','grant_title','name_heir','disinherit','abdicate']},
+];
+const CLAIM_ACTIONS:CourtAction[]=['recognise_claim','takeover','regency_claim'];
+const LABELS:Partial<Record<CourtAction,string>>={petition:'Petition for Office',patron:'Seek Patronage',advise:'Offer Advice',alliance:'Household Alliance',expose:'Investigate Court Funds',appoint:'Appoint Councillor',dismiss:'Dismiss Councillor',recognise_claim:'Press a Royal Claim',takeover:'Seek a Takeover',regency_claim:'Claim after Regency',abdicate:'Abdicate'};
+const DETAILS:Partial<Record<CourtAction,string>>={petition:'Formally request the selected office. The incumbent keeps the seal until the council decides.',patron:'Ask an adult noble or councillor for patronage. Gain influence and Crown support through service.',advise:'Correct a decree to improve prosperity, influence and Crown support.',alliance:'Agree a new alliance with another eligible household. Existing allies and your own family are excluded.',expose:'Check the court funds. Recover stolen gold when evidence exists; otherwise publish the accounts.',appoint:'Give the selected office to an eligible adult. Replacing its holder risks opposition.',dismiss:'Remove the selected office holder. Expect resentment and political opposition.',abdicate:'Yield the Crown to an eligible successor. Existing claims and family history remain.',recognise_claim:'Ask the council to recognise your documented claim against a weakened mandate.',takeover:'Seek the Crown with influence and council support when the ruler has lost public backing.',regency_claim:'Seek recognition after completing a regency with council agreement.'};
+const NEED_PERSON:CourtAction[]=['patron','alliance','appoint','justice','grant_title','name_heir','disinherit'];
+const NEED_OFFICE:CourtAction[]=['petition','appoint','dismiss'];
+const label=(id:CourtAction)=>LABELS[id]??ROYAL_DECISIONS.find(d=>d.id===id)?.name??id;
+export function CourtPanel({state}:{state:GameState}){
+ const {dispatch}=useGame(),{width}=useWindowDimensions();
+ const [office,setOffice]=useState<CourtOffice>('chancellor'),[action,setAction]=useState<CourtAction>('petition');
+ const [person,setPerson]=useState<string>(),[group,setGroup]=useState<string>(),[counsel,setCounsel]=useState<'consult'|'override'>('consult');
+ const [records,setRecords]=useState(false),[moreAdvice,setMoreAdvice]=useState(false);
+ const court=state.world.court;if(!court)return <View style={PANEL.parchCard}><PixelText size={18}>No court is recognised.</PixelText></View>;
+ const player=state.world.characters[state.playerCharacterId],rules=court.rulerId===player.id;
+ const holder=state.world.characters[court.offices[office]??''],officeName=POLITICAL_OFFICES.find(o=>o.id===office)!.name;
+ const candidates=courtCandidatesFor(state,action),target=candidates.some(c=>c.id===person)?person:undefined;
+ const needsPerson=NEED_PERSON.includes(action),needsOffice=NEED_OFFICE.includes(action);
+ const reason=courtAvailability(state,action,needsPerson?target:undefined,needsOffice?office:undefined);
+ const advice=rules&&!POLITICAL_ACTIONS.includes(action)&&!CLAIM_ACTIONS.includes(action)?councilAdvice(state,action):[];
+ const lead:CourtOffice=action==='mobilise'?'marshal':action==='religion'?'religious_adviser':action.startsWith('tax_')?'treasurer':'chancellor';
+ const firstAdvice=advice.find(a=>a.id===court.offices[lead])??advice[0];
+ const choose=(id:CourtAction)=>{setAction(id);setPerson(undefined);setMoreAdvice(false);};
+ const actionsGrid=(actions:CourtAction[])=><View style={{flexDirection:'row',flexWrap:'wrap',gap:7}}>{actions.map(id=><PixelButton key={id} selected={id===action} bg={id===action?C.charm:C.lightFill} shadow={id===action?C.charmDark:C.blueDark} onPress={()=>choose(id)} style={{width:width>=360?'48.5%':'100%'}} innerStyle={{padding:10,minHeight:49,justifyContent:'center'}}><PixelText font="pixel" size={7} color={C.blueDark}>{label(id).toUpperCase()}</PixelText></PixelButton>)}</View>;
+ const royalAction=!POLITICAL_ACTIONS.includes(action);
+ const actionDetail=<View style={[PANEL.parchCard,{gap:9}]}>
+   <View style={{flexDirection:'row',gap:10,alignItems:'center'}}><Image source={GOAL_ICONS.scholar} resizeMode="contain" style={{width:38,height:38}}/><PixelText font="pixel" size={9} color={C.blueDeep} style={{flex:1}}>{label(action).toUpperCase()}</PixelText></View>
+   <PixelText size={18} color={C.textBrown}>{ROYAL_DECISIONS.find(d=>d.id===action)?.desc??DETAILS[action]}</PixelText>
+   {needsOffice&&<PixelText size={18}>Selected office: {officeName} · {holder?.name??'Vacant'}</PixelText>}
+   {action==='petition'&&<View style={{gap:6,borderTopWidth:1,borderColor:C.parchSd,paddingTop:9}}><PixelText font="pixel" size={7} color={C.blueDeep}>REQUIREMENTS</PixelText>{courtPetitionRequirements(state).map(r=><PixelText key={r.label} size={17} color={r.met?C.faithDark:C.bad}>{r.met?'✓':'•'} {r.label} · {r.current}</PixelText>)}</View>}
+   {needsPerson&&<><PersonPicker key={action} people={candidates} value={target} onChange={setPerson}/>{!candidates.length&&<PixelText size={16}>No living person currently meets this action’s requirements.</PixelText>}</>}
+   {advice.length>0&&<View style={{gap:7}}><PixelText font="pixel" size={7} color={C.blueDeep}>COUNCIL ADVICE</PixelText><PixelText size={16}>{advice.filter(a=>a.support).length} for · {advice.filter(a=>!a.support).length} against</PixelText>{(moreAdvice?advice:firstAdvice?[firstAdvice]:[]).map(a=><PixelText key={a.id} size={17}>{a.support?'For':'Against'} · {a.text}</PixelText>)}<PixelButton bg={C.lightFill} shadow={C.paleEdge} onPress={()=>setMoreAdvice(!moreAdvice)} innerStyle={{padding:9}}><PixelText size={16}>{moreAdvice?'FEWER COUNCIL VIEWS':'OTHER COUNCIL VIEWS'}</PixelText></PixelButton><View style={{flexDirection:'row',flexWrap:'wrap',gap:8}}>{(['consult','override'] as const).map(id=><PixelButton key={id} selected={counsel===id} bg={counsel===id?C.charm:C.lightFill} shadow={C.paleEdge} onPress={()=>setCounsel(id)} innerStyle={{padding:9}}><PixelText size={16}>{id==='consult'?'Hear council':'Act independently'}</PixelText></PixelButton>)}</View></View>}
+   <PixelButton disabled={!!reason} bg={reason?C.lightFill:C.charm} shadow={reason?C.paleEdge:C.charmDark} onPress={()=>dispatch({type:'COURT',action,targetId:needsPerson?target:undefined,office:needsOffice?office:undefined,counsel})} innerStyle={{padding:12,minHeight:49,alignItems:'center'}}><PixelText font="pixel" size={8} color={C.blueDark}>{action==='petition'?'SUBMIT PETITION':`CONFIRM: ${label(action).toUpperCase()}`}</PixelText></PixelButton>
+   <PixelText size={16} color={reason?C.bad:C.textMuted}>{reason??'1 yearly action · 1 court matter'}</PixelText>
+   {court.petition?.applicantId===player.id&&<PixelText size={17} color={C.blueDeep}>Petition for {POLITICAL_OFFICES.find(o=>o.id===court.petition!.office)?.name}: {court.petition.resolved?court.petition.outcome:'Awaiting the council’s decision'}{court.petition.outcome==='conditional'?` · court standing ${court.petition.requiredStanding} required`:''}.</PixelText>}
   </View>;
+ return <View style={{gap:10}}>
+  <View style={[PANEL.parchCard,{gap:8}]}>
+   <View style={{flexDirection:'row',alignItems:'center',gap:10}}><Image source={PAYWALL_ART.crown} resizeMode="contain" style={{width:width>=360?60:36,height:60}}/><View style={{flex:1,gap:6}}><PixelText font="pixel" size={10} color={C.blueDeep}>THE ROYAL COURT</PixelText><PixelText size={18}>Ruler: {state.world.characters[court.rulerId]?.name??'Unrecorded'}. Heir: {state.world.characters[court.heirId??'']?.name??'Disputed'}.</PixelText></View></View>
+   {court.regentId&&<PixelText size={17}>Regent: {state.world.characters[court.regentId]?.name}</PixelText>}
+   <PixelText size={18}>Treasury {court.treasury}g · Legitimacy {court.legitimacy} · Your influence {player.factionInfluence??0}</PixelText>
+   <PixelText size={16} color={C.amber}>Court matters remaining: {Math.max(0,COURT_YEARLY_ACTION_LIMIT-(court.actionsYear===state.world.currentYear?court.actionsUsed:0))}/{COURT_YEARLY_ACTION_LIMIT}</PixelText>
+  </View>
+  <View style={{flexDirection:width>=700?'row':'column',gap:9}}>
+   <View style={width>=700?{flex:1}:undefined}><HoldingPanel title="COUNCIL MEMBERS">{POLITICAL_OFFICES.map(o=>{const npc=state.world.characters[court.offices[o.id]??''];return <PixelButton key={o.id} selected={office===o.id} bg={office===o.id?C.charm:C.lightFill} shadow={office===o.id?C.charmDark:C.blueDark} onPress={()=>setOffice(o.id)} innerStyle={{padding:8,flexDirection:'row',alignItems:'center',gap:8,minHeight:56}}>
+    <Image source={npc?kinIconAsset(npc.id,npc.kind,npc.gender,npc.age):CAREER_FAMILY_ART[o.id==='religious_adviser'?'church':o.id==='marshal'?'martial':'court']} resizeMode="contain" style={{width:35,height:35}}/><View style={{flex:1,gap:4}}><PixelText font="pixel" size={7} color={C.blueDark}>{o.name.toUpperCase()}</PixelText><PixelText size={18}>{npc?.name??'Vacant'}</PixelText></View><PixelText size={22}>›</PixelText>
+   </PixelButton>;})}</HoldingPanel></View>
+   <View style={[PANEL.parchCard,{gap:9,...(width>=700?{flex:1}:{})}]}>
+    {holder&&<Image source={kinIconAsset(holder.id,holder.kind,holder.gender,holder.age)} resizeMode="contain" style={{width:60,height:60,alignSelf:'flex-start'}}/>}
+    <PixelText font="pixel" size={8} color={C.blueDeep}>{officeName.toUpperCase()}: {holder?.name??'VACANT'}</PixelText>
+    <PixelText size={18}>{holder?'The incumbent retains the seal while a petition is considered.':'No councillor currently holds this office.'}</PixelText>
+    <PixelText size={16} color={C.textBrown}>Education, service and council support affect appointments. Selecting an office does not spend an action.</PixelText>
+   </View>
+  </View>
+  <HoldingPanel title="POLITICAL ACTIONS">{actionsGrid(POLITICAL_ACTIONS)}</HoldingPanel>
+  {!royalAction&&actionDetail}
+  <HoldingPanel title={rules?'ROYAL DECISIONS':'ROYAL SUCCESSION'}>
+   {rules?ROYAL_GROUPS.map(g=><View key={g.title} style={{gap:8}}><PixelButton bg={group===g.title?C.charm:C.lightFill} shadow={C.blueDark} onPress={()=>{setGroup(group===g.title?undefined:g.title);choose(g.actions[0]);}} innerStyle={{padding:10,minHeight:46}}><PixelText font="pixel" size={7} color={C.blueDeep}>{g.title} {group===g.title?'▴':'▾'}</PixelText></PixelButton>{group===g.title&&actionsGrid(g.actions)}</View>):actionsGrid(CLAIM_ACTIONS)}
+  </HoldingPanel>
+  {royalAction&&actionDetail}
+  <PixelButton bg={C.lightFill} shadow={C.paleEdge} onPress={()=>setRecords(!records)} innerStyle={{padding:10}}><PixelText font="pixel" size={7} color={C.blueDeep}>COURT RECORDS & OPPOSITION {records?'▴':'▾'}</PixelText></PixelButton>
+  {records&&<View style={[PANEL.parchCard,{gap:8}]}>{court.records.slice(-5).reverse().map((r,i)=><PixelText key={i} size={16}>Year {r.year}: {r.detail}</PixelText>)}<PixelText size={16}>Open scandals: {court.scandals.filter(s=>!s.resolved).length}.</PixelText>{court.coalitions?.map(q=><PixelText key={q.leaderId} size={16}>{state.world.characters[q.leaderId]?.name}’s coalition · strength {q.strength}</PixelText>)}{court.claims.filter(q=>state.world.characters[q.characterId]?.alive&&q.characterId!==court.rulerId).map(q=><PixelText key={q.characterId} size={16}>{state.world.characters[q.characterId].name} · {q.basis} · strength {q.strength}{q.disinherited?' · disinherited':''}</PixelText>)}</View>}
+ </View>;
 }
-export function CourtEntry({ state }: { state: GameState }) {
-  const { dispatch } = useGame(), court = state.world.court; if (!court) return null;
-  return <PixelButton bg={C.parch} shadow={C.parchSd} onPress={() => dispatch({ type: 'SET_TAB',tab: 'hold' })} style={{ marginBottom: 12 }} innerStyle={{ padding: 11 }}><PixelText font="pixel" size={8} color={C.blueDeep}>COURT & COUNCIL ▸</PixelText><PixelText size={16} style={{ marginTop: 6 }}>{state.world.characters[court.rulerId]?.name} rules. Legitimacy {court.legitimacy}. Open council, decrees and succession in Holding.</PixelText></PixelButton>;
+export function CourtEntry({state,onOpen}:{state:GameState;onOpen?:()=>void}){
+ const {dispatch}=useGame(),court=state.world.court;if(!court)return null;
+ return <PixelButton bg={C.parch} shadow={C.parchSd} onPress={()=>onOpen?onOpen():dispatch({type:'SET_TAB',tab:'hold'})} style={{marginBottom:12}} innerStyle={{padding:11,gap:6}}><PixelText font="pixel" size={8} color={C.blueDeep}>COURT & COUNCIL ▸</PixelText><PixelText size={16}>{state.world.characters[court.rulerId]?.name} rules. Legitimacy {court.legitimacy}. Open Royal Court in Holding.</PixelText></PixelButton>;
 }

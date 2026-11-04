@@ -56,12 +56,22 @@ export function refreshRoyalClaims(state: GameState): void {
 }
 export type CourtAction = 'patron' | 'petition' | 'alliance' | 'expose' | 'advise' | 'recognise_claim' | 'takeover' | 'regency_claim' | 'appoint' | 'dismiss' | 'tax_raise' | 'tax_relief' | 'justice' | 'religion' | 'mobilise' | 'peace' | 'grant_title' | 'name_heir' | 'disinherit' | 'abdicate';
 const PUBLIC_ACTIONS: CourtAction[] = ['patron','petition','alliance','expose','advise','recognise_claim','takeover','regency_claim'];
+export const COURT_YEARLY_ACTION_LIMIT=3;
+/** Shared presentation of the same petition qualifications enforced below. */
+export function courtPetitionRequirements(state:GameState):{label:string;current:string;met:boolean}[]{
+ const p=state.world.characters[state.playerCharacterId],standing=p.professionalHistory?.court?.reputation??0;
+ return [
+  {label:'Court education or court standing 20+',current:p.education?.qualifications.includes('court_education')?'Court educated':`Standing ${standing}`,met:Boolean(p.education?.qualifications.includes('court_education')||standing>=20)},
+  {label:'Influence 15+',current:`Influence ${p.factionInfluence??0}`,met:(p.factionInfluence??0)>=15},
+  {label:'Crown support 5+',current:`Crown support ${state.world.factions.crown.playerStanding}`,met:state.world.factions.crown.playerStanding>=5},
+ ];
+}
 export function courtAvailability(state: GameState, action: CourtAction, targetId?: string, office?: CourtOffice): string | null {
   const time = timedActionAvailability(state); if (!time.available) return time.reason!;
   const court = state.world.court; if (!court) return 'No recognised court';
   const p = state.world.characters[state.playerCharacterId];
   if (state.age < 16) return 'Political duties begin at sixteen';
-  if (court.actionsYear === state.world.currentYear && court.actionsUsed >= 3) return 'Three council matters per year';
+  if (court.actionsYear === state.world.currentYear && court.actionsUsed >= COURT_YEARLY_ACTION_LIMIT) return 'Three council matters per year';
   if (court.lastActionYears?.[action] === state.world.currentYear) return 'Already decided this year';
   const target = targetId ? state.world.characters[targetId] : undefined;
   if (targetId && !target?.alive) return 'Choose a living person';
@@ -78,8 +88,8 @@ export function courtAvailability(state: GameState, action: CourtAction, targetI
     if (court.petition && !court.petition.resolved) return 'A petition is already before the council';
     const professional = p.professionalHistory?.court;
     if (court.petition?.applicantId === p.id && court.petition.outcome === 'conditional' && (professional?.reputation ?? 0) < (court.petition.requiredStanding ?? 25)) return `The conditional service requires court standing ${court.petition.requiredStanding}`;
-    if (!(p.education?.qualifications.includes('court_education') || (professional?.reputation ?? 0) >= 20)) return 'Needs court education or respected court service';
-    if ((p.factionInfluence ?? 0) < 15 || state.world.factions.crown.playerStanding < 5) return 'Needs 15 influence and Crown support';
+    if (!courtPetitionRequirements(state)[0].met) return 'Needs court education or respected court service';
+    if (courtPetitionRequirements(state).slice(1).some(r=>!r.met)) return 'Needs 15 influence and Crown support';
   }
   if (action === 'abdicate' && !royalCandidates(state).length) return 'Name an eligible successor first';
   if (action === 'justice' && target?.legalState?.status !== 'imprisoned') return 'Choose an imprisoned person';

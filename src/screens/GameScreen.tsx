@@ -30,7 +30,7 @@ import { DoTab } from '@/components/tabs/DoTab';
 import { KinTab } from '@/components/tabs/KinTab';
 import { ShopTab } from '@/components/tabs/ShopTab';
 import { MeTab } from '@/components/tabs/MeTab';
-import { HoldingTab } from '@/components/tabs/HoldingTab';
+import { HoldingTab,type HoldingSection } from '@/components/tabs/HoldingTab';
 import { EventModal } from '@/components/modals/EventModal';
 import { SettingsModal } from '@/components/modals/SettingsModal';
 import { DeathScreen } from '@/components/modals/DeathScreen';
@@ -105,6 +105,7 @@ export function GameScreen() {
   const goal = selectGoal(state);
   const [chronicleOpen, setChronicleOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const [holdingSection,setHoldingSection]=useState<HoldingSection>('estate');
   const insets = useSafeAreaInsets();
   const bottomNavInset = Math.max(insets.bottom, MIN_ANDROID_BOTTOM_NAV_GUARD);
   const currentEvent = state.pendingEvent ? eventById(state.pendingEvent.eventId) : undefined;
@@ -201,6 +202,7 @@ export function GameScreen() {
                 dispatch({ type: 'DO_ACTIVITY', id });
               }}
               onCareer={(action, careerId) => dispatch({ type: 'CAREER_ACTION', action, careerId })}
+              onOpenCourt={()=>{setHoldingSection('court');dispatch({type:'SET_TAB',tab:'hold'});}}
             />
           )}
           {state.tab === 'kin' && (
@@ -218,7 +220,7 @@ export function GameScreen() {
           )}
           {state.tab === 'hold' && (
             <HoldingTab
-              state={state}
+              state={state} section={holdingSection} onSectionChange={setHoldingSection}
               onAction={(id) => {
                 haptic('medium', buzz);
                 dispatch({ type: 'MANAGE_HOLDING', id });
@@ -227,7 +229,6 @@ export function GameScreen() {
                 haptic('success', buzz);
                 dispatch({ type: 'BUY_HOLDING_UPGRADE', id });
               }}
-              onToggleVillage={() => dispatch({ type: 'SET_SETTINGS', settings: { villageCollapsed: !state.settings.villageCollapsed } })}
             />
           )}
           {state.tab === 'shop' && (

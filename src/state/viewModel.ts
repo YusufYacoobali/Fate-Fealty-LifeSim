@@ -1,3 +1,4 @@
+import {displayName} from '@/engine/nameValidation';
 import {royalProgression} from '@/engine/advancement';
 import { BIRTH_ORIGINS } from '@/data/birthOrigins';
 /**
@@ -101,11 +102,11 @@ export function selectBio(s: GameState): string {
   const player = s.world.characters[s.playerCharacterId];
   const origin = BIRTH_ORIGINS.find(o => o.id === player.background?.origin)?.name ?? 'Unknown';
   const office = Object.entries(s.world.court?.offices ?? {}).find(([, id]) => id === player.id)?.[0];
-  return `${s.first} ${s.epithet}, a ${rank.key.toLowerCase()} of Swineford and ${career}, ${s.age} winters old. Born to a ${origin.toLowerCase()} household${office ? `; appointed ${office.replaceAll('_', ' ')}` : ''}. Owns ${s.gold} gold${debt ? ` and owes ${debt}` : ''}. ${player.education?.qualifications.length ? `Learning: ${player.education.qualifications.map(q => q.replaceAll('_', ' ')).join(', ')}.` : 'No formal qualifications; later study remains open.'}`;
+  return `${displayName(s.first,s.epithet)}, a ${rank.key.toLowerCase()} of Swineford and ${career}, ${s.age} winters old. Born to a ${origin.toLowerCase()} household${office ? `; appointed ${office.replaceAll('_', ' ')}` : ''}. Owns ${s.gold} gold${debt ? ` and owes ${debt}` : ''}. ${player.education?.qualifications.length ? `Learning: ${player.education.qualifications.map(q => q.replaceAll('_', ' ')).join(', ')}.` : 'No formal qualifications; later study remains open.'}`;
 }
 
 export function fullName(s: GameState): string {
-  return `${s.first} ${s.epithet}`;
+  return displayName(s.first,s.epithet);
 }
 
 export { traitsOf as selectTraits } from '@/engine/traitEngine';

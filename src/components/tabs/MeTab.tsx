@@ -62,9 +62,9 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, onN
           <PixelText font="pixel" size={10} color={C.charm}>
             {firstName}
           </PixelText>
-          <PixelText font="body" size={16} color="#dbe9ff" style={{ marginTop: 3 }}>
+          {epithet&&<PixelText font="body" size={16} color="#dbe9ff" style={{ marginTop: 3 }}>
             "{epithet}"
-          </PixelText>
+          </PixelText>}
           <View style={{ alignSelf: 'flex-start', marginTop: 5, backgroundColor: C.light, paddingHorizontal: 7, paddingVertical: 1, borderBottomWidth: 2, borderRightWidth: 2, borderColor: C.blue }}>
             <PixelText font="body" size={14} color={C.blueDark}>
               {classRank} · AGE {age}

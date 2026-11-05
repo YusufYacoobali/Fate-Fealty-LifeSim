@@ -1,3 +1,4 @@
+import {displayName} from './nameValidation';
 /**
  * Pure cross-life progression logic: evaluating achievements and recording a
  * finished life into the lifetime stats + Hall of Legends. No React, no native
@@ -59,7 +60,7 @@ export function recordLifeEnd(meta: AppMeta, state: GameState): AppMeta {
 
   const record: DynastyRecord = {
     lifeNo: state.lifeNo,
-    name: `${state.first} ${state.epithet}`,
+    name: displayName(state.first,state.epithet),
     rank: rankKey,
     age: state.age,
     cause: state.deathCause || 'Unknown causes',

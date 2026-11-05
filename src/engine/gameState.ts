@@ -1,3 +1,4 @@
+import {personalNameError,NICKNAME_MAX_LENGTH} from './nameValidation';
 import {normalizeLifeEventNotices} from './lifeEventNotices';
 import {reconcileMarriages} from './characterState';
 import {normalizeChildNaming} from './childNaming';
@@ -135,6 +136,8 @@ export interface FreshLifeOptions {
   lifeNo?: number;
   /** Player-chosen name (character creation); falls back to a random name. */
   firstName?: string;
+  /** Undefined keeps the legacy random epithet; empty string means none. */
+  nickname?: string;
   /** Player-chosen birth trait id; falls back to a random one. */
   birthTraitId?: string;
   gender?: GenderIdentity;
@@ -198,8 +201,10 @@ function enrichCharacter(character: WorldCharacter, index: number, familyId: str
 }
 
 function createLifeFromWorldSeed(opts: FreshLifeOptions, worldSeed: number): GameState {
-  const first = opts.firstName?.trim() || pick(namesForGender(opts.gender ?? 'man'));
-  const epithet = pick(EPITHETS);
+  const first = opts.firstName!==undefined&&!personalNameError(opts.firstName)?opts.firstName.trim():pick(namesForGender(opts.gender ?? 'man'));
+  // Preserve the legacy RNG draw even when the preview supplies an exact nickname.
+  const generatedEpithet=pick(EPITHETS);
+  const epithet=opts.nickname!==undefined&&!personalNameError(opts.nickname,{optional:true,max:NICKNAME_MAX_LENGTH})?opts.nickname.trim():generatedEpithet;
   const settings = opts.settings ?? DEFAULT_SETTINGS;
   const inherit = opts.inherit ?? {};
   const gender = opts.gender ?? 'man';

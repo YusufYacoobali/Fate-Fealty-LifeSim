@@ -1,15 +1,17 @@
 import { BIRTH_ORIGINS } from '@/data/birthOrigins';
 import type { BirthOriginId } from '@/types/game';
-import React, { useState } from 'react';
-import { Image, ScrollView, TextInput, View } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { Image, ScrollView, TextInput, View, Keyboard } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
 import { Difficulty, GenderIdentity } from '@/types/game';
 import { NewLifeOptions } from '@/state/gameReducer';
 import { birthTraits } from '@/data/traits';
-import { FIRST_NAMES, namesForGender } from '@/data/names';
-import { pick } from '@/engine/random';
+import { EPITHETS, namesForGender } from '@/data/names';
+import {personalNameError,displayName,NICKNAME_MAX_LENGTH} from '@/engine/nameValidation';
+// Preview randomness is local and cannot draw from any saved world.
+const previewPick=<T,>(items:readonly T[]):T=>items[Math.floor(Math.random()*items.length)];
 import { C, FONT } from '@/theme/theme';
 import { traitIconAsset } from '@/assets/generatedAssets';
 import { defaultPronouns } from '@/data/identity';
@@ -41,7 +43,11 @@ export function characterCreationBottomPadding(safeBottom: number, minimumGuard 
 export function CharacterCreation({ initialDifficulty, premiumUnlocked, onBegin, onLockedTraitPress }: Props) {
   const insets = useSafeAreaInsets();
   const bottomPadding = characterCreationBottomPadding(insets.bottom);
-  const [name, setName] = useState(() => pick(namesForGender(DEFAULT_CHARACTER_GENDER)));
+  const [name, setName] = useState(() => previewPick(namesForGender(DEFAULT_CHARACTER_GENDER)));
+  const [nameEdited,setNameEdited]=useState(false);
+  const [nickname,setNickname]=useState(()=>previewPick(EPITHETS));
+  const [error,setError]=useState<string|null>(null);
+  const nicknameInput=useRef<React.ComponentRef<typeof TextInput>>(null);
   const [birthOrigin, setBirthOrigin] = useState<BirthOriginId | undefined>();
   const [customBirth, setCustomBirth] = useState(false);
   const [traitId, setTraitId] = useState<string>(SURPRISE);
@@ -52,22 +58,25 @@ export function CharacterCreation({ initialDifficulty, premiumUnlocked, onBegin,
   const selectedTrait = traits.find((t) => t.id === traitId) ?? null;
   const selectedTraitIcon = selectedTrait ? traitIconAsset(selectedTrait.id) : undefined;
 
-  const begin = () =>
+  const begin = () => {
+    const problem=personalNameError(name)??personalNameError(nickname,{optional:true,max:NICKNAME_MAX_LENGTH});
+    if(problem){setError(problem);return;}
+    Keyboard.dismiss();setError(null);
     onBegin({
-      birthOrigin: customBirth ? birthOrigin : undefined,
-      firstName: name.trim() || undefined,
-      birthTraitId: traitId === SURPRISE ? undefined : traitId,
-      difficulty,
-      gender,
-      pronouns: defaultPronouns(gender),
-      attraction: gender === 'woman' ? 'men' : 'women',
+      birthOrigin:customBirth?birthOrigin:undefined,
+      firstName:name.trim(),nickname:nickname.trim(),
+      birthTraitId:traitId===SURPRISE?undefined:traitId,
+      difficulty,gender,pronouns:defaultPronouns(gender),attraction:gender==='woman'?'men':'women',
     });
+  };
 
   return (
     <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 70, backgroundColor: C.ink }}>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         keyboardShouldPersistTaps="handled"
+        automaticallyAdjustKeyboardInsets
+        keyboardDismissMode="on-drag"
         contentContainerStyle={{ padding: 16, paddingTop: 28, paddingBottom: bottomPadding }}
       >
         <PixelText font="pixel" size={13} color={C.charm} style={{ textAlign: 'center' }}>
@@ -79,25 +88,44 @@ export function CharacterCreation({ initialDifficulty, premiumUnlocked, onBegin,
 
         {/* NAME */}
         <PixelText font="pixel" size={8} color={C.charm} style={{ marginBottom: 7 }}>
-          THY NAME
+          NAME
         </PixelText>
-        <View style={{ flexDirection: 'row', alignItems: 'stretch', gap: 7, marginBottom: 16 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'stretch', marginBottom: 12 }}>
           <View style={{ flex: 1, minHeight: 48, backgroundColor: C.parch, borderWidth: 3, borderColor: C.inkSoft, borderTopColor: C.parchSl, borderLeftColor: C.parchSl, borderBottomColor: C.parchSd, borderRightColor: C.parchSd, justifyContent: 'center' }}>
             <TextInput
               value={name}
-              onChangeText={(t) => setName(t.slice(0, 16))}
+              onChangeText={(t) => {setName(t);setNameEdited(true);setError(null);}}
+              accessibilityLabel="Name"
+              multiline={false}
+              returnKeyType="next"
+              onSubmitEditing={()=>nicknameInput.current?.focus()}
               placeholder="Name thyself"
               placeholderTextColor="#b0a070"
               style={{ fontFamily: FONT.body, fontSize: 22, color: C.textDark, paddingHorizontal: 10, paddingVertical: 0, textAlignVertical: 'center' }}
-              maxLength={16}
+              maxLength={60}
             />
           </View>
-          <PixelButton bg={C.light} shadow={C.blue} onPress={() => setName(pick(namesForGender(gender)))} style={{ alignSelf: 'stretch' }} innerStyle={{ width: 50, minHeight: 48, alignItems: 'center', justifyContent: 'center' }}>
+          <PixelButton bg={C.light} shadow={C.blue} accessibilityLabel="Generate random name" onPress={() => {setName(previewPick(namesForGender(gender)));setNameEdited(false);setError(null);}} style={{ alignSelf: 'stretch' }} innerStyle={{ width: 50, minHeight: 48, alignItems: 'center', justifyContent: 'center' }}>
             <PixelText size={20} style={{ includeFontPadding: true, lineHeight: 28 }}>
               🎲
             </PixelText>
           </PixelButton>
         </View>
+
+        <PixelText font="pixel" size={8} color={C.charm} style={{marginBottom:7}}>NICKNAME · OPTIONAL</PixelText>
+        <View style={{flexDirection:'row',alignItems:'stretch',marginBottom:8}}>
+          <View style={{flex:1,minWidth:0,minHeight:48,backgroundColor:C.parch,borderWidth:3,borderColor:C.parchSd,justifyContent:'center'}}>
+            <TextInput ref={nicknameInput} accessibilityLabel="Nickname" value={nickname} onChangeText={t=>{setNickname(t);setError(null);}} placeholder="No nickname" placeholderTextColor="#b0a070" multiline={false} maxLength={80} returnKeyType="done" onSubmitEditing={()=>Keyboard.dismiss()} style={{fontFamily:FONT.body,fontSize:22,color:C.textDark,paddingHorizontal:10,paddingVertical:0,textAlignVertical:'center'}}/>
+          </View>
+          <PixelButton accessibilityLabel="Generate random nickname" bg={C.light} shadow={C.blue} onPress={()=>{setNickname(previewPick(EPITHETS));setError(null);}} innerStyle={{width:50,minHeight:48,alignItems:'center',justifyContent:'center'}}><PixelText size={20} style={{includeFontPadding:true,lineHeight:28}}>🎲</PixelText></PixelButton>
+        </View>
+        <PixelButton bg={C.lightFill} shadow={C.paleEdge} onPress={()=>{setNickname('');setError(null);}} innerStyle={{padding:10,minHeight:44}}><PixelText font="pixel" size={7}>NO NICKNAME</PixelText></PixelButton>
+        <View style={{borderWidth:2,borderColor:C.charm,backgroundColor:'#0f274a',padding:10,gap:8,marginVertical:14}}>
+          <PixelText font="pixel" size={8} color={C.charm}>THY FULL NAME</PixelText>
+          <PixelText accessibilityLabel="Full name preview" size={24} color={C.cream}>{displayName(name,nickname)||'Enter thy name'}</PixelText>
+          <PixelText size={15} color={C.creamBlue}>This exact name will begin your new life.</PixelText>
+        </View>
+        {error&&<PixelText accessibilityRole="alert" size={18} color={C.health} style={{marginBottom:12}}>{error}</PixelText>}
 
         <PixelText font="pixel" size={8} color={C.charm} style={{ marginBottom: 7 }}>
           THY IDENTITY
@@ -110,7 +138,7 @@ export function CharacterCreation({ initialDifficulty, premiumUnlocked, onBegin,
               shadow={gender === option.id ? C.charmDark : C.paleEdge}
               onPress={() => {
                 setGender(option.id);
-                if (FIRST_NAMES.includes(name)) setName(pick(namesForGender(option.id)));
+                if (!nameEdited) setName(previewPick(namesForGender(option.id)));
               }}
               style={{ flex: 1 }}
               innerStyle={{ paddingVertical: 8, alignItems: 'center' }}

@@ -1,13 +1,10 @@
+import {personalNameError,PERSONAL_NAME_MAX_LENGTH} from './nameValidation';
 import type {GameState} from '@/types/game';
 import {namesForGender} from '@/data/names';
 
-export const CHILD_NAME_MAX_LENGTH = 20;
-export function childNameError(name: string): string | null {
-  if (typeof name !== 'string') return 'Enter a name or keep the suggestion.';
-  if (/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/u.test(name)) return 'Use one line without control characters.';
-  if (!name.trim()) return 'Enter a name or keep the suggestion.';
-  if (Array.from(name.trim()).length > CHILD_NAME_MAX_LENGTH) return 'Use 20 characters or fewer.';
-  return null;
+export const CHILD_NAME_MAX_LENGTH=PERSONAL_NAME_MAX_LENGTH;
+export function childNameError(name:string):string|null {
+ return personalNameError(name,{emptyMessage:'Enter a name or keep the suggestion.'});
 }
 /** Genealogy or legal wardship, never the old child label alone. Pure preview. */
 export function canNameChild(s: GameState, id: string): boolean {

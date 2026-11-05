@@ -1,7 +1,7 @@
 import { allianceUnavailable } from './courtAlliances';
 import type { CourtOffice, Effects, GameState, WorldCharacter } from '@/types/game';
 import type { CourtAction } from './courtEngine';
-import { POLITICAL_OFFICES } from '@/data/politicalOffices';
+import { OFFICE_APPOINTMENT_INFLUENCE, POLITICAL_OFFICES } from '@/data/politicalOffices';
 import { clamp, chance } from './random';
 import { perspectives, readRelationship, applyRelationshipShift } from './relationshipState';
 import { pushFeed } from './gameState';
@@ -53,10 +53,10 @@ export function resolveOfficePetition(s: GameState, route: NonNullable<Effects['
   q.resolved = true;
   if (q.rulerId !== c.rulerId || q.incumbentId !== c.offices[q.office] || Object.values(c.offices).includes(p.id) || c.rulerId === p.id) { q.outcome = 'rejected'; record(s,'petition_lapsed','The court changed during your petition. The new ruler must consider a fresh request.'); return; }
   if (route === 'withdraw') { q.outcome = 'withdrawn'; record(s,'petition_withdrawn','You withdraw the request without displacing the present holder.'); return; }
-  if (route === 'conditional') { q.outcome = 'conditional'; q.requiredStanding = Math.max(25,(p.professionalHistory?.court?.reputation ?? 0) + 8); record(s,'petition_conditional',`The ruler invites a new petition after you achieve court standing ${q.requiredStanding}. The office stays with its current holder until a later decision.`); return; }
+  if (route === 'conditional') { q.outcome = 'conditional'; q.requiredStanding = Math.max(25,(p.professionalHistory?.court?.reputation ?? 0) + 8); record(s,'petition_conditional',`The ruler invites a new petition after you achieve Court professional standing ${q.requiredStanding}. The office stays with its current holder until a later decision.`); return; }
   const prospects = petitionProspects(s,route);
   if (chance(prospects.odds)) {
-    c.offices[q.office] = p.id; p.factionInfluence = clamp((p.factionInfluence ?? 0) + 8); q.outcome = 'appointed';
+    c.offices[q.office] = p.id; p.factionInfluence = clamp((p.factionInfluence ?? 0) + OFFICE_APPOINTMENT_INFLUENCE); q.outcome = 'appointed';
     if (q.incumbentId) { applyRelationshipShift(s,q.incumbentId,{}, { affinity: -18, trust: -8 }); addCourtOpposition(s,q.incumbentId,12); }
     if (q.rivalId) { applyRelationshipShift(s,q.rivalId,{}, { affinity: -10 }); addCourtOpposition(s,q.rivalId,6); }
     record(s,'petition_appointed',`The council awards you the ${q.office.replaceAll('_',' ')}’s seal. ${prospects.detail}`,p.id);

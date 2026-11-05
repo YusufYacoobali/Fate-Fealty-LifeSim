@@ -1,3 +1,4 @@
+import {COURT_ACTION_GAINS,COURT_TREASURY_COSTS,POLITICAL_TERMS} from '@/data/politicalOffices';
 import {grantNobilityTo} from './titleEngine';
 import {BARONY,baronyRequirements,missingRequirements,nobilityRequirements} from './progressionRequirements';
 import {currentCourtScandal,identifyCourtScandals} from './courtIncidents';
@@ -7,7 +8,7 @@ import type { CourtOffice, Effects, GameState, WorldCharacter } from '@/types/ga
 import { POLITICAL_OFFICES } from '@/data/politicalOffices';
 import { legacyStatus } from './lifeDepthState';
 import { addRoyalClaim, recogniseRuler, royalCandidates, settleRoyalSuccession } from './royalSuccessionEngine';
-import { timedActionAvailability } from './actionClock';
+import { timedActionBlockers,timedActionAvailability } from './actionClock';
 import { applyRelationshipShift } from './relationshipState';
 import { appendCharacterMemory } from './worldJournal';
 import { clamp, chance } from './random';
@@ -63,54 +64,63 @@ export const COURT_YEARLY_ACTION_LIMIT=3;
 export function courtPetitionRequirements(state:GameState):{label:string;current:string;met:boolean}[]{
  const p=state.world.characters[state.playerCharacterId],standing=p.professionalHistory?.court?.reputation??0;
  return [
-  {label:'Court education or court standing 20+',current:p.education?.qualifications.includes('court_education')?'Court educated':`Standing ${standing}`,met:Boolean(p.education?.qualifications.includes('court_education')||standing>=20)},
-  {label:'Influence 15+',current:`Influence ${p.factionInfluence??0}`,met:(p.factionInfluence??0)>=15},
+  {label:'Court education or court professional standing 20+',current:p.education?.qualifications.includes('court_education')?'Court educated':`${POLITICAL_TERMS.standing.label} ${standing}`,met:Boolean(p.education?.qualifications.includes('court_education')||standing>=20)},
+  {label:'Political influence 15+',current:`${POLITICAL_TERMS.influence.label} ${p.factionInfluence??0}`,met:(p.factionInfluence??0)>=15},
   {label:'Crown support 5+',current:`Crown support ${state.world.factions.crown.playerStanding}`,met:state.world.factions.crown.playerStanding>=5},
  ];
 }
-export function courtAvailability(state: GameState, action: CourtAction, targetId?: string, office?: CourtOffice): string | null {
-  const time = timedActionAvailability(state); if (!time.available) return time.reason!;
-  const court = state.world.court; if (!court) return 'No recognised court';
-  const p = state.world.characters[state.playerCharacterId];
-  if (state.age < 16) return 'Political duties begin at sixteen';
-  if (court.actionsYear === state.world.currentYear && court.actionsUsed >= COURT_YEARLY_ACTION_LIMIT) return 'Three council matters per year';
-  if (court.lastActionYears?.[action] === state.world.currentYear) return 'Already decided this year';
-  if(action==='seek_barony'||action==='seek_nobility'){const reason=missingRequirements(action==='seek_barony'?baronyRequirements(state):nobilityRequirements(state));if(reason)return reason;}
-  const target = targetId ? state.world.characters[targetId] : undefined;
-  if (targetId && !target?.alive) return 'Choose a living person';
-  if (['patron','alliance','appoint','justice','grant_title','name_heir','disinherit'].includes(action) && !target) return 'Choose a person';
-  const ruler = court.rulerId === p.id;
-  if (!PUBLIC_ACTIONS.includes(action) && (!ruler || !state.lifetimeUnlocked || court.regentId)) return 'Requires an entitled adult ruler';
-  if (['appoint','dismiss','petition'].includes(action) && (!office || !POLITICAL_OFFICES.some(o => o.id === office))) return 'Choose an office';
-  if (action === 'alliance') { const reason = allianceUnavailable(state, targetId); if (reason) return reason; }
-  if (action === 'patron' && (target!.age < 18 || (target!.rankIdx < 3 && !Object.values(court.offices).includes(target!.id)))) return 'Choose an adult noble or council patron';
-  if (action === 'appoint' && (target!.age < 18 || target!.id === court.rulerId || Object.values(court.offices).includes(target!.id))) return 'An adult may hold one council office';
-  if (action === 'dismiss' && !court.offices[office!]) return 'That office is vacant';
-  if (action === 'petition') {
-    if (ruler || Object.values(court.offices).includes(p.id)) return 'Already serving in the court';
-    if (court.petition && !court.petition.resolved) return 'A petition is already before the council';
-    const professional = p.professionalHistory?.court;
-    if (court.petition?.applicantId === p.id && court.petition.outcome === 'conditional' && (professional?.reputation ?? 0) < (court.petition.requiredStanding ?? 25)) return `The conditional service requires court standing ${court.petition.requiredStanding}`;
-    if (!courtPetitionRequirements(state)[0].met) return 'Needs court education or respected court service';
-    if (courtPetitionRequirements(state).slice(1).some(r=>!r.met)) return 'Needs 15 influence and Crown support';
-  }
-  if (action === 'abdicate' && !royalCandidates(state).length) return 'Name an eligible successor first';
-  if (action === 'justice' && target?.legalState?.status !== 'imprisoned') return 'Choose an imprisoned person';
-  if (['name_heir','disinherit'].includes(action) && !court.claims.some(c => c.characterId === targetId && !c.disinherited && c.characterId !== court.rulerId)) return 'Choose an eligible royal claimant';
-  if (action === 'grant_title' && (target!.age < 18 || target!.id === p.id || target!.rankIdx>=3 || (target!.socialStatus?.estate??'commoner')!=='commoner')) return 'Choose another untitled adult';
-  if (['recognise_claim','takeover','regency_claim'].includes(action)) {
-    if (!state.lifetimeUnlocked) return 'Monarch routes require Premium access';
-    if (ruler) return 'Already ruler';
-    if ((p.factionInfluence ?? 0) < (action === 'takeover' ? 60 : 30) || state.world.factions.crown.playerStanding < 15) return 'Needs influence and Crown support';
-    if (action === 'recognise_claim' && !court.claims.some(c => c.characterId === p.id && !c.disinherited)) return 'No documented claim';
-    if (action === 'regency_claim' && (court.formerRegentId !== p.id || state.world.characters[court.rulerId].age < 16)) return 'Requires a completed regency and council agreement';
-    if (action === 'takeover' && (court.legitimacy > 30 || state.world.conditions.publicOrder > 35)) return 'The reigning monarch retains too much support';
-    if (action === 'recognise_claim' && court.legitimacy > 40 && state.world.characters[court.rulerId]?.alive) return 'The reigning monarch still has a recognised mandate';
-  }
-  const costs: Partial<Record<CourtAction, number>> = { tax_relief: 20, religion: 15, mobilise: 30, peace: 15 };
-  if (court.treasury < (costs[action] ?? 0)) return `Needs ${costs[action]} in the royal treasury`;
-  return null;
+/** All relevant blockers, in the same priority order used by the handler. */
+export function courtActionBlockers(state:GameState,action:CourtAction,targetId?:string,office?:CourtOffice):string[]{
+ const reasons=[...timedActionBlockers(state)],court=state.world.court;
+ if(!court)return [...reasons,'No recognised court'];
+ const p=state.world.characters[state.playerCharacterId],target=targetId?state.world.characters[targetId]:undefined,ruler=court.rulerId===p.id;
+ const add=(condition:boolean,message:string)=>{if(condition)reasons.push(message);};
+ add(state.age<16,`Political duties require age 16; current age ${state.age}`);
+ add(court.actionsYear===state.world.currentYear&&court.actionsUsed>=COURT_YEARLY_ACTION_LIMIT,`Three council matters per year (${court.actionsUsed}/${COURT_YEARLY_ACTION_LIMIT} used)`);
+ add(court.lastActionYears?.[action]===state.world.currentYear,'Already decided this year');
+ if(action==='seek_barony'||action==='seek_nobility')for(const row of(action==='seek_barony'?baronyRequirements(state):nobilityRequirements(state)))add(!row.met,`${row.label}; current ${row.current}`);
+ add(!!targetId&&!target?.alive,'Choose a living person');
+ add(['patron','alliance','appoint','justice','grant_title','name_heir','disinherit'].includes(action)&&!target,'Choose a person');
+ if(!PUBLIC_ACTIONS.includes(action)){
+  add(!ruler,'Requires the current ruler’s authority');add(!state.lifetimeUnlocked,'Requires Pro access');add(!!court.regentId,'Requires an adult ruler outside a regency');
+ }
+ add(['appoint','dismiss','petition'].includes(action)&&(!office||!POLITICAL_OFFICES.some(o=>o.id===office)),'Choose an office');
+ if(action==='alliance'){const reason=allianceUnavailable(state,targetId);if(reason)reasons.push(reason);}
+ add(action==='patron'&&!!target&&(target.age<18||(target.rankIdx<3&&!Object.values(court.offices).includes(target.id))),'Choose an adult noble or council patron');
+ add(action==='appoint'&&!!target&&(target.age<18||target.id===court.rulerId||Object.values(court.offices).includes(target.id)),'An adult may hold one council office');
+ add(action==='dismiss'&&!court.offices[office!],'That office is vacant');
+ if(action==='petition'){
+  const serving=ruler||Object.values(court.offices).includes(p.id);add(serving,'Already serving in the court');
+  add(!!court.petition&&!court.petition.resolved,'A petition is already before the council');
+  const standing=p.professionalHistory?.court?.reputation??0;
+  add(court.petition?.applicantId===p.id&&court.petition.outcome==='conditional'&&standing<(court.petition.requiredStanding??25),`Conditional service requires Court professional standing ${court.petition?.requiredStanding??25}; current ${standing}`);
+  if(!serving)for(const row of courtPetitionRequirements(state))add(!row.met,`${row.label}; current ${row.current}`);
+ }
+ add(action==='abdicate'&&!royalCandidates(state).length,'Name an eligible successor first');
+ add(action==='justice'&&target?.legalState?.status!=='imprisoned','Choose an imprisoned person');
+ add(['name_heir','disinherit'].includes(action)&&!court.claims.some(c=>c.characterId===targetId&&!c.disinherited&&c.characterId!==court.rulerId),'Choose an eligible royal claimant');
+ add(action==='grant_title'&&!!target&&(target.age<18||target.id===p.id||target.rankIdx>=3||(target.socialStatus?.estate??'commoner')!=='commoner'),'Choose another untitled adult');
+ if(['recognise_claim','takeover','regency_claim'].includes(action)){
+  add(!state.lifetimeUnlocked,'Monarch routes require Pro access');add(ruler,'Already ruler');
+  add(!!court.claims.find(c=>c.characterId===p.id)?.disinherited,'Your documented claim is disinherited');
+  const need=action==='takeover'?60:30;
+  add((p.factionInfluence??0)<need,`Political influence ${need}+ required; current ${p.factionInfluence??0}`);
+  add(state.world.factions.crown.playerStanding<15,`Crown support 15+ required; current ${state.world.factions.crown.playerStanding}`);
+  add(action==='recognise_claim'&&!court.claims.some(c=>c.characterId===p.id&&!c.disinherited),'No eligible documented claim');
+  add(action==='regency_claim'&&(court.formerRegentId!==p.id||(state.world.characters[court.rulerId]?.age??0)<16),'Requires a completed regency and council agreement');
+  if(action==='takeover'){add(court.legitimacy>30,`Requires current ruler Legitimacy 30 or lower; current ${court.legitimacy}`);add(state.world.conditions.publicOrder>35,`Requires public order 35 or lower; current ${state.world.conditions.publicOrder}`);}
+  add(action==='recognise_claim'&&court.legitimacy>40&&!!state.world.characters[court.rulerId]?.alive,`The reigning monarch still has a recognised mandate (Legitimacy ${court.legitimacy}; must be 40 or lower)`);
+ }
+ const cost=COURT_TREASURY_COSTS[action]??0;add(court.treasury<cost,`Needs ${cost} in the royal treasury; current ${court.treasury}`);
+ return [...new Set(reasons)];
 }
+export function courtAvailability(state:GameState,action:CourtAction,targetId?:string,office?:CourtOffice):string|null{return courtActionBlockers(state,action,targetId,office)[0]??null;}
+/** Read-only and capped exactly as execution. No scandal discovery or RNG here. */
+export function courtActionGains(state:GameState,action:CourtAction){
+ const base=COURT_ACTION_GAINS[action]??{influence:0,support:0,prosperity:0},influence=state.world.characters[state.playerCharacterId].factionInfluence??0,support=state.world.factions.crown.playerStanding,prosperity=state.world.conditions.prosperity;
+ return {influence:clamp(influence+base.influence)-influence,support:clamp(support+base.support,-100,100)-support,prosperity:clamp(prosperity+base.prosperity)-prosperity};
+}
+
 function recordCourt(state: GameState, kind: string, targetId: string | undefined, detail: string): void {
   const court = state.world.court!;
   court.records.push({ year: state.world.currentYear, kind, actorId: state.playerCharacterId, targetId, detail });
@@ -124,25 +134,26 @@ export function performCourtAction(state: GameState, action: CourtAction, target
   court.actionsUsed++; (court.lastActionYears ??= {})[action] = state.world.currentYear;
   const advice = court.rulerId === p.id ? councilAdvice(state,action) : [];
   const world = state.world.conditions;
+  const gains=courtActionGains(state,action);p.factionInfluence=(p.factionInfluence??0)+gains.influence;state.world.factions.crown.playerStanding+=gains.support;world.prosperity+=gains.prosperity;
   let text = '';
   switch (action) {
     case 'seek_barony': state.pendingEvent={eventId:'baron_land_grant',bindings:{}};text=`Your request for a barony is ready for confirmation. Keep ${BARONY.reserve}g in reserve to qualify; the patent costs ${BARONY.price}g if accepted.`;break;
     case 'seek_nobility': state.pendingEvent={eventId:'court_nobility_petition',bindings:{ruler:court.rulerId}};text='Your petition for landed nobility goes before the ruler. It confers neither an office nor the Crown.';break;
-    case 'patron': p.factionInfluence = clamp((p.factionInfluence ?? 0) + 7); state.world.factions.crown.playerStanding = clamp(state.world.factions.crown.playerStanding + 4, -100, 100); applyRelationshipShift(state, target!.id, { affinity: 5 }, { affinity: 6, respect: 4 }); state.occupation.patronId = target!.id; text = `${target!.name} agrees to hear your petitions. Patronage begins with actual letters and an expectation of service.`; break;
+    case 'patron': applyRelationshipShift(state, target!.id, { affinity: 5 }, { affinity: 6, respect: 4 }); state.occupation.patronId = target!.id; text = `${target!.name} agrees to hear your petitions. Patronage begins with actual letters and an expectation of service.`; break;
     case 'petition': {
       beginOfficePetition(state,office!); text = `Your request for the ${office!.replaceAll('_',' ')}’s seal goes before the council. The present holder keeps the office while the petition is heard.`; break;
     }
     case 'alliance': {
       const family = state.world.families[p.birthFamilyId ?? ''], other = state.world.families[target!.birthFamilyId ?? ''];
       family.allyFamilyIds.push(other.id); other.allyFamilyIds.push(family.id);
-      p.factionInfluence = clamp((p.factionInfluence ?? 0) + 6); text = `${target!.name}'s household records an alliance with yours. Its obligations will outlive the present courtiers.`; break;
+      text = `${target!.name}'s household records an alliance with yours. Its obligations will outlive the present courtiers.`; break;
     }
-    case 'advise': p.factionInfluence = clamp((p.factionInfluence ?? 0) + 5); world.prosperity = clamp(world.prosperity + 2); state.world.factions.crown.playerStanding = clamp(state.world.factions.crown.playerStanding + 3, -100, 100); text = 'Your correction removes a duplicate levy from the decree. The realm gains a little prosperity and you gain a little influence.'; break;
+    case 'advise': text = 'Your correction removes a duplicate levy from the decree. The realm gains a little prosperity and you gain a little influence.'; break;
     case 'expose': {
       identifyCourtScandals(state);const scandal = currentCourtScandal(state);
       if (scandal) { scandal.exposed = true; scandal.resolved = true; scandal.resolvedYear=state.world.currentYear; if (court.offices[scandal.office] === scandal.actorId) delete court.offices[scandal.office]; court.treasury += Math.floor(scandal.amount / 2); applyRelationshipShift(state, scandal.actorId, { trust: -20 }, { affinity: -25 }); court.legitimacy = clamp(court.legitimacy + 5); text = `Your investigation removes ${state.world.characters[scandal.actorId]?.name ?? 'the official'} and recovers ${Math.floor(scandal.amount / 2)} treasury gold. The missing portion has already been spent.`; }
       else { world.publicOrder = clamp(world.publicOrder + 2); text = 'Your audit finds no missing funds. You publish the accounts instead of manufacturing an accusation.'; }
-      p.factionInfluence = clamp((p.factionInfluence ?? 0) + 6); break;
+      break;
     }
     case 'recognise_claim': case 'takeover': case 'regency_claim':
       if (action !== 'recognise_claim') addRoyalClaim(state, p.id, court.rulerId, action === 'takeover' ? 'takeover' : 'regency', 70);

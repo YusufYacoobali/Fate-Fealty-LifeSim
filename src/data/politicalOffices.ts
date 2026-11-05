@@ -16,3 +16,16 @@ export const ROYAL_DECISIONS = [
   { id: 'name_heir', name: 'Name a royal heir', desc: 'Select a legitimate claimant; rival claims remain.' },
   { id: 'disinherit', name: 'Disinherit a claimant', desc: 'Remove their eligibility, at a cost to family loyalty.' },
 ] as const;
+
+/** Shared labels and base effects; previews clamp the same values as execution. */
+export const POLITICAL_TERMS={
+ influence:{label:'Political influence',description:'Your personal ability to influence court decisions.'},
+ support:{label:'Crown support',description:'How favourably the Crown faction regards you.'},
+ standing:{label:'Court professional standing',description:'Your reputation in the court career; it is separate from holding an office.'},
+ legitimacy:{label:'Legitimacy',description:'Support for the current monarch’s right to rule, rather than your personal influence.'},
+} as const;
+export const COURT_ACTION_GAINS:Partial<Record<import('@/engine/courtEngine').CourtAction,{influence:number;support:number;prosperity:number}>>={
+ patron:{influence:7,support:4,prosperity:0},advise:{influence:5,support:3,prosperity:2},alliance:{influence:6,support:0,prosperity:0},expose:{influence:6,support:0,prosperity:0},
+};
+export const OFFICE_APPOINTMENT_INFLUENCE=8;
+export const COURT_TREASURY_COSTS:Partial<Record<import('@/engine/courtEngine').CourtAction,number>>={tax_relief:20,religion:15,mobilise:30,peace:15};

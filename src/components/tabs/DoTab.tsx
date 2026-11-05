@@ -8,7 +8,7 @@ import { Image, ScrollView, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { PixelButton } from '../ui/PixelButton';
 import { ACTIVITY_DEFS, CATEGORIES } from '@/data/activities';
-import { ActivityCategory, GameState } from '@/types/game';
+import { ActivityCategory, GameState, EducationTrackId } from '@/types/game';
 import { C } from '@/theme/theme';
 import { ACTIVITY_ICONS } from '@/assets/generatedAssets';
 import { CareerPanel } from './career-panel';
@@ -22,11 +22,12 @@ interface Props {
   state: GameState;
   onCat: (c: ActivityCategory | 'all') => void;
   onActivity: (id: string) => void;
+  educationFocus?: EducationTrackId;
   onOpenCourt?:()=>void;
   onCareer: (action: CareerAction, careerId?: string) => void;
 }
 
-export function DoTab({ cat, age, state, onCat, onActivity, onCareer,onOpenCourt }: Props) {
+export function DoTab({ cat, age, state, onCat, onActivity, onCareer,onOpenCourt,educationFocus }: Props) {
   const role = deriveLifeRole(state);
   const activities = ACTIVITY_DEFS.filter((a) => (!a.roles || a.roles.includes(role)) && (cat === 'all' || a.cat === cat));
 
@@ -60,7 +61,7 @@ export function DoTab({ cat, age, state, onCat, onActivity, onCareer,onOpenCourt
       {/* activity grid */}
       {cat === 'quests' ? <QuestsTab /> : <ScrollView automaticallyAdjustKeyboardInsets keyboardDismissMode="on-drag" keyboardShouldPersistTaps="handled" key={cat} style={{ flex: 1 }} contentContainerStyle={{ padding: 11, paddingBottom: 7 }}>
         {(cat === 'all' || cat === 'work') && state.age >= 16 && (careerById(state.occupation.careerId)?.family === 'court' || state.world.court?.rulerId === state.playerCharacterId) && <CourtEntry state={state} onOpen={onOpenCourt} />}
-        {(cat === 'all' || cat === 'practice') && <EducationPanel state={state} />}
+        {(cat === 'all' || cat === 'practice') && <EducationPanel state={state} initialTrack={educationFocus} />}
         {cat === 'practice' && <TrainingPanel /> }
         {(cat === 'all' || cat === 'work') && <CareerPanel state={state} onAction={onCareer} />}
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>

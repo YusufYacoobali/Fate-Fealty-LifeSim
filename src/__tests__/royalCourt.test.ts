@@ -44,7 +44,7 @@ describe('persistent royal court', () => {
   });
   it.each(['recognise_claim', 'takeover', 'regency_claim'] as const)('gates %s and the central recognition primitive', action => {
     const s = royal(); s.lifetimeUnlocked = false; s.world.court!.legitimacy = 0;
-    expect(courtAvailability(s, action)).toMatch(/Premium/);
+    expect(courtAvailability(s, action)).toMatch(/Pro access/);
     expect(recogniseRuler(s, s.playerCharacterId, 'forged call')).toBe(false);
     s.world.characters.father.alive = false;
     settleRoyalSuccession(s);
@@ -66,7 +66,7 @@ describe('persistent royal court', () => {
     s = gameReducer(s, { type: 'CHOOSE',choice: eventById(s.pendingEvent!.eventId).choices[0] });
     expect(s.world.court!.petition!.resolved).toBe(true);
     expect(s.rankIdx).toBe(0);
-    expect(courtAvailability(s, 'tax_raise')).toMatch(/entitled adult ruler/);
+    expect(courtAvailability(s, 'tax_raise')).toMatch(/current ruler’s authority/);
   });
   it('charges royal decisions once, moves factions and leaves delayed consequences', () => {
     let s = crown(); const treasury = s.world.court!.treasury;
@@ -97,7 +97,7 @@ describe('persistent royal court', () => {
     court.heirId = s.playerCharacterId; s.world.characters.father.alive = false;
     settleRoyalSuccession(s);
     expect(court.regentId).toBeDefined();
-    expect(courtAvailability(s, 'tax_raise')).toMatch(/sixteen/);
+    expect(courtAvailability(s, 'tax_raise')).toMatch(/age 16/);
     s.age = s.world.characters[s.playerCharacterId].age = 16;
     reconcileCourt(s); expect(court.regentId).toBeUndefined();
   });

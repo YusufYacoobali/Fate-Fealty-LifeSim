@@ -16,13 +16,17 @@ export interface ActionAvailability {
   reason?: string;
 }
 
-export function timedActionAvailability(state: GameState): ActionAvailability {
-  if (state.dead) return { available: false, reason: 'Thy life is ended' };
-  if (state.duel || state.rpg.mission || state.rpg.forge) return { available: false, reason: 'Finish the current encounter' };
-  if (state.pendingEvent) return { available: false, reason: 'Resolve the current event' };
-  if (state.tags.includes('imprisoned')) return { available: false, reason: 'Imprisoned' };
-  if (state.actionClock.used >= state.actionClock.cap) return { available: false, reason: 'No actions remain this year' };
-  return { available: true };
+export function timedActionBlockers(state:GameState):string[]{
+ const reasons:string[]=[];
+ if(state.dead)reasons.push('Thy life is ended');
+ if(state.duel||state.rpg.mission||state.rpg.forge)reasons.push('Finish the current encounter');
+ if(state.pendingEvent)reasons.push('Resolve the current event');
+ if(state.tags.includes('imprisoned'))reasons.push('Imprisoned');
+ if(state.actionClock.used>=state.actionClock.cap)reasons.push('No actions remain this year');
+ return reasons;
+}
+export function timedActionAvailability(state:GameState):ActionAvailability{
+ const reason=timedActionBlockers(state)[0];return reason?{available:false,reason}:{available:true};
 }
 
 export function spendAction(state: GameState): GameState {

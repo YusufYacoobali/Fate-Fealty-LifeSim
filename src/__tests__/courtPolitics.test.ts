@@ -36,7 +36,7 @@ test('vacancy and council support improve prospects; conditional service is an a
   s.world.court!.offices.chancellor = s.world.court!.petition!.incumbentId;
   s = choose(s,2); expect(s.world.court!.petition!.outcome).toBe('conditional');
   s.world.currentYear++; s.actionClock.used = 0;
-  expect(courtAvailability(s,'petition',undefined,'chancellor')).toMatch(/conditional service/);
+  expect(courtAvailability(s,'petition',undefined,'chancellor')).toMatch(/Conditional service/);
 });
 test('a change of ruler or office during a saved petition cannot overwrite the new appointment', () => {
   let s = applicant(5); s = gameReducer(s,{ type: 'COURT',action: 'petition',office: 'chancellor' });

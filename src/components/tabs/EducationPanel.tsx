@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View } from 'react-native';
 import type { GameState, EducationTrackId, SponsorshipKind } from '@/types/game';
 import { EDUCATION_TRACKS, educationTrack } from '@/data/education';
@@ -15,13 +15,14 @@ import { C, PANEL } from '@/theme/theme';
 
 const SECTIONS = [{ id: 'learning', label: 'Learning' }, { id: 'funding', label: 'Funding' }, { id: 'people', label: 'People' }, { id: 'record', label: 'Record' }] as const;
 const ADULT_NAMES: Record<EducationTrackId,string> = { household: 'Independent household study', parish: 'Adult literacy lessons', guild: 'Late apprenticeship', cathedral: 'Scholarly and religious training', martial: 'Professional martial training', noble: 'Private court tutor' };
-export function EducationPanel({ state }: { state: GameState }) {
+export function EducationPanel({ state, initialTrack }: { state: GameState; initialTrack?: EducationTrackId }) {
   const { dispatch } = useGame();
   const [section, setSection] = useState<typeof SECTIONS[number]['id']>('learning');
-  const [track, setTrack] = useState<EducationTrackId>('parish');
+  const [track, setTrack] = useState<EducationTrackId>(initialTrack ?? 'parish');
   const [funding, setFunding] = useState<SponsorshipKind>(state.age < 18 ? 'parish_charity' : 'merit');
   const [sponsorId, setSponsorId] = useState<string>();
   const [more, setMore] = useState(false);
+  useEffect(() => { if (initialTrack) { setTrack(initialTrack); setSection('learning'); } }, [initialTrack]);
   const e = state.world.characters[state.playerCharacterId].education;
   if (state.age < 5) return <View style={PANEL.parchCard}><PixelText size={16}>Your household guides your first years. Learning paths open at age five.</PixelText></View>;
   if (!e) return null;
@@ -40,6 +41,7 @@ export function EducationPanel({ state }: { state: GameState }) {
       <PixelText size={15} color={C.textMuted} style={{ marginTop: 6 }}>{e.qualifications.length ? e.qualifications.map(q => q.replaceAll('_',' ')).join(' · ') : 'No qualifications yet. Later study stays open.'}</PixelText>
       {e.track && <PixelText size={15}>Mentor: {state.world.characters[e.mentorId ?? '']?.name ?? 'Awaiting replacement'}</PixelText>}
     </View>
+    {initialTrack && e.track && e.track !== initialTrack && <View style={PANEL.parchCard}><PixelText size={16}>You are already enrolled in {trackName(e.track)}. Complete it or use Other learning choices to leave before beginning {trackName(initialTrack)}.</PixelText></View>}
     <PanelChips items={SECTIONS} value={section} onChange={id => { setSection(id); setMore(false); }} />
     {section === 'learning' && <>
       {!e.track ? <View style={PANEL.parchCard}>

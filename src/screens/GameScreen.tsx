@@ -105,13 +105,15 @@ export function GameScreen() {
   const goal = selectGoal(state);
   const [chronicleOpen, setChronicleOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const [educationFocus,setEducationFocus]=useState<'martial'>();
   const [courtFocus,setCourtFocus]=useState<CourtAction>();
   const [holdingSection,setHoldingSection]=useState<HoldingSection>('estate');
   useEffect(()=>setHoldingSection('estate'),[state.playerCharacterId,state.lifeNo]);
   const navigateAdvancement=(destination:AdvancementDestination)=>{
     if(destination==='premium'){setCartOpen(true);return;}
-    if(['court','patron','advice','barony','nobility'].includes(destination)){setHoldingSection('court');setCourtFocus(destination==='patron'?'patron':destination==='advice'?'advise':destination==='barony'?'seek_barony':destination==='nobility'?'seek_nobility':'petition');dispatch({type:'SET_TAB',tab:'hold'});return;}
+    if(['court','patron','advice','barony','nobility','claim'].includes(destination)){setHoldingSection('court');setCourtFocus(destination==='claim'?'recognise_claim':destination==='patron'?'patron':destination==='advice'?'advise':destination==='barony'?'seek_barony':destination==='nobility'?'seek_nobility':'petition');dispatch({type:'SET_TAB',tab:'hold'});return;}
     if(destination==='life'){dispatch({type:'SET_TAB',tab:'life'});return;}
+    setEducationFocus(destination==='martial_learning'?'martial':undefined);
     dispatch({type:'SET_CAT',cat:destination==='work'||destination==='career_promotion'?'work':destination==='activities'?'leisure':'practice'});dispatch({type:'SET_TAB',tab:'do'});
   };
   const insets = useSafeAreaInsets();
@@ -201,6 +203,7 @@ export function GameScreen() {
           </View>}
           {state.tab === 'do' && (
             <DoTab
+              educationFocus={educationFocus}
               cat={state.doCat}
               age={state.age}
               state={state}

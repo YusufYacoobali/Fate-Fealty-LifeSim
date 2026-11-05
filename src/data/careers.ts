@@ -1,3 +1,4 @@
+import {POLITICAL_TERMS} from './politicalOffices';
 import { CareerDef, GameState } from '@/types/game';
 
 export const CAREERS: CareerDef[] = [
@@ -57,7 +58,7 @@ export function careerRequirements(state:GameState,career:CareerDef):(import('@/
  const qualification=({craft:'apprenticeship',trade:'literacy',church:'clerical_learning',martial:'martial_training',court:'court_education',medicine:'literacy',law:'literacy'} as const)[career.family as 'craft'|'trade'|'church'|'martial'|'court'|'medicine'|'law'];
  const history=state.world.characters[state.playerCharacterId]?.professionalHistory?.[career.family];
  if(career.tier>0)add('milestones',`${Math.min(2,career.tier)} distinct professional milestones`,`${history?.completedActions.length??0}`,(history?.completedActions.length??0)>=Math.min(2,career.tier),`Needs ${Math.min(2,career.tier)} distinct professional milestones`);
- if(career.tier>=2)add('standing','Professional standing 24+',`${history?.reputation??0}`,(history?.reputation??0)>=24,'Needs 24 professional standing');
+ if(career.tier>=2)add('standing',`${career.family==='court'?POLITICAL_TERMS.standing.label:'Professional standing'} 24+`,`${history?.reputation??0}`,(history?.reputation??0)>=24,'Needs 24 professional standing');
  if(career.tier>0&&qualification){const practical=!!history?.milestones.includes('field_training')&&(state.occupation.experience>=100||history.reputation>=35),formal=!!education?.qualifications.includes(qualification);add('qualification',`${qualification.replaceAll('_',' ')} or practical mentorship`,formal?'Qualified':practical?'Practical route met':'Not yet qualified',formal||practical,`Needs ${qualification.replaceAll('_',' ')} or practical mentorship`,career.family==='martial'?'martial_learning':'learning');}
  if(career.minReputation!=null)add('reputation',`Public reputation ${career.minReputation}+`,`${state.reputation}`,state.reputation>=career.minReputation,'Thy reputation is too low');
  for(const[key,target]of Object.entries(career.minStats??{})){

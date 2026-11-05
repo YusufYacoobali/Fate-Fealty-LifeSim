@@ -1,3 +1,4 @@
+import {POLITICAL_TERMS} from '@/data/politicalOffices';
 import { specializationsFor } from '@/data/careerSpecializations';
 import { ForgePlayButton } from '../rpg/Workshop';
 import React, { useState } from 'react';
@@ -95,7 +96,7 @@ export function CareerPanel({ state, onAction }: { state: GameState; onAction: (
           </View>
         </View>
         <PixelText font="body" size={14} color={C.textMuted} style={{ marginTop: 6 }}>
-          Professional standing {career ? state.world.characters[state.playerCharacterId].professionalHistory?.[career.family]?.reputation ?? 0 : 0}. Experience {state.occupation.experience}. Performance {state.occupation.performance}. Debt {debt}g. Actions left {actionsRemaining}.
+          {career?.family === 'court' ? POLITICAL_TERMS.standing.label : 'Professional standing'} {career ? state.world.characters[state.playerCharacterId].professionalHistory?.[career.family]?.reputation ?? 0 : 0}. Experience {state.occupation.experience}. Performance {state.occupation.performance}. Debt {debt}g. Actions left {actionsRemaining}.
         </PixelText>
       </View>
 

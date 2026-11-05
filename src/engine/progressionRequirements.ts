@@ -2,7 +2,7 @@ import type {GameState} from '@/types/game';
 import {careerById,careerRequirements} from '@/data/careers';
 import {RANKS} from '@/data/ranks';
 
-export type AdvancementDestination = 'life'|'activities'|'work'|'learning'|'martial_learning'|'court'|'patron'|'advice'|'barony'|'nobility'|'honour'|'career_promotion'|'premium';
+export type AdvancementDestination = 'life'|'activities'|'work'|'learning'|'martial_learning'|'court'|'claim'|'patron'|'advice'|'barony'|'nobility'|'honour'|'career_promotion'|'premium';
 export interface ProgressionRequirement {id:string;label:string;current:string;met:boolean;destination:AdvancementDestination;}
 export const requirement=(id:string,label:string,current:string,met:boolean,destination:AdvancementDestination='court'):ProgressionRequirement=>({id,label,current,met,destination});
 export const missingRequirements=(rows:ProgressionRequirement[])=>rows.filter(r=>!r.met).map(r=>`${r.label} (${r.current})`).join('; ');
@@ -24,7 +24,7 @@ export function nobilityRequirements(s:GameState):ProgressionRequirement[]{
  const p=player(s),r=s.world.characters[s.world.court?.rulerId??''];
  return [requirement('station','No landed or royal title',p.socialStatus?.estate??'commoner',(p.socialStatus?.estate??'commoner')==='commoner'),
  requirement('age','Age 18+',`${s.age}`,s.age>=18,'life'),
- requirement('ruler','Living adult ruler',r?.alive?r.name:'No recognised living ruler',!!r?.alive&&r.age>=18),
+ requirement('ruler','Recognised ruler outside regency',r?.alive?r.name:'No recognised living ruler',!!r?.alive&&r.age>=16&&!s.world.court?.regentId),
  requirement('influence','Political influence 15+',`${p.factionInfluence??0}`,(p.factionInfluence??0)>=15,'patron'),
  requirement('support','Crown support 5+',`${s.world.factions.crown.playerStanding}`,s.world.factions.crown.playerStanding>=5,'advice')];
 }

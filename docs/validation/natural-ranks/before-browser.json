@@ -1,0 +1,30 @@
+{
+  "results": [
+    {
+      "width": 280,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "width": 320,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "width": 768,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "width": 280,
+      "textScale": 1.35,
+      "passed": true
+    }
+  ],
+  "errors": []
+}

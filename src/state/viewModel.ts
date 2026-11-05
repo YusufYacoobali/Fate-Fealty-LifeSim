@@ -1,4 +1,4 @@
-import {BARONY,baronyRequirements,holdsBarony,militaryPromotionRequirements,nobilityRequirements} from '@/engine/progressionRequirements';
+import {rankPromotionRequirements} from '@/engine/progressionRequirements';
 import {displayName} from '@/engine/nameValidation';
 import {royalProgression} from '@/engine/advancement';
 import { BIRTH_ORIGINS } from '@/data/birthOrigins';
@@ -67,8 +67,8 @@ export function selectRankPath(s: GameState) {
   const royal=royalProgression(s);
   const held = [
     status?.estate === 'commoner',
-    ['squire', 'knight'].includes(status?.martialHonour ?? 'none'),
-    status?.martialHonour === 'knight',
+    s.rankIdx>=1,
+    s.rankIdx>=2,
     ['noble', 'baronial', 'royal'].includes(status?.estate ?? 'commoner') || !!royal.label,
     status?.estate === 'baronial' || status?.titles.includes('Baron'),
     s.world.court?.rulerId === s.playerCharacterId || (s.dead && s.rankIdx === 5),
@@ -86,44 +86,24 @@ export function selectRankPath(s: GameState) {
   });
 }
 
-/** One contextual profile sentence; details and actions remain at Court/Work. Pure. */
+/** A compact next-level hint from the very same requirements as promotion. */
 export function selectProgressionHint(s:GameState):string {
-  const p=s.world.characters[s.playerCharacterId],royal=royalProgression(s);
-  if(royal.label==='Monarch')return 'Monarch: protect your legitimacy and secure the succession at Court.';
-  if(royal.label){
-    if(royal.claim?.disinherited)return `${royal.label}: disinherited; your claim is excluded from Court succession.`;
-    if(royal.claim&&!s.lifetimeUnlocked)return `${royal.label}: claim recorded; Pro is required for player succession at Court.`;
-    if(royal.position){const n=royal.position,suffix=n%100>=11&&n%100<=13?'th':n%10===1?'st':n%10===2?'nd':n%10===3?'rd':'th';return `${royal.label}: ${n}${suffix} in succession; the designated heir has priority at Court.`;}
-    return `${royal.label}: no eligible claim. Review the succession at Court.`;
-  }
-  if(holdsBarony(s))return 'Baron: the Crown requires a recognised claim. Review succession at Court.';
-  const status=p.socialStatus;
-  if(status?.estate==='noble'){
-    const rows=baronyRequirements(s),missing=rows.find(row=>!row.met);
-    if(!missing)return 'Noble: seek a barony at Court; the patent costs '+BARONY.price+'g.';
-    if(missing.id==='access')return 'Noble: barony qualifications met; Pro is required to seek one at Court.';
-    const target=missing.id==='gold'?`${BARONY.reserve}g held`:missing.label.replace(/^Age /,'age ').replace(/\+$/,'');
-    return `Noble: a barony needs ${target} (now ${missing.current}). Seek it at Court.`;
-  }
-  if(status?.martialHonour==='squire'){
-    const route=militaryPromotionRequirements(s),missing=route?.rows.find(row=>!row.met);
-    if(missing?.id==='training')return 'Squire: complete martial training in Do → Practice to pursue knighthood.';
-    if(missing?.id==='career')return 'Squire: take a martial occupation in Do → Work to pursue knighthood.';
-    if(missing)return `Squire: knighthood needs ${missing.label.toLowerCase()} (now ${missing.current}). Train in Do.`;
-    return 'Squire: knighthood requirements met; await the yearly service review.';
-  }
-  const station=status?.martialHonour==='knight'?'Knight':'Commoner',rows=nobilityRequirements(s),missing=rows.find(row=>!row.met);
-  if(missing?.id==='age')return `${station}: nobility petitions need ${missing.label.toLowerCase()}. Build influence at Court.`;
-  if(missing?.id==='ruler')return `${station}: nobility petitions need a capable living ruler. Review Court.`;
-  if(rows.filter(row=>['influence','support'].includes(row.id)).some(row=>!row.met)){
-    const influence=rows.find(row=>row.id==='influence')!.label.replace('Political ',''),support=rows.find(row=>row.id==='support')!.label;
-    return `${station}: gain ${influence.toLowerCase()} and ${support}; petition for nobility at Court.`;
-  }
-  return `${station}: ready to petition for nobility at Court; the ruler may refuse.`;
+ if(s.rankIdx>=RANKS.length-1)return 'You rule the kingdom. Protect legitimacy and secure the succession.';
+ const next=RANKS[s.rankIdx+1],rows=rankPromotionRequirements(s);
+ if(s.rankProgress<100)return 'Work, study and build your reputation to increase your standing.';
+ if(s.rankIdx===4&&!rows.find(r=>r.id==='access')?.met)return 'Progress complete. Pro is required to become Monarch.';
+ if(s.rankIdx===4&&!rows.find(r=>r.id==='crown')?.met)return 'Your standing is sufficient. You still need a recognised route to the Crown.';
+ const missing=rows.find(r=>!r.met);
+ if(!missing)return `Progress complete. You are ready to become ${next.key}.`;
+ if(missing.id==='access')return `Progress complete. Pro is required to become ${next.key}.`;
+ if(missing.id==='age')return `Progress complete. Reach ${missing.label.toLowerCase().replace('+','')} to become ${next.key}.`;
+ if(missing.id==='gold')return `Progress complete. Hold ${next.promote!.minGold}g to become ${next.key}.`;
+ return `Progress complete. Reach ${missing.label.replace('+','')} to become ${next.key}.`;
 }
-
-/** @deprecated Advancement is a set of requirements, never a hereditary ladder. */
-export function selectRankClimb(_s:GameState):null{return null;}
+export function selectRankClimb(s:GameState){
+ const next=RANKS[s.rankIdx+1];if(!next)return null;
+ return {to:next.key==='Monarch'?'MONARCH':next.short,progress:Math.min(100,Math.max(0,s.rankProgress)),locked:!!next.premium&&!s.lifetimeUnlocked};
+}
 
 export function currentRank(s: GameState) {
   const rank = RANKS[s.rankIdx];

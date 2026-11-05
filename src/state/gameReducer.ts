@@ -1,3 +1,4 @@
+import {promote} from '@/engine/pathProgression';
 import {captureFatalHealth} from '@/engine/deathContext';
 import type {DeathOrigin} from '@/types/game';
 import {acknowledgeLifeEvent} from '@/engine/lifeEventNotices';
@@ -125,6 +126,7 @@ function timed(
     if(origin)captureFatalHealth(state,before,origin);
     spendAction(state);
     checkDeath(state);
+    promote(state);
     checkLifeGoal(state);
     return finishEngineTransaction(state);
   });
@@ -185,6 +187,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           s.tab = 'life'; s.world.feedFilter = 'all';
         }
         if (!s.dead && s.stats.health <= 0) checkDeath(s);
+        promote(s);checkLifeGoal(s);
       });
       return finishEngineTransaction(s);
     }
@@ -211,6 +214,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           if (opponent) startDuel(s, opponent.id, 'duel', true);
         }
         if (!s.duel && !s.dead && s.stats.health <= 0) checkDeath(s);
+        promote(s);checkLifeGoal(s);
       });
       return finishEngineTransaction(s);
     }
@@ -400,6 +404,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           concludeDuel(s);
           if (s.stats.health <= 0) checkDeath(s);
           resumeMissionAfterDuel(s, won);
+          promote(s);checkLifeGoal(s);
         return s;
       });
       return finishEngineTransaction(s);

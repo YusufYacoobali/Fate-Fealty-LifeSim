@@ -6,7 +6,7 @@ export interface RankDef {
   portrait: string;
   /** Pro access is required to obtain this station through player routes. */
   premium?: boolean;
-  /** Only ordinary military honours use these thresholds. Land and Crown use explicit grants/succession. */
+  /** Requirements for the next ordinary level; the Crown additionally needs legitimate succession. */
   promote?: {
     minAge: number;
     minGold?: number;
@@ -16,7 +16,7 @@ export interface RankDef {
   };
 }
 
-/** Compatibility display order, not a compulsory Commoner-to-Crown ladder. */
+/** Sequential ordinary levels. Royal birth and lawful Crown succession remain exceptional. */
 export const RANKS: RankDef[] = [
   {
     key: 'Peasant',
@@ -39,17 +39,20 @@ export const RANKS: RankDef[] = [
     key: 'Noble',
     short: 'NOBLE',
     portrait: '👑',
+    promote: { minAge: 20, minGold: 120, progress: 100, stats: { charm: 72, wits: 58 } },
   },
   {
     key: 'Baron',
     short: 'BARON',
     portrait: '🏰',
+    promote: { minAge: 30, minGold: 260, progress: 100, stats: { charm: 80, wits: 72 } },
     premium: true,
   },
   {
     key: 'Monarch',
     short: 'KING',
     portrait: '👑',
+    promote: { minAge: 40, minGold: 420, progress: 100, stats: { charm: 90, wits: 85, faith: 60 } },
     premium: true,
   },
 ];

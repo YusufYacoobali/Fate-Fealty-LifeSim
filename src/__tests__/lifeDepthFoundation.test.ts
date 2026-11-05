@@ -27,20 +27,18 @@ describe('life depth foundation', () => {
     expect(state.world.characters[state.playerCharacterId].education!.qualifications).toEqual([]);
     expect(state.world.characters[state.playerCharacterId].socialStatus!.titles).toEqual([]);
   });
-  it('does not turn prosperous professionals into knights or force a free crown', () => {
+  it('advances prosperous professionals sequentially but cannot force a crown', () => {
     const state = createLife({ worldSeed: 8 });
     Object.assign(state, { age: 50, gold: 9999, rankProgress: 9999, stats: { health: 100, charm: 100, wits: 100, faith: 100 } });
     state.occupation.careerId = 'trader';
-    expect(canPromote(state)).toBe(false);
-    state.rankIdx = 3;
-    expect(promote(state, true)).toBe(false);
-    state.lifetimeUnlocked = true;
-    expect(promote(state, true)).toBe(false);
+    expect(canPromote(state)).toBe(true);
+    expect(promote(state)).toBe(true);expect(state.rankIdx).toBe(1);
+    state.rankIdx=3;state.rankProgress=100;
     state.world.characters[state.playerCharacterId].socialStatus=legacyStatus(3);
-    expect(grantPlayerTitle(state,'baron')).toBe(true);
-    expect(state.gold).toBe(9909);
-    expect(state.rankIdx).toBe(4);
-    expect(promote(state, true)).toBe(false);
+    expect(promote(state,true)).toBe(false);
+    state.lifetimeUnlocked=true;expect(promote(state)).toBe(true);
+    expect(state.gold).toBe(9999);expect(state.rankIdx).toBe(4);
+    expect(promote(state,true)).toBe(false);
   });
 });
 

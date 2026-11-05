@@ -1,3 +1,4 @@
+import {promote} from './pathProgression';
 import { startDuel } from './duelEngine';
 /** Current-year choice resolution. At most one immediate additional scene may open.
  * Pre-v9 next-year pointers are ignored; the world retains the real effects. */
@@ -128,6 +129,7 @@ export function applyChoice(s: GameState, event: GameEvent, ch: Choice): ChoiceR
   if (openNow) { s.world.pacing.immediateChainDepth = (s.world.pacing.immediateChainDepth ?? 0) + 1; s.pendingEvent = { eventId: openNow.id, bindings: { ...s.pendingEvent?.bindings } }; }
   else { s.pendingEvent = null; s.world.pacing.immediateChainDepth = 0; }
   if (ch.challenge && challengeOpponent && !openNow && !s.dead) startDuel(s, challengeOpponent, 'duel', false, ch.challenge.stakes);
+  promote(s);checkLifeGoal(s);
   return { openNow };
 }
 

@@ -1,11 +1,9 @@
-import {militaryPromotionRequirements} from './progressionRequirements';
+import {recogniseRuler} from './royalSuccessionEngine';
+import {rankPromotionRequirements} from './progressionRequirements';
 import { careerById } from '@/data/careers';
 import { legacyStatus } from './lifeDepthState';
-/**
- * Hidden life paths and public standing. rankIdx remains a compatibility
- * projection: ordinary progression can recognise martial training, while birth,
- * explicit grants and court succession control hereditary titles and the crown.
- */
+/** Ordinary levels use the existing standing meter, independent of occupation.
+ * The Crown still belongs to the recorded ruler and lawful succession. */
 
 import { GameState, PathKey } from '@/types/game';
 import { RANKS } from '@/data/ranks';
@@ -26,42 +24,32 @@ export function dominantPath(s: GameState): PathKey {
   return best;
 }
 
-/** Check whether the player currently QUALIFIES for the next rank. */
+/** Progress is a single 0–100 meter. Completed standing waits for its gates. */
+export function adjustRankProgress(s:GameState,delta:number):void {
+ s.rankProgress=s.rankProgress>=100?100:Math.max(0,Math.min(100,s.rankProgress+delta));
+}
 export function canPromote(s: GameState): boolean {
-  const route=militaryPromotionRequirements(s);
-  return !s.dead&&!!route&&route.rows.every(r=>r.met);
+ const rows=rankPromotionRequirements(s);
+ return !s.dead&&!s.pendingEvent&&!s.duel&&!s.rpg.mission&&!s.rpg.forge&&rows.length>0&&rows.every(r=>r.met);
 }
-
-/** Explain the actual honour requirements, separately from land and wealth. */
-export function promotionRationale(s: GameState): string {
- const route=militaryPromotionRequirements(s),job=careerById(s.occupation.careerId);
- return `Your martial qualification, service as ${job?.title??'a soldier'} and service standing of ${s.rankProgress}${route?` meet the ${route.honour==='squire'?'Squire':'Knight'} requirements`:' have been recognised'}.`;
+/** Explain the actual life and requirements that earned this one-level rise. */
+export function promotionRationale(s:GameState):string {
+ const reasons=standingContributions(s).filter(r=>r.delta>0).sort((a,b)=>b.delta-a.delta).slice(0,3).map(r=>r.label);
+ return `Your completed standing${reasons.length?`, built through ${reasons.join(', ')},`:''} meets the requirements for ${RANKS[s.rankIdx+1]?.key??'your next level'}.`;
 }
-
-/** Promote one rank if possible (or forced). Resets rankProgress. */
-export function promote(s: GameState, force = false): boolean {
-  const route=militaryPromotionRequirements(s);
-  if(!route||s.dead||(!force&&!canPromote(s))||(force&&s.rankIdx>=2))return false;
-  const index=route.honour==='squire'?1:2,next=RANKS[index];
-  const player=s.world.characters[s.playerCharacterId];
-  const status=player.socialStatus??=legacyStatus(s.rankIdx);
-  const reason = force
-    ? 'An explicit grant recognises your military service.'
-    : promotionRationale(s);
-  status.martialHonour=route.honour;
-  status.grants=[...new Set([...status.grants,`martial_service_${s.world.currentYear}`])];
-  s.rankIdx = Math.max(s.rankIdx,index);
-  player.rankIdx=s.rankIdx;
-  s.rankProgress = 0;
-  addMemory(s, `promoted_${next.key.toLowerCase()}`, 3, reason);
-  pushFeed(
-    s,
-    `PROMOTED → ${next.short}`,
-    C.good,
-    `${reason} Your martial training is recognised with the honour of ${next.key}. One cousin has taken the news personally.`,
-    'good',
-  );
-  return true;
+/** The legacy force argument cannot bypass age, access, standing or Crown law. */
+export function promote(s:GameState,_force=false):boolean {
+ if(!canPromote(s))return false;
+ const nextIndex=s.rankIdx+1,next=RANKS[nextIndex],p=s.world.characters[s.playerCharacterId],reason=promotionRationale(s);
+ if(nextIndex===5&&!recogniseRuler(s,p.id,'lawful succession supported by completed standing'))return false;
+ const status=p.socialStatus??=legacyStatus(s.rankIdx);
+ if(nextIndex===3){if(status.estate!=='royal')status.estate='noble';status.titles=[...new Set([...status.titles,'Noble'])];}
+ if(nextIndex===4){if(status.estate!=='royal')status.estate='baronial';status.titles=[...new Set([...status.titles,'Baron'])];}
+ status.grants=[...new Set([...status.grants,`standing_rank_${nextIndex}_${s.world.currentYear}`])];
+ s.rankIdx=p.rankIdx=nextIndex;s.rankProgress=0;
+ addMemory(s,`promoted_${next.key.toLowerCase()}`,3,reason);
+ pushFeed(s,`PROMOTED → ${next.short}`,C.good,`${reason} You rise to ${next.key}. One cousin has taken the news personally.`,'good');
+ return true;
 }
 
 export function demote(s: GameState): boolean {
@@ -69,7 +57,7 @@ export function demote(s: GameState): boolean {
   const lost = RANKS[s.rankIdx];
   s.rankIdx -= 1;
   const player = s.world.characters[s.playerCharacterId];
-  if (player) player.socialStatus = legacyStatus(s.rankIdx);
+  if (player) {const previous=player.socialStatus;player.socialStatus=legacyStatus(s.rankIdx);if(previous){player.socialStatus.martialHonour=previous.martialHonour;if(previous.estate==='royal')player.socialStatus.estate='royal';}player.rankIdx=s.rankIdx;}
   s.rankProgress = 40;
   addMemory(s, `demoted_from_${lost.key.toLowerCase()}`, 3);
   pushFeed(
@@ -162,7 +150,13 @@ export function standingContributions(s: GameState): StandingContribution[] {
   else if (bestFaction >= 8) add('friends in useful places', 1);
   if (worstFaction <= -20) add('a powerful enemy', -2);
 
-  if (s.occupation.careerId && s.occupation.performance >= 65) add('respected work', 1);
+  if (s.occupation.careerId) {
+    add('steady work',1);
+    if(s.occupation.performance>=65)add('respected work',1);
+    const family=careerById(s.occupation.careerId)?.family;
+    if(family&&(s.world.characters[s.playerCharacterId].professionalHistory?.[family]?.reputation??0)>=30)add('professional renown',1);
+  }
+  if(s.world.characters[s.playerCharacterId].education?.qualifications.length)add('education and training',1);
 
   const legal = s.world.characters[s.playerCharacterId]?.legalState;
   if (s.tags.includes('imprisoned')) add('imprisonment', -6);
@@ -240,14 +234,14 @@ function explainStanding(s: GameState, items: StandingContribution[], delta: num
 
 /**
  * Called every age-up after events resolve: settle the year's standing account,
- * then recognise eligible martial progression. Progress can fall as well as
+ * then recognise the next eligible level. Progress can fall as well as
  * rise, and a rank already held is never lost here — only the climb toward the
  * next one is.
  */
 export function tickProgression(s: GameState): GameState {
   const contributions = standingContributions(s);
   const delta = contributions.reduce((sum, item) => sum + item.delta, 0);
-  s.rankProgress = Math.max(0, s.rankProgress + delta);
+  adjustRankProgress(s,delta);
   explainStanding(s, contributions, delta);
   if (canPromote(s)) promote(s);
   return s;

@@ -1,0 +1,10 @@
+
+> fate-and-fealty@1.0.0 test
+> jest --runInBand
+
+
+Test Suites: 108 passed, 108 total
+Tests:       1069 passed, 1069 total
+Snapshots:   0 total
+Time:        372.915 s, estimated 436 s
+Ran all test suites.

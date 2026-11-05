@@ -214,6 +214,7 @@ export function normalizeGameState(parsed: GameState): GameState {
     tab: (parsed.tab as string) === 'quests' ? 'do' : parsed.tab,
     doCat: (parsed.tab as string) === 'quests' ? 'quests' : parsed.doCat,
     schemaVersion: 7,
+    rankProgress:Number.isFinite(parsed.rankProgress)?Math.max(0,Math.min(100,parsed.rankProgress)):0,
     playerCharacterId,
     playerRun: parsed.playerRun
       ? { ...parsed.playerRun, roleProgress: { ...(parsed.playerRun.roleProgress ?? {}) } }

@@ -1,0 +1,42 @@
+{
+  "lives": 162,
+  "meanDeathAge": 61.24074074074074,
+  "ranks": [
+    {
+      "rank": "Commoner",
+      "reached": 162,
+      "rate": 1,
+      "meanAge": 0
+    },
+    {
+      "rank": "Squire",
+      "reached": 162,
+      "rate": 1,
+      "meanAge": 14.512345679012345
+    },
+    {
+      "rank": "Knight",
+      "reached": 160,
+      "rate": 0.9876543209876543,
+      "meanAge": 24.7125
+    },
+    {
+      "rank": "Noble",
+      "reached": 130,
+      "rate": 0.8024691358024691,
+      "meanAge": 33.246153846153845
+    },
+    {
+      "rank": "Baron",
+      "reached": 85,
+      "rate": 0.5246913580246914,
+      "meanAge": 41.8235294117647
+    },
+    {
+      "rank": "Monarch",
+      "reached": 2,
+      "rate": 0.012345679012345678,
+      "meanAge": 58.5
+    }
+  ]
+}

@@ -52,9 +52,11 @@ export function continueAsHeir(state: GameState, requestedHeirId?: string, lifet
   heir.gold += inheritedGold;
   const parentStatus = formerPlayer?.socialStatus ?? legacyStatus(state.rankIdx);
   if (['noble', 'baronial', 'royal'].includes(parentStatus.estate)) {
-    heir.socialStatus!.estate = parentStatus.estate === 'baronial' && !lifetimeUnlocked ? 'noble' : parentStatus.estate;
-    heir.socialStatus!.grants = [...new Set([...heir.socialStatus!.grants, 'inheritance'])];
-    heir.rankIdx = heir.socialStatus!.estate === 'baronial' && lifetimeUnlocked ? 4 : 3;
+    const estate=parentStatus.estate==='baronial'&&!lifetimeUnlocked?'noble':parentStatus.estate;
+    const inheritedRank=estate==='baronial'&&lifetimeUnlocked?4:3;
+    if(parentStatus.estate==='royal')heir.socialStatus!.estate='royal';
+    if(heir.rankIdx<inheritedRank){if(heir.socialStatus!.estate!=='royal')heir.socialStatus!.estate=estate;heir.rankIdx=inheritedRank;}
+    heir.socialStatus!.grants=[...new Set([...heir.socialStatus!.grants,'inheritance'])];
   }
   // A profession leaves household credit and unfinished matters, not a free job.
   for (const [family, inherited] of Object.entries(formerPlayer?.professionalHistory ?? {})) {
@@ -95,7 +97,7 @@ export function continueAsHeir(state: GameState, requestedHeirId?: string, lifet
   state.occupation = { ...heir.occupation };
   state.debts = heir.debts.map((debt) => ({ ...debt }));
   state.rankIdx = heir.rankIdx;
-  if (!lifetimeUnlocked && state.rankIdx >= 4) state.rankIdx = heir.rankIdx = 3;
+  // Existing earned levels survive access expiry; new inherited grants remain gated above.
   if (!lifetimeUnlocked && careerById(heir.occupation.careerId)?.premium) { heir.occupation = { careerId: null, experience: 0, performance: 50, workedThisYear: 0 }; state.occupation = { ...heir.occupation }; }
   state.rankProgress = 0;
   state.reputation = Math.floor(state.reputation / 2);

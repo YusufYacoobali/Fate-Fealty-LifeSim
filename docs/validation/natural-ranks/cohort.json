@@ -1,0 +1,3397 @@
+{
+  "seedStart": 965000,
+  "policy": "Six occupations assigned at eighteen; 2/6/10 actions per year; actual work, study, leisure, care and estate management; balanced existing event policy; no forced ranks, qualifications, money, stats, invulnerability or claims.",
+  "reloadChecks": 472,
+  "summary": {
+    "lives": 162,
+    "meanDeathAge": 61.24074074074074,
+    "ranks": [
+      {
+        "rank": "Commoner",
+        "reached": 162,
+        "rate": 1,
+        "meanAge": 0
+      },
+      {
+        "rank": "Squire",
+        "reached": 162,
+        "rate": 1,
+        "meanAge": 14.512345679012345
+      },
+      {
+        "rank": "Knight",
+        "reached": 160,
+        "rate": 0.9876543209876543,
+        "meanAge": 24.7125
+      },
+      {
+        "rank": "Noble",
+        "reached": 130,
+        "rate": 0.8024691358024691,
+        "meanAge": 33.246153846153845
+      },
+      {
+        "rank": "Baron",
+        "reached": 85,
+        "rate": 0.5246913580246914,
+        "meanAge": 41.8235294117647
+      },
+      {
+        "rank": "Monarch",
+        "reached": 2,
+        "rate": 0.012345679012345678,
+        "meanAge": 58.5
+      }
+    ]
+  },
+  "pro": {
+    "lives": 121,
+    "meanDeathAge": 61.49586776859504,
+    "ranks": [
+      {
+        "rank": "Commoner",
+        "reached": 121,
+        "rate": 1,
+        "meanAge": 0
+      },
+      {
+        "rank": "Squire",
+        "reached": 121,
+        "rate": 1,
+        "meanAge": 14.545454545454545
+      },
+      {
+        "rank": "Knight",
+        "reached": 120,
+        "rate": 0.9917355371900827,
+        "meanAge": 24.425
+      },
+      {
+        "rank": "Noble",
+        "reached": 99,
+        "rate": 0.8181818181818182,
+        "meanAge": 33.505050505050505
+      },
+      {
+        "rank": "Baron",
+        "reached": 85,
+        "rate": 0.7024793388429752,
+        "meanAge": 41.8235294117647
+      },
+      {
+        "rank": "Monarch",
+        "reached": 2,
+        "rate": 0.01652892561983471,
+        "meanAge": 58.5
+      }
+    ]
+  },
+  "free": {
+    "lives": 41,
+    "meanDeathAge": 60.48780487804878,
+    "ranks": [
+      {
+        "rank": "Commoner",
+        "reached": 41,
+        "rate": 1,
+        "meanAge": 0
+      },
+      {
+        "rank": "Squire",
+        "reached": 41,
+        "rate": 1,
+        "meanAge": 14.414634146341463
+      },
+      {
+        "rank": "Knight",
+        "reached": 40,
+        "rate": 0.975609756097561,
+        "meanAge": 25.575
+      },
+      {
+        "rank": "Noble",
+        "reached": 31,
+        "rate": 0.7560975609756098,
+        "meanAge": 32.41935483870968
+      },
+      {
+        "rank": "Baron",
+        "reached": 0,
+        "rate": 0,
+        "meanAge": null
+      },
+      {
+        "rank": "Monarch",
+        "reached": 0,
+        "rate": 0,
+        "meanAge": null
+      }
+    ]
+  },
+  "byOccupation": {
+    "tenant_farmer": {
+      "lives": 27,
+      "meanDeathAge": 60.81481481481482,
+      "ranks": [
+        {
+          "rank": "Commoner",
+          "reached": 27,
+          "rate": 1,
+          "meanAge": 0
+        },
+        {
+          "rank": "Squire",
+          "reached": 27,
+          "rate": 1,
+          "meanAge": 15.074074074074074
+        },
+        {
+          "rank": "Knight",
+          "reached": 26,
+          "rate": 0.9629629629629629,
+          "meanAge": 25.03846153846154
+        },
+        {
+          "rank": "Noble",
+          "reached": 23,
+          "rate": 0.8518518518518519,
+          "meanAge": 33.95652173913044
+        },
+        {
+          "rank": "Baron",
+          "reached": 15,
+          "rate": 0.5555555555555556,
+          "meanAge": 41.733333333333334
+        },
+        {
+          "rank": "Monarch",
+          "reached": 1,
+          "rate": 0.037037037037037035,
+          "meanAge": 55
+        }
+      ]
+    },
+    "trader": {
+      "lives": 27,
+      "meanDeathAge": 64.4074074074074,
+      "ranks": [
+        {
+          "rank": "Commoner",
+          "reached": 27,
+          "rate": 1,
+          "meanAge": 0
+        },
+        {
+          "rank": "Squire",
+          "reached": 27,
+          "rate": 1,
+          "meanAge": 14.62962962962963
+        },
+        {
+          "rank": "Knight",
+          "reached": 27,
+          "rate": 1,
+          "meanAge": 24.59259259259259
+        },
+        {
+          "rank": "Noble",
+          "reached": 25,
+          "rate": 0.9259259259259259,
+          "meanAge": 34.8
+        },
+        {
+          "rank": "Baron",
+          "reached": 17,
+          "rate": 0.6296296296296297,
+          "meanAge": 42.411764705882355
+        },
+        {
+          "rank": "Monarch",
+          "reached": 0,
+          "rate": 0,
+          "meanAge": null
+        }
+      ]
+    },
+    "cleric": {
+      "lives": 27,
+      "meanDeathAge": 58.2962962962963,
+      "ranks": [
+        {
+          "rank": "Commoner",
+          "reached": 27,
+          "rate": 1,
+          "meanAge": 0
+        },
+        {
+          "rank": "Squire",
+          "reached": 27,
+          "rate": 1,
+          "meanAge": 14.222222222222221
+        },
+        {
+          "rank": "Knight",
+          "reached": 27,
+          "rate": 1,
+          "meanAge": 26.037037037037038
+        },
+        {
+          "rank": "Noble",
+          "reached": 20,
+          "rate": 0.7407407407407407,
+          "meanAge": 30.3
+        },
+        {
+          "rank": "Baron",
+          "reached": 14,
+          "rate": 0.5185185185185185,
+          "meanAge": 38.785714285714285
+        },
+        {
+          "rank": "Monarch",
+          "reached": 0,
+          "rate": 0,
+          "meanAge": null
+        }
+      ]
+    },
+    "copyist": {
+      "lives": 27,
+      "meanDeathAge": 62.18518518518518,
+      "ranks": [
+        {
+          "rank": "Commoner",
+          "reached": 27,
+          "rate": 1,
+          "meanAge": 0
+        },
+        {
+          "rank": "Squire",
+          "reached": 27,
+          "rate": 1,
+          "meanAge": 14.407407407407407
+        },
+        {
+          "rank": "Knight",
+          "reached": 27,
+          "rate": 1,
+          "meanAge": 25.77777777777778
+        },
+        {
+          "rank": "Noble",
+          "reached": 20,
+          "rate": 0.7407407407407407,
+          "meanAge": 36.25
+        },
+        {
+          "rank": "Baron",
+          "reached": 11,
+          "rate": 0.4074074074074074,
+          "meanAge": 50.63636363636363
+        },
+        {
+          "rank": "Monarch",
+          "reached": 0,
+          "rate": 0,
+          "meanAge": null
+        }
+      ]
+    },
+    "guard": {
+      "lives": 27,
+      "meanDeathAge": 61.18518518518518,
+      "ranks": [
+        {
+          "rank": "Commoner",
+          "reached": 27,
+          "rate": 1,
+          "meanAge": 0
+        },
+        {
+          "rank": "Squire",
+          "reached": 27,
+          "rate": 1,
+          "meanAge": 15.37037037037037
+        },
+        {
+          "rank": "Knight",
+          "reached": 26,
+          "rate": 0.9629629629629629,
+          "meanAge": 24.115384615384617
+        },
+        {
+          "rank": "Noble",
+          "reached": 19,
+          "rate": 0.7037037037037037,
+          "meanAge": 33.05263157894737
+        },
+        {
+          "rank": "Baron",
+          "reached": 13,
+          "rate": 0.48148148148148145,
+          "meanAge": 40.15384615384615
+        },
+        {
+          "rank": "Monarch",
+          "reached": 1,
+          "rate": 0.037037037037037035,
+          "meanAge": 62
+        }
+      ]
+    },
+    "barber_surgeon": {
+      "lives": 27,
+      "meanDeathAge": 60.55555555555556,
+      "ranks": [
+        {
+          "rank": "Commoner",
+          "reached": 27,
+          "rate": 1,
+          "meanAge": 0
+        },
+        {
+          "rank": "Squire",
+          "reached": 27,
+          "rate": 1,
+          "meanAge": 13.37037037037037
+        },
+        {
+          "rank": "Knight",
+          "reached": 27,
+          "rate": 1,
+          "meanAge": 22.703703703703702
+        },
+        {
+          "rank": "Noble",
+          "reached": 23,
+          "rate": 0.8518518518518519,
+          "meanAge": 30.956521739130434
+        },
+        {
+          "rank": "Baron",
+          "reached": 15,
+          "rate": 0.5555555555555556,
+          "meanAge": 39.06666666666667
+        },
+        {
+          "rank": "Monarch",
+          "reached": 0,
+          "rate": 0,
+          "meanAge": null
+        }
+      ]
+    }
+  },
+  "byDifficulty": {
+    "Merciful": {
+      "lives": 54,
+      "meanDeathAge": 64.11111111111111,
+      "ranks": [
+        {
+          "rank": "Commoner",
+          "reached": 54,
+          "rate": 1,
+          "meanAge": 0
+        },
+        {
+          "rank": "Squire",
+          "reached": 54,
+          "rate": 1,
+          "meanAge": 14.277777777777779
+        },
+        {
+          "rank": "Knight",
+          "reached": 54,
+          "rate": 1,
+          "meanAge": 23.90740740740741
+        },
+        {
+          "rank": "Noble",
+          "reached": 47,
+          "rate": 0.8703703703703703,
+          "meanAge": 33.765957446808514
+        },
+        {
+          "rank": "Baron",
+          "reached": 30,
+          "rate": 0.5555555555555556,
+          "meanAge": 42.13333333333333
+        },
+        {
+          "rank": "Monarch",
+          "reached": 1,
+          "rate": 0.018518518518518517,
+          "meanAge": 62
+        }
+      ]
+    },
+    "Normal": {
+      "lives": 54,
+      "meanDeathAge": 58.925925925925924,
+      "ranks": [
+        {
+          "rank": "Commoner",
+          "reached": 54,
+          "rate": 1,
+          "meanAge": 0
+        },
+        {
+          "rank": "Squire",
+          "reached": 54,
+          "rate": 1,
+          "meanAge": 14.574074074074074
+        },
+        {
+          "rank": "Knight",
+          "reached": 52,
+          "rate": 0.9629629629629629,
+          "meanAge": 24.096153846153847
+        },
+        {
+          "rank": "Noble",
+          "reached": 39,
+          "rate": 0.7222222222222222,
+          "meanAge": 31.76923076923077
+        },
+        {
+          "rank": "Baron",
+          "reached": 26,
+          "rate": 0.48148148148148145,
+          "meanAge": 40.65384615384615
+        },
+        {
+          "rank": "Monarch",
+          "reached": 0,
+          "rate": 0,
+          "meanAge": null
+        }
+      ]
+    },
+    "Brutal": {
+      "lives": 54,
+      "meanDeathAge": 60.68518518518518,
+      "ranks": [
+        {
+          "rank": "Commoner",
+          "reached": 54,
+          "rate": 1,
+          "meanAge": 0
+        },
+        {
+          "rank": "Squire",
+          "reached": 54,
+          "rate": 1,
+          "meanAge": 14.685185185185185
+        },
+        {
+          "rank": "Knight",
+          "reached": 54,
+          "rate": 1,
+          "meanAge": 26.11111111111111
+        },
+        {
+          "rank": "Noble",
+          "reached": 44,
+          "rate": 0.8148148148148148,
+          "meanAge": 34
+        },
+        {
+          "rank": "Baron",
+          "reached": 29,
+          "rate": 0.5370370370370371,
+          "meanAge": 42.55172413793103
+        },
+        {
+          "rank": "Monarch",
+          "reached": 1,
+          "rate": 0.018518518518518517,
+          "meanAge": 55
+        }
+      ]
+    }
+  },
+  "byStyle": {
+    "casual": {
+      "lives": 54,
+      "meanDeathAge": 61.7962962962963,
+      "ranks": [
+        {
+          "rank": "Commoner",
+          "reached": 54,
+          "rate": 1,
+          "meanAge": 0
+        },
+        {
+          "rank": "Squire",
+          "reached": 54,
+          "rate": 1,
+          "meanAge": 18.90740740740741
+        },
+        {
+          "rank": "Knight",
+          "reached": 52,
+          "rate": 0.9629629629629629,
+          "meanAge": 35.73076923076923
+        },
+        {
+          "rank": "Noble",
+          "reached": 35,
+          "rate": 0.6481481481481481,
+          "meanAge": 46.25714285714286
+        },
+        {
+          "rank": "Baron",
+          "reached": 16,
+          "rate": 0.2962962962962963,
+          "meanAge": 54.8125
+        },
+        {
+          "rank": "Monarch",
+          "reached": 0,
+          "rate": 0,
+          "meanAge": null
+        }
+      ]
+    },
+    "balanced": {
+      "lives": 54,
+      "meanDeathAge": 60.55555555555556,
+      "ranks": [
+        {
+          "rank": "Commoner",
+          "reached": 54,
+          "rate": 1,
+          "meanAge": 0
+        },
+        {
+          "rank": "Squire",
+          "reached": 54,
+          "rate": 1,
+          "meanAge": 12.407407407407407
+        },
+        {
+          "rank": "Knight",
+          "reached": 54,
+          "rate": 1,
+          "meanAge": 21.25925925925926
+        },
+        {
+          "rank": "Noble",
+          "reached": 45,
+          "rate": 0.8333333333333334,
+          "meanAge": 30.733333333333334
+        },
+        {
+          "rank": "Baron",
+          "reached": 33,
+          "rate": 0.6111111111111112,
+          "meanAge": 40.666666666666664
+        },
+        {
+          "rank": "Monarch",
+          "reached": 1,
+          "rate": 0.018518518518518517,
+          "meanAge": 55
+        }
+      ]
+    },
+    "focused": {
+      "lives": 54,
+      "meanDeathAge": 61.370370370370374,
+      "ranks": [
+        {
+          "rank": "Commoner",
+          "reached": 54,
+          "rate": 1,
+          "meanAge": 0
+        },
+        {
+          "rank": "Squire",
+          "reached": 54,
+          "rate": 1,
+          "meanAge": 12.222222222222221
+        },
+        {
+          "rank": "Knight",
+          "reached": 54,
+          "rate": 1,
+          "meanAge": 17.555555555555557
+        },
+        {
+          "rank": "Noble",
+          "reached": 50,
+          "rate": 0.9259259259259259,
+          "meanAge": 26.4
+        },
+        {
+          "rank": "Baron",
+          "reached": 36,
+          "rate": 0.6666666666666666,
+          "meanAge": 37.111111111111114
+        },
+        {
+          "rank": "Monarch",
+          "reached": 1,
+          "rate": 0.018518518518518517,
+          "meanAge": 62
+        }
+      ]
+    }
+  },
+  "rows": [
+    {
+      "seed": 965000,
+      "difficulty": "Merciful",
+      "job": "tenant_farmer",
+      "style": "casual",
+      "pro": false,
+      "deathAge": 55,
+      "ages": [
+        0,
+        22,
+        38,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965001,
+      "difficulty": "Merciful",
+      "job": "tenant_farmer",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 62,
+      "ages": [
+        0,
+        19,
+        37,
+        47,
+        57,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965002,
+      "difficulty": "Merciful",
+      "job": "tenant_farmer",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 63,
+      "ages": [
+        0,
+        19,
+        34,
+        46,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965003,
+      "difficulty": "Merciful",
+      "job": "tenant_farmer",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 69,
+      "ages": [
+        0,
+        12,
+        19,
+        32,
+        40,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965004,
+      "difficulty": "Merciful",
+      "job": "tenant_farmer",
+      "style": "balanced",
+      "pro": false,
+      "deathAge": 58,
+      "ages": [
+        0,
+        12,
+        18,
+        27,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965005,
+      "difficulty": "Merciful",
+      "job": "tenant_farmer",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 69,
+      "ages": [
+        0,
+        12,
+        18,
+        28,
+        35,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965006,
+      "difficulty": "Merciful",
+      "job": "tenant_farmer",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 53,
+      "ages": [
+        0,
+        12,
+        16,
+        27,
+        36,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965007,
+      "difficulty": "Merciful",
+      "job": "tenant_farmer",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 67,
+      "ages": [
+        0,
+        20,
+        26,
+        32,
+        38,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965008,
+      "difficulty": "Merciful",
+      "job": "tenant_farmer",
+      "style": "focused",
+      "pro": false,
+      "deathAge": 61,
+      "ages": [
+        0,
+        12,
+        16,
+        26,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965009,
+      "difficulty": "Merciful",
+      "job": "trader",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 59,
+      "ages": [
+        0,
+        19,
+        31,
+        46,
+        57,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965010,
+      "difficulty": "Merciful",
+      "job": "trader",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 62,
+      "ages": [
+        0,
+        25,
+        44,
+        57,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965011,
+      "difficulty": "Merciful",
+      "job": "trader",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 69,
+      "ages": [
+        0,
+        18,
+        33,
+        44,
+        57,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965012,
+      "difficulty": "Merciful",
+      "job": "trader",
+      "style": "balanced",
+      "pro": false,
+      "deathAge": 75,
+      "ages": [
+        0,
+        12,
+        19,
+        31,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965013,
+      "difficulty": "Merciful",
+      "job": "trader",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 62,
+      "ages": [
+        0,
+        12,
+        19,
+        30,
+        38,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965014,
+      "difficulty": "Merciful",
+      "job": "trader",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 68,
+      "ages": [
+        0,
+        12,
+        19,
+        27,
+        34,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965015,
+      "difficulty": "Merciful",
+      "job": "trader",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 59,
+      "ages": [
+        0,
+        12,
+        16,
+        24,
+        32,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965016,
+      "difficulty": "Merciful",
+      "job": "trader",
+      "style": "focused",
+      "pro": false,
+      "deathAge": 71,
+      "ages": [
+        0,
+        12,
+        21,
+        32,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965017,
+      "difficulty": "Merciful",
+      "job": "trader",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 79,
+      "ages": [
+        0,
+        12,
+        16,
+        24,
+        33,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965018,
+      "difficulty": "Merciful",
+      "job": "cleric",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 53,
+      "ages": [
+        0,
+        14,
+        32,
+        48,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965019,
+      "difficulty": "Merciful",
+      "job": "cleric",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 72,
+      "ages": [
+        0,
+        15,
+        38,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965020,
+      "difficulty": "Merciful",
+      "job": "cleric",
+      "style": "casual",
+      "pro": false,
+      "deathAge": 60,
+      "ages": [
+        0,
+        17,
+        43,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965021,
+      "difficulty": "Merciful",
+      "job": "cleric",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 60,
+      "ages": [
+        0,
+        12,
+        20,
+        29,
+        36,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965022,
+      "difficulty": "Merciful",
+      "job": "cleric",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 70,
+      "ages": [
+        0,
+        12,
+        19,
+        28,
+        36,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965023,
+      "difficulty": "Merciful",
+      "job": "cleric",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 68,
+      "ages": [
+        0,
+        12,
+        18,
+        27,
+        34,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965024,
+      "difficulty": "Merciful",
+      "job": "cleric",
+      "style": "focused",
+      "pro": false,
+      "deathAge": 57,
+      "ages": [
+        0,
+        12,
+        16,
+        25,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965025,
+      "difficulty": "Merciful",
+      "job": "cleric",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 55,
+      "ages": [
+        0,
+        16,
+        23,
+        29,
+        35,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965026,
+      "difficulty": "Merciful",
+      "job": "cleric",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 52,
+      "ages": [
+        0,
+        12,
+        16,
+        24,
+        33,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965027,
+      "difficulty": "Merciful",
+      "job": "copyist",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 61,
+      "ages": [
+        0,
+        22,
+        36,
+        48,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965028,
+      "difficulty": "Merciful",
+      "job": "copyist",
+      "style": "casual",
+      "pro": false,
+      "deathAge": 64,
+      "ages": [
+        0,
+        19,
+        33,
+        47,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965029,
+      "difficulty": "Merciful",
+      "job": "copyist",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 66,
+      "ages": [
+        0,
+        17,
+        33,
+        44,
+        54,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965030,
+      "difficulty": "Merciful",
+      "job": "copyist",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 61,
+      "ages": [
+        0,
+        12,
+        18,
+        29,
+        55,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965031,
+      "difficulty": "Merciful",
+      "job": "copyist",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 62,
+      "ages": [
+        0,
+        14,
+        28,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965032,
+      "difficulty": "Merciful",
+      "job": "copyist",
+      "style": "balanced",
+      "pro": false,
+      "deathAge": 82,
+      "ages": [
+        0,
+        12,
+        18,
+        35,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965033,
+      "difficulty": "Merciful",
+      "job": "copyist",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 58,
+      "ages": [
+        0,
+        12,
+        19,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965034,
+      "difficulty": "Merciful",
+      "job": "copyist",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 83,
+      "ages": [
+        0,
+        12,
+        19,
+        43,
+        55,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965035,
+      "difficulty": "Merciful",
+      "job": "copyist",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 83,
+      "ages": [
+        0,
+        12,
+        16,
+        35,
+        48,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965036,
+      "difficulty": "Merciful",
+      "job": "guard",
+      "style": "casual",
+      "pro": false,
+      "deathAge": 63,
+      "ages": [
+        0,
+        21,
+        33,
+        43,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965037,
+      "difficulty": "Merciful",
+      "job": "guard",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 77,
+      "ages": [
+        0,
+        14,
+        36,
+        49,
+        57,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965038,
+      "difficulty": "Merciful",
+      "job": "guard",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 81,
+      "ages": [
+        0,
+        15,
+        26,
+        36,
+        46,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965039,
+      "difficulty": "Merciful",
+      "job": "guard",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 47,
+      "ages": [
+        0,
+        13,
+        21,
+        29,
+        39,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965040,
+      "difficulty": "Merciful",
+      "job": "guard",
+      "style": "balanced",
+      "pro": false,
+      "deathAge": 66,
+      "ages": [
+        0,
+        12,
+        20,
+        28,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965041,
+      "difficulty": "Merciful",
+      "job": "guard",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 64,
+      "ages": [
+        0,
+        12,
+        19,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965042,
+      "difficulty": "Merciful",
+      "job": "guard",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 52,
+      "ages": [
+        0,
+        12,
+        16,
+        23,
+        30,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965043,
+      "difficulty": "Merciful",
+      "job": "guard",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 74,
+      "ages": [
+        0,
+        12,
+        16,
+        null,
+        null,
+        62
+      ],
+      "highest": 5
+    },
+    {
+      "seed": 965044,
+      "difficulty": "Merciful",
+      "job": "guard",
+      "style": "focused",
+      "pro": false,
+      "deathAge": 69,
+      "ages": [
+        0,
+        12,
+        16,
+        23,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965045,
+      "difficulty": "Merciful",
+      "job": "barber_surgeon",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 54,
+      "ages": [
+        0,
+        16,
+        30,
+        38,
+        49,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965046,
+      "difficulty": "Merciful",
+      "job": "barber_surgeon",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 57,
+      "ages": [
+        0,
+        17,
+        33,
+        45,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965047,
+      "difficulty": "Merciful",
+      "job": "barber_surgeon",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 59,
+      "ages": [
+        0,
+        15,
+        29,
+        40,
+        49,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965048,
+      "difficulty": "Merciful",
+      "job": "barber_surgeon",
+      "style": "balanced",
+      "pro": false,
+      "deathAge": 62,
+      "ages": [
+        0,
+        12,
+        23,
+        30,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965049,
+      "difficulty": "Merciful",
+      "job": "barber_surgeon",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 62,
+      "ages": [
+        0,
+        12,
+        20,
+        34,
+        48,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965050,
+      "difficulty": "Merciful",
+      "job": "barber_surgeon",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 53,
+      "ages": [
+        0,
+        12,
+        20,
+        28,
+        35,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965051,
+      "difficulty": "Merciful",
+      "job": "barber_surgeon",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 61,
+      "ages": [
+        0,
+        12,
+        16,
+        26,
+        38,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965052,
+      "difficulty": "Merciful",
+      "job": "barber_surgeon",
+      "style": "focused",
+      "pro": false,
+      "deathAge": 80,
+      "ages": [
+        0,
+        12,
+        16,
+        22,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965053,
+      "difficulty": "Merciful",
+      "job": "barber_surgeon",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 53,
+      "ages": [
+        0,
+        12,
+        16,
+        22,
+        30,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965054,
+      "difficulty": "Normal",
+      "job": "tenant_farmer",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 68,
+      "ages": [
+        0,
+        21,
+        35,
+        46,
+        56,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965055,
+      "difficulty": "Normal",
+      "job": "tenant_farmer",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 79,
+      "ages": [
+        0,
+        15,
+        43,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965056,
+      "difficulty": "Normal",
+      "job": "tenant_farmer",
+      "style": "casual",
+      "pro": false,
+      "deathAge": 49,
+      "ages": [
+        0,
+        24,
+        null,
+        null,
+        null,
+        null
+      ],
+      "highest": 1
+    },
+    {
+      "seed": 965057,
+      "difficulty": "Normal",
+      "job": "tenant_farmer",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 50,
+      "ages": [
+        0,
+        12,
+        19,
+        29,
+        37,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965058,
+      "difficulty": "Normal",
+      "job": "tenant_farmer",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 74,
+      "ages": [
+        0,
+        12,
+        24,
+        34,
+        44,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965059,
+      "difficulty": "Normal",
+      "job": "tenant_farmer",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 67,
+      "ages": [
+        0,
+        12,
+        20,
+        33,
+        46,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965060,
+      "difficulty": "Normal",
+      "job": "tenant_farmer",
+      "style": "focused",
+      "pro": false,
+      "deathAge": 39,
+      "ages": [
+        0,
+        12,
+        16,
+        25,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965061,
+      "difficulty": "Normal",
+      "job": "tenant_farmer",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 49,
+      "ages": [
+        0,
+        12,
+        16,
+        24,
+        35,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965062,
+      "difficulty": "Normal",
+      "job": "tenant_farmer",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 65,
+      "ages": [
+        0,
+        12,
+        16,
+        25,
+        36,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965063,
+      "difficulty": "Normal",
+      "job": "trader",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 68,
+      "ages": [
+        0,
+        22,
+        43,
+        61,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965064,
+      "difficulty": "Normal",
+      "job": "trader",
+      "style": "casual",
+      "pro": false,
+      "deathAge": 59,
+      "ages": [
+        0,
+        20,
+        34,
+        45,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965065,
+      "difficulty": "Normal",
+      "job": "trader",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 57,
+      "ages": [
+        0,
+        15,
+        29,
+        45,
+        55,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965066,
+      "difficulty": "Normal",
+      "job": "trader",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 72,
+      "ages": [
+        0,
+        13,
+        20,
+        28,
+        35,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965067,
+      "difficulty": "Normal",
+      "job": "trader",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 55,
+      "ages": [
+        0,
+        12,
+        19,
+        27,
+        33,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965068,
+      "difficulty": "Normal",
+      "job": "trader",
+      "style": "balanced",
+      "pro": false,
+      "deathAge": 68,
+      "ages": [
+        0,
+        12,
+        27,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965069,
+      "difficulty": "Normal",
+      "job": "trader",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 60,
+      "ages": [
+        0,
+        12,
+        15,
+        24,
+        38,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965070,
+      "difficulty": "Normal",
+      "job": "trader",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 62,
+      "ages": [
+        0,
+        12,
+        16,
+        22,
+        41,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965071,
+      "difficulty": "Normal",
+      "job": "trader",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 83,
+      "ages": [
+        0,
+        12,
+        17,
+        28,
+        41,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965072,
+      "difficulty": "Normal",
+      "job": "cleric",
+      "style": "casual",
+      "pro": false,
+      "deathAge": 55,
+      "ages": [
+        0,
+        15,
+        45,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965073,
+      "difficulty": "Normal",
+      "job": "cleric",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 66,
+      "ages": [
+        0,
+        15,
+        29,
+        41,
+        53,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965074,
+      "difficulty": "Normal",
+      "job": "cleric",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 53,
+      "ages": [
+        0,
+        21,
+        38,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965075,
+      "difficulty": "Normal",
+      "job": "cleric",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 66,
+      "ages": [
+        0,
+        12,
+        20,
+        29,
+        43,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965076,
+      "difficulty": "Normal",
+      "job": "cleric",
+      "style": "balanced",
+      "pro": false,
+      "deathAge": 60,
+      "ages": [
+        0,
+        12,
+        25,
+        33,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965077,
+      "difficulty": "Normal",
+      "job": "cleric",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 48,
+      "ages": [
+        0,
+        12,
+        19,
+        33,
+        44,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965078,
+      "difficulty": "Normal",
+      "job": "cleric",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 66,
+      "ages": [
+        0,
+        12,
+        17,
+        26,
+        33,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965079,
+      "difficulty": "Normal",
+      "job": "cleric",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 65,
+      "ages": [
+        0,
+        12,
+        16,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965080,
+      "difficulty": "Normal",
+      "job": "cleric",
+      "style": "focused",
+      "pro": false,
+      "deathAge": 36,
+      "ages": [
+        0,
+        12,
+        19,
+        25,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965081,
+      "difficulty": "Normal",
+      "job": "copyist",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 49,
+      "ages": [
+        0,
+        15,
+        28,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965082,
+      "difficulty": "Normal",
+      "job": "copyist",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 67,
+      "ages": [
+        0,
+        15,
+        41,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965083,
+      "difficulty": "Normal",
+      "job": "copyist",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 51,
+      "ages": [
+        0,
+        24,
+        40,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965084,
+      "difficulty": "Normal",
+      "job": "copyist",
+      "style": "balanced",
+      "pro": false,
+      "deathAge": 57,
+      "ages": [
+        0,
+        12,
+        18,
+        31,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965085,
+      "difficulty": "Normal",
+      "job": "copyist",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 53,
+      "ages": [
+        0,
+        17,
+        26,
+        38,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965086,
+      "difficulty": "Normal",
+      "job": "copyist",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 54,
+      "ages": [
+        0,
+        12,
+        18,
+        39,
+        50,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965087,
+      "difficulty": "Normal",
+      "job": "copyist",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 55,
+      "ages": [
+        0,
+        12,
+        16,
+        26,
+        53,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965088,
+      "difficulty": "Normal",
+      "job": "copyist",
+      "style": "focused",
+      "pro": false,
+      "deathAge": 50,
+      "ages": [
+        0,
+        12,
+        17,
+        30,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965089,
+      "difficulty": "Normal",
+      "job": "copyist",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 66,
+      "ages": [
+        0,
+        12,
+        20,
+        29,
+        49,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965090,
+      "difficulty": "Normal",
+      "job": "guard",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 47,
+      "ages": [
+        0,
+        23,
+        40,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965091,
+      "difficulty": "Normal",
+      "job": "guard",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 58,
+      "ages": [
+        0,
+        40,
+        null,
+        null,
+        null,
+        null
+      ],
+      "highest": 1
+    },
+    {
+      "seed": 965092,
+      "difficulty": "Normal",
+      "job": "guard",
+      "style": "casual",
+      "pro": false,
+      "deathAge": 65,
+      "ages": [
+        0,
+        14,
+        32,
+        45,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965093,
+      "difficulty": "Normal",
+      "job": "guard",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 60,
+      "ages": [
+        0,
+        12,
+        20,
+        31,
+        40,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965094,
+      "difficulty": "Normal",
+      "job": "guard",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 55,
+      "ages": [
+        0,
+        12,
+        19,
+        29,
+        37,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965095,
+      "difficulty": "Normal",
+      "job": "guard",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 61,
+      "ages": [
+        0,
+        14,
+        28,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965096,
+      "difficulty": "Normal",
+      "job": "guard",
+      "style": "focused",
+      "pro": false,
+      "deathAge": 51,
+      "ages": [
+        0,
+        12,
+        16,
+        25,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965097,
+      "difficulty": "Normal",
+      "job": "guard",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 59,
+      "ages": [
+        0,
+        12,
+        16,
+        26,
+        32,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965098,
+      "difficulty": "Normal",
+      "job": "guard",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 52,
+      "ages": [
+        0,
+        12,
+        16,
+        22,
+        30,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965099,
+      "difficulty": "Normal",
+      "job": "barber_surgeon",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 70,
+      "ages": [
+        0,
+        15,
+        28,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965100,
+      "difficulty": "Normal",
+      "job": "barber_surgeon",
+      "style": "casual",
+      "pro": false,
+      "deathAge": 69,
+      "ages": [
+        0,
+        16,
+        31,
+        43,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965101,
+      "difficulty": "Normal",
+      "job": "barber_surgeon",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 53,
+      "ages": [
+        0,
+        15,
+        29,
+        43,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965102,
+      "difficulty": "Normal",
+      "job": "barber_surgeon",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 47,
+      "ages": [
+        0,
+        12,
+        24,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965103,
+      "difficulty": "Normal",
+      "job": "barber_surgeon",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 32,
+      "ages": [
+        0,
+        14,
+        23,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965104,
+      "difficulty": "Normal",
+      "job": "barber_surgeon",
+      "style": "balanced",
+      "pro": false,
+      "deathAge": 58,
+      "ages": [
+        0,
+        12,
+        18,
+        26,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965105,
+      "difficulty": "Normal",
+      "job": "barber_surgeon",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 67,
+      "ages": [
+        0,
+        12,
+        20,
+        26,
+        31,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965106,
+      "difficulty": "Normal",
+      "job": "barber_surgeon",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 74,
+      "ages": [
+        0,
+        12,
+        16,
+        22,
+        34,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965107,
+      "difficulty": "Normal",
+      "job": "barber_surgeon",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 63,
+      "ages": [
+        0,
+        12,
+        16,
+        25,
+        31,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965108,
+      "difficulty": "Brutal",
+      "job": "tenant_farmer",
+      "style": "casual",
+      "pro": false,
+      "deathAge": 59,
+      "ages": [
+        0,
+        18,
+        36,
+        50,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965109,
+      "difficulty": "Brutal",
+      "job": "tenant_farmer",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 66,
+      "ages": [
+        0,
+        21,
+        38,
+        54,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965110,
+      "difficulty": "Brutal",
+      "job": "tenant_farmer",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 60,
+      "ages": [
+        0,
+        22,
+        37,
+        52,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965111,
+      "difficulty": "Brutal",
+      "job": "tenant_farmer",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 59,
+      "ages": [
+        0,
+        14,
+        23,
+        33,
+        41,
+        55
+      ],
+      "highest": 5
+    },
+    {
+      "seed": 965112,
+      "difficulty": "Brutal",
+      "job": "tenant_farmer",
+      "style": "balanced",
+      "pro": false,
+      "deathAge": 54,
+      "ages": [
+        0,
+        12,
+        27,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965113,
+      "difficulty": "Brutal",
+      "job": "tenant_farmer",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 64,
+      "ages": [
+        0,
+        12,
+        21,
+        31,
+        39,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965114,
+      "difficulty": "Brutal",
+      "job": "tenant_farmer",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 56,
+      "ages": [
+        0,
+        12,
+        20,
+        28,
+        49,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965115,
+      "difficulty": "Brutal",
+      "job": "tenant_farmer",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 56,
+      "ages": [
+        0,
+        12,
+        17,
+        25,
+        37,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965116,
+      "difficulty": "Brutal",
+      "job": "tenant_farmer",
+      "style": "focused",
+      "pro": false,
+      "deathAge": 71,
+      "ages": [
+        0,
+        12,
+        21,
+        27,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965117,
+      "difficulty": "Brutal",
+      "job": "trader",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 54,
+      "ages": [
+        0,
+        16,
+        31,
+        42,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965118,
+      "difficulty": "Brutal",
+      "job": "trader",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 80,
+      "ages": [
+        0,
+        20,
+        32,
+        44,
+        54,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965119,
+      "difficulty": "Brutal",
+      "job": "trader",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 68,
+      "ages": [
+        0,
+        20,
+        38,
+        51,
+        63,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965120,
+      "difficulty": "Brutal",
+      "job": "trader",
+      "style": "balanced",
+      "pro": false,
+      "deathAge": 68,
+      "ages": [
+        0,
+        12,
+        19,
+        26,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965121,
+      "difficulty": "Brutal",
+      "job": "trader",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 60,
+      "ages": [
+        0,
+        12,
+        20,
+        31,
+        39,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965122,
+      "difficulty": "Brutal",
+      "job": "trader",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 51,
+      "ages": [
+        0,
+        15,
+        28,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965123,
+      "difficulty": "Brutal",
+      "job": "trader",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 56,
+      "ages": [
+        0,
+        12,
+        17,
+        26,
+        33,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965124,
+      "difficulty": "Brutal",
+      "job": "trader",
+      "style": "focused",
+      "pro": false,
+      "deathAge": 52,
+      "ages": [
+        0,
+        12,
+        16,
+        23,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965125,
+      "difficulty": "Brutal",
+      "job": "trader",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 62,
+      "ages": [
+        0,
+        12,
+        25,
+        32,
+        38,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965126,
+      "difficulty": "Brutal",
+      "job": "cleric",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 57,
+      "ages": [
+        0,
+        25,
+        52,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965127,
+      "difficulty": "Brutal",
+      "job": "cleric",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 59,
+      "ages": [
+        0,
+        22,
+        48,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965128,
+      "difficulty": "Brutal",
+      "job": "cleric",
+      "style": "casual",
+      "pro": false,
+      "deathAge": 70,
+      "ages": [
+        0,
+        20,
+        37,
+        50,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965129,
+      "difficulty": "Brutal",
+      "job": "cleric",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 58,
+      "ages": [
+        0,
+        12,
+        19,
+        27,
+        45,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965130,
+      "difficulty": "Brutal",
+      "job": "cleric",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 47,
+      "ages": [
+        0,
+        12,
+        21,
+        30,
+        44,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965131,
+      "difficulty": "Brutal",
+      "job": "cleric",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 51,
+      "ages": [
+        0,
+        12,
+        19,
+        28,
+        39,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965132,
+      "difficulty": "Brutal",
+      "job": "cleric",
+      "style": "focused",
+      "pro": false,
+      "deathAge": 64,
+      "ages": [
+        0,
+        12,
+        20,
+        26,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965133,
+      "difficulty": "Brutal",
+      "job": "cleric",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 52,
+      "ages": [
+        0,
+        12,
+        17,
+        24,
+        33,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965134,
+      "difficulty": "Brutal",
+      "job": "cleric",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 54,
+      "ages": [
+        0,
+        12,
+        17,
+        24,
+        35,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965135,
+      "difficulty": "Brutal",
+      "job": "copyist",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 56,
+      "ages": [
+        0,
+        17,
+        32,
+        44,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965136,
+      "difficulty": "Brutal",
+      "job": "copyist",
+      "style": "casual",
+      "pro": false,
+      "deathAge": 65,
+      "ages": [
+        0,
+        19,
+        59,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965137,
+      "difficulty": "Brutal",
+      "job": "copyist",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 58,
+      "ages": [
+        0,
+        17,
+        31,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965138,
+      "difficulty": "Brutal",
+      "job": "copyist",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 61,
+      "ages": [
+        0,
+        12,
+        19,
+        28,
+        55,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965139,
+      "difficulty": "Brutal",
+      "job": "copyist",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 64,
+      "ages": [
+        0,
+        12,
+        26,
+        34,
+        41,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965140,
+      "difficulty": "Brutal",
+      "job": "copyist",
+      "style": "balanced",
+      "pro": false,
+      "deathAge": 59,
+      "ages": [
+        0,
+        13,
+        33,
+        48,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965141,
+      "difficulty": "Brutal",
+      "job": "copyist",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 58,
+      "ages": [
+        0,
+        12,
+        17,
+        27,
+        41,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965142,
+      "difficulty": "Brutal",
+      "job": "copyist",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 81,
+      "ages": [
+        0,
+        12,
+        17,
+        37,
+        56,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965143,
+      "difficulty": "Brutal",
+      "job": "copyist",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 55,
+      "ages": [
+        0,
+        12,
+        18,
+        33,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965144,
+      "difficulty": "Brutal",
+      "job": "guard",
+      "style": "casual",
+      "pro": false,
+      "deathAge": 51,
+      "ages": [
+        0,
+        26,
+        41,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965145,
+      "difficulty": "Brutal",
+      "job": "guard",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 73,
+      "ages": [
+        0,
+        28,
+        43,
+        55,
+        69,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965146,
+      "difficulty": "Brutal",
+      "job": "guard",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 56,
+      "ages": [
+        0,
+        15,
+        33,
+        54,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965147,
+      "difficulty": "Brutal",
+      "job": "guard",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 74,
+      "ages": [
+        0,
+        12,
+        21,
+        31,
+        40,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965148,
+      "difficulty": "Brutal",
+      "job": "guard",
+      "style": "balanced",
+      "pro": false,
+      "deathAge": 62,
+      "ages": [
+        0,
+        12,
+        22,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965149,
+      "difficulty": "Brutal",
+      "job": "guard",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 58,
+      "ages": [
+        0,
+        12,
+        22,
+        31,
+        42,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965150,
+      "difficulty": "Brutal",
+      "job": "guard",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 56,
+      "ages": [
+        0,
+        12,
+        17,
+        24,
+        30,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965151,
+      "difficulty": "Brutal",
+      "job": "guard",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 58,
+      "ages": [
+        0,
+        12,
+        17,
+        24,
+        30,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965152,
+      "difficulty": "Brutal",
+      "job": "guard",
+      "style": "focused",
+      "pro": false,
+      "deathAge": 63,
+      "ages": [
+        0,
+        12,
+        21,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965153,
+      "difficulty": "Brutal",
+      "job": "barber_surgeon",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 58,
+      "ages": [
+        0,
+        16,
+        28,
+        37,
+        53,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965154,
+      "difficulty": "Brutal",
+      "job": "barber_surgeon",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 60,
+      "ages": [
+        0,
+        15,
+        28,
+        39,
+        48,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965155,
+      "difficulty": "Brutal",
+      "job": "barber_surgeon",
+      "style": "casual",
+      "pro": true,
+      "deathAge": 67,
+      "ages": [
+        0,
+        15,
+        30,
+        null,
+        null,
+        null
+      ],
+      "highest": 2
+    },
+    {
+      "seed": 965156,
+      "difficulty": "Brutal",
+      "job": "barber_surgeon",
+      "style": "balanced",
+      "pro": false,
+      "deathAge": 53,
+      "ages": [
+        0,
+        15,
+        26,
+        35,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965157,
+      "difficulty": "Brutal",
+      "job": "barber_surgeon",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 52,
+      "ages": [
+        0,
+        12,
+        19,
+        29,
+        37,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965158,
+      "difficulty": "Brutal",
+      "job": "barber_surgeon",
+      "style": "balanced",
+      "pro": true,
+      "deathAge": 80,
+      "ages": [
+        0,
+        12,
+        20,
+        29,
+        41,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965159,
+      "difficulty": "Brutal",
+      "job": "barber_surgeon",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 73,
+      "ages": [
+        0,
+        12,
+        17,
+        23,
+        30,
+        null
+      ],
+      "highest": 4
+    },
+    {
+      "seed": 965160,
+      "difficulty": "Brutal",
+      "job": "barber_surgeon",
+      "style": "focused",
+      "pro": false,
+      "deathAge": 50,
+      "ages": [
+        0,
+        12,
+        17,
+        23,
+        null,
+        null
+      ],
+      "highest": 3
+    },
+    {
+      "seed": 965161,
+      "difficulty": "Brutal",
+      "job": "barber_surgeon",
+      "style": "focused",
+      "pro": true,
+      "deathAge": 68,
+      "ages": [
+        0,
+        12,
+        20,
+        27,
+        32,
+        null
+      ],
+      "highest": 4
+    }
+  ]
+}

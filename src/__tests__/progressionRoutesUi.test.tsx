@@ -30,6 +30,9 @@ it('keeps premium tile locks and their existing access callback, while unlocked 
  mockState.lifetimeUnlocked=true;mount(open);expect(root.root.findAllByType(TouchableOpacity).every(t=>t.props.disabled)).toBe(true);
 });
 it('retains the actual royal status in the profile tiles and the single hint',()=>{
- mockState=createLife({worldSeed:950119,birthOrigin:'royal',lifetimeUnlocked:true});mount();expect(selectRankPath(mockState).map(r=>r.name)).toContain('PRINCE');expect(text()).toContain('Prince:');expect(text()).not.toContain('ADVANCEMENT');
- mockState.world.characters[mockState.playerCharacterId].gender='woman';mount();expect(selectRankPath(mockState).map(r=>r.name)).toContain('PRINCESS');expect(text()).toContain('Princess:');
+ mockState=createLife({worldSeed:950119,birthOrigin:'royal',lifetimeUnlocked:true});mount();expect(selectRankPath(mockState).map(r=>r.name)).toContain('PRINCE');expect(text()).toContain('PROGRESS TO ');expect(text()).not.toContain('ADVANCEMENT');
+ mockState.world.characters[mockState.playerCharacterId].gender='woman';mount();expect(selectRankPath(mockState).map(r=>r.name)).toContain('PRINCESS');expect(text()).toContain('PROGRESS TO ');
+});
+it('shows the actual standing meter without restoring dashboard controls',()=>{
+ mockState=makeState({age:20,rankIdx:1,rankProgress:68});mount();expect(text()).toContain('PROGRESS TO ');expect(text()).toContain('KNIGHT');expect(text()).toContain('68');expect(text()).toContain('Work, study');expect(text()).not.toContain('ADVANCEMENT');expect(root.root.findAllByType(PixelButton)).toHaveLength(0);
 });

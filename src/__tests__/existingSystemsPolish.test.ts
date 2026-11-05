@@ -269,10 +269,10 @@ describe('existing-system polish', () => {
     const promotion = s.feed.at(-1);
     const memory = s.memories.at(-1);
     expect(promotion?.tag).toContain('PROMOTED');
-    expect(promotion?.text).toContain('martial qualification');
-    expect(promotion?.text).toContain('meet the Squire requirements');
-    expect(promotion?.text).toMatch(/service standing of 100/);
+    expect(promotion?.text).toContain('completed standing');
+    expect(promotion?.text).toContain('requirements for Squire');
+    expect(promotion?.text).toMatch(/standing|work|wealth|name|court/);
     expect(memory?.tag).toBe('promoted_squire');
-    expect(memory?.note).toMatch(/service standing of 100/);
+    expect(memory?.note).toMatch(/standing|work|wealth|name|court/);
   });
 });

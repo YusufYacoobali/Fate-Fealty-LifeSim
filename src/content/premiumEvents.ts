@@ -1,4 +1,4 @@
-import {BARONY,baronyEligible} from '@/engine/progressionRequirements';
+import {baronyEligible} from '@/engine/progressionRequirements';
 import { GameEvent } from '@/types/game';
 
 /** Lifetime Pass events: higher station, same simple life-sim loop. */
@@ -8,14 +8,14 @@ export const PREMIUM_EVENTS: GameEvent[] = [
     premium: true,
     category: 'noble',
     title: 'A VACANT BARONY',
-    text: ()=>`The council offers a vacant border barony. You must hold ${BARONY.reserve} gold to qualify; buying the patent costs ${BARONY.price} gold. Your household keeps the remaining reserve. The land comes with neighbours who own rather a lot of spears.`,
-    ageMin: BARONY.minAge,
+    text: 'The council hears of a vacant border estate. Your household’s service earns a hearing, not a title for sale. Recognition can strengthen your standing towards the next ordinary rank.',
+    ageMin: 18,
     ranks: ['Noble'],
     requires: { custom: baronyEligible },
     once: false,
     actorRoles: {},
     choices: [
-      { label: `Buy the claim (${BARONY.price}g)`, costGold: BARONY.price, requires:{custom:baronyEligible}, outcome: { text: 'The seal is yours. Your patent is entered in the royal register; your household now holds a barony.', effects: { landGrant:'baron', charm: 8, reputation: 12, path: { court: 6 }, memory: { tag: 'barony_claimed', weight: 5 } }, tone: 'good' } },
+      { label: 'Present your household’s service', requires:{custom:baronyEligible}, outcome: { text: 'The council records your service. Your standing and reputation grow; a barony still requires completed progress and the ordinary qualifications.', effects: { landGrant:'baron', charm: 8, reputation: 12, path: { court: 6 }, memory: { tag: 'barony_recognised', weight: 5 } }, tone: 'good' } },
       { label: 'Wait for a better chance', outcome: { text: 'You smile, bow, and keep your purse closed. The chance may come again, if death does not get bored first.', effects: { wits: 4, reputation: 2, rankProgress: 20 }, tone: 'plain' } },
     ],
   },

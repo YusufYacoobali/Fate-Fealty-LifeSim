@@ -20,7 +20,7 @@ import { applyEducationEffect } from './educationEngine';
 import { Effects, GameState, PathKey, STAT_KEYS } from '@/types/game';
 import { addMemory, addMoney, addTag, pushFeed, removeTag } from './gameState';
 import { clamp } from './random';
-import { promote, demote } from './pathProgression';
+import { adjustRankProgress, demote } from './pathProgression';
 import { killKin as killKinMember, spawnKin } from './kinFactory';
 import { HEALTH_CONDITIONS } from '@/content/healthConditions';
 import { appendFamilyMemory } from './worldJournal';
@@ -103,7 +103,7 @@ export function applyEffects(s: GameState, eff?: Effects, origin?: DeathOrigin):
   // --- rank progress (hidden) ---
   if (eff.rankProgress != null) {
     const delta = rankProgressDelta(eff.rankProgress, !!eff.promote);
-    s.rankProgress = Math.max(0, s.rankProgress + delta);
+    adjustRankProgress(s,delta);
   }
 
   // --- reputation (hidden, -100..100) ---
@@ -198,8 +198,8 @@ export function applyEffects(s: GameState, eff?: Effects, origin?: DeathOrigin):
   }
   if (eff.killKin) killKinMember(s, resolveCharacterId(eff.killKin));
 
-  // --- promotion / demotion (forced) ---
-  if (eff.promote) promote(s);
+  // --- legacy promotion requests settle at transaction boundaries; demotion is explicit ---
+  // Legacy promotion flags cannot bypass the settled transaction checks.
   if (eff.demote) demote(s);
 
   // --- prison / exile (lighter than death, recorded as state) ---

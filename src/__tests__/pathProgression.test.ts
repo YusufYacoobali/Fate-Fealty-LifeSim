@@ -39,10 +39,10 @@ describe('pathProgression', () => {
     expect(s.rankIdx).toBe(0);
   });
 
-  it('promote(force) ignores requirements', () => {
+  it('the legacy force flag cannot bypass requirements', () => {
     const s = makeState({ age: 0, rankProgress: 0 });
-    expect(promote(s, true)).toBe(true);
-    expect(s.rankIdx).toBe(1);
+    expect(promote(s, true)).toBe(false);
+    expect(s.rankIdx).toBe(0);
   });
 
   it('locks Baron promotion behind the Lifetime Pass', () => {
@@ -55,8 +55,8 @@ describe('pathProgression', () => {
     };
     expect(canPromote(makeState({ ...ready, lifetimeUnlocked: false }))).toBe(false);
     const entitled = makeState({ ...ready, lifetimeUnlocked: true });
-    expect(canPromote(entitled)).toBe(false); // A barony requires an explicit grant.
-    expect(promote(entitled, true)).toBe(false); // Ordinary promotion cannot buy or invent a barony.
+    expect(canPromote(entitled)).toBe(true);
+    expect(promote(entitled)).toBe(true);expect(entitled.rankIdx).toBe(4);expect(entitled.gold).toBe(260);
   });
 
   it('tickProgression nudges progress toward promotion for martial lives', () => {

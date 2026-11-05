@@ -10,13 +10,15 @@ import { GameState } from '@/types/game';
  * heir can raise it — neither is an earned promotion, so both are ignored.
  */
 export function usePromotionCelebration(state: GameState, loaded: boolean) {
+  const wasLoaded=useRef(false);
   const previousRank = useRef(state.rankIdx);
   const previousLife = useRef(state.lifeNo);
   const previousPlayer = useRef(state.playerCharacterId);
   const [promotedTo, setPromotedTo] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!loaded) return;
+    if (!loaded) {wasLoaded.current=false;return;}
+    if(!wasLoaded.current){wasLoaded.current=true;previousRank.current=state.rankIdx;previousLife.current=state.lifeNo;previousPlayer.current=state.playerCharacterId;return;}
     const sameCharacter = state.lifeNo === previousLife.current && state.playerCharacterId === previousPlayer.current;
     if (sameCharacter && state.rankIdx > previousRank.current && !state.dead) {
       setPromotedTo(state.rankIdx);

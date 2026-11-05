@@ -17,8 +17,8 @@ interface Props {
 
 /** What the new station actually unlocks, in the player's own terms. */
 const RANK_MEANING: Record<number, string> = {
-  1: 'A squire eats better, trains under a real blade, and is finally worth someone noticing.',
-  2: 'Knighthood recognises martial service. Nobility and political office remain separate grants.',
+  1: 'Your growing standing earns the level of Squire. Your occupation stays your own.',
+  2: 'Your sustained standing earns the level of Knight. Military qualifications remain separate achievements.',
   3: 'A noble commands lands and tenants, and the Crown now knows thy family name.',
   4: 'A baron holds a barony in his own right, with courts, levies and enemies to match.',
   5: 'A monarch rules the realm. There is no one left above thee to blame.',

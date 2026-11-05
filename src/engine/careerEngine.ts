@@ -88,8 +88,7 @@ export function performCareerAction(state: GameState, action: CareerAction, care
     case 'honour': {
       const p = state.world.characters[state.playerCharacterId];
       p.socialStatus!.martialHonour = 'knight'; p.socialStatus!.grants.push(`service_knighthood_${state.world.currentYear}`);
-      state.rankIdx = Math.max(2, state.rankIdx);
-      pushFeed(state, 'KNIGHTED', C.good, 'Your documented command service earns a formal knighthood. Your family estate remains a separate matter.', 'good');
+      pushFeed(state, 'KNIGHTED', C.good, 'Your command service earns a military knighthood. This achievement does not change your ordinary rank.', 'good');
       return state;
     }
     case 'specialize': return performSpecialization(state, careerId ?? '');

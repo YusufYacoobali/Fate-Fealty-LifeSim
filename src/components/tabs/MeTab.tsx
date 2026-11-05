@@ -1,4 +1,4 @@
-import {selectRankPath,selectProgressionHint} from '@/state/viewModel';
+import {selectRankPath,selectProgressionHint,selectRankClimb} from '@/state/viewModel';
 import { SkillsEquipmentPanel } from '../rpg/RpgPanels';
 import { useGame } from '@/state/GameContext';
 import { careerById } from '@/data/careers';
@@ -42,7 +42,7 @@ interface Props {
 export function MeTab({ portrait, firstName, epithet, classRank, age, stats, traits, bio, onLockedRankPress }: Props) {
   const { state } = useGame();
   const {fontScale}=useWindowDimensions();
-  const rankPath=selectRankPath(state);
+  const rankPath=selectRankPath(state),rankClimb=selectRankClimb(state);
   const career = careerById(state.occupation.careerId);
   const professional = tradeProgress(state);
   const portraitAsset = rankPortraitAsset(classRank);
@@ -91,6 +91,10 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, tra
           {r.locked&&<PixelText font="pixel" size={7} color={r.fg} style={{marginTop:2}}>Locked</PixelText>}
         </TouchableOpacity>)}
       </ScrollView>
+      {rankClimb&&<View style={{marginTop:7,gap:5}}>
+        <PixelText font="body" size={14} color={C.blueDark}>PROGRESS TO {rankClimb.to} — {Math.round(rankClimb.progress)}%</PixelText>
+        <StatBar value={rankClimb.progress} color={C.charm} dark={C.charmDark} height={7} animated={!state.settings.reducedMotion} trackBg={C.lightFill} trackBorder={C.paleEdge}/>
+      </View>}
       <View style={[PANEL.parchCard,{padding:9,marginTop:7}]}>
         <PixelText testID="progression-hint" size={15} color={C.textBrown}>{selectProgressionHint(state)}</PixelText>
       </View>

@@ -28,7 +28,7 @@ function chooseActivity(s: GameState): string {
     if (need.charm != null && s.stats.charm < need.charm && s.gold >= 2) return 'bathhouse';
     if (need.wits != null && s.stats.wits < need.wits) return 'train';
   }
-  // Hereditary titles are explicit grants, not a gold-based rank gate.
+  // Build the reserve required by the next ordinary level; promotion does not spend it.
   if (next?.promote?.minGold != null && s.gold < next.promote.minGold + 5) return 'fields';
   return 'train';
 }

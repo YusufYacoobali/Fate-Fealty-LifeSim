@@ -12,7 +12,7 @@ export const ROYAL_DECISIONS = [
   { id: 'religion', name: 'Endow parish relief', desc: '15 treasury; reduce religious tension and gain Church support.' },
   { id: 'mobilise', name: 'Mobilise the host', desc: '30 treasury; the marshal’s ability determines protection.' },
   { id: 'peace', name: 'Negotiate peace', desc: '15 treasury funds an embassy; an accepted truce lowers war threat. Rejection remains possible.' },
-  { id: 'grant_title', name: 'Grant landed nobility', desc: 'A living adult receives a documented noble title.' },
+  { id: 'grant_title', name: 'Recognise service', desc: 'Recognise an untitled adult at the next ordinary rank.' },
   { id: 'name_heir', name: 'Name a royal heir', desc: 'Select a legitimate claimant; rival claims remain.' },
   { id: 'disinherit', name: 'Disinherit a claimant', desc: 'Remove their eligibility, at a cost to family loyalty.' },
 ] as const;

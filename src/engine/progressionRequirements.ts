@@ -1,3 +1,4 @@
+import {royalCandidates} from './royalSuccessionEngine';
 import type {GameState} from '@/types/game';
 import {careerById,careerRequirements} from '@/data/careers';
 import {RANKS} from '@/data/ranks';
@@ -6,20 +7,33 @@ export type AdvancementDestination = 'life'|'activities'|'work'|'learning'|'mart
 export interface ProgressionRequirement {id:string;label:string;current:string;met:boolean;destination:AdvancementDestination;}
 export const requirement=(id:string,label:string,current:string,met:boolean,destination:AdvancementDestination='court'):ProgressionRequirement=>({id,label,current,met,destination});
 export const missingRequirements=(rows:ProgressionRequirement[])=>rows.filter(r=>!r.met).map(r=>`${r.label} (${r.current})`).join('; ');
-export const BARONY = {minAge:38,reserve:350,charm:84,wits:76,price:90} as const;
+/** Compatibility metadata: rank qualification is not a purchase price. */
+export const BARONY = {minAge:RANKS[4].promote!.minAge,reserve:RANKS[4].promote!.minGold!,charm:RANKS[4].promote!.stats!.charm!,wits:RANKS[4].promote!.stats!.wits!,price:0} as const;
 const player=(s:GameState)=>s.world.characters[s.playerCharacterId];
 export const holdsBarony=(s:GameState)=>player(s).socialStatus?.estate==='baronial'||!!player(s).socialStatus?.titles.includes('Baron');
+export function rankPromotionRequirements(s:GameState):ProgressionRequirement[]{
+ const next=RANKS[s.rankIdx+1],req=next?.promote;if(!req)return [];
+ return [requirement('progress','Standing 100',`${Math.min(100,Math.max(0,s.rankProgress))}`,s.rankProgress>=100,'work'),
+ requirement('age',`Age ${req.minAge}+`,`${s.age}`,s.age>=req.minAge,'life'),
+ ...(req.minGold?[requirement('gold',`Gold held ${req.minGold}g`,`${s.gold}g`,s.gold>=req.minGold,'work')]:[]),
+ ...Object.entries(req.stats??{}).map(([stat,value])=>requirement(stat,`${stat[0].toUpperCase()+stat.slice(1)} ${value}+`,`${s.stats[stat as keyof GameState['stats']]}`,s.stats[stat as keyof GameState['stats']]>=value,stat==='wits'?'learning':'activities')),
+ ...(next.premium?[requirement('access','Pro access',s.lifetimeUnlocked?'Active':'Required',s.lifetimeUnlocked,'premium')]:[]),
+ ...(s.rankIdx===4?[requirement('crown','A recognised route to the Crown',crownPromotionEligible(s)?'Eligible succession':'Review claims and succession at Court',crownPromotionEligible(s),'claim')]:[])];
+}
+/** Standing cannot depose a living ruler. Only an already recognised ruler or
+ * the first lawful candidate to a vacant/deceased ruler can complete this step. */
+export function crownPromotionEligible(s:GameState):boolean{
+ const c=s.world.court;if(!c)return false;
+ return c.rulerId===s.playerCharacterId||!s.world.characters[c.rulerId]?.alive&&royalCandidates(s)[0]?.id===s.playerCharacterId;
+}
+/** Existing optional Court recognition, not the gate to reaching Baron. */
 export function baronyRequirements(s:GameState):ProgressionRequirement[]{
- const p=player(s),noble=['noble','royal'].includes(p.socialStatus?.estate??'')&&!holdsBarony(s)&&s.world.court?.rulerId!==p.id;
- return [requirement('station','Noble station; no existing barony',noble?'Met':holdsBarony(s)?'Already Baron':s.world.court?.rulerId===p.id?'Already ruler':p.socialStatus?.estate??'commoner',noble,'nobility'),
- requirement('age',`Age ${BARONY.minAge}+`,`${s.age}`,s.age>=BARONY.minAge,'life'),
- requirement('gold',`Gold held ${BARONY.reserve}g`,`${s.gold}g`,s.gold>=BARONY.reserve,'work'),
- requirement('charm',`Charm ${BARONY.charm}+`,`${s.stats.charm}`,s.stats.charm>=BARONY.charm,'activities'),
- requirement('wits',`Wits ${BARONY.wits}+`,`${s.stats.wits}`,s.stats.wits>=BARONY.wits,'learning'),
- requirement('access','Pro access',s.lifetimeUnlocked?'Active':'Required',s.lifetimeUnlocked,'premium')];
+ const p=player(s);return [requirement('station','Noble level; no existing barony',s.rankIdx===3&&!holdsBarony(s)?'Met':'Requires Noble',s.rankIdx===3&&!holdsBarony(s)),
+ requirement('age','Age 18+',`${s.age}`,s.age>=18,'life'),requirement('access','Pro access',s.lifetimeUnlocked?'Active':'Required',s.lifetimeUnlocked,'premium'),
+ requirement('recognition','Not recognised this year',p.socialStatus?.grants.includes(`baron_recognition_${s.world.currentYear}`)?'Already recognised':'Available',!p.socialStatus?.grants.includes(`baron_recognition_${s.world.currentYear}`))];
 }
 export const baronyEligible=(s:GameState)=>!s.dead&&baronyRequirements(s).every(r=>r.met);
-/** A new petition closes the gap between commoner careers and formal title grants. */
+/** Optional Court recognition builds standing rather than granting a rank. */
 export function nobilityRequirements(s:GameState):ProgressionRequirement[]{
  const p=player(s),r=s.world.characters[s.world.court?.rulerId??''];
  return [requirement('station','No landed or royal title',p.socialStatus?.estate??'commoner',(p.socialStatus?.estate??'commoner')==='commoner'),

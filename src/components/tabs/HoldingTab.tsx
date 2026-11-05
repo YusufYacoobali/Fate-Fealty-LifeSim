@@ -44,12 +44,12 @@ export function HoldingTab({state,courtFocus,section,onSectionChange,onAction,on
  const orders=HOLDING_ACTIONS.map((action,index)=>({action,index,availability:holdingActionAvailability(state,action.id)})).sort((a,b)=>Number(b.availability.available)-Number(a.availability.available)||a.index-b.index);
  const next=HOLDING_UPGRADES.find(u=>!state.holding.upgrades.includes(u.id)&&holdingUpgradeAvailability(state,u.id).available)??HOLDING_UPGRADES.find(u=>!state.holding.upgrades.includes(u.id));
  return <View style={{flex:1}}>
+  <ScrollView key={section} contentInsetAdjustmentBehavior="automatic" keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets keyboardDismissMode="on-drag" style={{flex:1}} contentContainerStyle={{padding:9,paddingBottom:18,gap:10}}>
   <View style={{flexDirection:'row',gap:4,padding:8,borderBottomWidth:3,borderColor:C.blueDeep}}>
    {([{id:'estate',label:'ESTATE',art:PAYWALL_ART.holding},{id:'court',label:'ROYAL COURT',art:PAYWALL_ART.crown},{id:'swineford',label:'SWINEFORD',art:HOLDING_UPGRADE_ART.stewards_hall}] as const).map(item=><PixelButton key={item.id} accessibilityLabel={item.label} selected={section===item.id} bg={section===item.id?C.charm:C.lightFill} shadow={section===item.id?C.charmDark:C.blueDark} onPress={()=>onSectionChange(item.id)} style={{flex:1,minWidth:0}} innerStyle={{paddingHorizontal:compactNavigation?1:7,paddingVertical:7,minHeight:52,alignItems:'center',justifyContent:'center',gap:4,flexDirection:width>=600?'row':'column'}}>
     <Image source={item.art} resizeMode="contain" style={{width:25,height:25}}/><PixelText font="pixel" size={7} color={C.blueDark} style={{textAlign:'center'}}>{compactNavigation?(item.id==='court'?'COURT':item.id==='swineford'?'VILLAGE':item.label):item.label}</PixelText>
    </PixelButton>)}
   </View>
-  <ScrollView key={section} contentInsetAdjustmentBehavior="automatic" keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets keyboardDismissMode="on-drag" style={{flex:1}} contentContainerStyle={{padding:9,paddingBottom:18,gap:10}}>
    {section==='court'?<CourtPanel state={state} initialAction={courtFocus}/>:section==='swineford'?<>
     <View style={PANEL.parchCard}><PixelText font="pixel" size={10} color={C.blueDeep}>THE VILLAGE OF SWINEFORD</PixelText><PixelText size={17} style={{marginTop:7}}>Village conditions affect everyone. Your estate’s Stores support village food; Security and Loyalty support order.</PixelText></View>
     <WorldStatusPanel state={state}/>

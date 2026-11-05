@@ -265,7 +265,6 @@ export function GameScreen() {
               stats={meStats}
               onNavigateAdvancement={navigateAdvancement}
               traits={selectTraits(state)}
-              goal={goal}
               bio={selectBio(state)}
               onLockedRankPress={() => {
                 haptic('light', buzz);
@@ -275,7 +274,7 @@ export function GameScreen() {
           )}
         </View>
 
-        {goal && !state.dead && <GoalBanner goal={goal} />}
+        {state.tab === 'life' && goal && !state.dead && <GoalBanner goal={goal} />}
         <AgeUpBar
           onAgeUp={() => {
             haptic('light', buzz);

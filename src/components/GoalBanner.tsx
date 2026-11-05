@@ -7,8 +7,7 @@ import { C } from '@/theme/theme';
 import { goalIconAsset } from '@/assets/generatedAssets';
 
 /**
- * A slim always-visible banner showing the player's current life ambition and
- * its progress — a constant nudge to work toward something concrete.
+ * The Life tab's ambition detail. Tracking and rewards are independent of tabs.
  */
 export function GoalBanner({ goal }: { goal: GoalView }) {
   const pct = Math.round(goal.progress * 100);
@@ -34,11 +33,11 @@ export function GoalBanner({ goal }: { goal: GoalView }) {
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, marginBottom: 5 }}>
           {icon && <Image source={icon} resizeMode="contain" style={{ width: 23, height: 23 }} />}
-          <PixelText font="body" size={15} color={C.cream} numberOfLines={1} style={{ flex: 1 }}>
+          <PixelText font="body" size={15} color={C.cream} style={{ flex: 1 }}>
             {goal.title}
           </PixelText>
         </View>
-        <PixelText font="body" size={13} color={C.creamBlue} numberOfLines={2} style={{ marginBottom: 5 }}>
+        <PixelText font="body" size={13} color={C.creamBlue} style={{ marginBottom: 5 }}>
           {goal.desc}
         </PixelText>
         <StatBar

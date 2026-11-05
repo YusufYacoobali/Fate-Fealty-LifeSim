@@ -1,3 +1,4 @@
+import {ScrollView} from 'react-native';
 import React,{useState} from 'react';
 import {act,create,type ReactTestRenderer} from 'react-test-renderer';
 import {HoldingTab,type HoldingSection} from '@/components/tabs/HoldingTab';
@@ -40,4 +41,10 @@ it('preserves all public, royal, appointment and succession actions without bypa
 });
 it('uses the direct Court entry callback without spending an action',()=>{
  const s=state(),onOpen=jest.fn();act(()=>{root=create(<CourtEntry state={s} onOpen={onOpen}/>);});tap('COURT & COUNCIL ▸');expect(onOpen).toHaveBeenCalledTimes(1);expect(mockDispatch).not.toHaveBeenCalled();
+});
+
+it('places section selectors inside the one main scroller before the section content',()=>{
+ const s=state();act(()=>{root=create(<HoldingTab state={s} section="estate" onSectionChange={jest.fn()} onAction={mockDispatch} onUpgrade={mockDispatch}/>);});
+ const scroll=root.root.findAllByType(ScrollView).filter(n=>!n.props.horizontal);expect(scroll).toHaveLength(1);
+ const nav=scroll[0].findAllByType(PixelButton).filter(n=>['ESTATE','ROYAL COURT','SWINEFORD'].includes(n.props.accessibilityLabel));expect(nav).toHaveLength(3);expect(scroll[0].props.stickyHeaderIndices).toBeUndefined();
 });

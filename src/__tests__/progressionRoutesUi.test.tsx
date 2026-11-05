@@ -16,8 +16,8 @@ function tap(label:string){const button=root.root.findAllByType(PixelButton).fin
 
 it('replaces the false ladder with real barony requirements, cost and direct action',()=>{
  mockState=makeState({age:38,rankIdx:3,gold:350,lifetimeUnlocked:true,stats:{health:80,charm:84,wits:76,faith:50}});
- act(()=>{root=create(<MeTab portrait="" firstName="Agnes" epithet="" classRank="Noble" age={38} stats={[]} traits={[]} goal={null} bio=""/>);});
- expect(text()).toContain('ADVANCEMENT');expect(text()).toContain('Age 38+');expect(text()).toContain('Gold held 350g');expect(text()).toContain('90');expect(text()).not.toContain('% TO');expect(text()).not.toContain('PATH TO NOBILITY');
+ act(()=>{root=create(<MeTab portrait="" firstName="Agnes" epithet="" classRank="Noble" age={38} stats={[]} traits={[]} bio=""/>);});
+ expect(text()).toContain('ADVANCEMENT');expect(text()).toContain('Age 38+');expect(text()).toContain('Gold held 350g');expect(text()).toContain('90');expect(text()).not.toContain('% TO');expect(text()).not.toContain('PATH TO NOBILITY');expect(text()).not.toContain('AMBITION');
  tap('SEEK A BARONY · 1 ACTION / 1 COURT MATTER');expect(mockDispatch).toHaveBeenCalledWith({type:'COURT',action:'seek_barony'});
 });
 it('puts a royal child’s actual succession ahead of optional landed titles',()=>{

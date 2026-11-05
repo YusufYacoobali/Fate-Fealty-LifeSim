@@ -9,7 +9,7 @@ import { Image, ScrollView, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { StatBar } from '../ui/StatBar';
 import { C, PANEL } from '@/theme/theme';
-import { goalIconAsset, rankPortraitAsset, statIconAsset, traitIconAsset } from '@/assets/generatedAssets';
+import { rankPortraitAsset, statIconAsset, traitIconAsset } from '@/assets/generatedAssets';
 
 interface StatVM {
   key: string;
@@ -28,14 +28,6 @@ interface TraitVM {
   kind: 'birth' | 'acquired';
 }
 
-interface GoalVM {
-  id: string;
-  title: string;
-  desc: string;
-  progress: number;
-  done: boolean;
-}
-
 interface Props {
   portrait: string;
   firstName: string;
@@ -45,12 +37,11 @@ interface Props {
   stats: StatVM[];
   onNavigateAdvancement?: (destination:AdvancementDestination)=>void;
   traits: TraitVM[];
-  goal: GoalVM | null;
   bio: string;
   onLockedRankPress?: () => void;
 }
 
-export function MeTab({ portrait, firstName, epithet, classRank, age, stats, onNavigateAdvancement, traits, goal, bio, onLockedRankPress }: Props) {
+export function MeTab({ portrait, firstName, epithet, classRank, age, stats, onNavigateAdvancement, traits, bio, onLockedRankPress }: Props) {
   const { state,dispatch } = useGame();
   const career = careerById(state.occupation.careerId);
   const professional = tradeProgress(state);
@@ -120,36 +111,6 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, onN
       </View>
 
       <SkillsEquipmentPanel />
-
-      {/* life goal */}
-      <PixelText font="pixel" size={8} color={C.blueDeep} style={{ marginTop: 14, marginBottom: 8 }}>
-        THY AMBITION
-      </PixelText>
-      <View style={PANEL.parchCard}>
-        {goal ? (
-          <>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, flex: 1 }}>
-                <Image source={goalIconAsset(goal.id)!} resizeMode="contain" style={{ width: 28, height: 28 }} />
-                <PixelText font="body" size={17} color={C.textDark} style={{ flex: 1 }}>
-                  {goal.title}
-                </PixelText>
-              </View>
-              <PixelText font="body" size={15} color={goal.done ? C.faithDark : C.amber}>
-                {goal.done ? 'DONE' : `${Math.round(goal.progress * 100)}%`}
-              </PixelText>
-            </View>
-            <StatBar value={Math.round(goal.progress * 100)} color={goal.done ? C.faith : C.purple} dark={goal.done ? C.faithDark : C.purpleDark} height={11} trackBg={C.lightFill} trackBorder={C.inkSoft} />
-            <PixelText font="body" size={14} color={C.textMuted} style={{ marginTop: 6 }}>
-              {goal.desc}
-            </PixelText>
-          </>
-        ) : (
-          <PixelText font="body" size={15} color={C.textMuted}>
-            {age >= 18 ? 'No ambition set.' : `A life's ambition will be set when you come of age (18).`}
-          </PixelText>
-        )}
-      </View>
 
       {/* traits */}
       <PixelText font="pixel" size={8} color={C.blueDeep} style={{ marginTop: 14, marginBottom: 8 }}>

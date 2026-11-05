@@ -4,10 +4,10 @@ export interface RankDef {
   key: RankKey;
   short: string;
   portrait: string;
-  /** Premium rank; free players stop before this. */
+  /** Pro access is required to obtain this station through player routes. */
   premium?: boolean;
-  /** Hidden requirements for promotion INTO this rank (checked against state). */
-  promote: {
+  /** Only ordinary military honours use these thresholds. Land and Crown use explicit grants/succession. */
+  promote?: {
     minAge: number;
     minGold?: number;
     stats?: Partial<Record<'health' | 'charm' | 'wits' | 'faith', number>>;
@@ -16,17 +16,12 @@ export interface RankDef {
   };
 }
 
-/**
- * The visible class ladder. Free players climb PEASANT -> SQUIRE -> KNIGHT -> NOBLE.
- * Premium owners can keep going to BARON -> MONARCH.
- * Promotion is driven by hidden rankProgress plus strict gating requirements.
- */
+/** Compatibility display order, not a compulsory Commoner-to-Crown ladder. */
 export const RANKS: RankDef[] = [
   {
     key: 'Peasant',
     short: 'PEASANT',
     portrait: '🧑‍🌾',
-    promote: { minAge: 0, progress: 0 },
   },
   {
     key: 'Squire',
@@ -44,21 +39,18 @@ export const RANKS: RankDef[] = [
     key: 'Noble',
     short: 'NOBLE',
     portrait: '👑',
-    promote: { minAge: 20, minGold: 120, progress: 100, stats: { charm: 72, wits: 58 } },
   },
   {
     key: 'Baron',
     short: 'BARON',
     portrait: '🏰',
     premium: true,
-    promote: { minAge: 23, minGold: 260, progress: 100, stats: { charm: 84, wits: 76 } },
   },
   {
     key: 'Monarch',
     short: 'KING',
     portrait: '👑',
     premium: true,
-    promote: { minAge: 28, minGold: 420, progress: 100, stats: { charm: 92, wits: 88, faith: 68 } },
   },
 ];
 

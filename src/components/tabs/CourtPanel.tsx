@@ -1,4 +1,6 @@
-import React,{useState} from 'react';
+import {baronyRequirements,nobilityRequirements,BARONY} from '@/engine/progressionRequirements';
+import {nobilityProspects} from '@/engine/titleEngine';
+import React,{useState,useEffect} from 'react';
 import {Image,View,useWindowDimensions} from 'react-native';
 import type {CourtOffice,GameState} from '@/types/game';
 import {courtAvailability,courtPetitionRequirements,COURT_YEARLY_ACTION_LIMIT,type CourtAction} from '@/engine/courtEngine';
@@ -11,23 +13,24 @@ import {PixelText} from '../ui/PixelText';
 import {PersonPicker} from '../ui/PersonPicker';
 import {C,PANEL} from '@/theme/theme';
 import {HoldingPanel} from './HoldingPanel';
-export const POLITICAL_ACTIONS:CourtAction[]=['petition','patron','advise','alliance','expose'];
+export const POLITICAL_ACTIONS:CourtAction[]=['petition','patron','advise','alliance','expose','seek_nobility','seek_barony'];
 export const ROYAL_GROUPS:{title:string;actions:CourtAction[]}[]=[
  {title:'KINGDOM AFFAIRS',actions:['tax_relief','tax_raise','religion','peace']},
  {title:'MILITARY & JUSTICE',actions:['mobilise','justice']},
  {title:'NOBILITY & SUCCESSION',actions:['appoint','dismiss','grant_title','name_heir','disinherit','abdicate']},
 ];
 const CLAIM_ACTIONS:CourtAction[]=['recognise_claim','takeover','regency_claim'];
-const LABELS:Partial<Record<CourtAction,string>>={petition:'Petition for Office',patron:'Seek Patronage',advise:'Offer Advice',alliance:'Household Alliance',expose:'Investigate Court Funds',appoint:'Appoint Councillor',dismiss:'Dismiss Councillor',recognise_claim:'Press a Royal Claim',takeover:'Seek a Takeover',regency_claim:'Claim after Regency',abdicate:'Abdicate'};
-const DETAILS:Partial<Record<CourtAction,string>>={petition:'Formally request the selected office. The incumbent keeps the seal until the council decides.',patron:'Ask an adult noble or councillor for patronage. Gain influence and Crown support through service.',advise:'Correct a decree to improve prosperity, influence and Crown support.',alliance:'Agree a new alliance with another eligible household. Existing allies and your own family are excluded.',expose:'Check the court funds. Recover stolen gold when evidence exists; otherwise publish the accounts.',appoint:'Give the selected office to an eligible adult. Replacing its holder risks opposition.',dismiss:'Remove the selected office holder. Expect resentment and political opposition.',abdicate:'Yield the Crown to an eligible successor. Existing claims and family history remain.',recognise_claim:'Ask the council to recognise your documented claim against a weakened mandate.',takeover:'Seek the Crown with influence and council support when the ruler has lost public backing.',regency_claim:'Seek recognition after completing a regency with council agreement.'};
+const LABELS:Partial<Record<CourtAction,string>>={seek_nobility:'Request Landed Nobility',seek_barony:'Seek a Barony',petition:'Petition for Office',patron:'Seek Patronage',advise:'Offer Advice',alliance:'Household Alliance',expose:'Investigate Court Funds',appoint:'Appoint Councillor',dismiss:'Dismiss Councillor',recognise_claim:'Press a Royal Claim',takeover:'Seek a Takeover',regency_claim:'Claim after Regency',abdicate:'Abdicate'};
+const DETAILS:Partial<Record<CourtAction,string>>={seek_nobility:'Ask the ruler for a patent of landed nobility. Eligibility permits a request; refusal is possible. It does not give an occupation, office or crown.',seek_barony:`Open the existing barony opportunity. Qualification requires ${BARONY.reserve}g held; acceptance costs ${BARONY.price}g. The title adds land, not the Crown.`,petition:'Formally request the selected office. The incumbent keeps the seal until the council decides.',patron:'Ask an adult noble or councillor for patronage. Gain influence and Crown support through service.',advise:'Correct a decree to improve prosperity, influence and Crown support.',alliance:'Agree a new alliance with another eligible household. Existing allies and your own family are excluded.',expose:'Check the court funds. Recover stolen gold when evidence exists; otherwise publish the accounts.',appoint:'Give the selected office to an eligible adult. Replacing its holder risks opposition.',dismiss:'Remove the selected office holder. Expect resentment and political opposition.',abdicate:'Yield the Crown to an eligible successor. Existing claims and family history remain.',recognise_claim:'Ask the council to recognise your documented claim against a weakened mandate.',takeover:'Seek the Crown with influence and council support when the ruler has lost public backing.',regency_claim:'Seek recognition after completing a regency with council agreement.'};
 const NEED_PERSON:CourtAction[]=['patron','alliance','appoint','justice','grant_title','name_heir','disinherit'];
 const NEED_OFFICE:CourtAction[]=['petition','appoint','dismiss'];
 const label=(id:CourtAction)=>LABELS[id]??ROYAL_DECISIONS.find(d=>d.id===id)?.name??id;
-export function CourtPanel({state}:{state:GameState}){
+export function CourtPanel({state,initialAction}:{state:GameState;initialAction?:CourtAction}){
  const {dispatch}=useGame(),{width}=useWindowDimensions();
- const [office,setOffice]=useState<CourtOffice>('chancellor'),[action,setAction]=useState<CourtAction>('petition');
+ const [office,setOffice]=useState<CourtOffice>('chancellor'),[action,setAction]=useState<CourtAction>(initialAction??'petition');
  const [person,setPerson]=useState<string>(),[group,setGroup]=useState<string>(),[counsel,setCounsel]=useState<'consult'|'override'>('consult');
  const [records,setRecords]=useState(false),[moreAdvice,setMoreAdvice]=useState(false);
+ useEffect(()=>{if(initialAction)setAction(initialAction);},[initialAction]);
  const court=state.world.court;if(!court)return <View style={PANEL.parchCard}><PixelText size={18}>No court is recognised.</PixelText></View>;
  const player=state.world.characters[state.playerCharacterId],rules=court.rulerId===player.id;
  const holder=state.world.characters[court.offices[office]??''],officeName=POLITICAL_OFFICES.find(o=>o.id===office)!.name;
@@ -44,6 +47,7 @@ export function CourtPanel({state}:{state:GameState}){
    <View style={{flexDirection:'row',gap:10,alignItems:'center'}}><Image source={GOAL_ICONS.scholar} resizeMode="contain" style={{width:38,height:38}}/><PixelText font="pixel" size={9} color={C.blueDeep} style={{flex:1}}>{label(action).toUpperCase()}</PixelText></View>
    <PixelText size={18} color={C.textBrown}>{ROYAL_DECISIONS.find(d=>d.id===action)?.desc??DETAILS[action]}</PixelText>
    {needsOffice&&<PixelText size={18}>Selected office: {officeName} · {holder?.name??'Vacant'}</PixelText>}
+   {(['seek_barony','seek_nobility'] as CourtAction[]).includes(action)&&<View style={{gap:6}}>{(action==='seek_barony'?baronyRequirements(state):nobilityRequirements(state)).map(r=><PixelText key={r.id} size={17} color={r.met?C.faithDark:C.textBrown}>{r.met?'✓':'•'} {r.label}: {r.current}</PixelText>)}<PixelText size={17}>{action==='seek_barony'?`${BARONY.reserve}g held to qualify; ${BARONY.price}g paid only if accepted. Declining keeps the opportunity open in a later year.`:`Current chance if eligible: ${Math.round(nobilityProspects(state).odds*100)}%. ${nobilityProspects(state).detail}`}</PixelText></View>}
    {action==='petition'&&<View style={{gap:6,borderTopWidth:1,borderColor:C.parchSd,paddingTop:9}}><PixelText font="pixel" size={7} color={C.blueDeep}>REQUIREMENTS</PixelText>{courtPetitionRequirements(state).map(r=><PixelText key={r.label} size={17} color={r.met?C.faithDark:C.bad}>{r.met?'✓':'•'} {r.label} · {r.current}</PixelText>)}</View>}
    {needsPerson&&<><PersonPicker key={action} people={candidates} value={target} onChange={setPerson}/>{!candidates.length&&<PixelText size={16}>No living person currently meets this action’s requirements.</PixelText>}</>}
    {advice.length>0&&<View style={{gap:7}}><PixelText font="pixel" size={7} color={C.blueDeep}>COUNCIL ADVICE</PixelText><PixelText size={16}>{advice.filter(a=>a.support).length} for · {advice.filter(a=>!a.support).length} against</PixelText>{(moreAdvice?advice:firstAdvice?[firstAdvice]:[]).map(a=><PixelText key={a.id} size={17}>{a.support?'For':'Against'} · {a.text}</PixelText>)}<PixelButton bg={C.lightFill} shadow={C.paleEdge} onPress={()=>setMoreAdvice(!moreAdvice)} innerStyle={{padding:9}}><PixelText size={16}>{moreAdvice?'FEWER COUNCIL VIEWS':'OTHER COUNCIL VIEWS'}</PixelText></PixelButton><View style={{flexDirection:'row',flexWrap:'wrap',gap:8}}>{(['consult','override'] as const).map(id=><PixelButton key={id} selected={counsel===id} bg={counsel===id?C.charm:C.lightFill} shadow={C.paleEdge} onPress={()=>setCounsel(id)} innerStyle={{padding:9}}><PixelText size={16}>{id==='consult'?'Hear council':'Act independently'}</PixelText></PixelButton>)}</View></View>}

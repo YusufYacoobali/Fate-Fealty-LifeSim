@@ -1,0 +1,40 @@
+import type {GameState} from '@/types/game';
+import {BARONY,baronyEligible,nobilityRequirements} from './progressionRequirements';
+import {legacyStatus} from './lifeDepthState';
+import {rollBonusFromTraits} from './traitEngine';
+import {addMoney} from './gameState';
+
+/** Eligibility is permission to petition, not a promise that the ruler agrees. */
+export function nobilityProspects(s:GameState):{baseOdds:number;odds:number;detail:string}{
+ const p=s.world.characters[s.playerCharacterId];
+ const baseOdds=Math.max(.1,Math.min(.85,.2+(s.reputation+(p.factionInfluence??0)+s.world.factions.crown.playerStanding)/300+Math.min(s.gold,350)/1400));
+ return {baseOdds,odds:Math.max(0,Math.min(1,baseOdds+rollBonusFromTraits(s))),detail:`Reputation ${s.reputation}; political influence ${p.factionInfluence??0}; Crown support ${s.world.factions.crown.playerStanding}; gold held ${s.gold}g. These affect the ruler’s decision.`};
+}
+export function titleConfirmationEligible(s:GameState,title:'noble'|'baron'):boolean{
+ return title==='baron'?baronyEligible(s):!s.dead&&nobilityRequirements(s).every(r=>r.met);
+}
+/** Atomic grant/payment. A replay or lost eligibility has no effects at all. */
+export function grantPlayerTitle(s:GameState,title:'noble'|'baron'):boolean{
+ if(!titleConfirmationEligible(s,title))return false;
+ const p=s.world.characters[s.playerCharacterId],status=p.socialStatus??=legacyStatus(s.rankIdx);
+ if(title==='baron'){
+  addMoney(s,-BARONY.price);
+  // A royal patent adds land; it cannot erase royal ancestry or documented claims.
+  if(status.estate!=='royal')status.estate='baronial';
+  status.titles=[...new Set([...status.titles,'Baron'])];
+  s.rankIdx=Math.max(s.rankIdx,4);
+ }else{status.estate='noble';status.titles=[...new Set([...status.titles,'Noble'])];s.rankIdx=Math.max(s.rankIdx,3);}
+ status.grants=[...new Set([...status.grants,`${title}_patent_${s.world.currentYear}`])];
+ p.rankIdx=s.rankIdx;s.rankProgress=0;
+ return true;
+}
+
+/** The ruler's existing NPC patent uses the same estate/title invariants. */
+export function grantNobilityTo(s:GameState,characterId:string):boolean{
+ const p=s.world.characters[characterId];
+ if(!p?.alive||p.age<18||p.id===s.playerCharacterId||(p.socialStatus?.estate??'commoner')!=='commoner'||p.rankIdx>=3)return false;
+ const status=p.socialStatus??=legacyStatus(p.rankIdx);
+ status.estate='noble';status.titles=[...new Set([...status.titles,'Noble'])];
+ status.grants=[...new Set([...status.grants,`royal_patent_${s.world.currentYear}`])];p.rankIdx=Math.max(3,p.rankIdx);
+ return true;
+}

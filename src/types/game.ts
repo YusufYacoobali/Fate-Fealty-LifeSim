@@ -622,6 +622,8 @@ export interface HoldingUpgradeDef {
 // ---------------------------------------------------------------------------
 
 export interface Effects {
+  /** Atomic, revalidated landed-title grant; the barony includes its 90g payment. */
+  landGrant?: 'noble'|'baron';
   legalVerdict?: 'acquit'|'convict'|'confess'|'bribed'|'exposed';
   bond?: { role: string; affinity?: number; trust?: number; respect?: number; clearRivalry?: boolean; flag?: 'rival' | 'feud' | 'friend' };
   familyFeud?: { role: string; reason: string };

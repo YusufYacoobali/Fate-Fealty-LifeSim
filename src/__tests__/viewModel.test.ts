@@ -1,3 +1,4 @@
+import {militaryPromotionRequirements} from '@/engine/progressionRequirements';
 import { selectRankClimb, selectRankPath } from '@/state/viewModel';
 import { makeState } from './helpers';
 
@@ -18,19 +19,14 @@ describe('viewModel', () => {
 
   const martialState = (overrides: Parameters<typeof makeState>[0]) => { const s = makeState(overrides); s.occupation.careerId = 'levy'; s.world.characters[s.playerCharacterId].education!.qualifications.push('martial_training'); return s; };
 
-  it('shows Peasant progress toward Squire using every promotion requirement', () => {
-    const progressLed = selectRankClimb(martialState({
-      age: 17,
-      rankProgress: 64,
-      stats: { health: 60, charm: 50, wits: 60, faith: 50 },
-    }));
-    expect(progressLed).toMatchObject({ from: 'COMMONER', to: 'SQUIRE', progress: 64, locked: false });
-
-    const witsBlocked = selectRankClimb(martialState({
-      age: 17,
-      rankProgress: 100,
-      stats: { health: 60, charm: 50, wits: 24, faith: 50 },
-    }));
-    expect(witsBlocked?.progress).toBe(50);
+  it('retires the compulsory rank percentage and shows separate military requirements',()=>{
+    const s=martialState({age:17,rankProgress:100,stats:{health:60,charm:50,wits:24,faith:50}});
+    expect(selectRankClimb(s)).toBeNull();
+    const route=militaryPromotionRequirements(s)!;
+    expect(route.honour).toBe('squire');
+    expect(route.rows.find(r=>r.id==='service')?.met).toBe(true);
+    expect(route.rows.find(r=>r.id==='wits')?.met).toBe(false);
+    expect(selectRankClimb(makeState({rankIdx:2}))).toBeNull();
+    expect(selectRankClimb(makeState({rankIdx:4}))).toBeNull();
   });
 });

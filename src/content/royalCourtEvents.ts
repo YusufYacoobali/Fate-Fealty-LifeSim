@@ -1,3 +1,5 @@
+import {nobilityRequirements} from '@/engine/progressionRequirements';
+import {nobilityProspects} from '@/engine/titleEngine';
 import {scandalText,currentCourtScandal} from '@/engine/courtIncidents';
 import { petitionProspects, petitionPatronEligible, oppositionAudienceCoalition } from '@/engine/courtPolitics';
 import type { GameEvent } from '@/types/game';
@@ -14,6 +16,10 @@ export const ROYAL_COURT_EVENTS: GameEvent[] = [
 ];
 
 ROYAL_COURT_EVENTS.push(
+  {id:'court_nobility_petition',title:'A PATENT FOR YOUR HOUSEHOLD',category:'court',domain:'politics',arcNodeOnly:true,actorRoles:{},
+   text:s=>`${s.world.characters[s.world.court!.rulerId]?.name??'The ruler'} hears your request for landed nobility. You present your household’s means and service. ${nobilityProspects(s).detail} The ruler may refuse; an appointment or knighthood is a separate honour.`,
+   choices:[{id:'present',label:'Present your petition',requires:{custom:s=>nobilityRequirements(s).every(r=>r.met)},successChance:s=>nobilityProspects(s).baseOdds,success:{text:'The ruler issues a patent of landed nobility. Your household receives the title; your occupation, military honours and the royal succession stay separate.',effects:{landGrant:'noble',reputation:6},tone:'good'},failure:{text:'The ruler declines the patent. You keep your means and may make another request in a later year.',effects:{wits:1},tone:'plain'}},
+   {id:'withdraw',label:'Withdraw the request',outcome:{text:'You withdraw before the council decides. No title or office changes hands.',tone:'plain'}}]},
   { id: 'court_office_contest', title: 'THE CONTESTED SEAL', category: 'court', domain: 'politics', arcNodeOnly: true, actorRoles: {},
     text: s => { const q = s.world.court?.petition; return q && !q.resolved ? `Your request for the ${q.office.replaceAll('_',' ')}’s seal is before the ruler. ${petitionProspects(s,'merit').detail} Appointment depends on the council’s decision.` : 'The court has already recorded this petition.'; },
     choices: [

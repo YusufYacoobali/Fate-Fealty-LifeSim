@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createLife, cloneState } from '@/engine/gameState';
 import { normalizeGameState } from '@/state/persistence';
+import {grantPlayerTitle} from '@/engine/titleEngine';
+import {legacyStatus} from '@/engine/lifeDepthState';
 import { canPromote, promote } from '@/engine/pathProgression';
 
 describe('life depth foundation', () => {
@@ -33,7 +35,11 @@ describe('life depth foundation', () => {
     state.rankIdx = 3;
     expect(promote(state, true)).toBe(false);
     state.lifetimeUnlocked = true;
-    expect(promote(state, true)).toBe(true);
+    expect(promote(state, true)).toBe(false);
+    state.world.characters[state.playerCharacterId].socialStatus=legacyStatus(3);
+    expect(grantPlayerTitle(state,'baron')).toBe(true);
+    expect(state.gold).toBe(9909);
+    expect(state.rankIdx).toBe(4);
     expect(promote(state, true)).toBe(false);
   });
 });

@@ -1,9 +1,11 @@
+import {AdvancementPanel} from './AdvancementPanel';
+import type {AdvancementDestination} from '@/engine/progressionRequirements';
 import { SkillsEquipmentPanel } from '../rpg/RpgPanels';
 import { useGame } from '@/state/GameContext';
 import { careerById } from '@/data/careers';
 import { tradeProgress, TRADE_ENDINGS } from '@/engine/tradeJourney';
 import React from 'react';
-import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, View } from 'react-native';
 import { PixelText } from '../ui/PixelText';
 import { StatBar } from '../ui/StatBar';
 import { C, PANEL } from '@/theme/theme';
@@ -16,26 +18,6 @@ interface StatVM {
   color: string;
   dark: string;
   val: number;
-}
-
-interface RankVM {
-  name: string;
-  locked: boolean;
-  bg: string;
-  sd: string;
-  fg: string;
-}
-
-interface RankClimbVM {
-  route?: string;
-  from: string;
-  to: string;
-  progress: number;
-  locked: boolean;
-}
-
-function displayLockedRank(name: string) {
-  return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
 }
 
 interface TraitVM {
@@ -61,16 +43,15 @@ interface Props {
   classRank: string;
   age: number;
   stats: StatVM[];
-  rankPath: RankVM[];
-  rankClimb: RankClimbVM | null;
+  onNavigateAdvancement?: (destination:AdvancementDestination)=>void;
   traits: TraitVM[];
   goal: GoalVM | null;
   bio: string;
   onLockedRankPress?: () => void;
 }
 
-export function MeTab({ portrait, firstName, epithet, classRank, age, stats, rankPath, rankClimb, traits, goal, bio, onLockedRankPress }: Props) {
-  const { state } = useGame();
+export function MeTab({ portrait, firstName, epithet, classRank, age, stats, onNavigateAdvancement, traits, goal, bio, onLockedRankPress }: Props) {
+  const { state,dispatch } = useGame();
   const career = careerById(state.occupation.careerId);
   const professional = tradeProgress(state);
   const portraitAsset = rankPortraitAsset(classRank);
@@ -107,51 +88,7 @@ export function MeTab({ portrait, firstName, epithet, classRank, age, stats, ran
         <PixelText font="body" size={16} color={C.textBrown}>Professional advancement follows experience and ability. Social station has its own ladder.</PixelText>
         {!!professional.chapter && <PixelText font="body" size={17} color={C.blueDark} style={{ marginTop: 6 }}>{professional.ending ? `Legacy: ${TRADE_ENDINGS[professional.ending]}` : `${professional.chapter} professional commissions completed`}</PixelText>}
       </View>
-      {/* path to nobility */}
-      <PixelText font="pixel" size={8} color={C.blueDeep} style={{ marginTop: 13, marginBottom: 8 }}>
-        PATH TO NOBILITY
-      </PixelText>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
-        {rankPath.map((r, i) => (
-          <TouchableOpacity
-            key={i}
-            activeOpacity={r.locked ? 0.72 : 1}
-            disabled={!r.locked}
-            accessibilityRole={r.locked ? 'button' : undefined}
-            accessibilityLabel={r.locked ? `${r.name} locked. Opens Lifetime Pass.` : r.name}
-            onPress={r.locked ? onLockedRankPress : undefined}
-            style={{ flex: 1, alignItems: 'center', backgroundColor: r.bg, borderWidth: 2, borderColor: C.inkSoft, borderBottomColor: r.sd, borderRightColor: r.sd, paddingVertical: 5, paddingHorizontal: 2, opacity: r.locked ? 0.86 : 1 }}
-          >
-            <PixelText font="pixel" size={7} color={r.fg}>
-              {r.locked ? displayLockedRank(r.name) : r.name}
-            </PixelText>
-            {r.locked && (
-              <PixelText font="pixel" size={7} color={r.fg} style={{ marginTop: 2 }}>
-                Locked
-              </PixelText>
-            )}
-          </TouchableOpacity>
-        ))}
-      </View>
-      {rankClimb && (
-        <View style={{ marginTop: 6 }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 3 }}>
-            <PixelText font="body" size={12} color={C.textMuted}>{rankClimb.from} PATH</PixelText>
-            <PixelText font="body" size={12} color={rankClimb.locked ? C.textMuted : C.blueDark}>
-              {rankClimb.locked ? `${rankClimb.to} REQUIRES PREMIUM` : `${rankClimb.progress}% TO ${rankClimb.to}`}
-            </PixelText>
-          </View>
-          <PixelText font="body" size={14} color={C.textMuted} style={{ marginBottom: 4 }}>{rankClimb.route}</PixelText>
-          <StatBar
-            value={rankClimb.progress}
-            color={rankClimb.locked ? '#9aa8b8' : C.charm}
-            dark={rankClimb.locked ? '#667486' : C.charmDark}
-            height={6}
-            trackBg={C.lightFill}
-            trackBorder={C.paleEdge}
-          />
-        </View>
-      )}
+      <AdvancementPanel state={state} onNavigate={onNavigateAdvancement??(destination=>destination==='premium'?onLockedRankPress?.():dispatch({type:'SET_TAB',tab:destination==='court'?'hold':'do'}))}/>
 
       {/* attributes */}
       <PixelText font="pixel" size={8} color={C.blueDeep} style={{ marginTop: 14, marginBottom: 8 }}>

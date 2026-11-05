@@ -1,3 +1,4 @@
+import {grantPlayerTitle} from './titleEngine';
 import {activeSpouse, unlinkSpouse} from './characterState';
 import {resolveLegalHearing} from './legalEngine';
 import { resolveOfficePetition, resolveCourtOpposition } from './courtPolitics';
@@ -54,6 +55,7 @@ function rankProgressDelta(delta: number, fullStrength: boolean): number {
 
 export function applyEffects(s: GameState, eff?: Effects): GameState {
   if (!eff) return s;
+  if (eff.landGrant && !grantPlayerTitle(s,eff.landGrant)) return s;
   if (eff.royalTransition) applyRoyalTransition(s, eff.royalTransition);
   if (eff.royalTreasury != null && s.world.court?.rulerId === s.playerCharacterId) s.world.court.treasury = Math.max(0, Math.min(5000, s.world.court.treasury + eff.royalTreasury));
   if (eff.courtPetition) resolveOfficePetition(s,eff.courtPetition);

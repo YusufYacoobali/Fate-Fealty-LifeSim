@@ -56,7 +56,7 @@ describe('pathProgression', () => {
     expect(canPromote(makeState({ ...ready, lifetimeUnlocked: false }))).toBe(false);
     const entitled = makeState({ ...ready, lifetimeUnlocked: true });
     expect(canPromote(entitled)).toBe(false); // A barony requires an explicit grant.
-    expect(promote(entitled, true)).toBe(true);
+    expect(promote(entitled, true)).toBe(false); // Ordinary promotion cannot buy or invent a barony.
   });
 
   it('tickProgression nudges progress toward promotion for martial lives', () => {

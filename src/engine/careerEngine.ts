@@ -1,3 +1,4 @@
+import {knighthoodServiceRequirements,missingRequirements,occupationPromotionRequirements} from './progressionRequirements';
 import { performSpecialization, specializationAvailability, recordProfessionalWork, tickProfessionalStanding } from './careerSpecializationEngine';
 import { recordTradeWork } from './tradeJourney';
 import { CareerDef, GameState } from '@/types/game';
@@ -30,9 +31,8 @@ export function careerActionAvailability(state: GameState, action: CareerAction,
     return { available: true };
   }
   if (action === 'honour') {
-    const p = state.world.characters[state.playerCharacterId], history = p.professionalHistory?.martial;
-    if (p.socialStatus?.martialHonour === 'knight') return { available: false, reason: 'Already knighted' };
-    if (state.age < 18 || current?.family !== 'martial' || !p.education?.qualifications.includes('martial_training') || skillLevel(state, 'arms') < 3 || (history?.reputation ?? 0) < 20 || !history?.milestones.some(m => ['service_honours', 'company_command'].includes(m))) return { available: false, reason: 'Needs martial training, Arms 3 and recognised command service' };
+    const reason=missingRequirements(knighthoodServiceRequirements(state));
+    if(reason)return {available:false,reason};
     return { available: true };
   }
   if (action === 'borrow') return state.debts.length ? { available: false, reason: 'Repay thy existing debt first' } : { available: true };
@@ -54,9 +54,7 @@ export function careerActionAvailability(state: GameState, action: CareerAction,
   if (!current) return { available: false, reason: 'No occupation' };
   if (action === 'promote') {
     if (!current.promotesTo) return { available: false, reason: 'At the top of this career' };
-    if (state.occupation.experience < 60 || state.occupation.performance < 55) return { available: false, reason: 'Needs 60 experience and 55 performance' };
-    const next = careerById(current.promotesTo)!;
-    const reason = careerAvailability(state, next);
+    const reason = missingRequirements(occupationPromotionRequirements(state));
     if (reason) return { available: false, reason };
   }
   return { available: true };

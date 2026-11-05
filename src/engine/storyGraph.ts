@@ -58,6 +58,7 @@ export function applyChoice(s: GameState, event: GameEvent, ch: Choice): ChoiceR
   const challengeOpponent = ch.challenge ? s.pendingEvent?.bindings?.[ch.challenge.role] : undefined;
   const outcome = resolveOutcome(ch, s);
   recordEventResolution(s, event, ch.id ?? ch.label);
+  if(event.id==='baron_land_grant'&&s.world.court)(s.world.court.lastActionYears??={}).seek_barony=s.world.currentYear;
   let openNow: GameEvent | null = null;
 
   if (outcome) {

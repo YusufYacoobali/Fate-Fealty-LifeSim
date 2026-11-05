@@ -46,22 +46,25 @@ export function careerById(id: string | null): CareerDef | undefined {
   return id ? CAREERS.find((career) => career.id === id) : undefined;
 }
 
-export function careerAvailability(state: GameState, career: CareerDef): string | null {
-  if (state.dead) return 'Thy life is ended';
-  if (career.premium && !state.lifetimeUnlocked) return 'Requires the Lifetime Pass';
-  if (state.age < career.minAge) return `Requires age ${career.minAge}`;
-  const education = state.world.characters[state.playerCharacterId]?.education;
-  const qualification = ({ craft: 'apprenticeship', trade: 'literacy', church: 'clerical_learning', martial: 'martial_training', court: 'court_education', medicine: 'literacy', law: 'literacy' } as const)[career.family as 'craft' | 'trade' | 'church' | 'martial' | 'court' | 'medicine' | 'law'];
-  const history = state.world.characters[state.playerCharacterId]?.professionalHistory?.[career.family];
-  // Existing jobs stay valid; new appointments accept formal learning or a
-  // longer, documented route through practical service and mentorship.
-  if (career.tier > 0 && (history?.completedActions.length ?? 0) < Math.min(2, career.tier)) return `Needs ${Math.min(2, career.tier)} distinct professional milestones`;
-  if (career.tier >= 2 && (history?.reputation ?? 0) < 24) return 'Needs 24 professional standing';
-  if (career.tier > 0 && qualification && !education?.qualifications.includes(qualification) && !(history?.milestones.includes('field_training') && (state.occupation.experience >= 100 || history.reputation >= 35))) return `Needs ${qualification.replaceAll('_', ' ')} or practical mentorship`;
-  if (career.minReputation != null && state.reputation < career.minReputation) return 'Thy reputation is too low';
-  for (const [key, value] of Object.entries(career.minStats ?? {})) {
-    const learned = (key === 'wits' && education?.qualifications.includes('literacy')) || (key === 'charm' && education?.qualifications.includes('court_education')) || (key === 'faith' && education?.qualifications.includes('clerical_learning')) ? 4 : 0;
-    if (state.stats[key as keyof typeof state.stats] + learned < (value ?? 0)) return `Needs ${key} ${value}`;
-  }
-  return null;
+/** Every application/promotion displays and checks this same list. */
+export function careerRequirements(state:GameState,career:CareerDef):(import('@/engine/progressionRequirements').ProgressionRequirement&{reason:string})[]{
+ const rows:(import('@/engine/progressionRequirements').ProgressionRequirement&{reason:string})[]=[];
+ const add=(id:string,label:string,current:string,met:boolean,reason:string,destination:import('@/engine/progressionRequirements').AdvancementDestination='work')=>rows.push({id,label,current,met,reason,destination});
+ add('alive','Living character',state.dead?'Life ended':'Alive',!state.dead,'Thy life is ended','life');
+ if(career.premium)add('access','Pro access',state.lifetimeUnlocked?'Active':'Required',state.lifetimeUnlocked,'Requires the Lifetime Pass','premium');
+ add('age',`Age ${career.minAge}+`,`${state.age}`,state.age>=career.minAge,`Requires age ${career.minAge}`,'life');
+ const education=state.world.characters[state.playerCharacterId]?.education;
+ const qualification=({craft:'apprenticeship',trade:'literacy',church:'clerical_learning',martial:'martial_training',court:'court_education',medicine:'literacy',law:'literacy'} as const)[career.family as 'craft'|'trade'|'church'|'martial'|'court'|'medicine'|'law'];
+ const history=state.world.characters[state.playerCharacterId]?.professionalHistory?.[career.family];
+ if(career.tier>0)add('milestones',`${Math.min(2,career.tier)} distinct professional milestones`,`${history?.completedActions.length??0}`,(history?.completedActions.length??0)>=Math.min(2,career.tier),`Needs ${Math.min(2,career.tier)} distinct professional milestones`);
+ if(career.tier>=2)add('standing','Professional standing 24+',`${history?.reputation??0}`,(history?.reputation??0)>=24,'Needs 24 professional standing');
+ if(career.tier>0&&qualification){const practical=!!history?.milestones.includes('field_training')&&(state.occupation.experience>=100||history.reputation>=35),formal=!!education?.qualifications.includes(qualification);add('qualification',`${qualification.replaceAll('_',' ')} or practical mentorship`,formal?'Qualified':practical?'Practical route met':'Not yet qualified',formal||practical,`Needs ${qualification.replaceAll('_',' ')} or practical mentorship`,career.family==='martial'?'martial_learning':'learning');}
+ if(career.minReputation!=null)add('reputation',`Public reputation ${career.minReputation}+`,`${state.reputation}`,state.reputation>=career.minReputation,'Thy reputation is too low');
+ for(const[key,target]of Object.entries(career.minStats??{})){
+  const credit=(key==='wits'&&education?.qualifications.includes('literacy'))||(key==='charm'&&education?.qualifications.includes('court_education'))||(key==='faith'&&education?.qualifications.includes('clerical_learning'))?4:0;
+  const value=state.stats[key as keyof typeof state.stats];
+  add(key,`${key} ${target}+`,`${value}${credit?' + 4 learning':''}`,value+credit>=(target??0),`Needs ${key} ${target}`,key==='wits'?'learning':'activities');
+ }
+ return rows;
 }
+export function careerAvailability(state:GameState,career:CareerDef):string|null{return careerRequirements(state,career).find(r=>!r.met)?.reason??null;}

@@ -1,3 +1,4 @@
+import {BARONY,baronyEligible} from '@/engine/progressionRequirements';
 import { GameEvent } from '@/types/game';
 
 /** Lifetime Pass events: higher station, same simple life-sim loop. */
@@ -7,13 +8,14 @@ export const PREMIUM_EVENTS: GameEvent[] = [
     premium: true,
     category: 'noble',
     title: 'A VACANT BARONY',
-    text: 'A border barony lacks a lord. The council wants coin, manners, and someone foolish enough to live near raiders.',
-    ageMin: 38,
+    text: ()=>`The council offers a vacant border barony. You must hold ${BARONY.reserve} gold to qualify; buying the patent costs ${BARONY.price} gold. Your household keeps the remaining reserve. The land comes with neighbours who own rather a lot of spears.`,
+    ageMin: BARONY.minAge,
     ranks: ['Noble'],
-    requires: { minGold: 350, statAtLeast: { charm: 84, wits: 76 } },
-    once: true,
+    requires: { custom: baronyEligible },
+    once: false,
+    actorRoles: {},
     choices: [
-      { label: 'Buy the claim (90g)', costGold: 90, outcome: { text: 'The seal is yours. Your patent is entered in the royal register; your household now holds a barony.', effects: { gold: -90, charm: 8, reputation: 12, rankProgress: 100, path: { court: 6 }, memory: { tag: 'barony_claimed', weight: 5 }, promote: true }, tone: 'good' } },
+      { label: `Buy the claim (${BARONY.price}g)`, costGold: BARONY.price, requires:{custom:baronyEligible}, outcome: { text: 'The seal is yours. Your patent is entered in the royal register; your household now holds a barony.', effects: { landGrant:'baron', charm: 8, reputation: 12, path: { court: 6 }, memory: { tag: 'barony_claimed', weight: 5 } }, tone: 'good' } },
       { label: 'Wait for a better chance', outcome: { text: 'You smile, bow, and keep your purse closed. The chance may come again, if death does not get bored first.', effects: { wits: 4, reputation: 2, rankProgress: 20 }, tone: 'plain' } },
     ],
   },

@@ -1,3 +1,4 @@
+import {militaryPromotionRequirements} from './progressionRequirements';
 import { careerById } from '@/data/careers';
 import { legacyStatus } from './lifeDepthState';
 /**
@@ -27,23 +28,8 @@ export function dominantPath(s: GameState): PathKey {
 
 /** Check whether the player currently QUALIFIES for the next rank. */
 export function canPromote(s: GameState): boolean {
-  const next = RANKS[s.rankIdx + 1];
-  if (!next) return false;
-  if (next.premium && !s.lifetimeUnlocked) return false;
-  // Wealth and general standing cannot confer a hereditary title or crown.
-  if (s.rankIdx >= 2) return false;
-  const education = s.world.characters[s.playerCharacterId]?.education;
-  if (careerById(s.occupation.careerId)?.family !== 'martial' || !education?.qualifications.includes('martial_training')) return false;
-  const req = next.promote;
-  if (s.age < req.minAge) return false;
-  if (req.minGold != null && s.gold < req.minGold) return false;
-  if (s.rankProgress < req.progress) return false;
-  if (req.stats) {
-    for (const [k, v] of Object.entries(req.stats)) {
-      if ((s.stats as any)[k] < (v as number)) return false;
-    }
-  }
-  return true;
+  const route=militaryPromotionRequirements(s);
+  return !s.dead&&!!route&&route.rows.every(r=>r.met);
 }
 
 const PROMOTION_REASON: Record<string, string> = {
@@ -84,29 +70,25 @@ export function promotionRationale(s: GameState): string {
 
 /** Promote one rank if possible (or forced). Resets rankProgress. */
 export function promote(s: GameState, force = false): boolean {
-  const next = RANKS[s.rankIdx + 1];
-  if (!next) return false;
-  if (next.premium && !s.lifetimeUnlocked) return false;
-  if (s.rankIdx >= 4) return false; // The crown is resolved only by court succession.
-  if (!force && !canPromote(s)) return false;
-  const player = s.world.characters[s.playerCharacterId];
-  const status = player.socialStatus ??= legacyStatus(s.rankIdx);
-  if (s.rankIdx === 0) status.martialHonour = 'squire';
-  if (s.rankIdx === 1) status.martialHonour = 'knight';
-  if (s.rankIdx === 2) { status.estate = 'noble'; status.titles.push('Noble'); }
-  if (s.rankIdx === 3) { status.estate = 'baronial'; status.titles.push('Baron'); }
-  status.grants.push(force ? `formal_grant_${s.world.currentYear}` : `martial_service_${s.world.currentYear}`);
+  const route=militaryPromotionRequirements(s);
+  if(!route||s.dead||(!force&&!canPromote(s))||(force&&s.rankIdx>=2))return false;
+  const index=route.honour==='squire'?1:2,next=RANKS[index];
+  const player=s.world.characters[s.playerCharacterId];
+  const status=player.socialStatus??=legacyStatus(s.rankIdx);
+  status.martialHonour=route.honour;
+  status.grants=[...new Set([...status.grants,`martial_service_${s.world.currentYear}`])];
   const reason = force
     ? 'Fortune, favour, or somebody important has moved the ladder beneath thy feet.'
     : promotionRationale(s);
-  s.rankIdx += 1;
+  s.rankIdx = Math.max(s.rankIdx,index);
+  player.rankIdx=s.rankIdx;
   s.rankProgress = 0;
   addMemory(s, `promoted_${next.key.toLowerCase()}`, 3, reason);
   pushFeed(
     s,
     `PROMOTED → ${next.short}`,
     C.good,
-    `${reason} Swineford can argue no longer: you are now a ${next.key}. One cousin has taken the news personally.`,
+    `${reason} Your martial training is recognised with the honour of ${next.key}. One cousin has taken the news personally.`,
     'good',
   );
   return true;

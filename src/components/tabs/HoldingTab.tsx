@@ -1,3 +1,4 @@
+import type {CourtAction} from '@/engine/courtEngine';
 import React,{useState} from 'react';
 import {Image,ScrollView,View,useWindowDimensions} from 'react-native';
 import type {GameState,HoldingResource} from '@/types/game';
@@ -14,7 +15,7 @@ import {HoldingExpansionPanel} from '../rpg/RpgPanels';
 import {CourtPanel} from './CourtPanel';
 import {HoldingPanel} from './HoldingPanel';
 export type HoldingSection='estate'|'court'|'swineford';
-interface Props{state:GameState;section:HoldingSection;onSectionChange:(section:HoldingSection)=>void;onAction:(id:string)=>void;onUpgrade:(id:string)=>void;}
+interface Props{courtFocus?:CourtAction;state:GameState;section:HoldingSection;onSectionChange:(section:HoldingSection)=>void;onAction:(id:string)=>void;onUpgrade:(id:string)=>void;}
 const RESOURCE_STYLE={stores:{label:'STORES',color:'#d8ad62',dark:'#966c2f'},security:{label:'SECURITY',color:C.blue,dark:C.blueDark},loyalty:{label:'LOYALTY',color:C.faith,dark:C.faithDark}};
 function recommendation(state: GameState): string {
   if (state.holding.lastActionAge === state.age) return 'Your estate order is complete. Age up to see the yearly result.';
@@ -34,7 +35,7 @@ function recommendation(state: GameState): string {
 }
 
 
-export function HoldingTab({state,section,onSectionChange,onAction,onUpgrade}:Props){
+export function HoldingTab({state,courtFocus,section,onSectionChange,onAction,onUpgrade}:Props){
  const {width,fontScale}=useWindowDimensions(),[buildingsOpen,setBuildingsOpen]=useState(false);
  const managed=state.holding.lastActionAge===state.age,locked=state.age<HOLDING_UNLOCK_AGE;
  const prosperity=holdingProsperity(state),upkeep=holdingYearlyUpkeep(state),reward=holdingProsperityReward(state);
@@ -49,7 +50,7 @@ export function HoldingTab({state,section,onSectionChange,onAction,onUpgrade}:Pr
    </PixelButton>)}
   </View>
   <ScrollView key={section} contentInsetAdjustmentBehavior="automatic" keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets keyboardDismissMode="on-drag" style={{flex:1}} contentContainerStyle={{padding:9,paddingBottom:18,gap:10}}>
-   {section==='court'?<CourtPanel state={state}/>:section==='swineford'?<>
+   {section==='court'?<CourtPanel state={state} initialAction={courtFocus}/>:section==='swineford'?<>
     <View style={PANEL.parchCard}><PixelText font="pixel" size={10} color={C.blueDeep}>THE VILLAGE OF SWINEFORD</PixelText><PixelText size={17} style={{marginTop:7}}>Village conditions affect everyone. Your estate’s Stores support village food; Security and Loyalty support order.</PixelText></View>
     <WorldStatusPanel state={state}/>
    </>:<>

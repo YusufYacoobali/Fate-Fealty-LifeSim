@@ -22,14 +22,14 @@ function chooseActivity(s: GameState): string {
     if (s.gold >= 2) return 'bathhouse';
   }
   const next = RANKS[s.rankIdx + 1];
-  if (next?.promote.stats) {
+  if (next?.promote?.stats) {
     // Shore up whichever gated stat is short.
     const need = next.promote.stats;
     if (need.charm != null && s.stats.charm < need.charm && s.gold >= 2) return 'bathhouse';
     if (need.wits != null && s.stats.wits < need.wits) return 'train';
   }
-  // Need gold for the noble gate?
-  if (next?.promote.minGold != null && s.gold < next.promote.minGold + 5) return 'fields';
+  // Hereditary titles are explicit grants, not a gold-based rank gate.
+  if (next?.promote?.minGold != null && s.gold < next.promote.minGold + 5) return 'fields';
   return 'train';
 }
 

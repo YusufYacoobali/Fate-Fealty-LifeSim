@@ -1,3 +1,5 @@
+import {grantNobilityTo} from './titleEngine';
+import {BARONY,baronyRequirements,missingRequirements,nobilityRequirements} from './progressionRequirements';
 import {currentCourtScandal,identifyCourtScandals} from './courtIncidents';
 import { allianceUnavailable } from './courtAlliances';
 import { beginOfficePetition, councilAdvice, reactToDecree, tickCourtOpposition, addCourtOpposition } from './courtPolitics';
@@ -54,8 +56,8 @@ export function refreshRoyalClaims(state: GameState): void {
   if (ruler.spouseId) addRoyalClaim(state, ruler.spouseId, ruler.id, 'marriage', 45);
   if (!court.heirId || !state.world.characters[court.heirId]?.alive || court.claims.some(c => c.characterId === court.heirId && c.disinherited)) court.heirId = royalCandidates(state)[0]?.id;
 }
-export type CourtAction = 'patron' | 'petition' | 'alliance' | 'expose' | 'advise' | 'recognise_claim' | 'takeover' | 'regency_claim' | 'appoint' | 'dismiss' | 'tax_raise' | 'tax_relief' | 'justice' | 'religion' | 'mobilise' | 'peace' | 'grant_title' | 'name_heir' | 'disinherit' | 'abdicate';
-const PUBLIC_ACTIONS: CourtAction[] = ['patron','petition','alliance','expose','advise','recognise_claim','takeover','regency_claim'];
+export type CourtAction = 'seek_barony' | 'seek_nobility' | 'patron' | 'petition' | 'alliance' | 'expose' | 'advise' | 'recognise_claim' | 'takeover' | 'regency_claim' | 'appoint' | 'dismiss' | 'tax_raise' | 'tax_relief' | 'justice' | 'religion' | 'mobilise' | 'peace' | 'grant_title' | 'name_heir' | 'disinherit' | 'abdicate';
+const PUBLIC_ACTIONS: CourtAction[] = ['seek_barony','seek_nobility','patron','petition','alliance','expose','advise','recognise_claim','takeover','regency_claim'];
 export const COURT_YEARLY_ACTION_LIMIT=3;
 /** Shared presentation of the same petition qualifications enforced below. */
 export function courtPetitionRequirements(state:GameState):{label:string;current:string;met:boolean}[]{
@@ -73,6 +75,7 @@ export function courtAvailability(state: GameState, action: CourtAction, targetI
   if (state.age < 16) return 'Political duties begin at sixteen';
   if (court.actionsYear === state.world.currentYear && court.actionsUsed >= COURT_YEARLY_ACTION_LIMIT) return 'Three council matters per year';
   if (court.lastActionYears?.[action] === state.world.currentYear) return 'Already decided this year';
+  if(action==='seek_barony'||action==='seek_nobility'){const reason=missingRequirements(action==='seek_barony'?baronyRequirements(state):nobilityRequirements(state));if(reason)return reason;}
   const target = targetId ? state.world.characters[targetId] : undefined;
   if (targetId && !target?.alive) return 'Choose a living person';
   if (['patron','alliance','appoint','justice','grant_title','name_heir','disinherit'].includes(action) && !target) return 'Choose a person';
@@ -94,7 +97,7 @@ export function courtAvailability(state: GameState, action: CourtAction, targetI
   if (action === 'abdicate' && !royalCandidates(state).length) return 'Name an eligible successor first';
   if (action === 'justice' && target?.legalState?.status !== 'imprisoned') return 'Choose an imprisoned person';
   if (['name_heir','disinherit'].includes(action) && !court.claims.some(c => c.characterId === targetId && !c.disinherited && c.characterId !== court.rulerId)) return 'Choose an eligible royal claimant';
-  if (action === 'grant_title' && (target!.age < 18 || target!.id === p.id)) return 'Choose another adult';
+  if (action === 'grant_title' && (target!.age < 18 || target!.id === p.id || target!.rankIdx>=3 || (target!.socialStatus?.estate??'commoner')!=='commoner')) return 'Choose another untitled adult';
   if (['recognise_claim','takeover','regency_claim'].includes(action)) {
     if (!state.lifetimeUnlocked) return 'Monarch routes require Premium access';
     if (ruler) return 'Already ruler';
@@ -123,6 +126,8 @@ export function performCourtAction(state: GameState, action: CourtAction, target
   const world = state.world.conditions;
   let text = '';
   switch (action) {
+    case 'seek_barony': state.pendingEvent={eventId:'baron_land_grant',bindings:{}};text=`Your request for a barony is ready for confirmation. Keep ${BARONY.reserve}g in reserve to qualify; the patent costs ${BARONY.price}g if accepted.`;break;
+    case 'seek_nobility': state.pendingEvent={eventId:'court_nobility_petition',bindings:{ruler:court.rulerId}};text='Your petition for landed nobility goes before the ruler. It confers neither an office nor the Crown.';break;
     case 'patron': p.factionInfluence = clamp((p.factionInfluence ?? 0) + 7); state.world.factions.crown.playerStanding = clamp(state.world.factions.crown.playerStanding + 4, -100, 100); applyRelationshipShift(state, target!.id, { affinity: 5 }, { affinity: 6, respect: 4 }); state.occupation.patronId = target!.id; text = `${target!.name} agrees to hear your petitions. Patronage begins with actual letters and an expectation of service.`; break;
     case 'petition': {
       beginOfficePetition(state,office!); text = `Your request for the ${office!.replaceAll('_',' ')}’s seal goes before the council. The present holder keeps the office while the petition is heard.`; break;
@@ -156,7 +161,7 @@ export function performCourtAction(state: GameState, action: CourtAction, target
       world.warThreat = clamp(world.warThreat - effective); if (effective < 8) court.legitimacy = clamp(court.legitimacy - 6); text = `The host costs thirty treasury gold. ${marshal?.name ?? 'An unstaffed command'} reduces the threat by ${effective}; competence has become a matter of survival.`; break;
     }
     case 'peace': { court.treasury -= 15; const envoy = state.world.characters[court.offices.chancellor ?? '']; const odds = clamp(0.3 + (envoy?.stats.wits ?? 20) / 200 + court.legitimacy / 400 - world.warThreat / 500 + (counsel === 'consult' ? 0.1 : 0),0.15,0.9); const agreed = chance(odds); if (agreed) { world.warThreat = clamp(world.warThreat - 8); state.world.factions.commons.playerStanding = clamp(state.world.factions.commons.playerStanding + 5,-100,100); } else court.legitimacy = clamp(court.legitimacy - 3); text = `Fifteen treasury gold funds ${envoy?.name ?? 'the unstaffed chancellery'}’s embassy. ${agreed ? 'The guarantees win a truce; war threat falls.' : 'The other side rejects the guarantees; war threat remains and legitimacy falls.'}`; break; }
-    case 'grant_title': target!.socialStatus ??= legacyStatus(target!.rankIdx); target!.socialStatus.estate = 'noble'; target!.socialStatus.titles = [...new Set([...target!.socialStatus.titles, 'Noble'])]; target!.socialStatus.grants.push(`royal_patent_${state.world.currentYear}`); target!.rankIdx = Math.max(3, target!.rankIdx); text = `${target!.name} receives a patent of landed nobility. The grant is entered in the royal record.`; break;
+    case 'grant_title': grantNobilityTo(state,target!.id); text = `${target!.name} receives a patent of landed nobility. The grant is entered in the royal record.`; break;
     case 'name_heir': court.heirId = target!.id; for (const claim of court.claims.filter(c => c.characterId !== target!.id && c.characterId !== p.id)) if (state.world.characters[claim.characterId]?.alive) applyRelationshipShift(state, claim.characterId, { affinity: -3 }, { affinity: -12 }); text = `${target!.name} is named heir. The other claimants retain their genealogy and their objections.`; break;
     case 'disinherit': court.claims.find(c => c.characterId === target!.id)!.disinherited = true; if (court.heirId === target!.id) court.heirId = undefined; court.legitimacy = clamp(court.legitimacy - 10); applyRelationshipShift(state, target!.id, { trust: -15 }, { affinity: -35 }); text = `${target!.name} is disinherited. The family receives a legal decision and the beginnings of a feud.`; break;
     case 'abdicate': { const successor = royalCandidates(state)[0]; if (successor) recogniseRuler(state, successor.id, 'a recorded abdication'); text = 'You surrender the crown. The council and the treasury continue under the recognised successor.'; break; }

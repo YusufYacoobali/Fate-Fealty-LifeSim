@@ -35,7 +35,7 @@ it('shows genuine petition qualifications, annual limits and the reason a submis
  s.world.court!.actionsYear=s.world.currentYear;s.world.court!.actionsUsed=3;act(()=>root.update(<CourtPanel state={{...s}}/>));expect(text()).toContain('Three council matters per year');
 });
 it('preserves all public, royal, appointment and succession actions without bypassing entitlement',()=>{
- expect(new Set([...POLITICAL_ACTIONS,...ROYAL_GROUPS.flatMap(g=>g.actions),'recognise_claim','takeover','regency_claim']).size).toBe(20);
+ expect(new Set([...POLITICAL_ACTIONS,...ROYAL_GROUPS.flatMap(g=>g.actions),'recognise_claim','takeover','regency_claim']).size).toBe(22);
  const s=state();s.world.court!.rulerId=s.playerCharacterId;s.lifetimeUnlocked=false;act(()=>{root=create(<CourtPanel state={s}/>);});for(const g of ROYAL_GROUPS){tap(g.title+' ▾');expect(text()).toContain(courtAvailability(s,g.actions[0],undefined,'chancellor'));}tap('KINGDOM AFFAIRS ▾');
 });
 it('uses the direct Court entry callback without spending an action',()=>{

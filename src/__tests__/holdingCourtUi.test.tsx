@@ -32,7 +32,7 @@ it('shows actual office holders and sends a petition for the selected office thr
  const next=gameReducer(s,mockDispatch.mock.calls[0][0]);expect(next.world.court!.petition!.office).toBe('marshal');expect(next.pendingEvent?.eventId).toBe('court_office_contest');expect(next.world.court!.actionsUsed).toBe(1);
 });
 it('shows genuine petition qualifications, annual limits and the reason a submission is blocked',()=>{
- const s=state();act(()=>{root=create(<CourtPanel state={s}/>);});for(const r of courtPetitionRequirements(s))expect(text()).toContain(r.label);expect(button('SUBMIT PETITION')!.props.disabled).toBe(true);expect(text()).toContain(courtAvailability(s,'petition',undefined,'chancellor'));
+ const s=state();act(()=>{root=create(<CourtPanel state={s}/>);});for(const r of courtPetitionRequirements(s))expect(text()).toContain(r.label);expect(button('SUBMIT PETITION')!.props.disabled).toBe(true);for(const r of courtPetitionRequirements(s))expect(root.root.findAllByType(PixelText).filter(t=>[t.props.children].flat(5).join('').includes(r.label))).toHaveLength(1);
  s.world.court!.actionsYear=s.world.currentYear;s.world.court!.actionsUsed=3;act(()=>root.update(<CourtPanel state={{...s}}/>));expect(text()).toContain('Three council matters per year');
 });
 it('preserves all public, royal, appointment and succession actions without bypassing entitlement',()=>{

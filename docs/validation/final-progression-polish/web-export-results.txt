@@ -1,0 +1,3 @@
+Expo production export --platform web --max-workers 2
+PASS (exit 0)
+Exported: /tmp/fate-final-polish-after

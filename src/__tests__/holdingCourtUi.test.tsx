@@ -61,5 +61,5 @@ it('keeps the Court overview compact and help collapsed, textual and free of act
 });
 it('preserves the manual barony action and detailed qualifications at Court',()=>{
  const s=makeState({age:38,rankIdx:3,gold:350,lifetimeUnlocked:true,stats:{health:90,charm:84,wits:76,faith:50}});syncPlayerToWorld(s);
- act(()=>{root=create(<CourtPanel state={s} initialAction="seek_barony"/>);});expect(text()).toContain('up to 25 standing');expect(text()).not.toContain('90g paid only if accepted');tap('CONFIRM: BARONIAL RECOGNITION');expect(mockDispatch).toHaveBeenCalledWith(expect.objectContaining({type:'COURT',action:'seek_barony'}));
+ act(()=>{root=create(<CourtPanel state={s} initialAction="seek_barony"/>);});expect(text()).toContain('up to 25 standing');expect(text()).not.toContain('90g paid only if accepted');tap('CONFIRM: SEEK COUNCIL RECOGNITION');expect(mockDispatch).toHaveBeenCalledWith(expect.objectContaining({type:'COURT',action:'seek_barony'}));
 });

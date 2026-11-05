@@ -95,7 +95,7 @@ describe('narrative overhaul compatibility',()=>{
     for(const old of baseline.events){
       const current=EVENTS_BY_ID[old.id];expect(current).toBeDefined();
       expect(current.choices.map(c=>c.id)).toEqual(old.choices.map((c:{id:string})=>c.id));
-      const correctedTitles:Record<string,string>={comic_lofty_bed:'A BED FIT FOR A GIANT',education_parish_0:'ONE ELBOW TOO MANY',family_mother_ill:'A MOTHER TAKES ILL',child_first_lesson:'A VERY LARGE WARNING',child_first_friend:'THE CHILD AT YOUR FENCE'};
+      const correctedTitles:Record<string,string>={baron_land_grant:'THE COUNCIL’S RECOGNITION',comic_lofty_bed:'A BED FIT FOR A GIANT',education_parish_0:'ONE ELBOW TOO MANY',family_mother_ill:'A MOTHER TAKES ILL',child_first_lesson:'A VERY LARGE WARNING',child_first_friend:'THE CHILD AT YOUR FENCE'};
       expect(current.title).toBe(correctedTitles[old.id]??old.title);
     }
     for(const old of baseline.annual)expect(ANNUAL_MESSAGES.some(m=>m.id===old.id)).toBe(true);

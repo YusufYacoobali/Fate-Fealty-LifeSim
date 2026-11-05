@@ -13,18 +13,21 @@ const player=(s:GameState)=>s.world.characters[s.playerCharacterId];
 export const holdsBarony=(s:GameState)=>player(s).socialStatus?.estate==='baronial'||!!player(s).socialStatus?.titles.includes('Baron');
 export function rankPromotionRequirements(s:GameState):ProgressionRequirement[]{
  const next=RANKS[s.rankIdx+1],req=next?.promote;if(!req)return [];
+ const court=s.world.court,claim=court?.claims.find(c=>c.characterId===s.playerCharacterId&&!c.disinherited);
+ const crownReady=s.rankIdx===4&&crownPromotionEligible(s);
+ const crownStatus=crownReady?'Eligible succession':!claim?'No eligible documented claim':s.world.characters[court?.rulerId??'']?.alive?'Await succession or political recognition':'Await eligible succession';
  return [requirement('progress','Standing 100',`${Math.min(100,Math.max(0,s.rankProgress))}`,s.rankProgress>=100,'work'),
  requirement('age',`Age ${req.minAge}+`,`${s.age}`,s.age>=req.minAge,'life'),
  ...(req.minGold?[requirement('gold',`Gold held ${req.minGold}g`,`${s.gold}g`,s.gold>=req.minGold,'work')]:[]),
  ...Object.entries(req.stats??{}).map(([stat,value])=>requirement(stat,`${stat[0].toUpperCase()+stat.slice(1)} ${value}+`,`${s.stats[stat as keyof GameState['stats']]}`,s.stats[stat as keyof GameState['stats']]>=value,stat==='wits'?'learning':'activities')),
  ...(next.premium?[requirement('access','Pro access',s.lifetimeUnlocked?'Active':'Required',s.lifetimeUnlocked,'premium')]:[]),
- ...(s.rankIdx===4?[requirement('crown','A recognised route to the Crown',crownPromotionEligible(s)?'Eligible succession':'Review claims and succession at Court',crownPromotionEligible(s),'claim')]:[])];
+ ...(s.rankIdx===4?[requirement('crown','A recognised route to the Crown',crownStatus,crownReady,'claim')]:[])];
 }
-/** Standing cannot depose a living ruler. Only an already recognised ruler or
- * the first lawful candidate to a vacant/deceased ruler can complete this step. */
+/** Standing cannot depose a living ruler. Only the first lawful claimant to a vacant throne can complete this step.
+ * Access is a separate requirement, so the hint does not invent a missing claim when only Pro is missing. */
 export function crownPromotionEligible(s:GameState):boolean{
  const c=s.world.court;if(!c)return false;
- return c.rulerId===s.playerCharacterId||!s.world.characters[c.rulerId]?.alive&&royalCandidates(s)[0]?.id===s.playerCharacterId;
+ return c.rulerId!==s.playerCharacterId&&!s.world.characters[c.rulerId]?.alive&&royalCandidates({...s,lifetimeUnlocked:true})[0]?.id===s.playerCharacterId;
 }
 /** Existing optional Court recognition, not the gate to reaching Baron. */
 export function baronyRequirements(s:GameState):ProgressionRequirement[]{

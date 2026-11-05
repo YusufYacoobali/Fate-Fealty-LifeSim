@@ -1,0 +1,7 @@
+npm test -- --runInBand
+
+Test Suites: 108 passed, 108 total
+Tests:       1086 passed, 1086 total
+Snapshots:   0 total
+Time:        358.853 s, estimated 374 s
+Ran all test suites.

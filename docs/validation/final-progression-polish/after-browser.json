@@ -1,0 +1,50 @@
+{
+  "results": [
+    {
+      "width": 280,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "width": 320,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "width": 768,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "width": 280,
+      "textScale": 1.35,
+      "passed": true
+    },
+    {
+      "scenario": "age",
+      "passed": true
+    },
+    {
+      "scenario": "pro",
+      "passed": true
+    },
+    {
+      "scenario": "crown",
+      "passed": true
+    },
+    {
+      "scenario": "noble",
+      "passed": true
+    },
+    {
+      "scenario": "ready",
+      "passed": true
+    }
+  ],
+  "errors": []
+}

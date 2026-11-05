@@ -43,6 +43,9 @@ it('preserves existing Noble/Baron saves and progress through repeated reload wi
 it('does not overthrow a living ruler even with perfect Baron standing and a claim',()=>{
  const s=ready(4),ruler=s.world.court!.rulerId;s.world.court!.claims.push({characterId:s.playerCharacterId,throughId:ruler,basis:'recognition',strength:100,disinherited:false});s.world.court!.heirId=s.playerCharacterId;expect(canPromote(s)).toBe(false);expect(promote(s,true)).toBe(false);expect(s.world.court!.rulerId).toBe(ruler);expect(s.rankProgress).toBe(100);
 });
+it('cannot turn complete Baron standing into a Crown claim',()=>{
+ const s=ready(4),court=s.world.court!,claims=JSON.stringify(court.claims);expect(canPromote(s)).toBe(false);expect(promote(s,true)).toBe(false);expect(s.rankIdx).toBe(4);expect(JSON.stringify(court.claims)).toBe(claims);expect(s.rankProgress).toBe(100);
+});
 it('retains exceptional royal birth, succession and ancestry when ordinary levels advance',()=>{
  const s=createLife({worldSeed:950117,birthOrigin:'royal',lifetimeUnlocked:true});expect(s.rankIdx).toBe(3);expect(royalProgression(s).label).toBe('Prince');s.age=40;s.gold=500;s.stats.charm=95;s.stats.wits=95;s.rankProgress=100;const p=s.world.characters[s.playerCharacterId],before=JSON.stringify([p.parentIds,s.world.court!.claims]);expect(promote(s)).toBe(true);expect(s.rankIdx).toBe(4);expect(p.socialStatus!.estate).toBe('royal');expect(JSON.stringify([p.parentIds,s.world.court!.claims])).toBe(before);expect(s.world.court!.rulerId).not.toBe(p.id);
 });
@@ -53,4 +56,29 @@ it('keeps an already-earned Baron heir when Pro access expires, without granting
 it('keeps military honours separate and makes royal NPC recognition sequential and replay-safe',()=>{
  const {grantNobilityTo}=require('@/engine/titleEngine'),{performCareerAction}=require('@/engine/careerEngine'),{legacyStatus}=require('@/engine/lifeDepthState');const s=ready();s.rankProgress=0;const p=s.world.characters[s.playerCharacterId];s.occupation.careerId='guard';p.education!.qualifications.push('martial_training');p.skills!.arms.level=3;Object.assign(require('@/engine/careerSpecializationEngine').professionalRecord(p,'martial'),{reputation:30,milestones:['company_command']});performCareerAction(s,'honour');expect(s.rankIdx).toBe(0);expect(p.socialStatus!.martialHonour).toBe('knight');
  const target=s.world.characters.edwin;target.age=30;target.rankIdx=0;target.socialStatus=legacyStatus(0);expect(grantNobilityTo(s,target.id)).toBe(true);expect(target.rankIdx).toBe(1);expect(grantNobilityTo(s,target.id)).toBe(false);expect(target.rankIdx).toBe(1);
+});
+it('defers an ordinary claimant at a vacant throne and then completes automatic Crown promotion exactly once',()=>{
+ const {addRoyalClaim,recogniseRuler}=require('@/engine/royalSuccessionEngine'),{reconcileCourt}=require('@/engine/courtEngine');let s=ready(4);s.occupation.careerId='trader';s.rankProgress=99;const former=s.world.court!.rulerId;
+ addRoyalClaim(s,s.playerCharacterId,former,'recognition',100);s.world.court!.heirId=s.playerCharacterId;s.world.characters[former].alive=false;reconcileCourt(s);expect(s.rankIdx).toBe(4);expect(s.world.court!.rulerId).toBe(former);expect(canPromote(s)).toBe(false);
+ s=normalizeGameState(JSON.parse(JSON.stringify(s)));expect(s.rankIdx).toBe(4);expect(s.world.court!.rulerId).toBe(former);expect(s.world.court!.claims.filter(c=>c.characterId===s.playerCharacterId)).toHaveLength(1);
+ s=gameReducer(s,{type:'DO_ACTIVITY',id:'study_trade'});expect(s.rankIdx).toBe(5);expect(s.rankProgress).toBe(0);expect(s.world.court!.rulerId).toBe(s.playerCharacterId);expect(s.memories.filter(m=>m.tag==='promoted_monarch')).toHaveLength(1);
+ expect(recogniseRuler(s,s.playerCharacterId,'a replay')).toBe(false);s=normalizeGameState(JSON.parse(JSON.stringify(s)));s=gameReducer(s,{type:'DO_ACTIVITY',id:'rest'});
+ expect(Object.values(s.world.characters).filter(p=>p.alive&&p.rankIdx===5)).toHaveLength(1);expect(s.world.court!.claims.filter(c=>c.characterId===s.playerCharacterId)).toHaveLength(1);expect(s.world.history.filter(h=>h.type==='royal_succession'&&h.participantIds.includes(s.playerCharacterId))).toHaveLength(1);expect(s.memories.filter(m=>m.tag==='promoted_monarch')).toHaveLength(1);
+});
+it.each(['age','gold','charm','wits','faith','access'] as const)('cannot use ordinary vacancy succession to bypass the %s requirement',gate=>{
+ const {addRoyalClaim}=require('@/engine/royalSuccessionEngine'),{reconcileCourt}=require('@/engine/courtEngine');const s=ready(4),former=s.world.court!.rulerId;addRoyalClaim(s,s.playerCharacterId,former,'recognition',100);s.world.court!.heirId=s.playerCharacterId;s.world.characters[former].alive=false;
+ if(gate==='age')s.age=39;else if(gate==='gold')s.gold=419;else if(gate==='access')s.lifetimeUnlocked=false;else s.stats[gate]=gate==='charm'?89:gate==='wits'?84:59;
+ reconcileCourt(s);expect(s.rankIdx).toBe(4);expect(s.world.court!.rulerId).not.toBe(s.playerCharacterId);expect(promote(s)).toBe(false);expect(s.rankProgress).toBe(100);
+});
+it('preserves exceptional royal-heir inheritance without ordinary Baron qualifications, but still requires Pro',()=>{
+ const {reconcileCourt}=require('@/engine/courtEngine');for(const pro of [true,false]){const s=createLife({worldSeed:950117,birthOrigin:'royal',lifetimeUnlocked:true});s.lifetimeUnlocked=pro;s.world.court!.heirId=s.playerCharacterId;const parent=s.world.court!.rulerId;s.world.characters[parent].alive=false;s.rankProgress=0;reconcileCourt(s);expect(s.world.court!.rulerId===s.playerCharacterId).toBe(pro);expect(s.rankIdx).toBe(pro?5:3);expect(s.memories.filter(m=>m.tag==='promoted_monarch')).toHaveLength(0);}
+});
+it('reaches the ordinary Crown route through an actual royal marriage and succession',()=>{
+ const {linkSpouses}=require('@/engine/characterState'),{reconcileCourt}=require('@/engine/courtEngine');let s=ready(4);s.rankProgress=99;const court=s.world.court!,ruler=s.world.characters[court.rulerId];
+ expect(linkSpouses(s,s.playerCharacterId,ruler.id)).toBe(true);reconcileCourt(s);expect(court.claims.find(c=>c.characterId===s.playerCharacterId)?.basis).toBe('marriage');court.heirId=s.playerCharacterId;expect(canPromote(s)).toBe(false);
+ ruler.alive=false;reconcileCourt(s);expect(s.rankIdx).toBe(4);expect(canPromote(s)).toBe(false);s=gameReducer(s,{type:'DO_ACTIVITY',id:'study_trade'});expect(s.rankIdx).toBe(5);expect(s.world.court!.rulerId).toBe(s.playerCharacterId);expect(s.memories.filter(m=>m.tag==='promoted_monarch')).toHaveLength(1);
+});
+it('renames council recognition without changing its stable choices, eligibility, rewards or replay protection',()=>{
+ const e=eventById('baron_land_grant')!;expect(e.title).toBe('THE COUNCIL’S RECOGNITION');expect(e.choices.map(c=>c.id)).toEqual(['baron_land_grant_choice_1','baron_land_grant_choice_2']);expect(e.choices[0].outcome!.effects).toEqual({landGrant:'baron',charm:8,reputation:12,path:{court:6},memory:{tag:'barony_recognised',weight:5}});expect(e.choices[1].outcome!.effects).toEqual({wits:4,reputation:2,rankProgress:20});expect(e.choices.some(c=>c.costGold)).toBe(false);
+ let s=ready(3);s.rankProgress=0;s.pendingEvent={eventId:e.id,bindings:{}};s=normalizeGameState(JSON.parse(JSON.stringify(s)));const gold=s.gold;s=gameReducer(s,{type:'CHOOSE',choice:e.choices[0]});expect(s.rankIdx).toBe(3);expect(s.rankProgress).toBe(25);expect(s.gold).toBe(gold);expect(s.memories.filter(m=>m.tag==='barony_recognised')).toHaveLength(1);
 });

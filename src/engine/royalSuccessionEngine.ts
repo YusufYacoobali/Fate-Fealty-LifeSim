@@ -21,7 +21,7 @@ export function royalCandidates(state: GameState, excludeIds: string[] = []): Wo
 }
 export function recogniseRuler(state: GameState, characterId: string, reason: string): boolean {
   const court = state.world.court, ruler = state.world.characters[characterId];
-  if (!court || !ruler?.alive || (characterId === state.playerCharacterId && !state.lifetimeUnlocked)) return false;
+  if (!court || !ruler?.alive || court.rulerId===characterId || (characterId === state.playerCharacterId && !state.lifetimeUnlocked)) return false;
   const claim = court.claims.find(c => c.characterId === characterId && !c.disinherited);
   if (!claim) return false;
   const former = state.world.characters[court.rulerId];
@@ -53,7 +53,13 @@ export function settleRoyalSuccession(state: GameState, excludeIds: string[] = [
   const ruler = state.world.characters[court.rulerId];
   if (ruler?.alive && !excludeIds.includes(ruler.id)) return;
   const candidate = royalCandidates(state, excludeIds)[0];
-  if (candidate) { recogniseRuler(state, candidate.id, 'the documented succession'); return; }
+  if (candidate) {
+    const claim=court.claims.find(c=>c.characterId===candidate.id)!;
+    // Royal-heir inheritance is exceptional. An ordinary claimant must finish the
+    // existing progression checks; leave this vacancy for promote() to settle.
+    if(candidate.id===state.playerCharacterId&&candidate.socialStatus?.estate!=='royal'&&claim.basis!=='birth')return;
+    recogniseRuler(state, candidate.id, 'the documented succession');return;
+  }
   // A broken line is settled by the surviving council, not by the player's wealth.
   const council = Object.values(court.offices).map(id => state.world.characters[id!]).find(c => c?.alive && c.age >= 18 && c.id !== state.playerCharacterId && !excludeIds.includes(c.id))
     ?? Object.values(state.world.characters).find(c => c.alive && c.age >= 18 && c.id !== state.playerCharacterId && c.id !== 'goose' && !excludeIds.includes(c.id));

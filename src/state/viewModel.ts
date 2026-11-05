@@ -89,16 +89,11 @@ export function selectRankPath(s: GameState) {
 /** A compact next-level hint from the very same requirements as promotion. */
 export function selectProgressionHint(s:GameState):string {
  if(s.rankIdx>=RANKS.length-1)return 'You rule the kingdom. Protect legitimacy and secure the succession.';
- const next=RANKS[s.rankIdx+1],rows=rankPromotionRequirements(s);
- if(s.rankProgress<100)return 'Work, study and build your reputation to increase your standing.';
- if(s.rankIdx===4&&!rows.find(r=>r.id==='access')?.met)return 'Progress complete. Pro is required to become Monarch.';
- if(s.rankIdx===4&&!rows.find(r=>r.id==='crown')?.met)return 'Your standing is sufficient. You still need a recognised route to the Crown.';
- const missing=rows.find(r=>!r.met);
- if(!missing)return `Progress complete. You are ready to become ${next.key}.`;
- if(missing.id==='access')return `Progress complete. Pro is required to become ${next.key}.`;
- if(missing.id==='age')return `Progress complete. Reach ${missing.label.toLowerCase().replace('+','')} to become ${next.key}.`;
- if(missing.id==='gold')return `Progress complete. Hold ${next.promote!.minGold}g to become ${next.key}.`;
- return `Progress complete. Reach ${missing.label.replace('+','')} to become ${next.key}.`;
+ const next=RANKS[s.rankIdx+1],missing=rankPromotionRequirements(s).filter(r=>!r.met&&r.id!=='progress');
+ const needs=missing.map(r=>r.id==='access'?'Pro':r.id==='gold'?r.label.replace('Gold held ',''):r.id==='age'?r.label.toLowerCase().replace('+',''):r.id==='crown'&&r.current==='Await succession or political recognition'?'succession or political recognition':r.id==='crown'?'a recognised route to the Crown':r.label.replace('+',''));
+ const list=needs.length<2?needs[0]:needs.slice(0,-1).join(', ')+' and '+needs.at(-1);
+ if(s.rankProgress<100)return `Build standing through work and achievements. ${needs.length?`${next.key} needs ${list}.`:`Reach 100 standing to become ${next.key}.`}`;
+ return needs.length?`Standing complete. ${next.key} needs ${list}.`:`Standing complete. Ready to become ${next.key}.`;
 }
 export function selectRankClimb(s:GameState){
  const next=RANKS[s.rankIdx+1];if(!next)return null;

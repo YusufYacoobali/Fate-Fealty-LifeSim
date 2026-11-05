@@ -34,5 +34,5 @@ it('retains the actual royal status in the profile tiles and the single hint',()
  mockState.world.characters[mockState.playerCharacterId].gender='woman';mount();expect(selectRankPath(mockState).map(r=>r.name)).toContain('PRINCESS');expect(text()).toContain('PROGRESS TO ');
 });
 it('shows the actual standing meter without restoring dashboard controls',()=>{
- mockState=makeState({age:20,rankIdx:1,rankProgress:68});mount();expect(text()).toContain('PROGRESS TO ');expect(text()).toContain('KNIGHT');expect(text()).toContain('68');expect(text()).toContain('Work, study');expect(text()).not.toContain('ADVANCEMENT');expect(root.root.findAllByType(PixelButton)).toHaveLength(0);
+ mockState=makeState({age:20,rankIdx:1,rankProgress:68});mount();expect(text()).toContain('PROGRESS TO ');expect(text()).toContain('KNIGHT');expect(text()).toContain('68');expect(text()).toContain('Build standing through work and achievements');expect(text()).not.toContain('ADVANCEMENT');expect(root.root.findAllByType(PixelButton)).toHaveLength(0);
 });

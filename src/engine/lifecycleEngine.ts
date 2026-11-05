@@ -40,7 +40,7 @@ export function tickKinMortality(s: GameState): GameState {
 /** The `ill` state drains health each year, with a chance to recover. */
 export function tickAilments(s: GameState): GameState {
   if (hasTag(s, 'ill')) {
-    applyEffects(s, { health: -rnd(3, 7) });
+    applyEffects(s, { health: -rnd(3, 7) },{category:'illness',sourceType:'condition',sourceId:'ill'});
     if (chance(0.28)) {
       removeTag(s, 'ill');
       pushFeed(s, 'RECOVERED', C.good, 'The lingering sickness finally breaks. You feel like a person again.', 'good');
@@ -49,7 +49,7 @@ export function tickAilments(s: GameState): GameState {
     }
   }
   if (hasTag(s, 'ale_ravaged')) {
-    applyEffects(s, { health: -rnd(2, 6), charm: -1 });
+    applyEffects(s, { health: -rnd(2, 6), charm: -1 },{category:'illness',sourceType:'condition',sourceId:'ale_ravaged'});
     if (chance(0.2)) {
       removeTag(s, 'ale_ravaged');
       pushFeed(s, 'THE SHAKES PASS', C.good, 'A hard sober season steadies thy hands and stomach.', 'good');
@@ -58,7 +58,7 @@ export function tickAilments(s: GameState): GameState {
     }
   }
   if (hasTag(s, 'poppy_dependent')) {
-    applyEffects(s, { health: -rnd(4, 9), wits: -1 });
+    applyEffects(s, { health: -rnd(4, 9), wits: -1 },{category:'illness',sourceType:'condition',sourceId:'poppy_dependent'});
     if (chance(0.14)) {
       removeTag(s, 'poppy_dependent');
       pushFeed(s, 'THE HAZE LIFTS', C.good, 'The craving loosens at last, leaving thee thinner but awake.', 'good');
@@ -74,7 +74,7 @@ export function tickImprisonment(s: GameState): GameState {
   if (!hasTag(s, 'imprisoned')) return s;
   const legal = s.world.characters[s.playerCharacterId]?.legalState;
   if (legal?.status === 'imprisoned' && legal.sentenceYearsRemaining > 0) {
-    applyEffects(s, { health: -rnd(1, 3) });
+    applyEffects(s, { health: -rnd(1, 3) },{category:'health',sourceType:'legal',sourceId:'imprisonment'});
     pushFeed(s, 'IMPRISONED', C.bad, `${legal.sentenceYearsRemaining} year${legal.sentenceYearsRemaining === 1 ? '' : 's'} remain in thy sentence.`, 'bad');
     return s;
   }
@@ -84,7 +84,7 @@ export function tickImprisonment(s: GameState): GameState {
     addMemory(s, 'released', 2);
     pushFeed(s, 'RELEASED', C.good, 'The gaoler turns the key at last. You stagger blinking into freedom, thinner and warier.', 'good');
   } else {
-    applyEffects(s, { health: -rnd(2, 5), charm: -1 });
+    applyEffects(s, { health: -rnd(2, 5), charm: -1 },{category:'health',sourceType:'legal',sourceId:'imprisonment'});
     pushFeed(s, 'IMPRISONED', C.bad, 'Another grim year in the dungeon. The rats are poor company and worse cooks.', 'bad');
   }
   return s;

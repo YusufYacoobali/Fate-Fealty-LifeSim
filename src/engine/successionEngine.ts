@@ -108,6 +108,8 @@ export function continueAsHeir(state: GameState, requestedHeirId?: string, lifet
   state.goalDone = false;
   state.dead = false;
   state.deathCause = '';
+  delete state.deathContext;
+  delete state.deathFinalized;
   state.epitaph = '';
   state.heirContinued = true;
   state.lifeNo += 1;

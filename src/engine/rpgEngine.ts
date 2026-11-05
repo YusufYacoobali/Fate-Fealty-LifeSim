@@ -295,7 +295,7 @@ function resolveMission(s: GameState, option: MissionOption, success: boolean): 
   s.world.feedFilter = 'all';
   const def = missionDefinition(s)!;
   const before = feedbackSnapshot(s);
-  applyEffects(s, success ? option.effects : option.failure ?? { reputation: -2 });
+  applyEffects(s, success ? option.effects : option.failure ?? { reputation: -2 },{category:'event',sourceType:'encounter',sourceId:run.id});
   if (run.kind === 'caravan' && run.stage < 2) {
     const inputId = run.id;
     run.choices = [...(run.choices ?? []), option.id];

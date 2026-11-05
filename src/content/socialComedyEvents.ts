@@ -23,7 +23,7 @@ export const SOCIAL_COMEDY_EVENTS:GameEvent[]=[
   reply('song','Make the interruption part of a song','The guests join in at the wrong places. {{other}} has to explain to the bride’s aunt that this was not a family custom until five minutes ago.',{charm:4,reputation:-2,bond:{role:'other',affinity:5}}),
   reply('persist','Refuse to surrender the rest of your magnificent speech','The couple finish eating before you finish the introduction. {{other}} moves the candle farther from your sleeve without interrupting the hiccups.',{reputation:-4,faith:1,bond:{role:'other',respect:-5}}),
  ],{repetitionGroup:'weddings'}),
- comic('wrong_balcony','THE LADDER AT THE WRONG WINDOW','{{other}} waits below a dark window with flowers. You know the room belongs to an elderly wool sorter who has already opened a bucket.',[
+ comic('wrong_balcony','THE LADDER AT THE WRONG WINDOW','{{other.intro}} asks you to hold a ladder below a dark window for a serenade. You know the room belongs to an elderly wool sorter who has already fetched a bucket.',[
   reply('warn','Move the admirer before the bucket tips','{{other}} escapes with dry flowers and a much wetter opinion of the address supplied by a friend.',{bond:{role:'other',trust:10},wits:1}),
   reply('announce','Announce the serenade to its actual audience','The wool sorter demands a second verse. {{other}} receives the bucket only after failing to supply one.',{charm:3,bond:{role:'other',trust:-12,flag:'rival'}}),
   reply('sing','Take the first verse yourself','The bucket finds you instead. {{other}} helps wring out your cloak and promises never to praise your voice again.',{health:-2,bond:{role:'other',affinity:12},reputation:-2}),
@@ -98,12 +98,12 @@ export const SOCIAL_COMEDY_EVENTS:GameEvent[]=[
   reply('legend','Help improve the story','{{other}} becomes increasingly brave with each telling and increasingly dependent on your silence.',{charm:3,bond:{role:'other',trust:10},createSecret:{type:'criminal_contact',severity:15}}),
   reply('quiet','Get the frightened neighbour away from the crowd','{{other}} stops shaking once the cheering is two streets away. You let the dog have the rest of the story.',{bond:{role:'other',trust:12},faith:1}),
  ]),
- comic('lofty_bed','THE BED MADE FOR A MUCH BETTER PERSON','{{other}} has raised a bed to show the household’s importance. Getting into it now requires a servant, a stool and a willingness to be seen needing both.',[
-  reply('stairs','Build a small step and name nobody in particular','{{other}} tests the step after everyone has been asked to leave. The furniture finally becomes suitable for sleeping.',{skillXp:{craftsmanship:4},bond:{role:'other',trust:7}}),
-  reply('admire','Admire the view from the floor','{{other}} descends to explain that height is not the point. This takes both the stool and most of the explanation.',{charm:3,bond:{role:'other',affinity:-9}}),
-  reply('lower','Suggest returning the legs to ordinary length','The carpenter lowers the bed while {{other}} is away. You are thanked for the comfort and blamed for the lost elevation.',{bond:{role:'other',respect:6,affinity:-3},wits:2}),
+ comic('lofty_bed','A BED FIT FOR A GIANT','{{other.intro}} invites you in to admire a new bed. The extra-long legs were meant to impress visitors. Now your host needs your help getting into it.',[
+  reply('stairs','Build a small step','{{other}} climbs in using your step, then asks you not to mention this outside the house. You leave the step where it can be found tonight.',{skillXp:{craftsmanship:4},bond:{role:'other',trust:7}}),
+  reply('admire','Ask whether it came with a ladder','{{other}} laughs once, then notices that you are still looking for the ladder. Your joke travels better than the invitation to visit again.',{charm:3,bond:{role:'other',affinity:-9}}),
+  reply('lower','Suggest shortening the legs','{{other}} admits the carpenter could shorten the legs. The sensible suggestion earns a nod; your host would rather you had admired the bed first.',{bond:{role:'other',respect:6,affinity:-3},wits:2}),
  ]),
- comic('feud_tune','THE FAMILY FEUD LEARNS A TUNE','{{other}} whistles a tune associated with an old family insult. Half the lane recognises the insult; the other half keeps asking for the next verse.',[
+ comic('feud_tune','THE FAMILY FEUD LEARNS A TUNE','While you walk home together, {{other.intro}} whistles a tune used to mock a neighbouring household. Half the lane recognises the insult; the other half asks you for the next verse.',[
   reply('different','Supply an embarrassingly affectionate new verse','The tune survives as a love song nobody wants to claim. {{other}} finds it much harder to whistle threateningly.',{charm:4,bond:{role:'other',trust:5}}),
   reply('answer','Sing the insulting verse back (family feud)','The lane learns both versions. Your households now possess a quarrel that can be performed without either of you being present.',{reputation:-4,familyFeud:{role:'other',reason:'Public exchange of a family insult'},bond:{role:'other',trust:-20}}),
   reply('private','Ask what the quarrel is actually about','{{other}} begins with a grandfather, loses track of a cousin and finally admits to never having met either. You agree to leave them out of supper.',{bond:{role:'other',trust:10},wits:2}),

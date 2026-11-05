@@ -1,3 +1,5 @@
+import {captureFatalHealth,eventDeathOrigin} from './deathContext';
+import type {DeathOrigin} from '@/types/game';
 import {grantPlayerTitle} from './titleEngine';
 import {activeSpouse, unlinkSpouse} from './characterState';
 import {resolveLegalHearing} from './legalEngine';
@@ -53,7 +55,7 @@ function rankProgressDelta(delta: number, fullStrength: boolean): number {
   return Math.min(-1, Math.floor(delta * RANK_PROGRESS_GAIN_MULTIPLIER));
 }
 
-export function applyEffects(s: GameState, eff?: Effects): GameState {
+export function applyEffects(s: GameState, eff?: Effects, origin?: DeathOrigin): GameState {
   if (!eff) return s;
   if (eff.landGrant && !grantPlayerTitle(s,eff.landGrant)) return s;
   if (eff.royalTransition) applyRoyalTransition(s, eff.royalTransition);
@@ -68,6 +70,7 @@ export function applyEffects(s: GameState, eff?: Effects): GameState {
   for (const [id, amount] of Object.entries(eff.materials ?? {})) s.rpg.materials[id as MaterialId] = Math.max(0, (s.rpg.materials[id as MaterialId] ?? 0) + amount);
   for (const [id, amount] of Object.entries(eff.goods ?? {})) s.rpg.goods[id] = Math.max(0, (s.rpg.goods[id] ?? 0) + amount);
 
+  const healthBefore=s.stats.health;
   const harsh = harshness(s);
   const resolveCharacterId = (id?: string) => id ? (s.pendingEvent?.bindings?.[id] ?? id) : s.playerCharacterId;
   const explicitTargetId = resolveCharacterId(eff.targetCharacterId);
@@ -315,18 +318,20 @@ export function applyEffects(s: GameState, eff?: Effects): GameState {
 
   // --- death (handled last so any stat/gold context is already applied) ---
   if (eff.death && !s.settings.liveForever) {
-    killPlayer(s, eff.death);
+    killPlayer(s, eff.death, eff.deathOrigin ? {...eventDeathOrigin(s),...eff.deathOrigin,sourceId:s.pendingEvent?.eventId??eff.deathOrigin.sourceId} : origin ?? eventDeathOrigin(s));
   }
 
+  if (origin || s.pendingEvent) captureFatalHealth(s,healthBefore,origin ?? eventDeathOrigin(s),origin?.sourceId==='ill'?'Died as a lingering illness exhausted the last of your health.':origin?.sourceId==='ale_ravaged'?'Died after prolonged drinking had exhausted your health.':origin?.sourceId==='poppy_dependent'?'Died as poppy dependence exhausted your health.':'Died after a fatal collapse in health.');
   return s;
 }
 
-export function killPlayer(s: GameState, cause: string): GameState {
+export function killPlayer(s: GameState, cause: string, origin: DeathOrigin=eventDeathOrigin(s)): GameState {
   if (s.dead) return s;
   s.dead = true;
-  s.deathCause = cause;
+  s.deathContext ??= {...origin,cause,year:s.world.currentYear,actorIds:[...new Set(origin.actorIds??[])]};
+  s.deathCause = s.deathContext.cause;
   const player=s.world.characters[s.playerCharacterId];
-  if (player) { player.alive=false; player.deathYear=s.world.currentYear; player.deathCause=cause; unlinkSpouse(s,player.id,'death'); }
+  if (player) { player.alive=false; player.deathYear=s.world.currentYear; player.deathCause=s.deathCause; player.deathContext=s.deathContext; unlinkSpouse(s,player.id,'death'); }
   return s;
 }
 

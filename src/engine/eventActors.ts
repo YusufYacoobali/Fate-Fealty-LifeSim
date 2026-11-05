@@ -28,6 +28,7 @@ export function describeActorForPlayer(s:GameState,id:string,context?:{role?:str
  const p=s.world.characters[s.playerCharacterId],tie=kinshipTo(s,id),r=relationship(s,id),e=p.education;
  const friend=Boolean(r?.flags.includes('friend')&&Math.min(r.aToB.affinity,r.bToA.affinity)>=40&&Math.min(r.aToB.trust,r.bToA.trust)>=30);
  const family=['mother','father','daughter','son','sister','brother','grandmother','grandfather','granddaughter','grandson','aunt','uncle','niece','nephew','cousin','spouse','ward','guardian'];
+ if(['sister','brother'].includes(tie)&&e?.track&&e.activeClassmateIds?.includes(id)&&person.education?.track===e.track)return `your ${tie} and fellow student, ${person.name}`;
  if(family.includes(tie))return `your ${tie}, ${person.name}`;
  if([...(p.guardianIds??[]),...(p.background?.guardianIds??[])].includes(id))return `your guardian, ${person.name}`;
  if(e?.track&&e.mentorId===id)return `your mentor, ${person.name}`;

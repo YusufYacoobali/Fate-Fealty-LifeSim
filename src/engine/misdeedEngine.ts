@@ -1,3 +1,4 @@
+import {captureFatalHealth} from './deathContext';
 /**
  * The things a life simulator has to let you do to other people.
  *
@@ -157,7 +158,9 @@ export function assault(state: GameState, target: WorldCharacter): void {
     rememberAbout(state, target, `${target.name} was beaten in the open.`, -5);
     pushFeed(state, 'ASSAULT', C.bad, `Thou beats ${target.name} without ceremony or warning. It is quick, and everybody sees it.`, 'plain');
   } else {
+    const before=state.stats.health;
     state.stats.health = clamp(state.stats.health - rnd(10, 20));
+    captureFatalHealth(state,before,{category:'combat',sourceType:'activity',sourceId:'assault',actorIds:[target.id]},`Died from wounds sustained attacking ${target.name}.`);
     pushFeed(state, 'ASSAULT FAILS', C.bad, `${target.name} was readier than thou expected, and thou comes off worse.`, 'bad');
   }
   const relation = relationshipWith(state, target.id);
@@ -243,7 +246,9 @@ export function prank(state: GameState, target: WorldCharacter): void {
 
 export function carouse(state: GameState, target: WorldCharacter): void {
   const messy = chance(0.3);
+  const before=state.stats.health;
   state.stats.health = clamp(state.stats.health - rnd(3, 8));
+  captureFatalHealth(state,before,{category:'health',sourceType:'activity',sourceId:'carouse',actorIds:[target.id]},'Died after drinking and fighting had exhausted your health.');
   target.stats.health = clamp(target.stats.health - rnd(2, 6));
   applyRelationshipShift(state, target.id, { affinity: 8, trust: 5 }, { affinity: 10, trust: 7, respect: messy ? -6 : 2 });
   if (messy) {

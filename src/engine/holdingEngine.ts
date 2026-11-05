@@ -218,7 +218,7 @@ function severeCrisis(s: GameState, lowest: HoldingResource): void {
   if (maybeHoldingEncounter(s, lowest)) return;
   if (lowest === 'stores') {
     adjustPopulation(s, -Math.max(3, Math.ceil(holdingPopulation(s) * 0.3)));
-    applyEffects(s, { health: -25, holding: { stores: 25 - s.holding.stores, loyalty: -10 } });
+    applyEffects(s, { health: -25, holding: { stores: 25 - s.holding.stores, loyalty: -10 } },{category:'health',sourceType:'condition',sourceId:'estate_famine'});
     addMemory(s, 'holding_famine', 4);
     pushFeed(s, 'HOLDING · FAMINE', C.bad, 'Famine takes the land by the throat. Seed grain is broken open at last, saving some and weakening all.', 'bad');
   } else if (lowest === 'security') {
@@ -226,7 +226,7 @@ function severeCrisis(s: GameState, lowest: HoldingResource): void {
     const active = s.holding.upgrades.filter((id) => isHoldingUpgradeActive(s, id));
     const destroyed = active.length ? pick(active) : null;
     if (destroyed) s.holding.upgrades = s.holding.upgrades.filter((id) => id !== destroyed);
-    applyEffects(s, { health: -15, holding: { security: 25 - s.holding.security } });
+    applyEffects(s, { health: -15, holding: { security: 25 - s.holding.security } },{category:'combat',sourceType:'encounter',sourceId:'estate_raid'});
     addMemory(s, 'holding_disaster', 4, destroyed ?? undefined);
     const lostText = destroyed ? ` The ${holdingUpgradeById(destroyed)?.name.toLowerCase()} is destroyed.` : '';
     pushFeed(s, 'HOLDING · DISASTER', C.bad, `Fire and raiders tear through the undefended holding.${lostText}`, 'bad');

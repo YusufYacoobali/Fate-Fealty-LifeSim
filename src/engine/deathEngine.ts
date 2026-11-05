@@ -3,45 +3,25 @@
  * whether — and how — the life ends.
  *
  * Checks, in order:
- *   0. The full span of years, which not even Live Forever gets past.
- *   1. Already dead (event-driven death set the flag) -> just finalise.
+ *   0. Already dead -> finalise once and preserve the recorded cause.
+ *   1. The full span of years, which not even Live Forever gets past.
  *   2. Health <= 0.
  *   3. Old-age risk that ramps with age.
- *   4. Path-flavoured hazards (outlaws hang, knights fall in war, etc.).
+ *   4. Sourced yearly dangers: an active violent charge or actual war service.
  *
  * Steps 3 and 4 roll once a year. `ageUp` calls this after nearly every
  * sub-step, so an ungated hazard is really eight or nine rolls a year.
  */
 
+import {unlinkSpouse} from './characterState';
 import { GameState } from '@/types/game';
 import { EPITAPHS } from '@/data/names';
-import { dominantPath } from './pathProgression';
 import { agingMultiplierFromTraits } from './traitEngine';
 import { killPlayer, legacyScore } from './consequenceEngine';
 import { addMemory, countLivingKin, hasTag, pushFeed } from './gameState';
 import { chance, pick, rnd } from './random';
 import { C } from '@/theme/theme';
 import { appendWorldHistory } from './worldJournal';
-
-const HEALTH_DEATHS = [
-  'Succumbed to a mild cough that turned out not to be mild.',
-  'The plague, finally. It had been going around.',
-  'A goose-related incident. Details remain disputed.',
-  'Fell into the turnip cellar and simply gave up.',
-  'Wasted away, muttering about apples.',
-];
-
-const OUTLAW_DEATHS = [
-  'Hanged at the crossroads for banditry. The crowd ate pies.',
-  'Caught by the King’s men one road too many.',
-  'Knifed in a tavern over a debt of four gold.',
-];
-
-const MARTIAL_DEATHS = [
-  'Fell gloriously in battle. Mostly gloriously.',
-  'Unhorsed at a tourney for the final, fatal time.',
-  'Died of a wound that the leech-doctor insisted was fine.',
-];
 
 function difficultyDeathMod(s: GameState): number {
   switch (s.settings.difficulty) {
@@ -55,11 +35,12 @@ function difficultyDeathMod(s: GameState): number {
 }
 
 export function checkDeath(s: GameState): GameState {
+  if (s.dead) return finalise(s);
   // The span is the one thing Live Forever does not buy. It used to return here
   // before any age check ran, so the setting meant literally never dying, and a
   // life with no end has nothing at stake in it.
   if (s.age >= MAX_LIFESPAN) {
-    killPlayer(s, 'Died at the full span of years. Nobody in Swineford could remember an older soul.');
+    killPlayer(s, 'Died at the full span of years. Nobody in Swineford could remember an older soul.', {category:'old_age',sourceType:'aging',sourceId:'maximum_lifespan'});
     return finalise(s);
   }
 
@@ -71,14 +52,9 @@ export function checkDeath(s: GameState): GameState {
 
   const mod = difficultyDeathMod(s);
 
-  // 1. Event-driven death (flag already set by consequence engine).
-  if (s.dead) return finalise(s);
-
   // 2. Health collapse.
   if (s.stats.health <= 0) {
-    let cause = pick(HEALTH_DEATHS);
-    if (dominantPath(s) === 'outlaw') cause = pick(OUTLAW_DEATHS);
-    killPlayer(s, cause);
+    killPlayer(s, s.deathContext?.cause ?? 'Died after a fatal collapse in health; no specific cause was recorded.', s.deathContext ?? {category:'unknown',sourceType:'system',sourceId:'health_collapse'});
     return finalise(s);
   }
 
@@ -97,19 +73,23 @@ export function checkDeath(s: GameState): GameState {
     const years = s.age - 45;
     const oldRisk = ((years / 200) + Math.pow(years / 58, 3) * 0.17) * mod;
     if (chance(oldRisk)) {
-      killPlayer(s, s.age > 70 ? 'Died peacefully of being very, very old.' : 'Died of a winter chill and a tired heart.');
+      killPlayer(s, 'Died of natural causes in later life.', {category:'old_age',sourceType:'aging',sourceId:'annual_aging'});
       return finalise(s);
     }
   }
 
-  // 5. Path-flavoured hazard.
-  const path = dominantPath(s);
-  if (path === 'outlaw' && s.reputation < -20 && chance(0.05 * mod)) {
-    killPlayer(s, pick(OUTLAW_DEATHS));
+  // An active, unresolved violent charge can bring a real same-year pursuit.
+  // Reputation and vocation alone neither summon guards nor invent an execution.
+  const legal=s.world.characters[s.playerCharacterId].legalState;
+  const charge=legal?.charges.find(c=>!c.resolved&&c.severity>=60&&/robbery|assault|attack|violence/i.test(c.offence));
+  if (legal&&charge&&legal.suspicion>=60&&legal.status!=='imprisoned'&&chance(0.05*mod)) {
+    pushFeed(s,'GUARD PURSUIT',C.bad,`Guards pursue you over the recorded charge of ${charge.offence}. You flee; a clash on the road leaves fatal wounds.`, 'bad');
+    killPlayer(s,'Died from wounds sustained while fleeing the guards.',{category:'pursuit',sourceType:'legal',sourceId:charge.id,actorIds:charge.witnessIds});
     return finalise(s);
   }
-  if (path === 'martial' && s.rankIdx >= 2 && hasTag(s, 'at_war') && chance(0.06 * mod)) {
-    killPlayer(s, pick(MARTIAL_DEATHS));
+  if (s.rankIdx>=2&&hasTag(s,'at_war')&&chance(0.06*mod)) {
+    pushFeed(s,'BATTLE',C.bad,'During this year’s fighting, you are struck while serving with the host. The wound proves fatal.', 'bad');
+    killPlayer(s,'Died from wounds sustained in battle.',{category:'combat',sourceType:'encounter',sourceId:`annual_battle_${s.world.currentYear}`});
     return finalise(s);
   }
 
@@ -117,14 +97,20 @@ export function checkDeath(s: GameState): GameState {
 }
 
 function finalise(s: GameState): GameState {
+  if(s.deathFinalized)return s;
+  s.deathCause ||= s.deathContext?.cause || 'Died; the surviving record does not identify a cause.';
+  s.deathContext ??= {category:'unknown',sourceType:'system',sourceId:'legacy_record',cause:s.deathCause,year:s.world.currentYear};
+  const p=s.world.characters[s.playerCharacterId];
+  if(p){p.alive=false;p.deathYear??=s.world.currentYear;p.deathCause=s.deathCause;p.deathContext=s.deathContext;unlinkSpouse(s,p.id,'death');}
+  s.deathFinalized=true;
   s.rpg.mission = null;
   s.rpg.expedition = null;
   if (!s.epitaph) s.epitaph = pick(EPITAPHS);
   if (!s.world.history.some((entry) => entry.type === 'death' && entry.participantIds.includes(s.playerCharacterId))) {
     appendWorldHistory(s, { id: `history_death_${s.nextId++}`, year: s.world.currentYear, type: 'death', participantIds: [s.playerCharacterId], familyIds: [s.world.characters[s.playerCharacterId]?.birthFamilyId ?? ''].filter(Boolean), causes: [s.deathCause], summary: `${s.first} died at ${s.age}. ${s.deathCause}`, salience: 5 });
   }
-  addMemory(s, 'died', 5, s.deathCause);
-  pushFeed(s, `AGE ${s.age} · THE END`, C.bad, `You died at ${s.age}. ${s.deathCause}`, 'bad');
+  if(!s.memories.some(m=>m.tag==='died'))addMemory(s, 'died', 5, s.deathCause);
+  if(!s.feed.some(f=>f.tag.includes('THE END')))pushFeed(s, `AGE ${s.age} · THE END`, C.bad, `You died at ${s.age}. ${s.deathCause}`, 'bad');
   return s;
 }
 
@@ -142,13 +128,13 @@ export interface DeathSummary {
 
 export function buildLifeChronicle(s: GameState): string[] {
   const relevant = s.world.history
-    .filter((entry) => entry.participantIds.includes(s.playerCharacterId) || entry.year >= s.playerRun.startedYear)
+    .filter((entry) => entry.participantIds.includes(s.playerCharacterId) || entry.type==='birth'&&entry.participantIds.some(id=>s.world.characters[id]?.parentIds?.includes(s.playerCharacterId)))
     .sort((a, b) => b.salience - a.salience || a.year - b.year)
     .slice(0, 5)
     .sort((a, b) => a.year - b.year)
     .map((entry) => `${entry.year}: ${entry.summary}`);
   const closest = Object.values(s.world.relationships)
-    .filter((relationship) => relationship.aId === s.playerCharacterId || relationship.bId === s.playerCharacterId)
+    .filter((relationship) => (relationship.aId === s.playerCharacterId || relationship.bId === s.playerCharacterId)&&Math.min(relationship.aToB.affinity,relationship.bToA.affinity)>=60&&Math.min(relationship.aToB.trust,relationship.bToA.trust)>=40)
     .sort((a, b) => (b.aToB.affinity + b.bToA.affinity) - (a.aToB.affinity + a.bToA.affinity))[0];
   if (closest) {
     const otherId = closest.aId === s.playerCharacterId ? closest.bId : closest.aId;
@@ -164,7 +150,7 @@ export function buildLifeChronicle(s: GameState): string[] {
 export function buildDeathSummary(s: GameState, rankKey: string): DeathSummary {
   const heirs = countLivingKin(s, 'child');
   return {
-    name: `${s.first} ${s.epithet}`,
+    name: [s.first,s.epithet].filter(Boolean).join(' '),
     age: s.age,
     rank: rankKey,
     gold: s.gold,

@@ -1,3 +1,4 @@
+import {captureFatalHealth} from './deathContext';
 /**
  * Fights, played out exchange by exchange.
  *
@@ -240,6 +241,7 @@ export function concludeDuel(state: GameState): GameState {
     if (duel.combat.solo) { state.tab = 'life'; state.world.feedFilter = 'all'; }
     state.duel = null; return state;
   }
+  const healthBefore=state.stats.health;
   const opponent = state.world.characters[duel.opponentId];
   const name = opponent?.name ?? 'thy opponent';
   const missionFight = state.rpg.mission?.phase === 'combat';
@@ -277,7 +279,7 @@ export function concludeDuel(state: GameState): GameState {
     });
     if (opponent) applyRelationshipShift(state, opponent.id, { respect: -6 }, { respect: -8, affinity: -8 });
     pushFeed(state, formal ? 'DUEL LOST' : 'BRAWL LOST', C.bad,
-      `${name} had the better of thee. Thou will heal; the story will not.`, 'bad');
+      `${name} had the better of thee. The wounds are real; so is the story.`, 'bad');
   } else {
     applyEffects(state, {
       health: -Math.round(punishment / 2),
@@ -294,6 +296,7 @@ export function concludeDuel(state: GameState): GameState {
     applyEffects(state, duel.outcome === 'won' ? duel.stakes.win : duel.stakes.lose);
     pushFeed(state, 'CHALLENGE SETTLED', C.amber, duel.outcome === 'won' ? `You claim the promised reward. ${duel.stakes.summary}` : `The challenge is lost. ${duel.stakes.summary}`, duel.outcome === 'won' ? 'good' : 'bad');
   }
+  captureFatalHealth(state,healthBefore,{category:'combat',sourceType:'encounter',sourceId:duel.combat?.id??`${duel.kind}_${duel.opponentId}_${state.world.currentYear}`,actorIds:[duel.opponentId]},`Died from wounds sustained fighting ${name}.`);
   addMemory(state, duel.kind === 'duel' ? 'fought_a_duel' : 'fought_a_brawl', 2, name);
   if (!missionFight) grantSkillXp(state, 'arms', duel.outcome === 'won' ? 6 : 3, 'combat');
   state.duel = null;

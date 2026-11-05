@@ -1,3 +1,4 @@
+import {captureFatalHealth} from './deathContext';
 import {enqueuePersonalDeath} from './lifeEventNotices';
 import { reconcileCourt } from './courtEngine';
 import { GameState, WorldCharacter } from '@/types/game';
@@ -32,7 +33,9 @@ function progressCharacterHealth(state: GameState, character: WorldCharacter): v
     const pressure = definition.contagious ? Math.round((state.world.conditions.diseasePressure - 50) / 12) : 0;
     condition.severity = clamp(condition.severity + definition.baseProgression + pressure - Math.round((nourishment - 50) / 18));
     condition.nextReviewYear = state.world.currentYear + 1;
+    const before=character.stats.health;
     character.stats.health = clamp(character.stats.health - Math.max(1, Math.round(condition.severity / 24)));
+    if(character.id===state.playerCharacterId){state.stats.health=character.stats.health;captureFatalHealth(state,before,{category:definition.kind==='injury'?'health':'illness',sourceType:'condition',sourceId:condition.id},`Died from ${definition.name}.`);}
     const recovery = definition.recoveryChance + Math.max(0, nourishment - 50) / 250 + Math.max(0, character.stats.health - 60) / 300;
     if (recovery > 0 && chance(recovery)) {
       condition.severity = clamp(condition.severity - 32);
@@ -46,7 +49,7 @@ function progressCharacterHealth(state: GameState, character: WorldCharacter): v
         // condition's name as the cause instead of a generic health collapse.
         character.stats.health = 0;
         state.stats.health = 0;
-        if (!state.settings.liveForever) killPlayer(state, definition.name);
+        if (!state.settings.liveForever) killPlayer(state, `Died from ${definition.name}.`,{category:definition.kind==='injury'?'health':'illness',sourceType:'condition',sourceId:condition.id});
       } else killCharacter(state, character, definition.name);
       return;
     }

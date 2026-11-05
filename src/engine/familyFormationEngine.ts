@@ -1,3 +1,4 @@
+import {captureFatalHealth} from './deathContext';
 import {activeSpouse} from './characterState';
 import {queueChildNaming} from './childNaming';
 import { GameState, ExpectedChild, WorldCharacter } from '@/types/game';
@@ -80,8 +81,9 @@ function resolveExpectedChild(state: GameState, expected: ExpectedChild): void {
     const food = household?.storedFood ?? household?.foodSecurity ?? 50;
     const risk = clamp(8 + state.world.conditions.diseasePressure / 5 + Math.max(0, 35 - food) / 3 + (mother && mother.age > 36 ? 8 : 0), 4, 45) / 100;
     if (mother && chance(risk)) {
+      const before=mother.stats.health;
       mother.stats.health = clamp(mother.stats.health - 12);
-      if (mother.id === state.playerCharacterId) state.stats.health = mother.stats.health;
+      if (mother.id === state.playerCharacterId) {state.stats.health = mother.stats.health;captureFatalHealth(state,before,{category:'illness',sourceType:'condition',sourceId:expected.id},'Died from complications following childbirth.');}
       mother.healthConditions ??= [];
       mother.healthConditions.push({ id: `health_${state.nextId++}`, conditionId: 'childbed_fever', kind: 'illness', severity: 42, diagnosed: false, startedYear: state.world.currentYear, nextReviewYear: state.world.currentYear + 1, sourceId: expected.id });
     }

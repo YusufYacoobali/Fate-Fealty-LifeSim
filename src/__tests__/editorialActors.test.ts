@@ -78,3 +78,14 @@ it('renders every education route with its real cast and all three current-year 
 it('keeps every rewritten event self-contained without adding story schedules or chapters',()=>{
  for(const e of ALL_EVENTS.filter(e=>e.id.startsWith('young_')||e.id.startsWith('education_'))){expect(e.chain).toBeUndefined();expect(e.callback).toBeUndefined();for(const c of e.choices)for(const o of [c.outcome,c.success,c.failure])expect(o?.next).toBeUndefined();}
 });
+it('renders the bed and relic scenes with a clear invitation, truthful relationships and every concrete response',()=>{
+ const bed=EVENTS_BY_ID.comic_lofty_bed,s=base(25),other=s.world.characters.edwin;s.pendingEvent={eventId:bed.id,bindings:{other:other.id}};
+ expect(renderBoundText(s,bed.text as string)).toContain('invites you in');expect(renderBoundText(s,bed.text as string)).toContain(other.name);expect(bed.title).toBe('A BED FIT FOR A GIANT');
+ expect(bed.choices.map(c=>c.id)).toEqual(['stairs','admire','lower']);expect(bed.choices[0].outcome!.effects).toMatchObject({skillXp:{craftsmanship:4},bond:{role:'other',trust:7}});
+ for(const choice of bed.choices){const text=renderBoundText(s,choice.label)+' '+renderBoundText(s,choice.outcome!.text);expect(text).not.toMatch(/\{\{|nobody in particular|carpenter lowers/);}
+ const t=enrolled(),p=t.world.characters[t.playerCharacterId],e=p.education!,peer=t.world.characters[e.activeClassmateIds![0]],lesson=EVENTS_BY_ID.education_parish_0;
+ peer.gender='woman';peer.parentIds=[...p.parentIds!];t.pendingEvent={eventId:lesson.id,bindings:{mentor:e.mentorId!,classmate:peer.id}};
+ expect(describeActorForPlayer(t,peer.id)).toContain('sister and fellow student');expect(renderBoundText(t,lesson.text as string)).toContain('list of holy relics');expect(lesson.title).toBe('ONE ELBOW TOO MANY');
+ for(const choice of lesson.choices){const text=renderBoundText(t,choice.label)+' '+renderBoundText(t,choice.outcome!.text);expect(text).not.toMatch(/\{\{|splendid extra elbow/);expect(text).toMatch(/list|entry|copy|correction/);}
+ peer.education!.track='guild';expect(describeActorForPlayer(t,peer.id)).not.toContain('fellow student');
+});

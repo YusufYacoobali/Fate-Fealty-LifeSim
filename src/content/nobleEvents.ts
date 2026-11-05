@@ -64,7 +64,7 @@ ageMin: 22,
 ranks: ['Noble'],
 once: true,
 paths: ['court'],
-choices: [{ label: 'Join the conspiracy', successChance: (s) => 0.4 + s.stats.wits / 250 + s.reputation / 400, success: { text: 'Your evidence reaches the council and the plotters pay you fifty gold. The baron faces an inquiry; no new title has yet been granted.', effects: { gold: 50, charm: 8, reputation: 15, path: { court: 6 }, memory: { tag: 'kingmaker', weight: 5 } }, tone: 'good' }, failure: { text: 'The plot was betrayed. Guards drag you to the block at dawn.', effects: { death: 'Beheaded for treason. The crowd, as ever, brought pies.' }, tone: 'bad' } },
+choices: [{ label: 'Join the conspiracy', successChance: (s) => 0.4 + s.stats.wits / 250 + s.reputation / 400, success: { text: 'Your evidence reaches the council and the plotters pay you fifty gold. The baron faces an inquiry; no new title has yet been granted.', effects: { gold: 50, charm: 8, reputation: 15, path: { court: 6 }, memory: { tag: 'kingmaker', weight: 5 } }, tone: 'good' }, failure: { text: 'The plot was betrayed. Guards drag you to the block at dawn.', effects: { death: 'Executed by beheading after the treason plot was exposed.', deathOrigin:{category:'execution',sourceType:'legal',sourceId:'noble_conspiracy'} }, tone: 'bad' } },
 { label: 'Betray the plotters to the baron', outcome: { text: 'You sold them out. The baron rewards your "loyalty" handsomely, though you sleep with one eye open now.', effects: { gold: 40, reputation: -8, faith: -10, memory: { tag: 'betrayer', weight: 4 } }, tone: 'plain' } },
 {
 label: "Refuse without inventing a later victory",

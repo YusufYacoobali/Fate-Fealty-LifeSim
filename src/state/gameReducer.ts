@@ -1,3 +1,5 @@
+import {captureFatalHealth} from '@/engine/deathContext';
+import type {DeathOrigin} from '@/types/game';
 import {acknowledgeLifeEvent} from '@/engine/lifeEventNotices';
 import {activeSpouse,reconcileMaritalState} from '@/engine/characterState';
 import {anotherChildName,canNameChild,confirmChildName,namingBlocked,namingChildId,normalizeChildNaming} from '@/engine/childNaming';
@@ -112,11 +114,14 @@ function timed(
   original: GameState,
   localAvailable: (state: GameState) => boolean,
   perform: (state: GameState) => GameState,
+  origin?: DeathOrigin,
 ): GameState {
   const state = cloneState(original);
   return runWithWorldRng(state.world, () => {
     if (!timedActionAvailability(state).available || !localAvailable(state)) return state;
+    const before=state.stats.health;
     perform(state);
+    if(origin)captureFatalHealth(state,before,origin);
     spendAction(state);
     checkDeath(state);
     return finishEngineTransaction(state);
@@ -275,11 +280,11 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'KIN_INTERACT': {
-      return timed(state, (s) => kinActionAvailability(s, action.id, action.action).available, (s) => interactKin(s, action.id, action.action));
+      return timed(state, (s) => kinActionAvailability(s, action.id, action.action).available, (s) => interactKin(s, action.id, action.action),{category:'health',sourceType:'activity',sourceId:action.action,actorIds:[action.id]});
     }
 
     case 'MANAGE_HOLDING': {
-      return timed(state, (s) => holdingActionAvailability(s, action.id).available, (s) => { manageHolding(s, action.id); awardActivitySkill(s, action.id); return s; });
+      return timed(state, (s) => holdingActionAvailability(s, action.id).available, (s) => { manageHolding(s, action.id); awardActivitySkill(s, action.id); return s; },{category:'health',sourceType:'activity',sourceId:action.id});
     }
 
     case 'BUY_HOLDING_UPGRADE': {
@@ -302,6 +307,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           checkLifeGoal(s);
           return s;
         },
+        {category:'health',sourceType:'activity',sourceId:`career_${action.action}`},
       );
     }
 

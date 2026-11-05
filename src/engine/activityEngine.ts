@@ -1,3 +1,4 @@
+import {captureFatalHealth} from './deathContext';
 import {activeSpouse} from './characterState';
 /**
  * Activity resolution. Activities are the player-driven counterpart to the
@@ -476,6 +477,7 @@ export function doActivity(s: GameState, id: string): GameState {
     ]), 'plain');
     return s;
   }
+  const healthBefore=s.stats.health;
   const handler = HANDLERS[id] ?? ROLE_HANDLERS[id];
   const handledContextually = handleContextualActivity(s, id);
   if (handler || handledContextually) {
@@ -490,6 +492,7 @@ export function doActivity(s: GameState, id: string): GameState {
       if (previous < 50 && next >= 50) pushFeed(s, `${role.replaceAll('_', ' ').toUpperCase()} MASTERY`, C.purpleDark, 'Years of practice have made this calling part of thy reputation.', 'good');
     }
   }
+  captureFatalHealth(s,healthBefore,{category:'health',sourceType:'activity',sourceId:id});
   checkLifeGoal(s);
   return s;
 }

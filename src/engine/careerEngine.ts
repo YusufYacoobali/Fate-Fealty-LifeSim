@@ -133,7 +133,7 @@ export function performCareerAction(state: GameState, action: CareerAction, care
       recordProfessionalWork(state);
       if (career.tier === 0) state.occupation.apprenticeshipYears = (state.occupation.apprenticeshipYears ?? 0) + 1;
       if (['craft', 'trade', 'medicine', 'entertainment', 'law'].includes(career.family)) state.occupation.guildStanding = Math.min(100, (state.occupation.guildStanding ?? 0) + 1);
-      if (career.healthRisk) applyEffects(state, { health: -career.healthRisk });
+      if (career.healthRisk) applyEffects(state, { health: -career.healthRisk },{category:'health',sourceType:'activity',sourceId:`career_${career.id}_work`});
       if (badDay) {
         pushFeed(state, 'WORK', C.amber, `${pick(POOR_DAY_LINES)} ${career.title} wages: ${pay}g.`, pay > 0 ? 'plain' : 'bad');
       } else {
@@ -229,7 +229,7 @@ function performRankDuty(state: GameState): void {
     { tag: 'ROYAL DECREE', text: 'You issue a decree. Scribes improve it, courtiers praise it, and the realm cautiously obeys.', effects: { charm: 6, reputation: 6, holding: { loyalty: 6 } } },
   ] as const;
   const duty = duties[Math.min(duties.length - 1, state.rankIdx)];
-  applyEffects(state, duty.effects);
+  applyEffects(state, duty.effects,{category:'health',sourceType:'activity',sourceId:`rank_duty_${duty.tag}`});
   pushFeed(state, duty.tag, C.purpleDark, duty.text, 'good');
 }
 

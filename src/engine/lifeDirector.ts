@@ -69,7 +69,7 @@ export function ageUp(s: GameState): GameState {
 
   // --- 3. attrition of age + ongoing world states ---
   const decay = agingDamage(s);
-  if (decay > 0) applyEffects(s, { health: -decay });
+  if (decay > 0) applyEffects(s, { health: -decay },{category:'old_age',sourceType:'aging',sourceId:'annual_health_decline'});
   checkDeath(s);
   if (s.dead) return s;
   tickKinMortality(s);

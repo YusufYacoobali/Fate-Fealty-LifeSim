@@ -194,6 +194,7 @@ export interface KinMember extends CharacterCore {
   worldMemories?: CharacterMemory[];
   deathYear?: number;
   deathCause?: string;
+  deathContext?: DeathContext;
   healthConditions?: HealthConditionState[];
   legalState?: LegalState;
   secrets?: CharacterSecretState[];
@@ -674,6 +675,7 @@ export interface Effects {
   demote?: boolean;
   /** Kill the player. The string is the cause of death. */
   death?: string;
+  deathOrigin?: DeathOrigin;
   /** Lighter consequences that get recorded as tags + memories. */
   prison?: boolean;
   exile?: boolean;
@@ -1011,6 +1013,18 @@ export interface DuelState {
   verdict?: string;
 }
 
+/** Recorded at a fatal transition; never guessed from occupation or reputation. */
+export interface DeathOrigin {
+  category: 'event' | 'illness' | 'combat' | 'execution' | 'pursuit' | 'health' | 'old_age' | 'unknown';
+  sourceType: 'event' | 'activity' | 'condition' | 'encounter' | 'legal' | 'aging' | 'system';
+  sourceId?: string;
+  actorIds?: string[];
+}
+export interface DeathContext extends DeathOrigin {
+  cause: string;
+  year: number;
+}
+
 export interface GameState {
   schemaVersion: 7;
   rpg: import('./rpg').RpgState;
@@ -1077,6 +1091,8 @@ export interface GameState {
   // --- death ---
   dead: boolean;
   deathCause: string;
+  deathContext?: DeathContext;
+  deathFinalized?: boolean;
   epitaph: string;
   heirContinued: boolean;
 

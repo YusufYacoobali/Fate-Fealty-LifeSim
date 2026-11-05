@@ -1,0 +1,17 @@
+{
+  "label": "a29b44f",
+  "healthCollapse": {
+    "dead": true,
+    "cause": "Hanged at the crossroads for banditry. The crowd ate pies."
+  },
+  "annualOutlawWithoutCriminalCase": {
+    "dead": true,
+    "cause": "Hanged at the crossroads for banditry. The crowd ate pies."
+  },
+  "acceptedBarony": {
+    "gold": 260,
+    "rank": 3,
+    "estate": "noble",
+    "memories": 1
+  }
+}

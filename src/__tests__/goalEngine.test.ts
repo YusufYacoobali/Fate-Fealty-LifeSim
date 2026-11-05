@@ -1,3 +1,4 @@
+import {gameReducer} from '@/state/gameReducer';
 import { assignLifeGoalIfDue, checkLifeGoal, goalView, GOAL_AGE } from '@/engine/goalEngine';
 import { assignableGoals, goalById, LIFE_GOALS } from '@/data/goals';
 import { ageUp } from '@/engine/lifeDirector';
@@ -119,4 +120,15 @@ describe('goal data integrity', () => {
     expect(new Set(ids).size).toBe(ids.length);
     for (const id of ids) expect(goalById(id)).toBeDefined();
   });
+});
+
+it('awards a completed ambition immediately on HOLD without requiring the Life banner',()=>{
+ const s=makeState({age:30,rankIdx:3,gold:149,tab:'hold',goalId:'fortune'});s.holding.stores=60;
+ const n=gameReducer(s,{type:'MANAGE_HOLDING',id:'sell_surplus'});
+ expect(n.tab).toBe('hold');expect(n.gold).toBe(149+19+15);expect(n.tags).toContain('goal_done_fortune');expect(n.memories.filter(m=>m.tag==='goal_fulfilled')).toHaveLength(1);expect(n.actionClock.used).toBe(s.actionClock.used+1);
+ const replay=gameReducer(n,{type:'MANAGE_HOLDING',id:'sell_surplus'});expect(replay.gold).toBe(n.gold);expect(replay.memories.filter(m=>m.tag==='goal_fulfilled')).toHaveLength(1);
+});
+it('never spends actions, draws RNG or awards rewards merely for tab navigation',()=>{
+ const s=makeState({age:30,gold:150,tab:'life',goalId:'fortune'});const before=JSON.stringify([s.gold,s.world.rngState,s.actionClock,s.memories,s.goalId]);
+ for(const tab of ['do','kin','hold','shop','me'] as const){const n=gameReducer(s,{type:'SET_TAB',tab});expect(JSON.stringify([n.gold,n.world.rngState,n.actionClock,n.memories,n.goalId])).toBe(before);}
 });

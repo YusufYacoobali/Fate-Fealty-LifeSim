@@ -125,6 +125,7 @@ function timed(
     if(origin)captureFatalHealth(state,before,origin);
     spendAction(state);
     checkDeath(state);
+    checkLifeGoal(state);
     return finishEngineTransaction(state);
   });
 }

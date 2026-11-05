@@ -1,0 +1,14 @@
+{
+  "source": "Actual baron_land_grant acceptance executed against a29b44f",
+  "oldRank": 3,
+  "newRank": 4,
+  "oldGold": 260,
+  "newGold": 260,
+  "oldEstate": "noble",
+  "newEstate": "baronial",
+  "rngPreserved": true,
+  "statsPreserved": true,
+  "memoriesPreserved": true,
+  "historyPreserved": true,
+  "idempotent": true
+}

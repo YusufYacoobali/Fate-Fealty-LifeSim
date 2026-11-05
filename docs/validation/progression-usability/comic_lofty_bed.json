@@ -1,0 +1,49 @@
+{
+  "id": "comic_lofty_bed",
+  "title": "A BED FIT FOR A GIANT",
+  "bindings": {
+    "other": "aldric"
+  },
+  "introduction": "Lord Aldric, the ruler, invites you in to admire a new bed. The extra-long legs were meant to impress visitors. Now your host needs your help getting into it.",
+  "choices": [
+    {
+      "id": "stairs",
+      "label": "Build a small step",
+      "outcome": "Lord Aldric climbs in using your step, then asks you not to mention this outside the house. You leave the step where it can be found tonight.",
+      "effects": {
+        "skillXp": {
+          "craftsmanship": 4
+        },
+        "bond": {
+          "role": "other",
+          "trust": 7
+        }
+      }
+    },
+    {
+      "id": "admire",
+      "label": "Ask whether it came with a ladder",
+      "outcome": "Lord Aldric laughs once, then notices that you are still looking for the ladder. Your joke travels better than the invitation to visit again.",
+      "effects": {
+        "charm": 3,
+        "bond": {
+          "role": "other",
+          "affinity": -9
+        }
+      }
+    },
+    {
+      "id": "lower",
+      "label": "Suggest shortening the legs",
+      "outcome": "Lord Aldric admits the carpenter could shorten the legs. The sensible suggestion earns a nod; your host would rather you had admired the bed first.",
+      "effects": {
+        "bond": {
+          "role": "other",
+          "respect": 6,
+          "affinity": -3
+        },
+        "wits": 2
+      }
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "results": [
+    {
+      "scenario": "layout-and-navigation",
+      "width": 280,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "scenario": "layout-and-navigation",
+      "width": 320,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "scenario": "layout-and-navigation",
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "scenario": "layout-and-navigation",
+      "width": 768,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "scenario": "layout-and-navigation",
+      "width": 280,
+      "textScale": 1.35,
+      "passed": true
+    },
+    {
+      "scenario": "baron",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "scenario": "royal",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "scenario": "knight",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "scenario": "comic_lofty_bed",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "scenario": "education_parish_0",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "scenario": "death",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "scenario": "creator",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "scenario": "off-Life-ambition-reward",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "scenario": "creator-accessibility",
+      "width": 280,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "scenario": "creator-accessibility",
+      "width": 320,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "scenario": "creator-accessibility",
+      "width": 768,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "scenario": "creator-accessibility",
+      "width": 280,
+      "textScale": 1.35,
+      "passed": true
+    },
+    {
+      "scenario": "comic_lofty_bed-stairs",
+      "width": 280,
+      "textScale": 1.35,
+      "passed": true
+    },
+    {
+      "scenario": "comic_lofty_bed-admire",
+      "width": 280,
+      "textScale": 1.35,
+      "passed": true
+    },
+    {
+      "scenario": "comic_lofty_bed-lower",
+      "width": 280,
+      "textScale": 1.35,
+      "passed": true
+    },
+    {
+      "scenario": "education_parish_0-repair",
+      "width": 280,
+      "textScale": 1.35,
+      "passed": true
+    },
+    {
+      "scenario": "education_parish_0-deceive",
+      "width": 280,
+      "textScale": 1.35,
+      "passed": true
+    },
+    {
+      "scenario": "education_parish_0-confess",
+      "width": 280,
+      "textScale": 1.35,
+      "passed": true
+    }
+  ],
+  "errors": []
+}

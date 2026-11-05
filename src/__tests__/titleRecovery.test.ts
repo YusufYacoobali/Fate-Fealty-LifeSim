@@ -1,0 +1,14 @@
+import {makeState} from './helpers';
+import {syncPlayerToWorld} from '@/engine/gameState';
+import {normalizeGameState} from '@/state/persistence';
+import {repairWorldIntegrity} from '@/engine/worldIntegrity';
+function affected(){const s=normalizeGameState(makeState({age:40,rankIdx:3,gold:260,lifetimeUnlocked:true})),p=s.world.characters[s.playerCharacterId];delete p.titleRecoveryVersion;s.world.history.push({id:'old_patent',year:s.world.currentYear,type:'choice',eventId:'baron_land_grant',resolvedChoiceId:'baron_land_grant_choice_1',participantIds:[p.id],familyIds:[],causes:[],summary:'You bought the claim.',salience:5});syncPlayerToWorld(s);return s;}
+it('repairs a documented old paid patent once without recharging, replaying rewards or drawing RNG',()=>{
+ const s=affected(),before=JSON.parse(JSON.stringify([s.gold,s.stats,s.memories,s.world.rngState,s.world.relationships,s.world.history]));const n=normalizeGameState(JSON.parse(JSON.stringify(s)));expect(n.rankIdx).toBe(4);expect(n.world.characters[n.playerCharacterId].socialStatus!.estate).toBe('baronial');expect(n.world.characters[n.playerCharacterId].socialStatus!.titles).toContain('Baron');expect([n.gold,n.stats,n.memories,n.world.rngState,n.world.relationships,n.world.history]).toEqual(before);expect(normalizeGameState(JSON.parse(JSON.stringify(n)))).toEqual(n);repairWorldIntegrity(n);expect(n.rankIdx).toBe(4);
+});
+it('never grants from declined, unrelated, inherited, ambiguous or legitimately lost patents',()=>{
+ for(const change of [(s:ReturnType<typeof affected>)=>{s.world.history.at(-1)!.resolvedChoiceId='baron_land_grant_choice_2';},(s:ReturnType<typeof affected>)=>{s.world.history.at(-1)!.participantIds=['father',s.playerCharacterId];},(s:ReturnType<typeof affected>)=>{s.world.history=[];s.memories.push({id:9001,tag:'barony_claimed',age:40,weight:5});},(s:ReturnType<typeof affected>)=>{s.memories.push({id:9002,tag:'demoted_from_baron',age:40,weight:3});},(s:ReturnType<typeof affected>)=>{s.world.characters[s.playerCharacterId].titleRecoveryVersion=1;}]){const s=affected();change(s);const n=normalizeGameState(JSON.parse(JSON.stringify(s)));expect(n.rankIdx).toBe(3);}
+});
+it('preserves royal ancestry and claims in recovered patents and never restores a later loss',()=>{
+ const s=affected(),p=s.world.characters[s.playerCharacterId];p.socialStatus!.estate='royal';const before=JSON.stringify([p.parentIds,s.world.court!.claims]);let n=normalizeGameState(JSON.parse(JSON.stringify(s)));expect(n.world.characters[p.id].socialStatus!.estate).toBe('royal');expect(JSON.stringify([n.world.characters[p.id].parentIds,n.world.court!.claims])).toBe(before);n.rankIdx=n.world.characters[p.id].rankIdx=3;n.world.characters[p.id].socialStatus!.titles=[];n=normalizeGameState(JSON.parse(JSON.stringify(n)));expect(n.rankIdx).toBe(3);
+});

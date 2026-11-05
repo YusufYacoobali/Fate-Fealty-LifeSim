@@ -1,0 +1,10 @@
+
+> fate-and-fealty@1.0.0 test
+> jest --runInBand goalEngine progressionRoutes politicalGuidance
+
+
+Test Suites: 4 passed, 4 total
+Tests:       33 passed, 33 total
+Snapshots:   0 total
+Time:        2.491 s
+Ran all test suites matching goalEngine|progressionRoutes|politicalGuidance.

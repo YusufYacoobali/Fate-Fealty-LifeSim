@@ -32,40 +32,10 @@ export function canPromote(s: GameState): boolean {
   return !s.dead&&!!route&&route.rows.every(r=>r.met);
 }
 
-const PROMOTION_REASON: Record<string, string> = {
-  'a life under arms': 'service under arms',
-  'a life at court': 'years spent learning which fork and which lie to use at court',
-  'a life in the Church': 'visible devotion to the Church',
-  'honest trade and toil': 'honest work that even the lazy have noticed',
-  'a name known for the right reasons': 'a name spoken well beyond thy own table',
-  'a growing good name': 'a steadily improving name',
-  'a name beginning to travel': 'a name beginning to travel',
-  'conspicuous wealth': 'wealth too conspicuous to dismiss',
-  'a comfortable purse': 'a comfortably heavy purse',
-  'a purse that covers appearances': 'enough coin to look respectable at a distance',
-  'courtly bearing': 'courtly bearing',
-  'letters and learning': 'letters and learning',
-  'a reputation for piety': 'a reputation for piety',
-  'a flourishing holding': 'a flourishing holding',
-  'a well-kept holding': 'a well-kept holding',
-  'powerful friends': 'powerful friends',
-  'friends in useful places': 'friends in useful places',
-  'respected work': 'respected work',
-};
-
-/** A short, player-facing account of what actually earned an ordinary promotion. */
+/** Explain the actual honour requirements, separately from land and wealth. */
 export function promotionRationale(s: GameState): string {
-  const reasons = standingContributions(s)
-    .filter((item) => item.delta > 0)
-    .sort((a, b) => b.delta - a.delta)
-    .map((item) => PROMOTION_REASON[item.label] ?? item.label)
-    .filter((value, index, all) => all.indexOf(value) === index)
-    .slice(0, 3);
-
-  if (!reasons.length) return 'Years of stubborn effort have finally become inconvenient to ignore.';
-  if (reasons.length === 1) return `Thy ${reasons[0]} has finally become inconvenient to ignore.`;
-  if (reasons.length === 2) return `Thy ${reasons[0]} and ${reasons[1]} have finally become inconvenient to ignore.`;
-  return `Thy ${reasons[0]}, ${reasons[1]}, and ${reasons[2]} have finally become inconvenient to ignore.`;
+ const route=militaryPromotionRequirements(s),job=careerById(s.occupation.careerId);
+ return `Your martial qualification, service as ${job?.title??'a soldier'} and service standing of ${s.rankProgress}${route?` meet the ${route.honour==='squire'?'Squire':'Knight'} requirements`:' have been recognised'}.`;
 }
 
 /** Promote one rank if possible (or forced). Resets rankProgress. */
@@ -75,11 +45,11 @@ export function promote(s: GameState, force = false): boolean {
   const index=route.honour==='squire'?1:2,next=RANKS[index];
   const player=s.world.characters[s.playerCharacterId];
   const status=player.socialStatus??=legacyStatus(s.rankIdx);
+  const reason = force
+    ? 'An explicit grant recognises your military service.'
+    : promotionRationale(s);
   status.martialHonour=route.honour;
   status.grants=[...new Set([...status.grants,`martial_service_${s.world.currentYear}`])];
-  const reason = force
-    ? 'Fortune, favour, or somebody important has moved the ladder beneath thy feet.'
-    : promotionRationale(s);
   s.rankIdx = Math.max(s.rankIdx,index);
   player.rankIdx=s.rankIdx;
   s.rankProgress = 0;

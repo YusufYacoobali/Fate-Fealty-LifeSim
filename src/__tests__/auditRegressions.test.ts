@@ -114,7 +114,7 @@ describe('structured health mortality', () => {
     const causes = Array.from({ length: 30 }, (_, seed) => advance(terminallyIll(seed + 1), 1))
       .filter((s) => s.dead)
       .map((s) => s.deathCause);
-    expect(causes).toContain(expected);
+    expect(causes).toContain(`Died from ${expected}.`);
   });
 
   it('never leaves a death cause on a living character', () => {

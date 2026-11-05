@@ -1,3 +1,4 @@
+import {recoverLegacyBarony} from './titleRecovery';
 import {activeSpouse,reconcileMarriages} from './characterState';
 import {normalizeChildNaming} from './childNaming';
 import { GameState } from '@/types/game';
@@ -99,6 +100,7 @@ function repairKinship(state: GameState): void {
 /** Repair is intentionally reserved for world creation/load recovery. */
 export function repairWorldIntegrity(state: GameState): GameState {
   const characters = state.world.characters;
+  recoverLegacyBarony(state);
   repairKinship(state);
   reconcileMarriages(state);
   normalizeChildNaming(state);

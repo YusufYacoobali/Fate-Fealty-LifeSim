@@ -164,6 +164,7 @@ export function createLife(opts: FreshLifeOptions = {}): GameState {
   for (const person of Object.values(created.value.world.characters)) person.skills ??= freshSkills();
   initializeLifeDepth(created.value);
   initializeCourt(created.value);
+  created.value.world.characters[created.value.playerCharacterId].titleRecoveryVersion=1;
   reconcileMarriages(created.value);
   normalizeChildNaming(created.value);
   normalizeLifeEventNotices(created.value);

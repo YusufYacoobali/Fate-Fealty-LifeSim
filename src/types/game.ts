@@ -195,6 +195,7 @@ export interface KinMember extends CharacterCore {
   deathYear?: number;
   deathCause?: string;
   deathContext?: DeathContext;
+  titleRecoveryVersion?: 1;
   healthConditions?: HealthConditionState[];
   legalState?: LegalState;
   secrets?: CharacterSecretState[];

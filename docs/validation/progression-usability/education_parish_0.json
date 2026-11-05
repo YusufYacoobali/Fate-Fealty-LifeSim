@@ -1,0 +1,49 @@
+{
+  "id": "education_parish_0",
+  "title": "ONE ELBOW TOO MANY",
+  "bindings": {
+    "mentor": "oswin",
+    "classmate": "kin_4"
+  },
+  "introduction": "Your mentor, Agnes, asks you to copy the church’s list of holy relics. You accidentally list three elbow bones for one saint. Your sister and fellow student, Avice, spots it: ‘Did he have a spare arm?’",
+  "choices": [
+    {
+      "id": "repair",
+      "label": "Check the original list together",
+      "outcome": "You and Avice find that one elbow belongs to the next saint on the list. Agnes praises the correction. Two elbows each; nobody needs a spare arm.",
+      "effects": {
+        "education": {
+          "progress": 15,
+          "mentorBond": 7,
+          "peerBond": 6
+        },
+        "reputation": 2
+      }
+    },
+    {
+      "id": "deceive",
+      "label": "Let Avice copy the mistake",
+      "outcome": "Avice copies your list. When Agnes counts the three elbows aloud, you admit that you noticed the mistake before lending the page. Neither student escapes the correction, and neither companion is pleased with you.",
+      "effects": {
+        "education": {
+          "progress": 8,
+          "misconduct": 35,
+          "mentorBond": -12,
+          "peerBond": -25
+        }
+      }
+    },
+    {
+      "id": "confess",
+      "label": "Ask Agnes to check your work",
+      "outcome": "Agnes lays the original list beside yours and points to the next saint’s name. You move the third elbow to the right entry while Avice checks the rest. The finished copy has fewer wonders and better sums.",
+      "effects": {
+        "education": {
+          "progress": 7,
+          "misconduct": -12,
+          "mentorBond": 5
+        }
+      }
+    }
+  ]
+}

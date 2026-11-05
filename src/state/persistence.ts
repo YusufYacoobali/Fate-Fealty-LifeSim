@@ -1,3 +1,4 @@
+import {recoverLegacyBarony} from '@/engine/titleRecovery';
 import {reconcilePendingEventActors} from '@/engine/eventPicker';
 import {normalizeLifeEventNotices} from '@/engine/lifeEventNotices';
 import {reconcileMarriages} from '@/engine/characterState';
@@ -318,6 +319,7 @@ export function normalizeGameState(parsed: GameState): GameState {
     // An unavailable opponent must never strand the mission overlay.
     normalized.rpg.mission.phase = 'choice';
   }
+  recoverLegacyBarony(normalized);
   reconcileMarriages(normalized);
   normalizeChildNaming(normalized);
   normalizeLifeEventNotices(normalized);

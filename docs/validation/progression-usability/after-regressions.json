@@ -1,0 +1,17 @@
+{
+  "label": "v5-after",
+  "healthCollapse": {
+    "dead": true,
+    "cause": "Died after a fatal collapse in health; no specific cause was recorded."
+  },
+  "annualOutlawWithoutCriminalCase": {
+    "dead": false,
+    "cause": ""
+  },
+  "acceptedBarony": {
+    "gold": 260,
+    "rank": 4,
+    "estate": "baronial",
+    "memories": 1
+  }
+}

@@ -38,7 +38,7 @@ export function petitionProspects(s: GameState, route: 'merit' | 'patron'): { od
   const patron = s.world.characters[s.occupation.patronId ?? ''];
   const patronHelp = route === 'patron' && patron?.alive ? (bond(s,patron) - 35) / 2 : 0;
   const odds = clamp(20 + merit + (p.factionInfluence ?? 0) / 3 + (bond(s,ruler) - 50) / 3 + supporters * 7 + patronHelp + (incumbent?.alive ? -incumbent.stats.wits / 3 : 25) - (rival?.stats.wits ?? 0) / 12, 8, 92) / 100;
-  return { odds, detail: `${incumbent?.alive ? `${incumbent.name} defends the seal with Wits ${incumbent.stats.wits}` : 'The seal is vacant'}. ${supporters} council supporters; professional standing ${professional}; ruler trust ${Math.round(bond(s,ruler))}${rival ? `; ${rival.name} also seeks appointment` : ''}.` };
+  return { odds, detail: `${incumbent?.alive ? `${incumbent.name} defends the seal with Wits ${incumbent.stats.wits}` : 'The seal is vacant'}. ${supporters} council supporters; Court professional standing ${professional}; ruler trust ${Math.round(bond(s,ruler))}${rival ? `; ${rival.name} also seeks appointment` : ''}.` };
 }
 function stateSkill(s: GameState) { return s.world.characters[s.playerCharacterId].skills?.scholarship.level ?? 1; }
 function record(s: GameState, kind: string, detail: string, targetId?: string) {

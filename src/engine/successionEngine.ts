@@ -81,6 +81,7 @@ export function continueAsHeir(state: GameState, requestedHeirId?: string, lifet
   state.rpg.branches = freshRpg().branches;
   state.duel = null;
   state.playerRun = { startedYear: state.world.currentYear, generation: state.playerRun.generation + 1, roleProgress: {} };
+  heir.titleRecoveryVersion=1;
   state.first = heir.name;
   state.epithet = 'the Heir';
   state.gender = heir.gender;

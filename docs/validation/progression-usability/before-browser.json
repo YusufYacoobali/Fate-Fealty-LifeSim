@@ -1,0 +1,46 @@
+{
+  "results": [
+    {
+      "scenario": "layout-and-navigation",
+      "width": 390,
+      "textScale": 1,
+      "passed": true
+    },
+    {
+      "scenario": "baron",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "scenario": "royal",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "scenario": "knight",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "scenario": "comic_lofty_bed",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "scenario": "education_parish_0",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "scenario": "death",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "scenario": "creator",
+      "width": 390,
+      "passed": true
+    }
+  ],
+  "errors": []
+}

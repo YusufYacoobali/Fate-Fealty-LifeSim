@@ -1,0 +1,9 @@
+LAYOUT 390 1
+SCENARIO baron
+SCENARIO royal
+SCENARIO knight
+SCENARIO comic_lofty_bed
+SCENARIO education_parish_0
+SCENARIO death
+SCENARIO creator
+PASS 8 scenarios

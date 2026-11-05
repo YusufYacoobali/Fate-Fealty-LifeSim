@@ -1,0 +1,10 @@
+
+> fate-and-fealty@1.0.0 test
+> jest --runInBand progressionHints progressionRoutesUi holdingCourtUi viewModel progressionRoutes
+
+
+Test Suites: 5 passed, 5 total
+Tests:       32 passed, 32 total
+Snapshots:   0 total
+Time:        3.376 s
+Ran all test suites matching progressionHints|progressionRoutesUi|holdingCourtUi|viewModel|progressionRoutes.

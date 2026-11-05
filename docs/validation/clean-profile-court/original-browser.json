@@ -1,0 +1,86 @@
+{
+  "variant": "original",
+  "results": [
+    {
+      "width": 280,
+      "textScale": 1,
+      "me": {
+        "height": 13.5,
+        "scrollHeight": 1362,
+        "viewportHeight": 572
+      },
+      "court": {
+        "height": 170.296875,
+        "scrollHeight": 1881,
+        "viewportHeight": 492
+      },
+      "helpButtons": null,
+      "passed": true
+    },
+    {
+      "width": 320,
+      "textScale": 1,
+      "me": {
+        "height": 13.5,
+        "scrollHeight": 1323,
+        "viewportHeight": 586
+      },
+      "court": {
+        "height": 170.296875,
+        "scrollHeight": 1795,
+        "viewportHeight": 506
+      },
+      "helpButtons": null,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "textScale": 1,
+      "me": {
+        "height": 13.5,
+        "scrollHeight": 1283,
+        "viewportHeight": 586
+      },
+      "court": {
+        "height": 163.796875,
+        "scrollHeight": 1605,
+        "viewportHeight": 506
+      },
+      "helpButtons": null,
+      "passed": true
+    },
+    {
+      "width": 768,
+      "textScale": 1,
+      "me": {
+        "height": 13.5,
+        "scrollHeight": 1204,
+        "viewportHeight": 586
+      },
+      "court": {
+        "height": 141.796875,
+        "scrollHeight": 1298,
+        "viewportHeight": 515
+      },
+      "helpButtons": null,
+      "passed": true
+    },
+    {
+      "width": 280,
+      "textScale": 1.35,
+      "me": {
+        "height": 18.21875,
+        "scrollHeight": 1668,
+        "viewportHeight": 499
+      },
+      "court": {
+        "height": 322.25,
+        "scrollHeight": 2462,
+        "viewportHeight": 414
+      },
+      "helpButtons": null,
+      "passed": true
+    }
+  ],
+  "errors": []
+}

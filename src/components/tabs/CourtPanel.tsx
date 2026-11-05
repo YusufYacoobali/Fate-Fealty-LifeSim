@@ -1,10 +1,10 @@
-import {POLITICAL_TERMS,OFFICE_APPOINTMENT_INFLUENCE} from '@/data/politicalOffices';
+import {OFFICE_APPOINTMENT_INFLUENCE} from '@/data/politicalOffices';
 import {baronyRequirements,nobilityRequirements,BARONY} from '@/engine/progressionRequirements';
 import {nobilityProspects} from '@/engine/titleEngine';
 import React,{useState,useEffect} from 'react';
 import {Image,View,useWindowDimensions} from 'react-native';
 import type {CourtOffice,GameState} from '@/types/game';
-import {courtAvailability,courtActionBlockers,courtActionGains,courtPetitionRequirements,COURT_YEARLY_ACTION_LIMIT,type CourtAction} from '@/engine/courtEngine';
+import {courtAvailability,courtActionBlockers,courtPetitionRequirements,COURT_YEARLY_ACTION_LIMIT,type CourtAction} from '@/engine/courtEngine';
 import {courtCandidatesFor,councilAdvice} from '@/engine/courtPolitics';
 import {POLITICAL_OFFICES,ROYAL_DECISIONS} from '@/data/politicalOffices';
 import {useGame} from '@/state/GameContext';
@@ -58,14 +58,18 @@ export function CourtPanel({state,initialAction}:{state:GameState;initialAction?
    {court.petition?.applicantId===player.id&&<PixelText size={17} color={C.blueDeep}>Petition for {POLITICAL_OFFICES.find(o=>o.id===court.petition!.office)?.name}: {court.petition.resolved?court.petition.outcome:'Awaiting the council’s decision'}{court.petition.outcome==='conditional'?` · Court professional standing ${court.petition.requiredStanding} required`:''}.</PixelText>}
   </View>;
  return <View style={{gap:10}}>
-  <View style={[PANEL.parchCard,{gap:8}]}>
+  <View testID="court-overview" style={[PANEL.parchCard,{gap:8}]}>
    <View style={{flexDirection:'row',alignItems:'center',gap:10}}><Image source={PAYWALL_ART.crown} resizeMode="contain" style={{width:width>=360?60:36,height:60}}/><View style={{flex:1,gap:6}}><PixelText font="pixel" size={10} color={C.blueDeep}>THE ROYAL COURT</PixelText><PixelText size={18}>Ruler: {state.world.characters[court.rulerId]?.name??'Unrecorded'}. Heir: {state.world.characters[court.heirId??'']?.name??'Disputed'}.</PixelText></View></View>
    {court.regentId&&<PixelText size={17}>Regent: {state.world.characters[court.regentId]?.name}</PixelText>}
-   <PixelText size={18}>Treasury {court.treasury}g</PixelText>
-   {([{term:POLITICAL_TERMS.influence,value:player.factionInfluence??0},{term:POLITICAL_TERMS.support,value:state.world.factions.crown.playerStanding},{term:POLITICAL_TERMS.standing,value:player.professionalHistory?.court?.reputation??0},{term:POLITICAL_TERMS.legitimacy,value:court.legitimacy}]).map(({term,value})=><PixelText key={term.label} size={16}><PixelText size={17}>{term.label}: {value}. </PixelText>{term.description}</PixelText>)}
+   <PixelText size={18}>Treasury: {court.treasury}g · Legitimacy: {court.legitimacy}</PixelText>
+   <PixelText size={18}>Influence: {player.factionInfluence??0} · Crown Support: {state.world.factions.crown.playerStanding}</PixelText>
    <PixelText size={16} color={C.amber}>Court matters remaining: {Math.max(0,COURT_YEARLY_ACTION_LIMIT-(court.actionsYear===state.world.currentYear?court.actionsUsed:0))}/{COURT_YEARLY_ACTION_LIMIT}</PixelText>
-   <PixelButton bg={C.lightFill} shadow={C.paleEdge} onPress={()=>setHowToImprove(!howToImprove)} innerStyle={{padding:10,minHeight:46}}><PixelText font="pixel" size={7}>HOW TO IMPROVE {howToImprove?'▴':'▾'}</PixelText></PixelButton>
-   {howToImprove&&<View style={{gap:10}}>{(['patron','advise','alliance','expose'] as CourtAction[]).map(id=>{const candidate=['patron','alliance'].includes(id)?courtCandidatesFor(state,id)[0]?.id:undefined,blocked=courtActionBlockers(state,id,candidate),gain=courtActionGains(state,id);return <View key={id} style={{gap:5}}><PixelText size={17}>{label(id)}: +{gain.influence} political influence{gain.support?` · +${gain.support} Crown support`:''}{gain.prosperity?` · +${gain.prosperity} prosperity`:''}. Gains respect current caps.</PixelText>{id==='expose'&&<PixelText size={15}>Recovered funds and other consequences depend on what the investigation actually finds.</PixelText>}<PixelButton disabled={!!blocked.length} bg={blocked.length?C.lightFill:C.charm} shadow={C.paleEdge} onPress={()=>{choose(id);setPerson(candidate);}} innerStyle={{padding:9,minHeight:44}}><PixelText font="pixel" size={7}>OPEN {label(id).toUpperCase()}</PixelText></PixelButton>{blocked.map(message=><PixelText key={message} size={15} color={C.bad}>{message}</PixelText>)}</View>;})}<PixelText size={16}>Court professional standing grows through work and professional actions in a court occupation. Other careers build their own standing.</PixelText><PixelButton bg={C.lightFill} shadow={C.paleEdge} onPress={()=>{dispatch({type:'SET_CAT',cat:'work'});dispatch({type:'SET_TAB',tab:'do'});}} innerStyle={{padding:9,minHeight:44}}><PixelText font="pixel" size={7}>OPEN DO · COURT CAREERS</PixelText></PixelButton></View>}
+   <PixelButton accessibilityLabel={howToImprove?'HOW TO IMPROVE: hide help':'HOW TO IMPROVE: show help'} bg={C.lightFill} shadow={C.paleEdge} onPress={()=>setHowToImprove(!howToImprove)} innerStyle={{padding:10,minHeight:46}}><PixelText font="pixel" size={7}>HOW TO IMPROVE {howToImprove?'▴':'▾'}</PixelText></PixelButton>
+   {howToImprove&&<View testID="court-help" style={{gap:6}}>
+    <PixelText size={16}>Political influence: build it through patronage, advice, new household alliances and investigations.</PixelText>
+    <PixelText size={16}>Crown support: gain favour through patronage and advice.</PixelText>
+    <PixelText size={16}>Legitimacy: the ruler’s authority. A weakened mandate puts the Crown at risk.</PixelText>
+   </View>}
   </View>
   <View style={{flexDirection:width>=700?'row':'column',gap:9}}>
    <View style={width>=700?{flex:1}:undefined}><HoldingPanel title="COUNCIL MEMBERS">{POLITICAL_OFFICES.map(o=>{const npc=state.world.characters[court.offices[o.id]??''];return <PixelButton key={o.id} selected={office===o.id} bg={office===o.id?C.charm:C.lightFill} shadow={office===o.id?C.charmDark:C.blueDark} onPress={()=>setOffice(o.id)} innerStyle={{padding:8,flexDirection:'row',alignItems:'center',gap:8,minHeight:56}}>

@@ -1,0 +1,86 @@
+{
+  "variant": "expanded-before",
+  "results": [
+    {
+      "width": 280,
+      "textScale": 1,
+      "me": {
+        "height": 16.5,
+        "scrollHeight": 3682,
+        "viewportHeight": 672
+      },
+      "court": {
+        "height": 515.890625,
+        "scrollHeight": 2470,
+        "viewportHeight": 672
+      },
+      "helpButtons": null,
+      "passed": true
+    },
+    {
+      "width": 320,
+      "textScale": 1,
+      "me": {
+        "height": 16.5,
+        "scrollHeight": 3461,
+        "viewportHeight": 686
+      },
+      "court": {
+        "height": 436.703125,
+        "scrollHeight": 2305,
+        "viewportHeight": 686
+      },
+      "helpButtons": null,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "textScale": 1,
+      "me": {
+        "height": 16.5,
+        "scrollHeight": 3151,
+        "viewportHeight": 686
+      },
+      "court": {
+        "height": 430.203125,
+        "scrollHeight": 2038,
+        "viewportHeight": 686
+      },
+      "helpButtons": null,
+      "passed": true
+    },
+    {
+      "width": 768,
+      "textScale": 1,
+      "me": {
+        "height": 16.5,
+        "scrollHeight": 2724,
+        "viewportHeight": 686
+      },
+      "court": {
+        "height": 351.015625,
+        "scrollHeight": 1644,
+        "viewportHeight": 686
+      },
+      "helpButtons": null,
+      "passed": true
+    },
+    {
+      "width": 280,
+      "textScale": 1.35,
+      "me": {
+        "height": 22.28125,
+        "scrollHeight": 5465,
+        "viewportHeight": 613
+      },
+      "court": {
+        "height": 813.328125,
+        "scrollHeight": 3225,
+        "viewportHeight": 613
+      },
+      "helpButtons": null,
+      "passed": true
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,131 @@
+{
+  "variant": "after",
+  "results": [
+    {
+      "width": 280,
+      "textScale": 1,
+      "me": {
+        "height": 13.5,
+        "scrollHeight": 1233,
+        "viewportHeight": 672
+      },
+      "court": {
+        "height": 276.296875,
+        "scrollHeight": 2231,
+        "viewportHeight": 672
+      },
+      "hintLines": 3.0005013368983957,
+      "helpButtons": 0,
+      "passed": true
+    },
+    {
+      "width": 320,
+      "textScale": 1,
+      "me": {
+        "height": 13.5,
+        "scrollHeight": 1175,
+        "viewportHeight": 686
+      },
+      "court": {
+        "height": 232.296875,
+        "scrollHeight": 2101,
+        "viewportHeight": 686
+      },
+      "hintLines": 2.0003342245989306,
+      "helpButtons": 0,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "textScale": 1,
+      "me": {
+        "height": 13.5,
+        "scrollHeight": 1135,
+        "viewportHeight": 686
+      },
+      "court": {
+        "height": 225.796875,
+        "scrollHeight": 1834,
+        "viewportHeight": 686
+      },
+      "hintLines": 2.0003342245989306,
+      "helpButtons": 0,
+      "passed": true
+    },
+    {
+      "width": 768,
+      "textScale": 1,
+      "me": {
+        "height": 13.5,
+        "scrollHeight": 1077,
+        "viewportHeight": 686
+      },
+      "court": {
+        "height": 225.796875,
+        "scrollHeight": 1519,
+        "viewportHeight": 686
+      },
+      "hintLines": 1.0001671122994653,
+      "helpButtons": 0,
+      "passed": true
+    },
+    {
+      "width": 280,
+      "textScale": 1.35,
+      "me": {
+        "height": 18.21875,
+        "scrollHeight": 1522,
+        "viewportHeight": 613
+      },
+      "court": {
+        "height": 413.953125,
+        "scrollHeight": 2826,
+        "viewportHeight": 613
+      },
+      "hintLines": 4.000792236086354,
+      "helpButtons": 0,
+      "passed": true
+    },
+    {
+      "profile": "squire",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "profile": "knight",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "profile": "noble",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "profile": "royal",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "profile": "royal_kin",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "profile": "baron",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "profile": "monarch",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "profile": "locked",
+      "width": 390,
+      "passed": true
+    }
+  ],
+  "errors": []
+}

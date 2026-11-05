@@ -1,0 +1,10 @@
+scripts/createCleanProfileUiFixtures.ts
+scripts/verifyCleanProfileUi.cjs
+src/__tests__/holdingCourtUi.test.tsx
+src/__tests__/progressionHints.test.ts
+src/__tests__/progressionRoutesUi.test.tsx
+src/components/tabs/AdvancementPanel.tsx
+src/components/tabs/CourtPanel.tsx
+src/components/tabs/MeTab.tsx
+src/screens/GameScreen.tsx
+src/state/viewModel.ts

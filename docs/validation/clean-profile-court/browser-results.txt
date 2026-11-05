@@ -1,0 +1,14 @@
+after 280 1
+after 320 1
+after 390 1
+after 768 1
+after 280 1.35
+PROFILE squire
+PROFILE knight
+PROFILE noble
+PROFILE royal
+PROFILE royal_kin
+PROFILE baron
+PROFILE monarch
+PROFILE locked
+PASS 13 after

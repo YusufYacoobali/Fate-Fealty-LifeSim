@@ -1,0 +1,6 @@
+original 280 1
+original 320 1
+original 390 1
+original 768 1
+original 280 1.35
+PASS 5 original

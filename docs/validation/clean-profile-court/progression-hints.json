@@ -1,0 +1,38 @@
+[
+  {
+    "kind": "commoner",
+    "hint": "Commoner: ready to petition for nobility at Court; the ruler may refuse."
+  },
+  {
+    "kind": "squire",
+    "hint": "Squire: complete martial training in Do → Practice to pursue knighthood."
+  },
+  {
+    "kind": "knight",
+    "hint": "Knight: ready to petition for nobility at Court; the ruler may refuse."
+  },
+  {
+    "kind": "noble",
+    "hint": "Noble: seek a barony at Court; the patent costs 90g."
+  },
+  {
+    "kind": "royal",
+    "hint": "Prince: 2nd in succession; the designated heir has priority at Court."
+  },
+  {
+    "kind": "royal_kin",
+    "hint": "Royal Kin: no eligible claim. Review the succession at Court."
+  },
+  {
+    "kind": "baron",
+    "hint": "Baron: the Crown requires a recognised claim. Review succession at Court."
+  },
+  {
+    "kind": "monarch",
+    "hint": "Monarch: protect your legitimacy and secure the succession at Court."
+  },
+  {
+    "kind": "locked",
+    "hint": "Commoner: ready to petition for nobility at Court; the ruler may refuse."
+  }
+]

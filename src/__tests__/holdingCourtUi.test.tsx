@@ -48,3 +48,18 @@ it('places section selectors inside the one main scroller before the section con
  const scroll=root.root.findAllByType(ScrollView).filter(n=>!n.props.horizontal);expect(scroll).toHaveLength(1);
  const nav=scroll[0].findAllByType(PixelButton).filter(n=>['ESTATE','ROYAL COURT','SWINEFORD'].includes(n.props.accessibilityLabel));expect(nav).toHaveLength(3);expect(scroll[0].props.stickyHeaderIndices).toBeUndefined();
 });
+it('keeps the Court overview compact and help collapsed, textual and free of action controls',()=>{
+ const s=state(),p=s.world.characters[s.playerCharacterId];p.factionInfluence=25;s.world.factions.crown.playerStanding=10;
+ const before=JSON.stringify(s);act(()=>{root=create(<CourtPanel state={s}/>);});
+ const summary=root.root.findByProps({testID:'court-overview'});
+ const summaryText=summary.findAllByType(PixelText).map(n=>[n.props.children].flat(5).join('')).join(' ');
+ for(const value of ['Treasury: 250g · Legitimacy: 65','Influence: 25 · Crown Support: 10','Court matters remaining: 3/3'])expect(summaryText).toContain(value);
+ expect(summaryText).not.toMatch(/personal ability|career reputation|Court professional standing/);expect(root.root.findAllByProps({testID:'court-help'})).toHaveLength(0);
+ tap('HOW TO IMPROVE ▾');const help=root.root.findByProps({testID:'court-help'});expect(help.findAllByType(PixelButton)).toHaveLength(0);expect(help.findAllByType(PixelText)).toHaveLength(3);
+ const prose=help.findAllByType(PixelText).map(n=>n.props.children).join(' ');expect(prose).toMatch(/Political influence.*patronage.*advice.*alliances/);expect(prose).toMatch(/Crown support.*patronage.*advice/);expect(prose).toContain('Legitimacy');expect(prose).not.toMatch(/\+\d|OPEN |requirements|current caps/);
+ tap('HOW TO IMPROVE ▴');expect(root.root.findAllByProps({testID:'court-help'})).toHaveLength(0);expect(mockDispatch).not.toHaveBeenCalled();expect(JSON.stringify(s)).toBe(before);
+});
+it('preserves the manual barony action and detailed qualifications at Court',()=>{
+ const s=makeState({age:38,rankIdx:3,gold:350,lifetimeUnlocked:true,stats:{health:90,charm:84,wits:76,faith:50}});syncPlayerToWorld(s);
+ act(()=>{root=create(<CourtPanel state={s} initialAction="seek_barony"/>);});expect(text()).toContain('Gold held 350g');expect(text()).toContain('90g paid only if accepted');tap('CONFIRM: SEEK A BARONY');expect(mockDispatch).toHaveBeenCalledWith(expect.objectContaining({type:'COURT',action:'seek_barony'}));
+});
